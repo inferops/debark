@@ -1,0 +1,9 @@
+# Recorded output, not synthesised.
+# Image: debian:bookworm-slim (Docker Hub), pulled and run 2026-09-03.
+# Command:
+#   apt-get -s install this-package-does-not-exist-xyz
+# Exit code observed: 100.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+E: Unable to locate package this-package-does-not-exist-xyz

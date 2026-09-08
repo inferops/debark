@@ -1,0 +1,54 @@
+{
+  "schema_version": "debark.e2e.matrixresult/v1",
+  "generated_at": "2026-09-06T01:46:05.9514957Z",
+  "host": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.26.0"
+  },
+  "config": {
+    "workers": 1,
+    "fixture_filter": "pool-unreferenced"
+  },
+  "rows": [
+    {
+      "fixture": "pool-unreferenced",
+      "protects": "core/bundle/unreferenced.go; bundle.WarnUnreferenced.7 additive runs; Request.PriorBuild",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-05T18:46:12.641385-07:00",
+      "finished_at": "2026-09-05T18:46:45.3144829-07:00",
+      "total_ms": 32673,
+      "stage_ms": {
+        "build": 10814,
+        "build-binary": 1152,
+        "bundle-transfer": 64,
+        "install": 511,
+        "prior-build": 8044,
+        "snapshot-create": 158,
+        "target-setup": 5203,
+        "verify": 100
+      },
+      "bundle_size_bytes": 478110,
+      "package_count": 4,
+      "log_path": "matrix-work/r98f5f082/pool-unreferenced-debian-12-amd64/transcript.log"
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "pass": 1,
+    "fail": 0,
+    "blocked": 0,
+    "skipped": 0,
+    "timeout": 0,
+    "aborted": 0
+  }
+}

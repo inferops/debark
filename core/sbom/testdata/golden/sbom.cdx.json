@@ -1,0 +1,96 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:7e6f235e-46ee-5032-ad05-ef9d9a8bb5ba",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-03T12:00:00Z",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "debark",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "bom-ref": "bundle:bundle-20260903-0001",
+      "name": "bundle-20260903-0001",
+      "version": "noble-amd64"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:deb/debian/libc6@2.36-9%2Bdeb12u4?arch=amd64",
+      "name": "libc6",
+      "version": "2.36-9+deb12u4",
+      "purl": "pkg:deb/debian/libc6@2.36-9%2Bdeb12u4?arch=amd64",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+        }
+      ],
+      "properties": [
+        {
+          "name": "debark:source-package",
+          "value": "glibc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:deb/ubuntu/vlc@3.0.21-1build1?arch=amd64",
+      "name": "vlc",
+      "version": "3.0.21-1build1",
+      "purl": "pkg:deb/ubuntu/vlc@3.0.21-1build1?arch=amd64",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+        }
+      ],
+      "properties": [
+        {
+          "name": "debark:source-package",
+          "value": "vlc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:deb/debian/zoom@1%3A5.17.11.4059-1?arch=amd64",
+      "name": "zoom",
+      "version": "1:5.17.11.4059-1",
+      "purl": "pkg:deb/debian/zoom@1%3A5.17.11.4059-1?arch=amd64",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:deb/ubuntu/openjdk-17-jre-headless@17.0.13%2B11~us1-0ubuntu1~22.04?arch=arm64",
+      "name": "openjdk-17-jre-headless",
+      "version": "17.0.13+11~us1-0ubuntu1~22.04",
+      "purl": "pkg:deb/ubuntu/openjdk-17-jre-headless@17.0.13%2B11~us1-0ubuntu1~22.04?arch=arm64",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4"
+        }
+      ],
+      "properties": [
+        {
+          "name": "debark:source-package",
+          "value": "openjdk-17"
+        }
+      ]
+    }
+  ]
+}

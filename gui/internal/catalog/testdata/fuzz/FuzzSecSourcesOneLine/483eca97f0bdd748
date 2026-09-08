@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("deB [ArCh=\x8d]0 0 0")

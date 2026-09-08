@@ -1,0 +1,76 @@
+version: 2
+
+updates:
+  # Go module dependencies. debark's own rule is "no new dependencies
+  # without discussion" (docs/dev/contract-brief.md rule 4) — dependabot
+  # only proposes version bumps of what is already in go.mod, as a PR a
+  # human reviews; it never adds a new dependency on its own.
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "go"
+    commit-message:
+      prefix: "go"
+      include: "scope"
+    groups:
+      go-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # The gui/ module is a SEPARATE Go module (github.com/inferops/debark/gui)
+  # with its own go.mod and its own dependency set — Wails, its webview
+  # bindings and their transitive graph. A dependabot entry for "/" does not
+  # see a nested module, so without this block the desktop application's
+  # dependencies would never be offered an update. Same rule as above: bumps
+  # only, never a new dependency.
+  #
+  # github.com/inferops/debark itself is resolved here through a `replace`
+  # against ../ and has no version, so dependabot has nothing to bump for it
+  # and correctly leaves it alone.
+  - package-ecosystem: "gomod"
+    directory: "/gui"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "go"
+      - "gui"
+    commit-message:
+      prefix: "go(gui)"
+      include: "scope"
+    groups:
+      gui-go-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions used by this repository's own workflows, including
+  # pinned reusable-workflow refs (e.g. the SLSA generator in release.yml).
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

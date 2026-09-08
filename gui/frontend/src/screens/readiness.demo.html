@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>readiness.js — screen demo</title>
+
+    <!--
+      Theme before first paint, mirroring frontend/index.html so this page and
+      the real application cannot disagree about the storage key.
+    -->
+    <script>
+      try {
+        var m = localStorage.getItem('debark.theme');
+        if (m === 'light' || m === 'dark') document.documentElement.setAttribute('data-theme', m);
+      } catch (e) {
+        /* private window, storage blocked: system theme is the right fallback */
+      }
+    </script>
+
+    <link rel="stylesheet" href="../design/tokens.css" />
+    <link rel="stylesheet" href="../design/components.css" />
+
+    <!--
+      Harness chrome only. Everything below the toolbar is the real screen
+      module using the real design system; nothing here restyles it.
+    -->
+    <style>
+      body { display: flex; flex-direction: column; height: 100vh; }
+      /* .df-app__main bounds the height; .df-app__pane inside it is what the
+         shell hands a screen — no padding, no measure, `overflow: auto`. */
+      .demo-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+      .demo-toasts {
+        position: fixed;
+        right: var(--space-4);
+        bottom: var(--space-4);
+        z-index: var(--z-toast);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        width: min(420px, calc(100vw - var(--space-8)));
+      }
+      .demo-note { padding: var(--space-4); }
+    </style>
+  </head>
+
+  <body>
+    <div class="df-headerbar">
+      <span class="df-headerbar__title">readiness.js</span>
+      <span class="df-headerbar__subtitle df-mono">screens/readiness.js · stubbed backend</span>
+      <div class="df-spacer"></div>
+      <div class="df-cluster" id="theme-chips"></div>
+    </div>
+
+    <div class="df-toolbar">
+      <div class="df-cluster" id="scenario-chips"></div>
+      <div class="df-toolbar__divider"></div>
+      <label class="df-check">
+        <input type="checkbox" class="df-check__input" id="slow" />
+        <span class="df-check__label">Slow machine (2.5&nbsp;s pass)</span>
+      </label>
+      <label class="df-check">
+        <input type="checkbox" class="df-check__input" id="job-running" />
+        <span class="df-check__label">Build running</span>
+      </label>
+      <div class="df-spacer"></div>
+      <span class="df-text-sm df-text-secondary" id="nav-log">no navigation yet</span>
+    </div>
+
+<!-- The real frame, not an approximation of it: .df-app__main bounds the
+     height and .df-app__pane is what the shell hands a screen — no padding, no
+     measure, and `overflow: auto` so the SCREEN's own column scrolls. A
+     harness that mounts into an unbounded block cannot reproduce the class of
+     bug where a flex child with `min-height: 0` collapses below its content
+     and a boxed list clips what is inside it, which is exactly what the first
+     run on WebKit2GTK found. -->
+    <main class="demo-body df-app__main">
+      <div class="df-app__pane" id="screen-root"></div>
+    </main>
+    <div class="demo-toasts" id="toasts"></div>
+
+    <script>
+      // ES module imports are blocked on file:// by every engine this app
+      // targets. Say so usefully rather than showing a blank page.
+      window.setTimeout(function () {
+        if (window.__readinessDemoLoaded) return;
+        var root = document.getElementById('screen-root');
+        if (!root || root.firstChild) return;
+        var panel = document.createElement('div');
+        panel.className = 'df-banner df-banner--warning demo-note';
+        panel.setAttribute('role', 'status');
+        var body = document.createElement('div');
+        body.className = 'df-banner__body';
+        var t = document.createElement('p');
+        t.className = 'df-banner__title';
+        t.textContent = 'This page needs to be served over HTTP.';
+        var p = document.createElement('p');
+        p.className = 'df-banner__text';
+        p.textContent =
+          'It loads screens/readiness.js as a real ES module, and browsers refuse module imports from ' +
+          'file:// URLs. From the repository root run:  python3 -m http.server 8080  and open ' +
+          'http://localhost:8080/frontend/src/screens/readiness.demo.html';
+        body.appendChild(t);
+        body.appendChild(p);
+        panel.appendChild(body);
+        panel.appendChild(document.createElement('div'));
+        root.appendChild(panel);
+      }, 900);
+    </script>
+
+    <script type="module">
+      import screen from './readiness.js';
+
+      window.__readinessDemoLoaded = true;
+
+      // The real shell hands screens states.js exactly as it exports it, so the
+      // demo does too. Guarded: this file belongs to another package, and a
+      // half-written states.js must not take the demo down — the screen falls
+      // back to the design system's own .df-state markup.
+      let states = null;
+      try {
+        states = (await import('../shell/states.js')).default;
+      } catch (err) {
+        console.warn('demo: states.js unavailable, using the built-in fallback', err);
+      }
+
+      /* =====================================================================
+         Scenario data.
+
+         Every summary, remedy, command and note below is the wording the Go
+         engine actually produces (internal/readiness/checks.go,
+         checks_linux.go, checks_windows.go). Inventing friendlier copy here
+         would make the demo a review of text that does not ship.
+         ===================================================================== */
+
+      const LINUX = 'linux/amd64';
+      const WINDOWS = 'windows/amd64';
+
+      const OK_BINARY = {
+        id: 'debark-binary',
+        title: 'debark command-line tool',
+        status: 'ok',
+        severity: 'info',
+        summary: 'debark 0.9.3 is installed and answering.',
+        detail: '/usr/bin/debark (found on PATH or beside this application)',
+        duration_ms: 21,
+      };
+
+      const OK_APT = {
+        id: 'apt',
+        title: 'Native apt',
+        status: 'ok',
+        severity: 'info',
+        summary: 'apt 2.7.14 is available natively, so builds need no container.',
+        detail: '/usr/bin/apt-get, /usr/bin/dpkg',
+        duration_ms: 14,
+      };
+
+      const OK_CONTAINER = {
+        id: 'container',
+        title: 'Container runtime',
+        status: 'ok',
+        severity: 'info',
+        summary: 'Docker is installed and its daemon is answering.',
+        detail: '/usr/bin/docker, server 27.3.1',
+        duration_ms: 188,
+      };
+
+      const OK_KEY = {
+        id: 'signing-key',
+        title: 'Operator signing key',
+        status: 'ok',
+        severity: 'info',
+        summary: 'An operator signing key is in place.',
+        detail: '/home/operator/.config/debark/operator.key',
+        duration_ms: 1,
+      };
+
+      const OK_DISK = {
+        id: 'disk-space',
+        title: 'Disk space',
+        status: 'ok',
+        severity: 'info',
+        summary: '184.2 GiB free where bundles and the package store will be written.',
+        detail: '/var/lib/debark: 184.2 GiB free of 468.5 GiB',
+        duration_ms: 2,
+      };
+
+      function buildEnv(sources) {
+        return {
+          id: 'build-environment',
+          title: 'Build environment',
+          status: 'ok',
+          severity: 'info',
+          summary: 'This machine can run a build using ' + sources + '.',
+          duration_ms: 0,
+        };
+      }
+
+      const BLOCKED_ENV_WINDOWS = {
+        id: 'build-environment',
+        title: 'Build environment',
+        status: 'problem',
+        severity: 'blocking',
+        summary: 'This machine has no way to run apt, so it cannot build a bundle yet.',
+        remedy:
+          'Install WSL 2 or Docker Desktop using the rows above, or build on a Linux machine you can reach — ' +
+          'a bundle is an ordinary folder, so building it there and copying it back is fully supported and is ' +
+          'often the only option on a managed laptop.',
+        duration_ms: 0,
+      };
+
+      const NO_KEY = {
+        id: 'signing-key',
+        title: 'Operator signing key',
+        status: 'problem',
+        severity: 'info',
+        summary: 'No operator signing key was found, so bundles will be built unsigned.',
+        remedy: 'Create one now, or carry on and sign later — a bundle can be built, copied and installed without one.',
+        action: {
+          label: 'Create a signing key',
+          command: ['debark', 'keygen', '--out', '/home/operator/.config/debark/operator.key'],
+          display: 'debark keygen --out /home/operator/.config/debark/operator.key',
+          elevated: false,
+          runnable: true,
+          note:
+            'The public key is written beside it and must reach the target separately from the media you sign ' +
+            'with it.',
+        },
+        detail: 'looked for /home/operator/.config/debark/operator.key',
+        duration_ms: 1,
+      };
+
+      const NO_KEY_WINDOWS = Object.assign({}, NO_KEY, {
+        action: Object.assign({}, NO_KEY.action, {
+          command: ['debark', 'keygen', '--out', 'C:\\Users\\operator\\AppData\\Roaming\\debark\\operator.key'],
+          display: 'debark keygen --out "C:\\Users\\operator\\AppData\\Roaming\\debark\\operator.key"',
+        }),
+        detail: 'looked for C:\\Users\\operator\\AppData\\Roaming\\debark\\operator.key',
+      });
+
+      const SCENARIOS = {
+        'linux-green': {
+          label: 'Fully green',
+          platform: LINUX,
+          checks: [OK_BINARY, OK_APT, OK_CONTAINER, buildEnv('native apt and a container runtime'), OK_KEY, OK_DISK],
+        },
+
+        'docker-stopped': {
+          label: 'Docker not running',
+          platform: LINUX,
+          checks: [
+            OK_BINARY,
+            OK_APT,
+            {
+              id: 'container',
+              title: 'Container runtime',
+              status: 'problem',
+              severity: 'degraded',
+              summary: 'Docker is installed but its daemon is not running.',
+              remedy: 'Start the docker service, then run this check again.',
+              action: {
+                label: 'Start Docker',
+                command: ['sudo', 'systemctl', 'start', 'docker'],
+                display: 'sudo systemctl start docker',
+                elevated: true,
+                runnable: false,
+              },
+              detail:
+                '/usr/bin/docker — Cannot connect to the Docker daemon at unix:///var/run/docker.sock. ' +
+                'Is the docker daemon running?',
+              duration_ms: 96,
+            },
+            buildEnv('native apt'),
+            OK_KEY,
+            OK_DISK,
+          ],
+          fixes: { container: OK_CONTAINER, 'build-environment': buildEnv('native apt and a container runtime') },
+        },
+
+        'docker-perms': {
+          label: 'Docker group',
+          platform: LINUX,
+          checks: [
+            OK_BINARY,
+            OK_APT,
+            {
+              id: 'container',
+              title: 'Container runtime',
+              status: 'problem',
+              severity: 'degraded',
+              summary: 'Docker is installed and running, but this account is not permitted to talk to it.',
+              remedy:
+                'Your user needs to be in the docker group; add it, then log out and back in so the new group ' +
+                'membership takes effect.',
+              action: {
+                label: 'Add this user to the docker group',
+                command: ['sudo', 'usermod', '-aG', 'docker', 'operator'],
+                display: 'sudo usermod -aG docker operator',
+                elevated: true,
+                runnable: false,
+                note: 'Group membership only applies to new sessions: log out and back in afterwards.',
+              },
+              detail:
+                '/usr/bin/docker — permission denied while trying to connect to the Docker daemon socket at ' +
+                'unix:///var/run/docker.sock',
+              duration_ms: 84,
+            },
+            buildEnv('native apt'),
+            OK_KEY,
+            OK_DISK,
+          ],
+          fixes: { container: OK_CONTAINER, 'build-environment': buildEnv('native apt and a container runtime') },
+        },
+
+        'windows-bare': {
+          label: 'Windows, no WSL, no Docker',
+          platform: WINDOWS,
+          checks: [
+            Object.assign({}, OK_BINARY, {
+              detail: 'C:\\Program Files\\debark\\debark.exe (found on PATH or beside this application)',
+            }),
+            {
+              id: 'wsl',
+              title: 'WSL 2',
+              status: 'problem',
+              severity: 'degraded',
+              summary: 'The Windows Subsystem for Linux is not installed.',
+              remedy:
+                'Install WSL 2 with the command below, install Docker Desktop instead, or run the builder on a ' +
+                'Linux machine you can reach and copy the bundle back — all three are supported ways to work, and ' +
+                'on a managed laptop the third may be the only one your policy allows.',
+              action: {
+                label: 'Install WSL 2',
+                command: ['wsl', '--install'],
+                display: 'wsl --install',
+                elevated: true,
+                runnable: false,
+                note: 'This enables Windows features and needs a restart to finish.',
+              },
+              detail: 'C:\\WINDOWS\\system32\\wsl.exe — The Windows Subsystem for Linux is not installed.',
+              duration_ms: 2410,
+            },
+            {
+              id: 'container',
+              title: 'Container runtime',
+              status: 'problem',
+              severity: 'degraded',
+              summary: 'No container runtime is installed.',
+              remedy:
+                'On Windows a build needs either WSL 2 or a container runtime. Install Docker Desktop ' +
+                '(https://docs.docker.com/desktop/install/windows-install/) or Podman Desktop ' +
+                '(https://podman-desktop.io/), or use WSL 2 instead.',
+              action: {
+                label: 'Install Docker Desktop',
+                command: ['winget', 'install', '--exact', '--id', 'Docker.DockerDesktop'],
+                display: 'winget install --exact --id Docker.DockerDesktop',
+                elevated: false,
+                runnable: true,
+                note: 'Windows will ask for administrator confirmation while the installer runs.',
+              },
+              duration_ms: 31,
+            },
+            BLOCKED_ENV_WINDOWS,
+            NO_KEY_WINDOWS,
+            Object.assign({}, OK_DISK, {
+              summary: '96.4 GiB free where bundles and the package store will be written.',
+              detail: 'C:\\Users\\operator\\AppData\\Local\\debark\\store: 96.4 GiB free of 476.0 GiB',
+            }),
+          ],
+          // Installing Docker Desktop leaves it installed and not started, and
+          // needing a restart. Saying so is the honest outcome, and it is what
+          // puts the "the command finished, but…" line on screen.
+          fixes: {
+            container: {
+              id: 'container',
+              title: 'Container runtime',
+              status: 'problem',
+              severity: 'degraded',
+              summary: 'Docker is installed but its daemon is not running.',
+              remedy: 'Start Docker Desktop and wait for it to report that it is running, then run this check again.',
+              detail: 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe — error during connect',
+              duration_ms: 412,
+            },
+            'signing-key': OK_KEY,
+          },
+        },
+
+        'no-binary': {
+          label: 'No debark binary',
+          platform: LINUX,
+          checks: [
+            {
+              id: 'debark-binary',
+              title: 'debark command-line tool',
+              status: 'problem',
+              severity: 'blocking',
+              summary: 'The debark command-line tool was not found on this machine.',
+              remedy:
+                'Install the debark package, or put the debark binary somewhere on your PATH — every ' +
+                'catalogue, build and export in this application runs it.',
+              detail:
+                "searched PATH and this application's own directory: debark is not on PATH and not beside " +
+                '/usr/lib/debark-gui',
+              duration_ms: 3,
+            },
+            OK_APT,
+            OK_CONTAINER,
+            buildEnv('native apt and a container runtime'),
+            OK_KEY,
+            OK_DISK,
+          ],
+          fixes: { 'debark-binary': OK_BINARY },
+        },
+
+        'no-key': {
+          label: 'No signing key',
+          platform: LINUX,
+          checks: [
+            OK_BINARY,
+            OK_APT,
+            OK_CONTAINER,
+            buildEnv('native apt and a container runtime'),
+            NO_KEY,
+            OK_DISK,
+          ],
+          fixes: { 'signing-key': OK_KEY },
+        },
+
+        'low-disk': {
+          label: 'Low disk, no container',
+          platform: LINUX,
+          checks: [
+            OK_BINARY,
+            OK_APT,
+            {
+              id: 'container',
+              title: 'Container runtime',
+              status: 'problem',
+              severity: 'degraded',
+              summary: 'No container runtime is installed.',
+              remedy:
+                'A container is only needed when this host\u2019s own apt cannot serve the target — a different ' +
+                'distribution or release. Install Docker or Podman if you expect to build for one of those; see ' +
+                'https://docs.docker.com/engine/install/.',
+              action: {
+                label: 'Install Docker',
+                command: ['sudo', 'apt-get', 'install', '-y', 'docker.io'],
+                display: 'sudo apt-get install -y docker.io',
+                elevated: true,
+                runnable: false,
+              },
+              duration_ms: 6,
+            },
+            buildEnv('native apt'),
+            OK_KEY,
+            {
+              id: 'disk-space',
+              title: 'Disk space',
+              status: 'problem',
+              severity: 'degraded',
+              summary: 'Only 3.1 GiB is free at /var/lib/debark, and a bundle can easily be larger than that.',
+              remedy:
+                'Free some space, or pick an output folder on another drive when you build — nothing here stops ' +
+                'you carrying on.',
+              detail: '/var/lib/debark: 3.1 GiB free of 468.5 GiB',
+              duration_ms: 2,
+            },
+          ],
+          fixes: { 'disk-space': OK_DISK },
+        },
+
+        'mid-run': {
+          label: 'Mid-run',
+          platform: LINUX,
+          midRun: 'container',
+          checks: [OK_BINARY, OK_APT, OK_CONTAINER, buildEnv('native apt and a container runtime'), OK_KEY, OK_DISK],
+        },
+      };
+
+      /* =====================================================================
+         The stubbed backend.
+
+         Same method names, same return shapes and same event order as
+         internal/app/bindings.go, so the screen cannot be written against a
+         friendlier backend than the one it will meet.
+         ===================================================================== */
+
+      const listeners = new Map();
+
+      function emit(name, payload) {
+        for (const fn of listeners.get(name) || []) {
+          try {
+            fn(payload);
+          } catch (err) {
+            console.error('demo: listener for ' + name + ' threw', err);
+          }
+        }
+      }
+
+      function clone(value) {
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function recount(report) {
+        let blocking = 0;
+        let degraded = 0;
+        for (const c of report.checks) {
+          if (c.status !== 'problem') continue;
+          if (c.severity === 'blocking') blocking += 1;
+          else if (c.severity === 'degraded') degraded += 1;
+        }
+        report.blocking_count = blocking;
+        report.degraded_count = degraded;
+        report.can_build = blocking === 0 && report.checks.length > 0;
+        report.remote_builder = remoteBuilderFor(report);
+        return report;
+      }
+
+      /* ReadinessReport.remote_builder — a PRODUCT decision that lives on the
+         backend, so the screen reads it rather than reconstructing it from the
+         platform and a set of check ids. Two reasons, as the engine has them. */
+      function remoteBuilderFor(report) {
+        const checks = report.checks || [];
+        const env = checks.find((c) => c.id === 'build-environment');
+        if (env && env.status === 'problem') {
+          return {
+            reason: 'no-build-environment',
+            message:
+              'Nothing on this machine can run apt, so a build here will fail at the first step. ' +
+              'A bundle is an ordinary folder, and nothing in it depends on the machine that made it.',
+            hint:
+              'Install it on a Linux machine you can reach — a work VM, a server, a colleague’s laptop — ' +
+              'build there, and copy the folder back.',
+            blocked: checks.filter((c) => c.status === 'problem' && c.severity !== 'info').map((c) => c.id),
+          };
+        }
+        const local = checks.filter((c) => c.id === 'wsl' || c.id === 'container');
+        if (String(report.platform || '').indexOf('windows') === 0 &&
+            local.length > 0 && local.every((c) => c.status === 'problem')) {
+          return {
+            reason: 'local-options-blocked',
+            message:
+              'WSL 2 and a container runtime are the only local ways to run apt on Windows, and neither is ' +
+              'available here. On a managed laptop policy blocks both often enough that this is the normal case.',
+            hint:
+              'Build on a Linux machine you can reach and copy the folder back. It is a fully supported way ' +
+              'to work, not a workaround.',
+            blocked: local.map((c) => c.id),
+          };
+        }
+        return undefined;
+      }
+
+      function reportFor(key) {
+        const s = SCENARIOS[key];
+        return recount({
+          // `derived` is on the type now: exactly one row is computed from the
+          // others and RunOne refuses it by name.
+          checks: clone(s.checks).map((c) => Object.assign({ derived: c.id === 'build-environment' }, c,
+            { derived: c.id === 'build-environment' })),
+          platform: s.platform,
+          checking: false,
+          running_check: '',
+          checked_at: new Date().toISOString(),
+          duration_ms: 231,
+        });
+      }
+
+      const state = {
+        key: 'linux-green',
+        report: reportFor('linux-green'),
+        timer: 0,
+        running: '',
+      };
+
+      function slow() {
+        return document.getElementById('slow').checked;
+      }
+
+      function clearTimer() {
+        if (state.timer) {
+          clearTimeout(state.timer);
+          state.timer = 0;
+        }
+      }
+
+      function replace(id, next) {
+        state.report.checks = state.report.checks.map((c) => (c.id === id ? clone(next) : c));
+        recount(state.report);
+      }
+
+      const stub = {
+        LifecycleStatus() {
+          return Promise.resolve({ build_running: document.getElementById('job-running').checked, export_running: false, stopping: false, unsaved_selection: false, target_generation: 0, selection_revision: 0 });
+        },
+        Readiness() {
+          return Promise.resolve(clone(state.report));
+        },
+
+        StartReadinessCheck() {
+          if (state.timer) return Promise.resolve({ ok: false, error: { code: 'app.busy', message: 'A readiness check is already running.' } });
+          state.report.checking = true;
+          state.report.running_check = '';
+          emit('readiness:started', clone(state.report));
+          state.timer = setTimeout(
+            () => {
+              state.timer = 0;
+              state.report = reportFor(state.key);
+              emit('readiness:finished', { ok: true, cancelled: false, action: false, report: clone(state.report) });
+            },
+            slow() ? 2500 : 180
+          );
+          return Promise.resolve({ ok: true });
+        },
+
+        RecheckReadiness(id) {
+          if (state.timer) return Promise.resolve({ ok: false, error: { code: 'app.busy', message: 'A readiness check is already running.' } });
+          const check = state.report.checks.find((c) => c.id === id);
+          if (!check) return Promise.resolve({ ok: false, error: { code: 'app.invalid_input', message: 'No such check.', hint: 'Pick a row on the readiness screen.' } });
+          state.running = id;
+          state.report.running_check = id;
+          emit('readiness:progress', { check_id: id, title: check.title, action: false, message: 'Checking', done: 0, total: 1 });
+          state.timer = setTimeout(() => {
+            state.timer = 0;
+            state.running = '';
+            const fix = (SCENARIOS[state.key].fixes || {})[id];
+            if (fix) replace(id, fix);
+            const envFix = (SCENARIOS[state.key].fixes || {})['build-environment'];
+            if (fix && envFix && id !== 'build-environment') replace('build-environment', envFix);
+            state.report.running_check = '';
+            emit('readiness:progress', { check_id: id, action: false, done: 1, total: 1 });
+            emit('readiness:finished', { ok: true, cancelled: false, check_id: id, action: false, report: clone(state.report) });
+          }, 700);
+          return Promise.resolve({ ok: true });
+        },
+
+        RunReadinessAction(id) {
+          const check = state.report.checks.find((c) => c.id === id);
+          const action = check && check.action;
+          if (!action) {
+            return Promise.resolve({
+              ok: false,
+              error: {
+                code: 'app.invalid_input',
+                message: 'There is no one-command fix for "' + id + '".',
+                hint: 'Follow the remedy shown on that row, then re-check it.',
+              },
+            });
+          }
+          if (!action.runnable) {
+            // What internal/app.RunReadinessAction does with an elevated
+            // action. The screen never offers the button, but the refusal is
+            // real and reachable from a console.
+            return Promise.resolve({
+              ok: false,
+              error: {
+                code: 'app.invalid_input',
+                message: 'That fix needs administrator rights, so this application will not run it.',
+                hint: 'Copy the command and run it in a terminal you have elevated yourself, then re-check the row.',
+                command: action.command,
+              },
+            });
+          }
+          if (state.timer) return Promise.resolve({ ok: false, error: { code: 'app.busy', message: 'A readiness check is already running.' } });
+
+          state.report.running_check = id;
+          emit('readiness:progress', { check_id: id, title: check.title, action: true, message: action.label, done: 0, total: 1 });
+          // winget takes minutes in real life; nine seconds here is enough to
+          // show that the screen says so rather than appearing to hang.
+          const cost = action.command[0] === 'winget' ? 9000 : 1200;
+          state.timer = setTimeout(() => {
+            state.timer = 0;
+            const fix = (SCENARIOS[state.key].fixes || {})[id];
+            if (fix) replace(id, fix);
+            state.report.running_check = '';
+            emit('readiness:progress', { check_id: id, action: true, done: 1, total: 1 });
+            emit('readiness:finished', { ok: true, cancelled: false, check_id: id, action: true, report: clone(state.report) });
+          }, cost);
+          return Promise.resolve({ ok: true });
+        },
+
+        CancelReadinessCheck() {
+          if (!state.timer) return Promise.resolve({ ok: true });
+          clearTimer();
+          state.report.checking = false;
+          state.report.running_check = '';
+          state.report.checks = state.report.checks.map((c) => Object.assign({}, c, { running: false }));
+          emit('readiness:finished', { ok: false, cancelled: true, action: false, report: clone(state.report) });
+          return Promise.resolve({ ok: true });
+        },
+
+        CopyToClipboard(text) {
+          const done = () => ({ ok: true });
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text).then(done, () => legacyCopy(text));
+          }
+          return Promise.resolve(legacyCopy(text));
+        },
+      };
+
+      function legacyCopy(text) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          return { ok: true };
+        } catch (err) {
+          return {
+            ok: false,
+            error: {
+              code: 'app.internal',
+              message: 'The clipboard could not be written.',
+              hint: 'Select the text and copy it by hand.',
+              details: String(err),
+            },
+          };
+        }
+      }
+
+      /* =====================================================================
+         The ctx the shell would hand this screen.
+         ===================================================================== */
+
+      const toasts = document.getElementById('toasts');
+
+      function toast(kind, message) {
+        const banner = document.createElement('div');
+        banner.className = 'df-banner df-banner--' + (kind === 'danger' ? 'danger' : kind);
+        banner.setAttribute('role', kind === 'danger' ? 'alert' : 'status');
+        banner.appendChild(document.createElement('div'));
+        const body = document.createElement('div');
+        body.className = 'df-banner__body';
+        const p = document.createElement('p');
+        p.className = 'df-banner__text';
+        p.textContent = message;
+        body.appendChild(p);
+        banner.appendChild(body);
+        banner.appendChild(document.createElement('div'));
+        toasts.appendChild(banner);
+        setTimeout(() => banner.remove(), 3200);
+      }
+
+      const ctx = Object.freeze({
+        go(id) {
+          document.getElementById('nav-log').textContent = 'ctx.go("' + id + '") — the shell would navigate here';
+        },
+        back() {},
+        on(event, handler) {
+          if (!listeners.has(event)) listeners.set(event, new Set());
+          listeners.get(event).add(handler);
+        },
+        off(event, handler) {
+          const set = listeners.get(event);
+          if (set) set.delete(handler);
+        },
+        bindings: stub,
+        toast,
+        states,
+        theme: null,
+      });
+
+      /* =====================================================================
+         Harness controls.
+         ===================================================================== */
+
+      function chip(label, pressed, onClick) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'df-chip df-chip--filter';
+        b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+        b.textContent = label;
+        b.addEventListener('click', onClick);
+        return b;
+      }
+
+      const scenarioChips = document.getElementById('scenario-chips');
+      function renderScenarioChips() {
+        scenarioChips.textContent = '';
+        for (const key of Object.keys(SCENARIOS)) {
+          scenarioChips.appendChild(
+            chip(SCENARIOS[key].label, key === state.key, () => selectScenario(key))
+          );
+        }
+      }
+
+      function selectScenario(key) {
+        clearTimer();
+        state.key = key;
+        state.report = reportFor(key);
+        renderScenarioChips();
+
+        const s = SCENARIOS[key];
+        if (s.midRun) {
+          // Frozen mid-flight, so the pending row and the busy toolbar can be
+          // looked at rather than glimpsed.
+          state.report.checking = true;
+          state.report.running_check = s.midRun;
+          state.report.checks = state.report.checks.map((c) =>
+            c.id === s.midRun ? Object.assign({}, c, { running: true }) : c
+          );
+          emit('readiness:started', clone(state.report));
+          emit('readiness:progress', { check_id: s.midRun, action: false, message: 'Checking Container runtime', done: 0, total: 1 });
+          return;
+        }
+        stub.StartReadinessCheck();
+      }
+
+      const themeChips = document.getElementById('theme-chips');
+      function currentTheme() {
+        return document.documentElement.getAttribute('data-theme') || 'system';
+      }
+      function renderThemeChips() {
+        themeChips.textContent = '';
+        for (const mode of ['system', 'light', 'dark']) {
+          themeChips.appendChild(
+            chip(mode[0].toUpperCase() + mode.slice(1), currentTheme() === mode, () => {
+              if (mode === 'system') document.documentElement.removeAttribute('data-theme');
+              else document.documentElement.setAttribute('data-theme', mode);
+              try {
+                if (mode === 'system') localStorage.removeItem('debark.theme');
+                else localStorage.setItem('debark.theme', mode);
+              } catch (err) {
+                /* storage blocked: the attribute is still applied */
+              }
+              renderThemeChips();
+            })
+          );
+        }
+      }
+
+      /* =====================================================================
+         Boot.
+         ===================================================================== */
+
+      renderThemeChips();
+      renderScenarioChips();
+
+      const root = document.getElementById('screen-root');
+      screen.mount(root, ctx);
+      screen.show(ctx, { returnTo: 'build' });
+      document.getElementById('job-running').addEventListener('change', async () => emit('app:lifecycle', await stub.LifecycleStatus()));
+    </script>
+  </body>
+</html>

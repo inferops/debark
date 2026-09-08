@@ -1,0 +1,781 @@
+Package: accountsservice
+Architecture: amd64
+Version: 23.13.9-2ubuntu6
+Priority: optional
+Section: gnome
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian freedesktop.org maintainers <pkg-freedesktop-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 524
+Depends: default-dbus-system-bus | dbus-system-bus, libaccountsservice0 (= 23.13.9-2ubuntu6), libc6 (>= 2.34), libglib2.0-0t64 (>= 2.79.0), libpolkit-gobject-1-0 (>= 0.99)
+Recommends: default-logind | logind, polkitd
+Suggests: gnome-control-center
+Filename: pool/main/a/accountsservice/accountsservice_23.13.9-2ubuntu6_amd64.deb
+Size: 71126
+MD5sum: 7bb2c4b0289d8db1b51dd4db0d9b4b40
+SHA1: 021568ec4fd93cff8234576a77418a61937a37bc
+SHA256: 92cff947a1b7026d24942de445459d9fbf3cb7254efb98cd581cb4921a4380fd
+SHA512: 4b23078f8ca67de99975960913965bd49cc3e08b4f55720f638ec607229ae32751660c3b4e4a5fee0b925e9f2a6790f6680134ca8e01cdff9fba56e4f96701c5
+Homepage: https://www.freedesktop.org/wiki/Software/AccountsService/
+Description: query and manipulate user account information
+Task: ubuntu-desktop-minimal, ubuntu-desktop, ubuntu-desktop-raspi, kubuntu-desktop, xubuntu-minimal, xubuntu-desktop, lubuntu-desktop, ubuntustudio-desktop-core, ubuntustudio-desktop, ubuntukylin-desktop, ubuntukylin-desktop-minimal, ubuntu-mate-core, ubuntu-mate-desktop, ubuntu-budgie-desktop-minimal, ubuntu-budgie-desktop, ubuntu-budgie-desktop-raspi, ubuntu-unity-desktop, edubuntu-desktop-gnome-minimal, edubuntu-desktop-gnome-raspi, ubuntucinnamon-desktop-minimal, ubuntucinnamon-desktop-raspi
+Description-md5: 8aeed0a03c7cd494f0c4b8d977483d7e
+
+Package: acct
+Architecture: amd64
+Version: 6.6.4-5build1
+Priority: optional
+Section: admin
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Security Tools <team+pkg-security@tracker.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 297
+Pre-Depends: init-system-helpers (>= 1.54~)
+Depends: libc6 (>= 2.38), lsb-base
+Filename: pool/main/a/acct/acct_6.6.4-5build1_amd64.deb
+Size: 86316
+MD5sum: e97bfecc259a0110606a1610a913bae9
+SHA1: 2ad8da3bda4fe1f14869c54cb88e629eafe221b1
+SHA256: 3819692bd13438332f3f2e9a78f9fdbded39afc29b5e54a7cd302292e4efee82
+SHA512: 80a028b7fd3a2ff244c07b7fe918680e8f94ab9bd5fa5c3a25f4ab44db6665a08ff8e5a4fb080023bd41e8219801175718a8cf5011f1a7d77e85ac174db509e7
+Homepage: https://www.gnu.org/software/acct/
+Description: GNU Accounting utilities for process and login accounting
+Description-md5: 2411ebcaa9bca02b21c19f927d3e1bda
+
+Package: acl
+Architecture: amd64
+Version: 2.3.2-1build1
+Multi-Arch: foreign
+Priority: optional
+Section: utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Guillem Jover <guillem@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 192
+Depends: libacl1 (= 2.3.2-1build1), libc6 (>= 2.38)
+Filename: pool/main/a/acl/acl_2.3.2-1build1_amd64.deb
+Size: 39388
+MD5sum: c5afe2f9bf65c2087a12a7f5a81d2e04
+SHA1: 840dfb0d4d54bf994f6a3d026b316746eaf40409
+SHA256: b84e6017b630fd765beddf4db9cbfdd4ef6e08e19bab66e06735b4354aa95f3c
+SHA512: a2941954168a374fd3956f087da0f44c91256386933f061dc427dea69fbc778a45cf32a70f9ab5a9a42207c715449a65bc0e3021fbd54e8f3971dbbb68ce68ba
+Homepage: https://savannah.nongnu.org/projects/acl/
+Description: access control list - utilities
+Task: ubuntu-desktop-minimal, ubuntu-desktop, print-server, ubuntu-desktop-raspi, kubuntu-desktop, xubuntu-minimal, xubuntu-desktop, lubuntu-desktop, ubuntustudio-desktop-core, ubuntustudio-desktop, ubuntukylin-desktop, ubuntukylin-desktop-minimal, ubuntu-mate-core, ubuntu-mate-desktop, ubuntu-budgie-desktop-minimal, ubuntu-budgie-desktop, ubuntu-budgie-desktop-raspi, ubuntu-unity-desktop, edubuntu-desktop-gnome-minimal, edubuntu-desktop-gnome-raspi, ubuntucinnamon-desktop-minimal, ubuntucinnamon-desktop-raspi
+Description-md5: b83fc53f6059dbeb88f11752e70968e7
+
+Package: adduser
+Architecture: all
+Version: 3.137ubuntu1
+Multi-Arch: foreign
+Priority: important
+Section: admin
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Adduser Developers <adduser@packages.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 452
+Depends: passwd
+Suggests: liblocale-gettext-perl, perl, cron, quota, ecryptfs-utils (>= 67-1)
+Filename: pool/main/a/adduser/adduser_3.137ubuntu1_all.deb
+Size: 100872
+MD5sum: a6fed0e710827b45fba6d9e3966ba840
+SHA1: 6bc2c7b3c75baa5a9d29a1d5d41bbe95096c5f04
+SHA256: 542aff2395eb912a56833e11a78076342779689d8fede7adcf08d1d6b0d0cd8b
+SHA512: 7ca0f740f178f19d3d5c3e0280f358814d99662eff78813b6e845d596f85110084fa07ae383a3630730220f92c010c8ef33f61777fecd365e8adbbe8c97fb1e3
+Description: add and remove users and groups
+Task: cloud-minimal, minimal, server-minimal
+Description-md5: a5681e7bad8d90695043c6eab9784701
+
+Package: apt
+Architecture: amd64
+Version: 2.7.14build2
+Priority: important
+Build-Essential: yes
+Section: admin
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: APT Development Team <deity@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 4103
+Provides: apt-transport-https (= 2.7.14build2)
+Depends: base-passwd (>= 3.6.1) | adduser, gpgv, libapt-pkg6.0t64 (>= 2.7.14build2), ubuntu-keyring, libc6 (>= 2.38), libgcc-s1 (>= 3.3.1), libgnutls30t64 (>= 3.8.1), libseccomp2 (>= 2.4.2), libstdc++6 (>= 13.1), libsystemd0
+Recommends: ca-certificates
+Suggests: apt-doc, aptitude | synaptic | wajig, dpkg-dev (>= 1.17.2), gnupg | gnupg2 | gnupg1, powermgmt-base
+Conflicts: apt-verify, libnettle8 (<< 3.9.1-2.2~)
+Breaks: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~), aptitude (<< 0.8.10)
+Replaces: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~)
+Filename: pool/main/a/apt/apt_2.7.14build2_amd64.deb
+Size: 1374960
+MD5sum: 9f04e180847d7c836c30e2001dbfeec7
+SHA1: 987961b7ad7a96aa7762649d5699865b4c39c7ff
+SHA256: 72b4e9ba826544fa87e9101857432ebfa61c29ec4e091fcd67396cde9b9c6459
+SHA512: 3e3653154c8d86b2a86baf2f75f0be7c420b9fc9263f14ff0723481a5fa7c78550cd32cff8cca6f9bbbf43233654f196d63693814fb673e640ee23c0f21a8be1
+Description: commandline package manager
+Task: cloud-minimal, minimal, server-minimal
+Description-md5: 9fb97a88cb7383934ef963352b53b4a7
+
+Package: base-files
+Architecture: amd64
+Version: 13ubuntu10
+Multi-Arch: foreign
+Priority: required
+Essential: yes
+Section: admin
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Santiago Vila <sanvila@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 426
+Provides: base, usr-is-merged
+Pre-Depends: awk
+Depends: libc6 (>= 2.34), libcrypt1 (>= 1:4.4.10-10ubuntu3)
+Breaks: debian-security-support (<< 2019.04.25), initscripts (<< 2.88dsf-13.3), sendfile (<< 2.1b.20080616-5.2~), ubuntu-server (<< 1.453)
+Replaces: base, dpkg (<= 1.15.0), miscutils
+Filename: pool/main/b/base-files/base-files_13ubuntu10_amd64.deb
+Size: 73634
+MD5sum: d25fe203cbd17c9254661a823a2311af
+SHA1: cc54267b82c7b8595479c5b3ae3066c295935ba8
+SHA256: cd06729c776397bb74779773f4dece372a1a3f795e5992804022bffab0278ffb
+SHA512: ea08a980a6f2bf62edf34064b749288289238f57f49a4e8f9c681ffcfc2ad07131fba1529bf662492dc4adaeccbd0aedf68fe720dee913baf3f6affd60001d23
+Description: Debian base system miscellaneous files
+Task: minimal
+Description-md5: 6d16337f57b84c4747f56438355b2395
+
+Package: bash
+Architecture: amd64
+Version: 5.2.21-2ubuntu4
+Multi-Arch: foreign
+Priority: required
+Essential: yes
+Section: shells
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Matthias Klose <doko@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 1900
+Pre-Depends: libc6 (>= 2.38), libtinfo6 (>= 6)
+Depends: base-files (>= 2.1.12), debianutils (>= 5.6-0.1)
+Recommends: bash-completion
+Suggests: bash-doc
+Filename: pool/main/b/bash/bash_5.2.21-2ubuntu4_amd64.deb
+Size: 794086
+MD5sum: 627cdbb775b1a60dadd502e96e0426b1
+SHA1: 8065b79389fc555b38cf71e297a259773b09c38e
+SHA256: 73de311a21e094e29ac01527d2b52226cc87fde0a5b57032902251b426d92c66
+SHA512: c14c2c8fa0d1ae7530efa0375845257b4ec0baa5bc42982efca2d7fa860b4e4ea3f04d31cfa328d2f250b2baeac3795c8b31aa5ff2d514ed16a5cf8c3132a590
+Homepage: http://tiswww.case.edu/php/chet/bash/bashtop.html
+Description: GNU Bourne Again SHell
+Task: minimal
+Description-md5: 3522aa7b4374048d6450e348a5bb45d9
+
+Package: coreutils
+Architecture: amd64
+Version: 9.4-3ubuntu6
+Multi-Arch: foreign
+Priority: required
+Essential: yes
+Section: utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Michael Stone <mstone@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 6944
+Pre-Depends: libacl1 (>= 2.2.23), libattr1 (>= 1:2.4.48), libc6 (>= 2.38), libgmp10 (>= 2:6.3.0+dfsg), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.0)
+Breaks: usrmerge (<< 39)
+Filename: pool/main/c/coreutils/coreutils_9.4-3ubuntu6_amd64.deb
+Size: 1412418
+MD5sum: 87f6ca012cb48ab107b2ba9c24411c14
+SHA1: 85e7fea28b711bf10fb186e5e72abc54b54cc932
+SHA256: 0d19c3e94f04ff1aafde46701fe1783da0a068a4904adc3794c30140f1aaeb8f
+SHA512: 8fa7966d22da4f369035087f9715b00515d4fa628f01a476c149e1ac0ed0b94aeb4f06281e90d581170231cdfa59b856593d13957c3a898b0078e1e0b1415f44
+Homepage: http://gnu.org/software/coreutils
+Description: GNU core utilities
+Task: minimal, server-minimal
+Description-md5: d0d975dec3625409d24be1238cede238
+
+Package: dpkg
+Architecture: amd64
+Version: 1.22.6ubuntu6
+Multi-Arch: foreign
+Priority: required
+Essential: yes
+Section: admin
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 6237
+Pre-Depends: libbz2-1.0, libc6 (>= 2.38), liblzma5 (>= 5.4.0), libmd0 (>= 0.0.0), libselinux1 (>= 3.1~), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Depends: tar (>= 1.28-1)
+Suggests: apt, debsig-verify
+Breaks: libapt-pkg5.0 (<< 1.7~b), lsb-base (<< 10.2019031300)
+Filename: pool/main/d/dpkg/dpkg_1.22.6ubuntu6_amd64.deb
+Size: 1283368
+MD5sum: f93ecabe027e6fb187482e6a257d2aa4
+SHA1: 9f3db7fc50c7469acff29aac7cfe58510d13ea97
+SHA256: 8a398c3a701a99be87766863487fc0eda943eb08c6e8fa254a6732d828eef531
+SHA512: 1bca53b641fa847bb88a44e30bb08f2ffd1e3b067ecb1f8f7c2715dce69d0442df659e45292d998e9671e81325333a42ff96d500532237b0facbb168774ba9a3
+Homepage: https://wiki.debian.org/Teams/Dpkg
+Description: Debian package management system
+Task: cloud-minimal, minimal, server-minimal
+Description-md5: 2f156c6a30cc39895ad3487111e8c190
+
+Package: gnome-themes-extra
+Architecture: amd64
+Version: 3.28-2ubuntu5
+Multi-Arch: same
+Priority: optional
+Section: gnome
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 39
+Depends: gnome-themes-extra-data (>= 3.28-2ubuntu5), libc6 (>= 2.4), libcairo2 (>= 1.2.4), libglib2.0-0t64 (>= 2.38.0), libgtk2.0-0t64 (>= 2.24.15), gtk2-engines-pixbuf
+Recommends: gnome-accessibility-themes, adwaita-icon-theme (>= 3.18.0-2~)
+Filename: pool/main/g/gnome-themes-extra/gnome-themes-extra_3.28-2ubuntu5_amd64.deb
+Size: 15152
+MD5sum: 725e715d62211b50483c7ffbb3bd6502
+SHA1: 6b37302205aead590cdb6780072a9182c312b5d0
+SHA256: d9811a2f5523d5fde2b43d5f9d52647428e1be60ca999df2d542bdf00cfd9694
+SHA512: ee24dc8f9fba71eb6aecbbc93d04c32449103e55396b54008d8d0eeadc7c67ac7c704e25e13cba4c1b12d8561f77c0e468d57513aaadeabfeb27c22399919169
+Description: Adwaita GTK 2 theme — engine
+Task: ubuntu-desktop-minimal, ubuntu-desktop, xubuntu-minimal, xubuntu-desktop, lubuntu-desktop, ubuntustudio-desktop, ubuntu-mate-core, ubuntu-mate-desktop, ubuntu-budgie-desktop-minimal, ubuntu-budgie-desktop, ubuntu-budgie-desktop-raspi, ubuntu-unity-desktop, edubuntu-desktop-gnome-minimal, edubuntu-desktop-gnome, edubuntu-desktop-gnome-raspi, ubuntucinnamon-desktop-minimal, ubuntucinnamon-desktop-raspi
+Description-md5: f3db194ed48f162a1b53a54e177a1e06
+
+Package: language-pack-gnome-nb
+Architecture: all
+Version: 1:24.04+20240419
+Priority: optional
+Section: translations
+Origin: Ubuntu
+Maintainer: Language pack maintainers <language-packs@ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 9
+Pre-Depends: dpkg (>= 1.16.1)
+Depends: language-pack-gnome-nb-base (>= 1:24.04+20240419), language-pack-nb
+Replaces: language-pack-gnome-nb (<< 1:24.04+20240419), language-pack-gnome-nb-base, language-pack-kde-nb (<< 1:24.04+20240419), language-pack-kde-nb-base (<< 1:24.04+20240419), language-pack-nb (<< 1:24.04+20240419), language-pack-nb-base (<< 1:24.04+20240419)
+Filename: pool/main/l/language-pack-gnome-nb/language-pack-gnome-nb_24.04+20240419_all.deb
+Size: 1940
+MD5sum: d2bab64354bbc175b9217d100dfeac94
+SHA1: ebbacb807732e9b08d696278455823d0d005a357
+SHA256: 6939e975b382f7a0fe726ebeaf64635989d6e0accd0c24f2ef9d71d3a0838980
+SHA512: d66f8fba779e6148912e0bf6ff522d2eb6a080c980a802c1d2b37c8fc6e378ccb9883a8965d68059aef14e2d9d9691730b8eea97b5738f9dfe505444f0fd9c0c
+Description: GNOME translation updates for language Bokmål, Norwegian; Norwegian Bokmål
+Description-md5: 6a1b73da105a57b595b139f8bf97ef1f
+
+Package: perl
+Architecture: amd64
+Version: 5.38.2-3.2build2
+Multi-Arch: allowed
+Priority: optional
+Build-Essential: yes
+Section: perl
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Niko Tyni <ntyni@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 672
+Provides: libansicolor-perl (= 5.01), libarchive-tar-perl (= 2.40), libattribute-handlers-perl (= 1.03), libautodie-perl (= 2.36), libcompress-raw-bzip2-perl (= 2.204.001), libcompress-raw-zlib-perl (= 2.204.001), libcompress-zlib-perl (= 2.204), libcpan-meta-perl (= 2.150010), libcpan-meta-requirements-perl (= 2.140), libcpan-meta-yaml-perl (= 0.018), libdigest-md5-perl (= 2.58.01), libdigest-perl (= 1.20), libdigest-sha-perl (= 6.04), libencode-perl (= 3.19), libexperimental-perl (= 0.031), libextutils-cbuilder-perl (= 0.280238), libextutils-command-perl (= 7.70), libextutils-install-perl (= 2.22), libextutils-parsexs-perl (= 3.510000), libfile-spec-perl (= 3.8800), libhttp-tiny-perl (= 0.086), libi18n-langtags-perl (= 0.45), libio-compress-base-perl (= 2.204), libio-compress-bzip2-perl (= 2.204), libio-compress-perl (= 2.204), libio-compress-zlib-perl (= 2.204), libio-zlib-perl (= 1.14), libjson-pp-perl (= 4.16000), liblocale-maketext-perl (= 1.33), liblocale-maketext-simple-perl (= 0.21.01), libmath-bigint-perl (= 1.999837), libmath-complex-perl (= 1.6200), libmime-base64-perl (= 3.16.01), libmodule-corelist-perl (= 5.20231129), libmodule-load-conditional-perl (= 0.74), libmodule-load-perl (= 0.36), libmodule-metadata-perl (= 1.000037), libnet-perl (= 1:3.15), libnet-ping-perl (= 2.76), libparams-check-perl (= 0.38), libparent-perl (= 0.241), libparse-cpan-meta-perl (= 2.150010), libperl-ostype-perl (= 1.010), libpod-escapes-perl (= 1.07), libpod-simple-perl (= 3.43), libstorable-perl (= 3.32), libsys-syslog-perl (= 0.36), libtest-harness-perl (= 3.44), libtest-simple-perl (= 1.302194), libtest-tester-perl (= 1.302194), libtest-use-ok-perl (= 1.302194), libtext-balanced-perl (= 2.06), libthread-queue-perl (= 3.14), libthreads-perl (= 2.36), libthreads-shared-perl (= 1.68), libtime-hires-perl (= 1.9775), libtime-local-perl (= 1.3000), libtime-piece-perl (= 1.3401.01), libunicode-collate-perl (= 1.31), libversion-perl (= 1:0.9929), libversion-requirements-perl, podlators-perl (= 5.01)
+Pre-Depends: dpkg (>= 1.17.17)
+Depends: perl-base (= 5.38.2-3.2build2), perl-modules-5.38 (>= 5.38.2-3.2build2), libperl5.38t64 (= 5.38.2-3.2build2)
+Recommends: netbase
+Suggests: perl-doc, libterm-readline-gnu-perl | libterm-readline-perl-perl, make, libtap-harness-archive-perl
+Conflicts: libjson-pp-perl (<< 2.27200-2)
+Breaks: apt-show-versions (<< 0.22.10), libdist-inkt-perl (<< 0.024-5), libmarc-charset-perl (<< 1.35-3), libperl-dev (<< 5.24.0~), perl-doc (<< 5.38.2-1), perl-modules-5.22, perl-modules-5.24, perl-modules-5.26 (<< 5.26.2-5)
+Replaces: perl-base (<< 5.36.0-2), perl-modules (<< 5.22.0~)
+Filename: pool/main/p/perl/perl_5.38.2-3.2build2_amd64.deb
+Size: 231370
+MD5sum: a6050fccd6258c9a0db949ab0f995c5a
+SHA1: 1f6eb91c3d11a39e1964218d1535d9867abbff68
+SHA256: a59f3d152ed767cf3be0924890e64d1f9424ac75f4124672ba6830d2ac587e03
+SHA512: c7c306af085456020760fd7365d197963fd6683785c83379fa46f9db5b27312ef908bf4096ebbdac00b4cd245fa6fd1d4b2a8605afbd68b18b65c9167bf518ed
+Homepage: http://dev.perl.org/perl5/
+Description: Larry Wall's Practical Extraction and Report Language
+Task: ubuntu-desktop-minimal, ubuntu-desktop, cloud-image, cloud-image, server-minimal, ubuntu-wsl, server, ubuntu-server-raspi, mail-server, postgresql-server, print-server, lamp-server, ubuntu-desktop-raspi, kubuntu-desktop, xubuntu-minimal, xubuntu-desktop, lubuntu-desktop, ubuntustudio-desktop-core, ubuntustudio-desktop, ubuntukylin-desktop, ubuntukylin-desktop-minimal, ubuntu-mate-core, ubuntu-mate-desktop, ubuntu-budgie-desktop-minimal, ubuntu-budgie-desktop, ubuntu-budgie-desktop-raspi, ubuntu-unity-desktop, edubuntu-desktop-gnome-minimal, edubuntu-desktop-gnome-raspi, ubuntucinnamon-desktop-minimal, ubuntucinnamon-desktop-raspi
+Description-md5: 603cb1e5fe66da8106c364f4e9b84082
+
+Package: python3-heat
+Architecture: all
+Version: 1:22.0.0-0ubuntu1
+Priority: optional
+Section: python
+Source: heat
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: PKG OpenStack <openstack-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 9027
+Depends: heat-common (= 1:22.0.0-0ubuntu1), python3-alembic (>= 1.8.0), python3-aodhclient (>= 0.9.0), python3-babel (>= 2.3.4), python3-barbicanclient (>= 4.5.2), python3-blazarclient (>= 1.0.1), python3-cinderclient (>= 1:3.3.0), python3-croniter (>= 0.3.4), python3-cryptography (>= 2.5), python3-ddt (>= 1.4.1), python3-debtcollector (>= 1.19.0), python3-designateclient (>= 2.7.0), python3-eventlet (>= 0.18.2), python3-fixtures (>= 3.0.0), python3-glanceclient (>= 1:2.8.0), python3-gnocchiclient (>= 3.3.1), python3-greenlet (>= 0.4.10), python3-heatclient (>= 1.10.0), python3-ironicclient (>= 2.8.0), python3-keystoneauth1 (>= 3.18.0), python3-keystoneclient (>= 1:3.8.0), python3-keystonemiddleware (>= 5.1.0), python3-lxml (>= 4.5.0), python3-magnumclient (>= 2.3.0), python3-manilaclient (>= 1.16.0), python3-migrate (>= 0.13.0), python3-mistralclient (>= 1:3.1.0), python3-monascaclient (>= 1.12.0), python3-netaddr (>= 0.7.18), python3-neutron-lib (>= 1.14.0), python3-neutronclient (>= 1:7.7.0), python3-novaclient (>= 2:9.1.0), python3-octaviaclient (>= 1.8.0), python3-openstackclient (>= 3.12.0), python3-openstacksdk (>= 0.28.0), python3-oslo.cache (>= 1.26.0), python3-oslo.concurrency (>= 3.26.0), python3-oslo.config (>= 1:6.8.0), python3-oslo.context (>= 1:2.22.0), python3-oslo.db (>= 6.0.0), python3-oslo.i18n (>= 3.20.0), python3-oslo.log (>= 4.3.0), python3-oslo.messaging (>= 14.1.0), python3-oslo.middleware (>= 3.31.0), python3-oslo.policy (>= 3.11.0), python3-oslo.reports (>= 1.18.0), python3-oslo.serialization (>= 2.25.0), python3-oslo.service (>= 1.24.0), python3-oslo.upgradecheck (>= 1.3.0), python3-oslo.utils (>= 4.5.0), python3-oslo.versionedobjects (>= 1.31.2), python3-osprofiler (>= 1.4.0), python3-pastedeploy (>= 1.5.0), python3-pbr (>= 3.1.1), python3-pymysql, python3-requests (>= 2.23.0), python3-routes (>= 2.3.1), python3-saharaclient (>= 1.4.0), python3-senlinclient (>= 0.3.0), python3-six (>= 1.10.0), python3-sqlalchemy (>= 1.4.0), python3-stevedore (>= 1:3.1.0), python3-swiftclient (>= 1:3.2.0), python3-tenacity (>= 6.1.0), python3-troveclient (>= 1:2.2.0), python3-tz (>= 2013.6), python3-vitrageclient (>= 2.7.0), python3-webob (>= 1:1.7.1), python3-yaml (>= 5.1), python3-yaql (>= 1.1.3), python3-zaqarclient (>= 1.3.0), python3-packaging, python3:any
+Filename: pool/main/h/heat/python3-heat_22.0.0-0ubuntu1_all.deb
+Size: 922052
+MD5sum: 4892a13bf0abfc766f22a884141444e1
+SHA1: 9b8a96e4dcf0e347e89a711ba6a15d5bdd14850c
+SHA256: 845161b521a94e933b98bd8067d2cfd3a6983108eb1a7df54b2c808fb8dfbce0
+SHA512: cb0f45f7059ed56210161a888847384201ff795fad39e61c565d0a3cec876caaed50f33e52af6797a200a1ae25a3286ab32ed113ac57a97ac74db68329381414
+Homepage: https://wiki.openstack.org/Heat
+Description: OpenStack orchestration service - Python 3 files
+Description-md5: 629282ce985f23f67d27069faeb1ca0b
+
+Package: casper
+Architecture: amd64
+Version: 1.498
+Priority: extra
+Section: misc
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 217
+Depends: libc6 (>= 2.38), libplymouth5 (>= 0.9.2), initramfs-tools (>= 0.92bubuntu55), busybox-initramfs (>= 1:1.1.3-4ubuntu3), dmsetup, user-setup, sudo, eject, uuid-runtime, localechooser-data (>= 2.65ubuntu1) | ubiquity, util-linux (>= 2.15-1), file, lzma, udev (>= 174), cifs-utils, finalrd, fdisk
+Conflicts: live-initramfs, usplash (<< 0.4-43)
+Breaks: genext2fs (<< 1.4.1)
+Filename: pool/main/c/casper/casper_1.498_amd64.deb
+Size: 57968
+MD5sum: ed9c481af63eacbae696bd7da1b681d9
+SHA1: c2b6663fab098e948589a559970b5b47866764ce
+SHA256: d6978b1102bb6db76ffb9367f2953a1d2434eac2f674b229aefd4212690d1fcb
+SHA512: ae40a8766016adfeec05d1d2d3c0fe503fb15aef2eab46cbd05eebe60576a7af91aa72e8a586d0613d415045a1c825b49788a56ae6690e764d39af935bea4d4d
+Description: Run a "live" preinstalled system from read-only media
+Tag: admin::boot, admin::filesystem, implemented-in::shell, protocol::smb, role::plugin, scope::utility, special::completely-tagged, works-with-format::iso9660
+Task: server-live, xubuntu-live, ubuntustudio-dvd-live, ubuntu-mate-live, ubuntucinnamon-live
+Description-md5: 9be0120948307c7e897a16c45a69ba0f
+
+Package: default-jdk
+Architecture: amd64
+Version: 2:1.21-75+exp1
+Priority: optional
+Section: devel
+Source: java-common (0.75+exp1)
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 6
+Provides: java-sdk, java10-sdk, java11-sdk, java12-sdk, java13-sdk, java14-sdk, java15-sdk, java16-sdk, java17-sdk, java18-sdk, java19-sdk, java2-sdk, java20-sdk, java21-sdk, java5-sdk, java6-sdk, java7-sdk, java8-sdk, java9-sdk
+Depends: default-jre (= 2:1.21-75+exp1), default-jdk-headless (= 2:1.21-75+exp1), openjdk-21-jdk
+Filename: pool/main/j/java-common/default-jdk_1.21-75+exp1_amd64.deb
+Size: 926
+MD5sum: 4ba58d3c6974397ebd4f30284318f6b1
+SHA1: 782236e7d6e91a7557b3bc13f56b03496c3af30b
+SHA256: cf1ead1249724ee34041412010eda98677c5962905dbab71dc5a619d943d3216
+SHA512: 073b1b6f116fd39df39a4d08f0b701476f5648959cb0a907f68ff8e32cf6af18bf2a33d3d0398863ed72892f526a0d3808cf3919815af7988dff21b93c130346
+Homepage: https://wiki.debian.org/Java/
+Description: Standard Java or Java compatible Development Kit
+Cnf-Extra-Commands: javac,javadoc,jar
+Description-md5: 9fcc2fbb2aca966fcfef817fd0d590b3
+
+Package: grub-efi-amd64-bin
+Architecture: amd64
+Version: 2.12-1ubuntu7
+Multi-Arch: foreign
+Priority: extra
+Section: admin
+Source: grub2-unsigned
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: GRUB Maintainers <pkg-grub-devel@alioth-lists.debian.net>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 10205
+Depends: grub-common (>= 2.02~beta2-9)
+Recommends: grub-efi-amd64-signed, efibootmgr
+Replaces: grub-common (<= 1.97~beta2-1), grub-efi-amd64 (<< 1.99-1), grub2 (<< 2.12-1ubuntu7)
+Filename: pool/main/g/grub2-unsigned/grub-efi-amd64-bin_2.12-1ubuntu7_amd64.deb
+Size: 1634332
+MD5sum: 1ad2346ae2a4dd627001c71d8ae2c46e
+SHA1: c5423e6bf642c9ed5063f5c259f1d8c701a6afce
+SHA256: 07ef0179d3cfa36adc9f75f7710984aa5693cb587b319b2c7f48fcda939be703
+SHA512: 4945ebcb9aee13ef11e58cfd9424b5edce32e3f6b965d3afd82c5d2d04e688676e8bab08e134780f4da2263a267d9196b02dc1c6731b95ea135310f2be9f6bd7
+Homepage: https://www.gnu.org/software/grub/
+Description: GRand Unified Bootloader, version 2 (EFI-AMD64 modules)
+Task: ubuntu-live, kubuntu-live, xubuntu-live, ubuntukylin-live, ubuntu-mate-live, ubuntu-budgie-live, edubuntu-live, ubuntucinnamon-live
+Efi-Vendor: ubuntu
+Description-md5: f6ad99c32640061c96401d0bc70e2f8a
+
+Package: gstreamer1.0-alsa
+Architecture: amd64
+Version: 1.24.2-1
+Multi-Arch: same
+Priority: optional
+Section: libs
+Source: gst-plugins-base1.0
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Maintainers of GStreamer packages <gst-plugins-base1.0@packages.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 159
+Provides: gstreamer1.0-audiosink, gstreamer1.0-audiosource
+Depends: libasound2t64 (>= 1.0.27), libc6 (>= 2.4), libglib2.0-0t64 (>= 2.79.0), libgstreamer-plugins-base1.0-0 (>= 1.24.0), libgstreamer1.0-0 (>= 1.24.0)
+Suggests: alsa-utils (>= 0.9.0)
+Filename: pool/main/g/gst-plugins-base1.0/gstreamer1.0-alsa_1.24.2-1_amd64.deb
+Size: 42448
+MD5sum: 9feb0f47c7f3d476be5066ea94a9366a
+SHA1: 3042d7e9ba85b7eb7dbd649260bdfd3a7b7b98ce
+SHA256: 6256562dec59f07b7cf20e7f66bcacf4b01f2f9afa7b7328f84ab306496edda2
+SHA512: ffd85057d364bf7565dabf16e95c6041fb721a495154ff9d09af64ff77dc0836c125e1ce2704bb76c71df7f5c59f71bde586eee1e2d5b0c6319008adb5da35f0
+Homepage: https://gstreamer.freedesktop.org
+Description: GStreamer plugin for ALSA
+Task: ubuntu-desktop-minimal, ubuntu-desktop, ubuntustudio-video, ubuntu-budgie-desktop-minimal, ubuntu-budgie-desktop, ubuntu-budgie-desktop-raspi, ubuntu-unity-desktop, edubuntu-desktop-gnome-minimal, edubuntu-desktop-gnome, edubuntu-desktop-gnome-raspi, ubuntucinnamon-desktop-minimal, ubuntucinnamon-desktop
+Gstreamer-Elements: alsamidisrc, alsasink, alsasrc
+Gstreamer-Version: 1.24
+Description-md5: 339f038172c486f3cef220df0c0e5ac4
+
+Package: postgresql-16
+Architecture: amd64
+Version: 16.2-1ubuntu4
+Priority: optional
+Section: database
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian PostgreSQL Maintainers <team+postgresql@tracker.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 43800
+Provides: postgresql-16-jit-llvm (= 17), postgresql-contrib-16
+Depends: locales | locales-all, postgresql-client-16, postgresql-common (>= 252~), ssl-cert, tzdata, debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.38), libgcc-s1 (>= 3.3.1), libgssapi-krb5-2 (>= 1.14+dfsg), libicu74 (>= 74.1-1~), libldap2 (>= 2.6.2), libllvm17t64, liblz4-1 (>= 0.0~r130), libpam0g (>= 0.99.7.1), libpq5 (>= 16~~), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.0), libstdc++6 (>= 5.2), libsystemd0, libuuid1 (>= 2.16), libxml2 (>= 2.7.4), libxslt1.1 (>= 1.1.25), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Recommends: sysstat
+Breaks: dbconfig-common (<< 2.0.22~)
+Filename: pool/main/p/postgresql-16/postgresql-16_16.2-1ubuntu4_amd64.deb
+Size: 15452168
+MD5sum: a0ddd38a3ce650de38cbd1fa4960861f
+SHA1: 55098507be06aa3bbdb7d0fef855338c6195e0fd
+SHA256: 7f25383e8f39ca99f4886b7b2cbb31c62534ac924e3a61da3f0e8e6456091e69
+SHA512: 181d452698e0895c5f54d916a4ee2f2bf6899175e9f5a7d0049723026db9360da0a3f4001f34e3015bc0e0d90d92a63eb161b50d62085cc2c87f0a559e317fe2
+Homepage: http://www.postgresql.org/
+Description: The World's Most Advanced Open Source Relational Database
+Task: postgresql-server
+Postgresql-Catversion: 202307071
+Description-md5: d7367291c15795e56aa78252604f9ced
+
+Package: oem-qemu-meta
+Architecture: all
+Version: 20.04~ubuntu6
+Priority: optional
+Section: misc
+Origin: Ubuntu
+Maintainer: Commercial Engineering <commercial-engineering@canonical.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 13
+Depends: ubuntu-oem-keyring
+Filename: pool/main/o/oem-qemu-meta/oem-qemu-meta_20.04~ubuntu6_all.deb
+Size: 2392
+MD5sum: 7d8d71b3786af15e8929af7806bcb88a
+SHA1: c8b9f40546cb9a8cbb047d49b448e67775f9b304
+SHA256: f58a5d2f2adc63e828780b0db45dc0ab4c4954a4db219c3a7e9e751fbb113ba1
+SHA512: d0496b45ad8fbb5fdfeee49fde5c514c0ef5719b1ef3a750cb2176a1c0659369df8a47d662e37c3498772fd27b8875556b9130302ad7ee8597976defda625224
+Description: Meta package for QEMU
+Modaliases: meta(dmi:*:pnUBUNTUQEMUTEST:*)
+Ubuntu-Oem-Kernel-Flavour: default
+Description-md5: fec855b994bcee60ea45cad6d24cd41c
+
+Package: e2fsprogs
+Architecture: amd64
+Version: 1.47.0-2.4~exp1ubuntu4
+Multi-Arch: foreign
+Priority: required
+Section: admin
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 1504
+Pre-Depends: libblkid1 (>= 2.36), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libext2fs2t64 (= 1.47.0-2.4~exp1ubuntu4), libss2 (>= 1.38), libuuid1 (>= 2.16)
+Depends: logsave
+Recommends: e2fsprogs-l10n
+Suggests: gpart, parted, fuse2fs, e2fsck-static
+Filename: pool/main/e/e2fsprogs/e2fsprogs_1.47.0-2.4~exp1ubuntu4_amd64.deb
+Size: 600734
+MD5sum: 855bbad60823e3cd35ab89a91f72522b
+SHA1: 105064262cc815f33ed9eff98aa7a8d01682dd61
+SHA256: bc3f351b5a45ae2278d2baa81ae1f4e690260ed8b8c870c8a8f5f4f97d36a8ad
+SHA512: d530c1aa9403416ee5ced78d4d6ddaf3b49a39f6ac2131b66666ac8633a72629f87b1a8cab547e8969af8ac54241f0356c60fbeb15d7d255e2e18680cad25df0
+Homepage: http://e2fsprogs.sourceforge.net
+Description: ext2/ext3/ext4 file system utilities
+Task: cloud-minimal, minimal, server-minimal
+Important: yes
+Description-md5: 92d0fdf684262bbfa702eaea3f50b97e
+
+Package: boot-managed-by-snapd
+Architecture: amd64
+Version: 4build1
+Priority: optional
+Protected: yes
+Section: utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 29
+Depends: libc6 (>= 2.34), libjson-c5 (>= 0.15)
+Conflicts: grub-efi-amd64, grub-efi-amd64-signed, grub-efi-arm64, grub-efi-arm64-signed, grub-pc, linux-firmware, linux-image, nullboot, secureboot-db, shim, shim-signed
+Filename: pool/main/b/boot-managed-by-snapd/boot-managed-by-snapd_4build1_amd64.deb
+Size: 5558
+MD5sum: 5cf84889a50336f0939d5753f1856613
+SHA1: bf33c398db64198c5087b1a3eb3b0c41fbeecf52
+SHA256: aac1b2a657598ad8e4a8e43843ba0f35b27c7b7cb011df95e2f1aaa39f6f711a
+SHA512: fd007d855d5ac54b7c9d2c03db0f84d1fb858ab1e8e08ecb92f8271ce90ab3d837a6867166cc239f1706cc22795e3795c68686e5cab096204280156f93db750d
+Description: Package marking the system boot as managed by snapd
+Description-md5: 1ca0779d6fe2e652e5e17b8243b001c2
+
+Package: libc6
+Architecture: amd64
+Version: 2.39-0ubuntu8
+Multi-Arch: same
+Priority: required
+Section: libs
+Source: glibc
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 13430
+Depends: libgcc-s1
+Recommends: libidn2-0 (>= 2.0.5~)
+Suggests: glibc-doc, debconf | debconf-2.0, locales, libnss-nis, libnss-nisplus
+Breaks: chrony (<< 4.2-3~), cyrus-imapd (<< 3.6.1-2ubuntu1), fakechroot (<< 2.19-3.5), firefox (<< 91~), firefox-esr (<< 91~), gnumach-image-1.8-486 (<< 2:1.8+git20210923~), gnumach-image-1.8-486-dbg (<< 2:1.8+git20210923~), gnumach-image-1.8-xen-486 (<< 2:1.8+git20210923~), gnumach-image-1.8-xen-486-dbg (<< 2:1.8+git20210923~), hurd (<< 1:0.9.git20220301-2), locales (<< 2.39), locales-all (<< 2.39), nscd (<< 2.39), python3-iptables (<< 1.0.0-2), scipy (<< 1.10.1-10build1), tinydns (<< 1:1.05-14), valgrind (<< 1:3.19.0-1~)
+Replaces: libc6-amd64
+Filename: pool/main/g/glibc/libc6_2.39-0ubuntu8_amd64.deb
+Size: 3264806
+MD5sum: 6a8d4dbde2a7765c0ebc0f4a8d5ee5b7
+SHA1: 1e259bb358c6ff2be0d2920ff920159edf465d25
+SHA256: af36c7ac770770fe3d3c10e85d6bc538e76e57570ba7db7d397fb9f654783ef3
+SHA512: 1342927143c72fd7b38f13f77624e1863cfcaa6a90c631b16fe0789cbf6af5ff10cf08acb984c85b725e70531bcc4789584a3c69dd39c1253cbdfe7842273951
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description: GNU C Library: Shared libraries
+Task: cloud-minimal, minimal, server-minimal
+Original-Vcs-Browser: https://salsa.debian.org/glibc-team/glibc
+Original-Vcs-Git: https://salsa.debian.org/glibc-team/glibc.git
+Description-md5: fc3001b0b90a1c8e6690b283a619d57f
+
+Package: libc6-dbg
+Architecture: amd64
+Version: 2.39-0ubuntu8
+Multi-Arch: same
+Priority: extra
+Section: debug
+Source: glibc
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 11173
+Provides: libc-dbg, libc6-dbgsym
+Depends: libc6 (= 2.39-0ubuntu8)
+Filename: pool/main/g/glibc/libc6-dbg_2.39-0ubuntu8_amd64.deb
+Size: 7466882
+MD5sum: 535a946b27ef6f76fca121f56f4c3215
+SHA1: abd6e9c94ca35a2803d51c7985b66216783e0e43
+SHA256: a716efe8d06b0c27af74f098f86f34d9744d55656137d3121c3e3594f42b7802
+SHA512: c5c5b6ebffe80970470b4c3350ec439b7e4082209e7f0741464a0ca0bd93dbe25ae42572bf5e2efc7011ce48637eb4b5593141614efe09446cc3e7bf0723b9af
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description: GNU C Library: detached debugging symbols
+Task: ubuntu-desktop-minimal, ubuntu-desktop, kubuntu-desktop, xubuntu-desktop, ubuntustudio-desktop-core, ubuntustudio-desktop, ubuntukylin-desktop, ubuntukylin-desktop, ubuntukylin-desktop-minimal, ubuntu-mate-core, ubuntu-mate-desktop, ubuntu-budgie-desktop-minimal, ubuntu-budgie-desktop, ubuntu-budgie-desktop-raspi, ubuntu-unity-desktop, edubuntu-desktop-gnome-minimal, edubuntu-desktop-gnome, edubuntu-desktop-gnome-raspi, ubuntucinnamon-desktop-minimal, ubuntucinnamon-desktop, ubuntucinnamon-desktop, ubuntucinnamon-desktop-raspi
+Build-Ids: 004d88866480e8968c1cbe12fb6c79c1c457e7fc 01834c3d9b8cd5b5e24dd2f89d46687bb0fdb406 02dffba1bc8be714ec6a2399f0c52c2879ed61ba 0355588c399f97fbd4953637a13e02ed6c5306c7 04ec92d2e1024b921cf22ab5c3382515de20c73f 05049860b9df033f417100eb4ee95b32fb45d042 06392eb070fe1cec5c61e40f502453e41e968ccc 07d759d78e66717c3bf79580660d455a5216ed0b 083a3f6bbb65f05a9bb8a2a8ab4bdaf0393aa5e6 089602b03e8cd0e2de875c1d38d39a55a188e8cc 08d3d56b717f20a92482a51060e94c6cc7b50f32 08eb3c25a47c8ab4c23278a79949edb737edcc84 0a810cda851200a0645e83aed8ccd360cb12e18e 0ad5986b290a4f17d28c044165fe3b439248d338 0b18b1171fc7d86cb8038e1aa64fb489c000c511 0bcf54bc77e5b18b7d3f2a7f212c4428c4b40aa5 0c0ba2ddd62bb5d3f246d2a8153d68ed66fdfece 0f3e8b3b800abf54af33c727a7877679d2d0bec3 10847e8aff3034a3e193391a2930f095cae0f98c 108c64d8555b7c5c51914b2e4323a02e2b097b6a 113009f40edddef65e52a8d5087a16aeae36c7f7 118aca0ee7eba4a3aa462bd5dccc9739d4919cac 11c89bb3bfb0f109984b870c9c72c213bf773122 13b7287ecdf043e87cde8facf6351b8bb73f7de6 1489a6f693e0c424cb31e5c6b96a5cfc8e015756 14d598c36a271319a8edbe054026b96eba9eeaaa 1e335501c0846964d031834e0e1e7d1836b44d19 1fde9e5f08620c8d03aa9f64427a026092817c84 212b0085f062189f87535ed81e3f21afdc919874 232274c0019767b821da1c6ebc2df43e60503035 2405bdcca8600d071998371d19fe92f83a54b12f 25d6b36f004ee6814a7b255b68b8544d56080dc2 26ab2aaf2b90f7afed8d630cc330046f496d173e 26baebf6de081a2cd6fc0f0ef289d973dc50f46e 2933b2e900ca53f1c4c2bf99cff5c1a92203b6d5 2a70bdd8fb76eed097c035e9da061355c0713169 2cf974cb1f0ff1a1f11a5e8703f71b7f7dca9568 2d7d2695554bbc5dfe140c985be6cf006b8a5bbe 2df90d07dfff9ce1ddb05f1e9eac480335a5cfa2 2e483f713c2ecbb9203d0dec07984c623861aed5 2ef2e3fb02eb851452d2f42bfa7053725500b83d 303d3184b874b4ff7645b153b1d3e84ab68ae653 311c9c9b30d6991fb903ab459173c66eb8e7e895 324f8d683a0854f006cb30bfd948f5e935008442 336c53c7c8e21cf37b8f548692b6ec69a70b77d1 3385a3f967bc241d4238709767db5f47bd91f290 342455bb98fb39d6e6f63e89f504a86999340cb0 34a7f8edf191506c89b762c9ab166380f35aee36 356c35f8c6e064a9c459026cdee27288580b49f2 368d44a585cf69fd6d3acda7ee291d16ed62811b 383bec14a03c404d2dfc57fcb99680c926e5aca7 3a1c04fb1778aea7c6191ff1b8e343a9cf3feb36 3a2e5a0f2aa04d26be708fa16a47f430a6878841 3a841f2fd8940231979517dfc21e931809e677e9 3a8c5febee6261188be50cd3af9d5e16260f2028 3b58d7acccb03d0c4e4794237f0b8a253059a3af 3cd80eb34de10043a9e432d6e4d8488283fe5538 3d0c54932b2e35886736074f214114b659e9871e 3d579ab72c4169263ef75df7229918f33d8683df 3d8c9100d62ce3154d96081245026eece85c78fc 411a9f84b4f1742fa3c01a64bbf7fd0683e0be6b 411bcb91c0cb7d19542d45dc9a49cf49e154fc8f 4130eec3c22ea5e84fdfe190bb1b6a46ed3fac53 423c788e2edee3de7f9f8ab79738bf92bfbaef5e 423f3e1b26166ad8e984150efb0463acda956f25 438937b10a06cba603d7128f3f248aee5530adb6 4390ba6fc1084d2acc7d85765297ed453b0edff0 43f46f11305afd935bad7b0b0aba9100035e3d42 441e731e15cd60c5f4e51256daaf821e9f774471 45c0cef0d3d526a66c1fec77168ff8425c32aa2a 46b40d0cde6d01573f2e7cf731aadeb92819bb52 46c890a9e9720008b10b42acfc99d81fd7885542 46f779f2a0af3cf01e02a59e472bb5655bafdd90 4770e0ca7d47e7988c1a8a4d848e35b832a4b04d 4898c61225e1e165db770f924be23518d04e8974 499bcc9dc67ee37eb802ab891139c7e5d08c460c 4a803da324dec5c75fd34e6d9d4ab0a6b6b91ca1 4ad33199695e9c546742f7397daec0dfe57dc1b2 4b394feafe5af0e2f375c6283e31492f248777a5 4c8bc7f268e294e0ec9aff93f68fee9fb19d0008 4d5f7bcf3c4b80f95a43ed93c52da53b46cc116f 4da3e29b1d5e2764d80a8c99f919db0cc891e23a 4e4fb222a881965a4611c0626053950bac655056 4eb05b7fabf09d5d934fb0c833276460df9b833d 4f06a198152f611aafb22ed4abb579b8ba1b9d46 500f31e3c60f0f1c034e20c7e62dee9f0b87600d 5012b6a233458804fee4e7e1e8c1cd89b45ca0ef 51cf8495751066182d48171897043f3048e9c91b 5594c0f5cbb0fcdaca7a96099103c2ce866358c0 5594dcbf537f8a820be64f1a89f1ba10c53330ca 55ae37c3eb5bc3da82a5417b931fa346101f15d3 55d7ef0cb24e967e89666b4d816f7b5bd65bc544 56808d254d40f21c20fd92f6a3bc06073c68b154 5780cca27c4abcf9586906ddce4a6dc65c30cec0 57ed9eb3149d2eaff318303e29bdcbacd0352fa7 57f8553888d1b0dde9f5bf5a621223e003d9c81b 59f86acb711958da6e98a205198732d23af21f11 5b367618ef1a4d9f05f079c24928d2bba72e8bd9 5b37d6a1bfee547d5fa25c6553a889bf7da8bb6d 5c49c812e3a4ba37f0a9fc61ee9e207da6b14791 5e2bb34916f20a688ef0c96cea801546b26ead6f 626d76bb176f65c35bb629b5b5ebab4b1fbdf79c 63a180ad9d86a8f33be1b8393bfe3bb1d0063e43 64757837740ba0b7a036d3627f2467f0e702c452 65887cccc4729886b37074fbffb5135521f19d81 65bc7d1209243467fe24c14732ed314aa9f05ff5 680cc521c6682527867bb261cfe3611e79ddd6b2 6a9df11d9d929b8522f318c2183a4e9702f01deb 6ae65c80c63201a411d899b0ea9a14959dc60c59 6b12e637deea0947def52bc673a3db482616896a 6b601b5924bb865ee02935cf06deef6272e0498c 6b99a59758003e09ced28c96c3e79f6d17bdab4e 6bc2525a6af6d73b5ad40b3ad7f9c25982c51bdd 6c90f40bbe1cda4827c47bab2fa1910701f296eb 715afaa23271ecccbe23799acb69eabc1c092de5 715e1ccea94a90fabd87df579500ba0f97102c94 71beeb7862a5ffb54bf9d8f7f187769dd05b5a1d 71dc8bbcfe97f6afaa8142d4b7480dcc27afee1c 720265ae4afeb63684e1eabade30921de133a6bf 725eb91c2ee45997773c2c3231906a84023ca970 73664a511a84fbe4aee704254c83d98f1abd4a89 738e3bb4260e127ffef0847681c3216ebb73e0aa 75ffe5d99ca36c585bf4121f074fe35161d268ac 76a008169efcbf57186758bd48724246f782ad24 76b2f2a3e94e09dcc6d4fc7b0372017113e9a13c 774a18fdb378e6476a4ac7408b266606a140b12c 782f34f37b9fd54156242ee8c81e63c72abfa6ef 7a5ae12d4b58c0b28951e5afc38a3468d24d5cbc 7a82485e610055aa3f3ecc50addf2be2405a8fc1 7accc59ba3f7b8982f050da0ff4d127288fdd149 7ad274db1b50d87d958a6f68c30c0c9140b6617e 7bc07cd0f0a77acfc3934dd87ca3cf0ac0cc631c 7c23ab7a25882ea713e33e6fd89f8530dd18e24e 7c6ce40cf25bacb2460cfb5a57df3b3c6621934f 7c9f2122942ce3d4da949d9f24fe3b557f9278d8 7d26e998e5f9cc13e1137af3da3a78cd0b34be90 7d89c85e4f1d346a759da0976f38edf7b87282bc 7e75e734c4ad835ff57e326c5b880092775fc2d7 7ef3d18657a1b818a971e6f995c8b15e4cc2fda0 80622920990d93f21f65c375306564e6c9fafee9 80cc0ce6bfc5cc76c9c7d5de5c5baa4cef34eaba 818a35e2596fe83d920da5ad2223ace571d1b2cb 822bda8351f4e42c9a941a97243e9ca9d8fee144 83a51f38e63dd79f384f396c7a60ab682de83780 83a671ac03d4fe3e45b04063783dab8e663e25bc 85af9fb859c1caa9549dbfa753de2ec42c2c4c35 88db0dc9444d31b43b29ed87b2268c070c58a769 89008782277b168c4d8ccedff7b06c013fdd7dcd 8979343c7ed19c3aff674859d5e4cba7407cf977 89c61d1aa5b9b47c94bec4c70a752b46e284d251 8aa24f75250ee0089d6e1fe6c348da55631b8185 8aa94dec68a8593f83b605d2c614f500484898ab 8ad2769183a57a83ee4f424c74efd1d47dd1348f 8adb081e75a94cff8f972d6c2a6375609f42982e 8bd3480bdde65877033665f2d7ff89da0595eb9d 8c6bdb4556b1d41b5f63bf16c09fe7fd4d49c592 8e23bc93420362000fcb8380c70119a6646a3165 93640f150475a4e7bde7ef8ce917be143c217ab2 93a8e2d8e3267ea0d59e42ecb7a942f0941bef32 93b968daf024b9c29c87e9adab32a138028e60b0 9417ea7564be875019162b58918451e1321b7904 94c346b8312b223c276e18524961e4c74a2c091a 9803f578931edd0702b0f41e5a8f6340f9087ef9 9a4046ff8f8569c003586b6e156004265dbe7547 9ac4143d095415625d8049b199e3fe0ab83b46a0 9c7354048316f7344e81309da48d9462916b2ffd 9cf4f41980d767a69fa058a80d07b16ae3659fd3 9e725d5c998cbdd284728772e5b3c3c7d37e351e 9e76961ee122002fa745d8b12ed4fdbc41b863be 9ed0c65472c8ba1a1be74e7501c1a556eef58df3 9f57e99eeadbba2be26c0f83b33f1154b83856f2 9f88d0a239552611d6297d24cb2d852bb102d87d 9fc92ded78360102694222c50a94b559ec38a6c3 a10a686848c11c4faac64074d85605b9c51be14e a29e24ef180843bccab4fac94c4851081f415e6f a4aa4318a9e59419bff423ca3601fa0d43ed55d2 a4cc82ad3b678f31ae8d865de3190e88b561d065 a61ffa5450428def3e96b4a6e738acbc5b02f583 a6cd54bfdad83a5e754d9fab564bf4af5811d7d9 aa3c9df8e75c375a58daa1fdb7e5d6ab602a2af4 ab6d81759c2fdbb77f5e49734fef6d7182db701f ab8380cf95f828b9e427f01d246b57675fcf6d72 ac1cdc392ac8332d3a60ceee07bb1acbba877003 ac7509cbfd8a0ba79215612797c319f9a7a1d66c ac87125f8f64fd5a28314f2398011df604492dc5 acd556eaa3396421bfb965930dad92c1cdd0cb13 ad2ead2bf37bc67ed14afac4cdde1c1bfbd3b788 ae9d30d13d16015911e5dd084b662e05109cc148 b2a29efb33cfe3728ed2b886f8a5370d71ed4fbc b3391f9017b64a6bb58ee9eaf93afa213eb1bd69 b3c9267b14660d4a0438d828c4d8f40345351d5e b52f615ef33fc33eb269a56e98bd3c8b60423e6f b627ea5fdeb5bb31c53dcf28636fd9239feceabd b67faaffee0c3d1a1eac0ffbe80d7b46503174b1 b6aebf446bfef0ab855e4542fc47e7e3e43daff3 b6d700ce74495cf789b9c57ad74d847f4825ea6f b7a9b18d434673ae4ca7b0b2d7de496c4ab58f67 b7bc627d74505e51273007d777f3dd743ccbfdc7 b7f9385ceab6c62ee71b81c8b0d59c6270ab20fd b830a9c71be6f208f4ac5628cc560b3849c8a25a ba1650da3b75d22c9f50ad2e2f27aba7be4a7e0a bc58049df324b748e8d9851e32ef0125221042a6 c1e7369cd687ccbcb58b7d6dbf0471c4c45d0fcc c21390415735e4c46619f2b3d698db017721c451 c25345cf186c4982ad7b9c0cdd4d140f7f360a5d c37f0915ad7352d34b0bfbb5ead3ea08aa4e22a9 c3e15cd95a95d597ffa550ef4fbde9bb645e6790 c620c1b51430f703c02be03fbfe66f8ca6ac7d3a c6fc334e2bb50a717cdf2530acbd132b3213b8e0 c72d9b961ff91f94b2263fd3b2291a7401873b01 ca0fc25f6d3fcc393f85401d982757452ce17cc2 ca902e16a0c8ba3204c4196017f34c7dcf41f66f cadd9a16c8f65a6d25b7ac97d1b0fd90f3360aa9 cc2275fba6ed54d48d1c280e05b1c74bf44759e1 cc3bc96238847e52850dd97ffe1b8abfeb665afc cd5839650cf1d9ddf3fc7efdd20a2b33ec7620c4 cee928de1537a34ca59256432cffb1748006688a cf5680a16a7995a73b260ce85818883b19e28555 d075aa65c86dee6833007919af69bb46429293a6 d0cc902873d45b0d8148ab93cfe273d70263b3ba d2dc7e32edf8db23be6d11e8feae7e256a11aad7 d3c7f85d56f2799a2c12be40e2799644aa5289b5 d3f008920572140b37dbf5a7ad8364e5d2482dfa d5523dd4d60e9ddb80c471ca5368577079fc1d12 d631a4b94e70d42ae23f5583b60ff227f594be27 da76bd51abcba086c5345e2bdb9551af7d735c4f da84d2015eb6d3d9f2210ca0188e38320f0ff682 db4d9206e058e557355877b9cb7d3b52fe592e2e db5e95d741a324a7a5adb9a34bedaffe66db3621 db70884671b2207c59d9008723a0a3c1865295d5 dd163b520eb7ccdb1180487859a3973074465a6a dd58effc4f2149cba70dc9d87d3769873db6df22 dddc23c5fb61d1a26b07e28e47f06dc476ab04e9 deffdb1c25545d7acbe394059514932538cc858f e0d2fcdd5bb1d3505dac8f993e9837af00f469ec e0e2b4a788269e46c687399fb405df0ccfcdfa51 e1ac1ebf9124928ce77eb6b8987708e708f5488d e1eeeffe539d81ac4d4a6805100c50994fa0f20d e204b9ce409bba6332ba1af88860b83edb79d955 e263bbb97ccb544646781104b39ab8759cb2449a e43fc1d68c7281af06a65321abdb5bfc09c29165 e839086ed7c0c0da4258efb7e93c4c7db8b3bc6a e8aabe861cdf9f53164328b43b0ea42b9e191626 e8f3e76f2c187dff0697ccfba88d94c11dcb250e e920a11b11f84005613504330fe91c4441c9aa45 ea1c0df29bb022ee5089d3a8cabf9edb7f2ddd52 eb247aa22eab85d07f07ce2b6bfaf2c3ee3f4ee8 eb2ea3c6de42693d31f092aea577054e23643d43 eba04cd79785aac7c9ef7cc6a8ab26d1b28c6805 ec891dbd1db113576939133106a629dcd95254c1 eceb48a1e5ee23f0f5daff055c29324d38b4fd18 ed0be9eca013ad8ca808859372151248c3b7c774 ed73aa09f27b51b07c579d0bcb6f8a42ec1297a9 ee0e116e9555fdc6b1c364f879d7065e96c2ce2b efe0469b3a6d6a53ae6d71ea372f4561a590e5c9 f01bdfdcf4ba3bfe3193820d0c2060b7ed2f72eb f06fe9c5da2aab37e6a19e3ee317888488b54b5c f1355547ea77cc9967af3dbd0145d55bb30cec5d f260e8fc4b0df514f0b7afbe8140d176fd56442f f3b72313847acc4e1de39cd2c2d1a21f7fde1e58 f4f522536bef5d262f20cd3d3f3405e78cf37f35 f57ed408d358c169282b5760653369ce35595ed1 f67a8503ae1865947d126cfac9966d032e398608 f67c9f5824d90d3db28d7b559e5d0a2f1e0fdbaa f8cf89cb0735d4d4f7a15e7183d4ce0615697e47 facce6a7790fe7c1d22e454ee9772b24327fc3be fad7e7d2f75629af573f936f6fd072b814880794 fc08bdd3f64b48fcef766e8be78f1d1e8c07a43e fc7e79cca0caea428c4e0b9501a5ca1fc7eec6d3 fd5687cea1d61f4b0ae9c05b67b426523ea0815e ff3405fbc1309fe2674872ae993696919b7e8052 ff3f219f50c6b23beaabeb97e5dad9b1c4d2d134 ff5ff6884b7d540b4f046ff628cedfbd19768a25
+Original-Vcs-Browser: https://salsa.debian.org/glibc-team/glibc
+Original-Vcs-Git: https://salsa.debian.org/glibc-team/glibc.git
+Description-md5: bbc98343da14bf76d4a45c2181fd8902
+
+Package: util-linux
+Architecture: amd64
+Version: 2.39.3-9ubuntu6
+Multi-Arch: foreign
+Priority: required
+Essential: yes
+Section: utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3438
+Provides: hardlink
+Pre-Depends: libblkid1 (>= 2.37.2), libc6 (>= 2.38), libcap-ng0 (>= 0.7.9), libcrypt1 (>= 1:4.1.0), libmount1 (>= 2.39.1), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libsmartcols1 (>= 2.38), libsystemd0, libtinfo6 (>= 6), libudev1 (>= 183), libuuid1 (>= 2.16), zlib1g (>= 1:1.1.4)
+Recommends: sensible-utils
+Suggests: dosfstools, kbd, util-linux-extra, util-linux-locales
+Conflicts: hardlink
+Replaces: hardlink
+Filename: pool/main/u/util-linux/util-linux_2.39.3-9ubuntu6_amd64.deb
+Size: 1127346
+MD5sum: c276d81cfdece0e471fbe8757081d4e6
+SHA1: cccd91a24e3d413c537cd4579d918c16b546128c
+SHA256: adce7d9699a70bfdc28f0e0785459c97e7ea7b4755316a83d0b4f29a2e22f404
+SHA512: b6526c1a80d8fde10d05c3dc410dc9555f8fc55b58c1a6a0493e90fa238ed753c255e8d2a12c9ef7165f5899a1cd77885145643d200ecd965e2b4dde18a2082c
+Homepage: https://www.kernel.org/pub/linux/utils/util-linux/
+Description: miscellaneous system utilities
+Task: cloud-minimal, minimal
+Description-md5: 33d0291a69ffd307cfba295915df602a
+
+Package: rake
+Architecture: all
+Version: 13.0.6-3
+Multi-Arch: foreign
+Priority: optional
+Section: devel
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Ruby Team <pkg-ruby-extras-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 272
+Depends: ruby:any
+Recommends: zip
+Filename: pool/main/r/rake/rake_13.0.6-3_all.deb
+Size: 61584
+MD5sum: bfae31da41528478f6fa769c9660bc56
+SHA1: 8680af5f1318fdd83da532514b1d423f5a3992bf
+SHA256: 2ebe2591a30542c28d6bc6c8be638ab61cc1295875f364385ade895b23f8492d
+SHA512: d30251301903786bb84cc11954b28e7589a6c1a42fbdcfceb87e2310dd5d6d82e88b7e5d917df8021fd411bd532b3daeb6e359b6fbade5fa55e73b79ea86271f
+Homepage: https://github.com/ruby/rake
+Description: ruby make-like utility
+Ruby-Versions: all
+Description-md5: 13b953bd84607c7631a72c5bf042fc1f
+
+Package: mdevctl
+Architecture: amd64
+Version: 1.3.0-1ubuntu2
+Built-Using: rustc (= 1.75.0+dfsg0ubuntu1-0ubuntu7)
+Multi-Arch: foreign
+Priority: optional
+Section: admin
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Christian Ehrhardt <christian.ehrhardt@canonical.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 2760
+Depends: udev, libc6 (>= 2.34), libgcc-s1 (>= 4.2)
+Filename: pool/main/m/mdevctl/mdevctl_1.3.0-1ubuntu2_amd64.deb
+Size: 936290
+MD5sum: 789727c529c6e62deedb84274048f2aa
+SHA1: d6faf34853fbd53bf65fe417765ee821b58441c6
+SHA256: cea142cf247793ec3bcae7b443dd221f929253f65fa2ff111dc38a998910824a
+SHA512: 3c2460dbc15a14a8909163e326831ea6c955cc2c70e06e0ec8cad7a57c4e720ad39bac1c60f8528324d3f5bb86b0e44d48d30b16f32d7998437df7e8ca23dcf1
+Homepage: https://github.com/mdevctl/mdevctl
+Description: Mediated device management utility for Linux
+X-Cargo-Built-Using: rustc (= 1.75.0+dfsg0ubuntu1-0ubuntu7)
+Description-md5: 0fb9bffbdd19e2db98b5338bc7bb5a16
+
+Package: python3.12-minimal
+Architecture: amd64
+Version: 3.12.3-1
+Multi-Arch: allowed
+Priority: important
+Section: python
+Source: python3.12
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Matthias Klose <doko@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 7923
+Pre-Depends: libc6 (>= 2.38)
+Depends: libpython3.12-minimal (= 3.12.3-1), libexpat1 (>= 2.6.0), zlib1g (>= 1:1.2.0)
+Recommends: python3.12
+Suggests: binfmt-support
+Conflicts: binfmt-support (<< 1.1.2)
+Filename: pool/main/p/python3.12/python3.12-minimal_3.12.3-1_amd64.deb
+Size: 2343294
+MD5sum: d17cfe7b0167f26be9a16a95995f7cc9
+SHA1: c04c4c6c645d60ad850ed7205519a9f868267b1b
+SHA256: af9ce0b1da62af10ae8984d27638a7f6901cb20a2893fbedb72dc52fa53c87bc
+SHA512: f59f2f97debc79444d87f4ed9b22bdd247b2b02a123241ac99690aa4b198db0107b59d9bc8faa5ec4d7828affbadad5e4dff817706150ced6c5191c577efcf6d
+Description: Minimal subset of the Python language (version 3.12)
+Task: cloud-minimal, minimal, server-minimal
+Cnf-Visible-Pkgname: python3.12
+Description-md5: 409352196e00a839966f4424a82663b1
+
+Package: python-dev-is-python3
+Architecture: all
+Version: 3.11.4-1
+Multi-Arch: allowed
+Priority: optional
+Section: python
+Source: what-is-python (14)
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Matthias Klose  <doko@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 13
+Depends: python-is-python3 (= 3.11.4-1), python3-dev
+Breaks: python-dev, python-dev-is-python2, python-dev-is-python2-but-deprecated
+Replaces: python-dev, python-dev-is-python2, python-dev-is-python2-but-deprecated
+Filename: pool/main/w/what-is-python/python-dev-is-python3_3.11.4-1_all.deb
+Size: 1202
+MD5sum: 8656d8bac3f9e5d4828784f64ed4fc53
+SHA1: 27beb1e92b435b0c26d395938fddc03f63637523
+SHA256: f97c29e054a10d2614f4d830c2523ccbb7f1f027c0d64bfede2e500f8da9fef1
+SHA512: 3e5808a04c1e676d56326834d8444569c46938835106850e2ec3d60aa9308d43a6c6e48f4e2dbc761370100f1f33c070093cb78a7ff980ebdd6d0f425265dfaf
+Description: symlinks /usr/bin/python-config to python3-config
+Cnf-Ignore-Commands: python-config
+Description-md5: 947714bff9934f3996d5c4b1f2bbd453
+
+Package: open-vm-tools-desktop
+Architecture: amd64
+Version: 2:12.3.5-5build3
+Priority: extra
+Section: admin
+Source: open-vm-tools
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Bernd Zeimetz <bzed@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 491
+Depends: libatkmm-1.6-1v5 (>= 2.28.4), libc6 (>= 2.38), libcairomm-1.0-1v5 (>= 1.14.5), libdrm2 (>= 2.4.3), libgcc-s1 (>= 3.3.1), libglib2.0-0t64 (>= 2.16.0), libglibmm-2.4-1t64 (>= 2.66.7), libgtk-3-0t64 (>= 3.19.12), libgtkmm-3.0-1t64 (>= 3.24.9), libice6 (>= 1:1.0.0), libsigc++-2.0-0v5 (>= 2.8.0), libsm6, libstdc++6 (>= 13.1), libtirpc3t64 (>= 1.0.2), libudev1 (>= 183), libx11-6 (>= 2:1.4.99.1), libxext6, libxi6, libxinerama1 (>= 2:1.1.4), libxrandr2 (>= 2:1.2.0), libxtst6, open-vm-tools (= 2:12.3.5-5build3), fuse3, kmod
+Recommends: xauth, xserver-xorg-video-vmware
+Suggests: xdg-utils
+Filename: pool/main/o/open-vm-tools/open-vm-tools-desktop_12.3.5-5build3_amd64.deb
+Size: 135720
+MD5sum: 59cba019b850e7bced8618358a84861f
+SHA1: 284951c8dd79c53bbd1e77a11c27c6100d67279b
+SHA256: 0ce1d75509254aca207e17e42f3ef86c68e90d8033332b0ae8dc411f7803bfc6
+SHA512: 7817f49e503eedff2052ad95150b5052bdd8ca63a0b591947cb0ccd86ee52d43d60ee7080a45fa5f541ec72df8607d497ade7aa6919a905a43fe82d01d02e2c5
+Homepage: https://github.com/vmware/open-vm-tools
+Description: Open VMware Tools for virtual machines hosted on VMware (GUI)
+Modaliases: vmwgfx(pci:v000015ADd00000405sv*sd*bc*sc*i*)
+Description-md5: 0a75baf603aed1d261cb9d62936d3c0d
+
+Package: glibc-doc
+Architecture: all
+Version: 2.39-0ubuntu8
+Multi-Arch: foreign
+Priority: optional
+Section: doc
+Source: glibc
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3650
+Depends: glibc-doc-reference (>= 2.18)
+Filename: pool/main/g/glibc/glibc-doc_2.39-0ubuntu8_all.deb
+Size: 58432
+MD5sum: 3187db5fed4ece0a5426ab9b0ed5722a
+SHA1: b7a1ee29be1ef6fe9d0ea09ee33b53b70fbd303e
+SHA256: 3915a4dad5d1d8190865232dd9235ea8406bedcfd5063715072e43eb54b5de86
+SHA512: 83cc2a11a058196d5e8181f4bd6352aecf634a91600933d875ae12e8e51f8d3f011ba8bf679669c7a057b89713ca744e23eb8b1df2dd89f4f88e9087df4a64cc
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description: GNU C Library: Documentation
+Original-Vcs-Browser: https://salsa.debian.org/glibc-team/glibc
+Original-Vcs-Git: https://salsa.debian.org/glibc-team/glibc.git
+Description-md5: ec34f59d4398ff8ca003177c6585bf0a
+
+Package: qemu-block-extra
+Architecture: amd64
+Version: 1:8.2.2+ds-0ubuntu1
+Priority: optional
+Section: otherosfs
+Source: qemu
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian QEMU Team <pkg-qemu-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 306
+Depends: libbz2-1.0, libc6 (>= 2.29), libcurl3t64-gnutls (>= 7.16.3), libiscsi7 (>= 1.18.0), libnfs14 (>= 4.0.0), librados2 (>= 0.72.2), librbd1 (>= 19.2.0~git20240301.4c76c50-0ubuntu4), libssh-4 (>= 0.8.4), qemu-system-any (= 1:8.2.2+ds-0ubuntu1) | qemu-utils (= 1:8.2.2+ds-0ubuntu1)
+Enhances: qemu-system-arm, qemu-system-mips, qemu-system-misc, qemu-system-sparc, qemu-system-x86, qemu-utils
+Filename: pool/main/q/qemu/qemu-block-extra_8.2.2+ds-0ubuntu1_amd64.deb
+Size: 109956
+MD5sum: 0f47ede81b03406b19deeb2f03e59be5
+SHA1: 95f1dd77d70a09aeedb87a16aa7dc375b3d037b3
+SHA256: 4ea245125a0c728646d259d47eba1ec937f9b21909ad6043ac75fc27a38a24af
+SHA512: e55fff20cfae9cf96bf6eabfea5cf30dbd44bee88c8187c8cd4a07c4990cfa246764193668a9cf5350fe895549425c4caf12297892d277a41913e5d4d73e6fba
+Homepage: http://www.qemu.org/
+Description: extra block backend modules for qemu-system and qemu-utils
+Description-md5: b5e1c6baef0716841da073a7551acbc5
+

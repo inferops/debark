@@ -1,0 +1,34 @@
+Package: adduser
+Status: install ok installed
+Priority: important
+Section: admin
+Installed-Size: 686
+Maintainer: Debian Adduser Developers <adduser@packages.debian.org>
+Architecture: all
+Multi-Arch: foreign
+Version: 3.134
+Depends: passwd
+Description: add and remove users and groups
+ This package includes the 'adduser' and 'deluser' commands.
+
+Package: apt
+Status: install ok installed
+Priority: important
+Section: admin
+Installed-Size: 4321
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: amd64
+Version: 2.8.3
+Description: commandline package manager
+ This package provides commandline tools for searching and managing
+ as well as querying information about packages.
+
+Package: base-files
+Status: install ok installed
+Priority: required
+Section: admin
+Installed-Size: 90
+Maintainer: Santiago Vila <sanvila@debian.org>
+Architecture: amd64
+Version: 13ubuntu10.2
+Description: Ubuntu base system miscellaneous files

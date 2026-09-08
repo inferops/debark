@@ -1,0 +1,45 @@
+/*
+ * virtual-provides — virtual packages and Provides.
+ *
+ * Protects: the edge-fixture list, "virtual packages and
+ * Provides". A request can depend on a name that is never itself a real
+ * package — only ever satisfied by some other package's `Provides:` line
+ * (the classic real-world case is mail-transport-agent; here a synthetic
+ * pair proves the mechanism without depending on which real MTA a given
+ * archive snapshot currently offers). Both the provider and the dependent
+ * are staged together as vendor .deb inputs so apt resolves the virtual
+ * name entirely within one `apt-get install --download-only` pass, exactly
+ * as the design describes for external inputs.
+ *
+ * What would break if this regressed: any real request naming a virtual
+ * package (mail-transport-agent, default-jre, x-terminal-emulator, and
+ * hundreds more across the archive) would fail to resolve, or debark's
+ * lock/manifest would record the wrong provider if some layer guessed
+ * instead of asking apt.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "virtual-provides",
+  "protects": "edge fixtures: virtual packages and Provides",
+  "tags": ["edge"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "vendor_debs": [
+      { "name": "acme-provider", "version": "1.0", "provides": "acme-virtual-service", "bin": true },
+      { "name": "acme-app", "version": "1.0", "depends": "acme-virtual-service", "bin": true }
+    ]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-app", "acme-provider"],
+    "binaries": [
+      { "path": "/usr/bin/acme-app", "exit_code": 0, "stdout_contains": "acme-app 1.0" },
+      { "path": "/usr/bin/acme-provider", "exit_code": 0, "stdout_contains": "acme-provider 1.0" }
+    ]
+  }
+}

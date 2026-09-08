@@ -1,0 +1,75 @@
+# Root help and a sample of subcommand help screens, run against the real
+# debark binary shimmed into $PATH by TestMain (testscript.Main).
+
+exec debark --help
+stdout 'Usage:'
+stdout 'Available Commands:'
+stdout 'snapshot'
+stdout 'build'
+stdout 'verify'
+stdout 'install'
+
+exec debark -h
+stdout 'Usage:'
+
+# A group command's help lists its subcommands.
+exec debark snapshot --help
+stdout 'Usage:'
+stdout 'create'
+stdout 'inspect'
+
+exec debark store --help
+stdout 'gc'
+stdout 'ls'
+
+exec debark config --help
+stdout 'init'
+stdout 'show'
+stdout 'path'
+
+# A leaf command's help shows its own flags.
+exec debark build --help
+stdout 'Usage:'
+stdout '--snapshot'
+stdout '--backend'
+stdout '--sign'
+
+exec debark verify --help
+stdout 'Usage:'
+stdout '--allow-unsigned'
+
+exec debark install --help
+stdout '--status'
+stdout '--dry-run'
+
+# --keep-source's help names what it does to the machine, not just the
+# mechanism: it leaves a permanent, never-re-verified Trusted: yes apt
+# source behind (docs/security-model.md, "--keep-source leaves a
+# permanently trusted apt source behind").
+stdout 'Trusted: yes'
+stdout 'unverified'
+
+# --no-keyrings must not send an operator looking for a build-side flag that
+# does not exist. `build` has no --release, and nothing on the builder can
+# supply the key material a --no-keyrings snapshot left out; what it costs
+# is the Signed-By pinning and --approved-keys.
+exec debark snapshot create --help
+stdout '--no-keyrings'
+stdout '--approved-keys'
+! stdout '--release'
+
+# Hidden debugging commands are not runnable through a typo, but they do
+# work, and document their own contract.
+exec debark resolve --help
+stdout 'Usage:'
+stdout 'resolve-contract.md'
+
+exec debark fetch --help
+stdout 'Usage:'
+
+exec debark apt-root inspect --help
+stdout 'Usage:'
+
+exec debark keygen --help
+stdout '--out'
+stdout '--comment'

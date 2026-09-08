@@ -1,0 +1,269 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+#
+# debark release configuration (the CLI half).
+#
+# Validate locally:  goreleaser check          (or: make snapshot, see below)
+# Local dry run:      make snapshot             == goreleaser release --snapshot --clean
+# Real release:       push a "vX.Y.Z" tag; .github/workflows/release.yml runs
+#                      `goreleaser release --clean` from that tag.
+#
+# ONE REPOSITORY, TWO GORELEASER CONFIGS, ONE RELEASE.
+# This monorepo ships two products from one tag: the `debark` CLI (this file)
+# and the `debark-gui` desktop application (gui/.goreleaser.yaml). GoReleaser's
+# built-in `monorepo:` support is Pro-only, so the flow is explicit instead:
+# release.yml runs THIS config first — it creates the GitHub release for the tag
+# — and then runs gui/.goreleaser.yaml, which finds the existing release and
+# adds its artefacts and its own notes to it (`release.mode: append` there).
+# Two consequences are load-bearing and are why this file looks the way it does:
+#
+#   1. No two artefacts across the two configs may share a filename. GitHub
+#      answers a duplicate asset upload with 422 and goreleaser treats that as
+#      unrecoverable, so a collision is a failed release, not a warning. Every
+#      archive/package name is already prefixed with its own {{ .ProjectName }};
+#      `checksums.txt` was the one exception, and it is now project-scoped too
+#      (`debark_checksums.txt` here, `debark-gui_checksums.txt` there).
+#   2. `release.github` is deliberately NOT set. With it empty, goreleaser
+#      derives owner/name from the git remote (`git ls-remote --get-url`), so
+#      both configs release into whatever repository the checkout came from and
+#      neither has to be edited if the repository moves. The previous hardcoded
+#      `owner: debark` pointed at a repository that does not exist.
+#
+# Reproducibility (docs/dev/contract-brief.md rule 2):
+# CGO_ENABLED=0, -trimpath, the Go toolchain pinned by go.mod, and
+# mod_timestamp/SOURCE_DATE_EPOCH both derived from the release commit's own
+# timestamp — never a wall-clock build time or a host path. Two builds of the
+# same tag must produce byte-identical binaries; hack/reproducible-check.sh
+# proves it by building the same target twice and diffing the digests, and
+# release.yml runs it before anything is published.
+#
+# No telemetry, analytics or update-check code exists anywhere in this
+# pipeline or the binary it produces (contract-brief.md rule 3).
+
+version: 2
+
+project_name: debark
+
+before:
+  hooks:
+    - go mod verify
+    # Regenerate shell completions and man pages from the CLI's own command
+    # tree so the release archives and the .deb/.rpm packages ship the current
+    # help text. Both generators are real, verified subcommands of cmd/debark:
+    # `completion <shell>` is cobra's own (four shells, all exercised by
+    # internal/cli/cli_surface_test.go) and `gen-manpages DIR` is the hidden
+    # packaging command in internal/cli/cmd_genmanpages.go.
+    #
+    # NOTE the name: it is `gen-manpages`, not `man`. This hook used to say
+    # `go run ./cmd/debark man ./man`, which exits non-zero with
+    # `unknown command "man" for "debark"` — it would have failed every release
+    # at its first step. The Makefile's `man` target still has the same bug.
+    #
+    # The output paths are exactly the ones the nfpms `contents:` list below
+    # reads: man/debark.1 and completions/debark.{bash,zsh,fish,powershell}.
+    # Both directories are gitignored — build output, not source. Until those
+    # generators work this hook fails loudly rather than silently shipping
+    # stale or missing docs.
+    - sh -c 'mkdir -p completions man && for sh in bash zsh fish powershell; do go run ./cmd/debark completion "$sh" > "completions/debark.$sh"; done && go run ./cmd/debark gen-manpages ./man'
+
+builds:
+  - id: debark
+    main: ./cmd/debark
+    binary: debark
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    # Pin the embedded module timestamp to the release commit, not the
+    # machine doing the build.
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    ldflags:
+      - -s -w
+      - -X github.com/inferops/debark/core/version.Version={{ .Version }}
+      - -X github.com/inferops/debark/core/version.Commit={{ .FullCommit }}
+      - -X github.com/inferops/debark/core/version.Date={{ .CommitDate }}
+      # Edition=official: only this project's own release pipeline sets this
+      # (TRADEMARK.md, ADR-010). A build anyone else runs from the same
+      # source defaults to Edition=community — same behaviour, different
+      # provenance label. Edition is metadata, never a feature gate.
+      - -X github.com/inferops/debark/core/version.Edition=official
+    # Linux and Windows only, matching what CI actually tests
+    # (.github/workflows/matrix.yml) and what the desktop half of this
+    # repository can build at all.
+    #
+    # darwin/amd64 and darwin/arm64 were removed: nothing in this project runs
+    # on macOS, nothing tests it, and the Homebrew cask that was the only
+    # reason to publish those archives is gone (see the note below the nfpms
+    # block, where it used to be).
+    #
+    # linux/arm (armv7) and linux/riscv64 went with them: both were marked
+    # "best effort", neither was ever in the CI matrix, and every archive
+    # published is one somebody may reasonably report a bug against.
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - windows_amd64
+
+archives:
+  - id: debark
+    ids: [debark]
+    formats: [tar.gz]
+    # OS/arch naming compatible with `uname`, so a fetch script never has to
+    # special-case debark's own release naming. There is no `arm` branch any
+    # more: with armv7 dropped, GOARCH is the only thing that varies, so
+    # `{{ .Arch }}` alone is exact for every target above.
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - LICENSE
+      - NOTICE
+      - README.md
+      - CHANGELOG.md
+      - src: completions/*
+        dst: completions
+      - src: man/*
+        dst: man
+
+checksum:
+  # Project-scoped, NOT the default "checksums.txt". The GUI half of this
+  # repository publishes its own checksums file onto the same GitHub release,
+  # and two assets named "checksums.txt" is a 422 from GitHub and a failed
+  # release. It also removes a real footgun for anyone verifying by hand: with
+  # two products on one release page, `sha256sum -c checksums.txt
+  # --ignore-missing` against the wrong file exits 0 having checked nothing.
+  name_template: "{{ .ProjectName }}_checksums.txt"
+  algorithm: sha256
+
+# CycloneDX/SPDX SBOM per archive — a native, minimal CycloneDX writer, with
+# an optional syft exec for richer output. This is
+# the release pipeline's own supply-chain SBOM (what's inside the debark
+# binary's archive), a different thing from core/evidence's SBOM of a
+# *bundle* debark builds for someone else — both exist, neither is paywalled
+# (docs/free-paid-policy.md).
+sboms:
+  - id: archive-sbom
+    artifacts: archive
+    documents:
+      - "${artifact}.spdx.sbom.json"
+
+# Keyless cosign signing (Sigstore Fulcio/Rekor via GitHub Actions OIDC — see
+# release.yml's `id-token: write` permission). Signs the checksums file;
+# verifying its signature plus each artifact's digest against the checksums
+# file authenticates every artifact transitively. No private key is stored
+# anywhere. The .pem/.sig names follow the checksums file, so they are
+# project-scoped too and cannot collide with the GUI's.
+signs:
+  - id: checksums
+    cmd: cosign
+    certificate: "${artifact}.pem"
+    signature: "${artifact}.sig"
+    args:
+      - sign-blob
+      - --yes
+      - --output-certificate=${certificate}
+      - --output-signature=${signature}
+      - ${artifact}
+    artifacts: checksum
+    output: true
+
+# .deb / .rpm packages via nfpm (distribution
+# channels). This is debark's own release packaging, produced by nfpm —
+# unrelated to core/repository, which is the pure-Go writer debark itself
+# uses to build the apt repositories inside a *bundle*. (The desktop app's
+# .deb is deliberately NOT built by nfpm; gui/packaging/build-deb.sh owns it,
+# and gui/.goreleaser.yaml explains why at length.)
+nfpms:
+  - id: packages
+    ids: [debark]
+    package_name: debark
+    file_name_template: >-
+      {{ .PackageName }}_{{ .Version }}_{{ .Arch }}
+    vendor: The debark Authors
+    homepage: "https://github.com/inferops/debark"
+    maintainer: "The debark Authors <noreply@users.noreply.github.com>"
+    description: |
+      Move Debian/Ubuntu software across an air gap, correctly, and prove it.
+      Apache-2.0. No telemetry, ever.
+    license: Apache-2.0
+    formats:
+      - deb
+      - rpm
+    section: admin
+    priority: optional
+    # Every `src:` below is produced by the `before` hook at the top of this
+    # file, at exactly these paths — verified by running the hook: it writes
+    # man/debark.1 (plus 25 per-subcommand pages) and completions/debark.bash,
+    # .zsh, .fish and .powershell. A path mismatch here is a silent release
+    # failure, so if the generators ever change their output layout, change
+    # these with them.
+    contents:
+      - src: ./LICENSE
+        dst: /usr/share/doc/debark/LICENSE
+      - src: ./NOTICE
+        dst: /usr/share/doc/debark/NOTICE
+      - src: ./CHANGELOG.md
+        dst: /usr/share/doc/debark/CHANGELOG.md
+      - src: ./man/debark.1
+        dst: /usr/share/man/man1/debark.1
+      - src: ./completions/debark.bash
+        dst: /usr/share/bash-completion/completions/debark
+      - src: ./completions/debark.fish
+        dst: /usr/share/fish/vendor_completions.d/debark.fish
+      - src: ./completions/debark.zsh
+        dst: /usr/share/zsh/vendor-completions/_debark
+
+# There is no `homebrew_casks:` block here, on purpose.
+#
+# It used to publish a Cask to a `debark/homebrew-tap` repository. That
+# repository does not exist and this project does not own the `debark` GitHub
+# organisation, so the pipe could never have succeeded; worse, it templated
+# `{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}`, and goreleaser fails a release when
+# an `.Env` key it is asked for is unset. A Homebrew Cask is also macOS-only,
+# and macOS is no longer built (see the targets list above). If a tap is ever
+# wanted it needs a real repository and a real token first — and the darwin
+# targets back.
+
+changelog:
+  use: git
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+release:
+  # No `github: owner/name` block. goreleaser infers the repository from the
+  # git remote of the checkout it runs in, which is inferops/debark in CI, and
+  # stays correct if the repository is ever moved or renamed. The block that
+  # was here named `debark/debark`, which does not exist. See the header.
+  prerelease: auto
+  # `mode` is left at its default (keep-existing). This config runs FIRST and
+  # creates the release, so on a first run there is nothing to keep; on a
+  # re-run of the same tag it will not clobber the notes that
+  # gui/.goreleaser.yaml appended. That config sets `mode: append` — it is the
+  # other half of this decision.
+  footer: >-
+    ---
+
+
+    **Artifacts.** `debark_*` is the CLI: Linux amd64/arm64 and Windows amd64
+    archives, plus `.deb` and `.rpm` packages. `debark-gui_*` is the desktop
+    application, published onto this same release from this same tag. There are
+    no macOS builds.
+
+
+    **Verifying.** `debark_checksums.txt` covers every CLI artifact and is
+    signed with cosign in keyless mode; `debark_checksums.txt.sig` and
+    `debark_checksums.txt.pem` are its signature and certificate. The desktop
+    app has its own `debark-gui_checksums.txt`. Check each artifact against the
+    file for its own product — `sha256sum -c --ignore-missing` against the
+    wrong one exits 0 having verified nothing.
+
+
+    debark {{ .Tag }} — Apache-2.0, forever. No telemetry, no analytics, no
+    update check, in any edition. See
+    [docs/free-paid-policy.md](https://github.com/inferops/debark/blob/main/docs/free-paid-policy.md)
+    for exactly what stays free.

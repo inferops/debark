@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/buildjob/v1",
+  "title": "debark build job v1",
+  "description": "debark.buildjob/v1 - the job model that keeps the resolution/build engine callable by something other than the CLI: BuildRequest in, BuildResult out. Neither document is ever written into a bundle; both are wire/API objects a caller (the CLI today, a scheduler later) exchanges with the engine. A document validating against this schema is exactly one of the two shapes below, never a mix of their fields.",
+  "oneOf": [
+    { "$ref": "#/$defs/BuildRequest" },
+    { "$ref": "#/$defs/BuildResult" }
+  ],
+  "$defs": {
+    "BuildRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "snapshot_ref", "inputs", "options", "output"],
+      "properties": {
+        "schema_version": { "const": "debark.buildjob/v1", "description": "Fixed schema identifier; always debark.buildjob/v1." },
+        "snapshot_ref": { "type": "string", "description": "Path to a snapshot archive or an already-extracted snapshot directory, resolved by the caller before the engine sees it." },
+        "inputs": { "$ref": "#/$defs/Inputs", "description": "What the operator asked for: packages, URLs, files and directories." },
+        "options": { "$ref": "#/$defs/Options", "description": "Knobs that change what apt is asked and what is written." },
+        "output": { "$ref": "#/$defs/Output", "description": "Where the bundle goes and how it is signed." }
+      }
+    },
+    "Inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "packages": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*(=.+)?$" },
+          "description": "apt package names, optionally name=version."
+        },
+        "urls": { "type": "array", "items": { "$ref": "#/$defs/URLInput" }, "description": "https:// URLs to vendor .deb files." },
+        "files": { "type": "array", "items": { "type": "string" }, "description": "Local .deb paths." },
+        "local_dirs": { "type": "array", "items": { "type": "string" }, "description": "Directories scanned for .deb files." },
+        "list_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "packages.txt-style list files that were expanded into the fields above; recorded for provenance."
+        }
+      }
+    },
+    "URLInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
+      "properties": {
+        "url": { "type": "string", "format": "uri", "description": "https:// URL of a vendor .deb file." },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Operator-supplied expected digest. When present, this file's publisher_verification is upgraded from url-unverified to user-digest."
+        }
+      }
+    },
+    "Options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommends": { "type": "boolean", "description": "Overrides the target's apt.conf Install-Recommends. Absent means follow the target's own setting." },
+        "upgrades": { "type": "boolean", "description": "Adds a full-upgrade pass for packages already installed on the target." },
+        "update_mode": {
+          "type": "string",
+          "enum": ["additive", "refresh"],
+          "description": "additive (default) adds what is missing and touches nothing else; refresh (--update) re-resolves, re-fetches and then prunes."
+        },
+        "prune": { "type": "boolean", "description": "Removes superseded files in refresh mode. User-supplied files are never pruned regardless of this value." },
+        "arch_override": { "type": "string", "description": "Resolve for a different architecture than the snapshot's." },
+        "mirror_overrides": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Maps an original URI prefix to a replacement, for an internal mirror. Recorded in the lock."
+        },
+        "backend": {
+          "type": "string",
+          "enum": ["auto", "local", "container"],
+          "description": "Which apt runs the resolution. auto picks local or container at request time; the lock never records auto (see lock.v1's resolver.backend)."
+        },
+        "image": { "type": "string", "description": "Overrides the container image for the container backend." },
+        "policy_ref": { "type": "string", "description": "Path to a local debark.policy/v1 file." },
+        "approved_keys_ref": { "type": "string", "description": "Path to an organisation-approved archive key fingerprint list that resolution must satisfy." },
+        "acknowledge_redistribution": { "type": "boolean", "description": "Suppresses the interactive redistribution prompt. The warnings are still recorded regardless." },
+        "embed_binary": { "type": "string", "description": "Path to a debark target binary to copy into the bundle." },
+        "sbom": { "type": "boolean", "description": "Writes sbom.cdx.json into the bundle." },
+        "store_dir": { "type": "string", "description": "Overrides the content-addressed store location." },
+        "closed_world_check": { "type": "boolean", "description": "Runs the pre-export offline resolution proof. Defaults to true; only a debugging flag turns it off." }
+      }
+    },
+    "Output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sign"],
+      "properties": {
+        "path": { "type": "string", "description": "Output path for the bundle." },
+        "format": { "type": "string", "enum": ["dir", "tar"], "description": "Shape of the produced bundle: a directory tree, or a single tar.zst archive." },
+        "sign": {
+          "$ref": "#/$defs/SignOptions",
+          "description": "Signer selection. Always present in the emitted JSON, possibly as an empty object: encoding/json's omitempty has no effect on a non-pointer struct field (see docs/formats.md)."
+        }
+      }
+    },
+    "SignOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "signer_ref": { "type": "string", "description": "Names the key: a path to an ed25519 private key, gpg:<keyid>, or plugin:<name>." },
+        "required": { "type": "boolean", "description": "Fails the build when signing is impossible. When false and no signer is configured, the bundle is written unsigned and the fact is recorded." },
+        "repo_signer_ref": { "type": "string", "description": "Optionally signs the apt Release with a GPG key the target already trusts, producing InRelease/Release.gpg." }
+      }
+    },
+    "BuildResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "signed", "stats", "exit_class"],
+      "properties": {
+        "schema_version": { "const": "debark.buildjob/v1", "description": "Fixed schema identifier; always debark.buildjob/v1." },
+        "lock_ref": { "type": "string", "description": "Path to lock.json inside bundle_path." },
+        "manifest_ref": { "type": "string", "description": "Path to debark.manifest.json inside bundle_path." },
+        "bundle_path": { "type": "string", "description": "Where the bundle was written." },
+        "bundle_id": { "type": "string", "description": "Copy of the manifest's bundle_id." },
+        "signed": { "type": "boolean", "description": "True when at least one signature block was written." },
+        "stats": { "$ref": "#/$defs/ResultStats", "description": "Summary printed after the build and recorded in the lock." },
+        "warnings": { "type": "array", "items": { "type": "string" }, "description": "Human-facing warning sentences, already deduplicated." },
+        "unresolved": { "type": "array", "items": { "type": "string" }, "description": "Inputs apt could not satisfy." },
+        "fetch_failed": { "type": "array", "items": { "type": "string" }, "description": "External inputs that did not make it into the bundle: a URL that could not be downloaded, or a local .deb that could not be read. Each entry is the operator's literal input string, and says which input failed, never why. fetch_failures carries the reason, with one entry per entry here, in the same order." },
+        "fetch_failures": { "type": "array", "items": { "$ref": "#/$defs/FetchFailure" }, "description": "fetch_failed with the reason attached. Added as an optional field under the additive allowance in docs/formats.md 3.6; fetch_failed is deliberately not widened in place, because turning an array of string into an array of object is a meaning change and would force debark.buildjob/v2 on every existing consumer." },
+        "exit_class": {
+          "type": "string",
+          "enum": ["success", "usage", "environment", "incomplete", "verification", "resolution", "policy", "target-mismatch"],
+          "description": "Outcome class; mirrors core/dferr.Class as a stable string so a caller that never sees the process exit code still learns the outcome."
+        }
+      }
+    },
+    "FetchFailure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input", "reason"],
+      "properties": {
+        "input": { "type": "string", "description": "The operator's literal input string: a URL, or a local .deb path. Matches the corresponding entry in fetch_failed exactly, so the two can be joined. Deliberately not redacted, for the same reason fetch_failed is not - this is operator-facing summary data returned from the engine, never an artefact that ships inside the bundle, and the operator typed this string themselves and has to recognise it to retry." },
+        "reason": {
+          "type": "string",
+          "enum": ["unreachable", "tls-untrusted", "http-status", "digest-mismatch", "not-a-deb", "too-large", "refused-redirect", "unreadable", "cancelled", "bad-input", "local-storage", "other"],
+          "description": "Machine-readable classification; mirrors api/buildjob/v1.FetchFailureReasons() exactly. Each member maps to a distinct operator action, which is the test for adding one. Reasons are additive, so a reader must have a default arm and should treat an unknown value as \"other\"."
+        },
+        "detail": { "type": "string", "description": "One-line human explanation, already passed through core/fetch.RedactMessage so it is safe to print, log and store. Absent when the reason says everything there is to say." }
+      }
+    },
+    "ResultStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed", "unchanged", "bytes", "downloaded_bytes", "package_count"],
+      "properties": {
+        "added": { "type": "integer", "minimum": 0, "description": "Files newly added to the bundle by this run." },
+        "removed": { "type": "integer", "minimum": 0, "description": "Files removed (pruned) by this run." },
+        "unchanged": { "type": "integer", "minimum": 0, "description": "Files already present and untouched by this run." },
+        "bytes": { "type": "integer", "minimum": 0, "description": "Total bytes in the resulting bundle pool." },
+        "downloaded_bytes": { "type": "integer", "minimum": 0, "description": "Bytes that actually crossed the network this run." },
+        "package_count": { "type": "integer", "minimum": 0, "description": "Number of packages in the resulting bundle." },
+        "duration_seconds": { "type": "integer", "minimum": 0, "description": "Wall-clock duration of the build, when measured." }
+      }
+    }
+  }
+}

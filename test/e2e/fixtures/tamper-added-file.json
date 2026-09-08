@@ -1,0 +1,43 @@
+/*
+ * tamper-added-file — corrupted bundle: an extra file was added.
+ *
+ * Protects: the tamper matrix ("added file"). The harness writes
+ * an extra file into repo/pool/ that the manifest never listed
+ * (test/e2e/harness/tamper.go's ApplyTamper). This exercises a specific,
+ * separately-named check in verify/iface.go's Verify ordering — step 5, "no
+ * unexpected file is present in the bundle" (verify.ProblemFileUnexpected)
+ * — distinct from tamper-modified-deb.json's per-file digest check and from
+ * tamper-removed-file.json's missing-file check: an attacker who *adds*
+ * something (a second, malicious .deb slipped into the pool, hoping a
+ * loosely-configured apt source picks it up) leaves every originally-listed
+ * file's digest untouched, so only an explicit "nothing extra is here"
+ * check catches it.
+ *
+ * What would break if this regressed: a bundle directory copied onto
+ * writable media between build and install (a common real workflow — the
+ * media sits in a drop folder, or is a mounted share) could have a package
+ * quietly added to its pool without the manifest or signature needing to
+ * change at all, and apt would index and potentially install it.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "tamper-added-file",
+  "protects": "tamper matrix: added file; verify.ProblemFileUnexpected",
+  "tags": ["edge", "tamper"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "verify": { "exit_class": "verification" },
+    "install": { "exit_class": "skip" }
+  },
+  "tamper": { "kind": "added-file" }
+}

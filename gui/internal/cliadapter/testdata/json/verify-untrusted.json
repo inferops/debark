@@ -1,0 +1,36 @@
+{
+  "schema_version": "debark.verifyreport/v1",
+  "checked_at": "2026-09-06T23:17:58Z",
+  "bundle_path": "C:/Users/operator/debark/.demo/bundle",
+  "bundle_id": "70b70224a13e5214",
+  "ok": false,
+  "signed": false,
+  "signatures": [
+    {
+      "signer_kind": "ed25519-file",
+      "key_id": "b04ccf5360e46cdc",
+      "algorithm": "ed25519",
+      "valid": false,
+      "trusted": false,
+      "detail": "signed by a key not present in the trusted key sources"
+    }
+  ],
+  "files_checked": 0,
+  "bytes_checked": 0,
+  "problems": [
+    {
+      "kind": "signature-untrusted",
+      "path": "debark.manifest.sig",
+      "message": "no signature verifies against a trusted key"
+    }
+  ],
+  "target": {
+    "distro_id": "debian",
+    "version_id": "12",
+    "codename": "bookworm",
+    "arch": "amd64"
+  },
+  "created_at": "2026-09-05T20:37:07Z",
+  "tool_version": "dev",
+  "edition": "community"
+}

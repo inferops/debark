@@ -1,0 +1,10 @@
+{
+  "name": "debark",
+  "version": "dev",
+  "commit": "94612f558cd26fa57d6c0185956ff153c5162833",
+  "date": "2026-09-06T22:20:14Z",
+  "edition": "community",
+  "go_version": "go1.26.0",
+  "platform": "windows/amd64",
+  "build_digest": "54cfa54b026b0b7323f789fa71d03950e15822b38a0e30defd807c08cc6592d3"
+}

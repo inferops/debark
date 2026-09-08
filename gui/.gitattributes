@@ -1,0 +1,40 @@
+# Line endings for the frontend assets, and why this file exists.
+#
+# There is no bundler here: hack/copyfrontend copies frontend/index.html,
+# frontend/src and frontend/wailsjs verbatim into frontend/dist, and main.go
+# embeds that directory with //go:embed. So whatever bytes are in the working
+# tree are the bytes that ship, character for character.
+#
+# That makes line endings load-bearing rather than cosmetic, and it was
+# measured rather than reasoned. WebKit's CSS tokenizer turns a CRLF inside a
+# multi-line custom-property value into TWO newlines in the computed value, so
+# `--font-family-ui` and `--font-family-mono` in src/design/tokens.css read
+# back different under `getComputedStyle` from a CRLF checkout than from an LF
+# one. The design work hit it by accident while proving that collapsing the
+# duplicated dark block onto light-dark() changed no computed value; its
+# equivalence evidence would have been wrong had it not noticed.
+#
+# This repository is developed on Windows as well as Linux, and Git for
+# Windows defaults to core.autocrlf=true. Without the rules below, a fresh
+# clone on Windows gets CRLF in every one of these files and embeds it. The
+# repository stores LF today, so this changes nothing for anyone; it stops it
+# changing later, silently, on somebody else's machine.
+frontend/**            text eol=lf
+
+# The Go toolchain, gofmt and every shell script in hack/ assume LF too, and a
+# CRLF shebang line is an execve failure that reads as "no such file".
+*.go                   text eol=lf
+*.sh                   text eol=lf
+*.md                   text eol=lf
+go.mod                 text eol=lf
+go.sum                 text eol=lf
+Makefile               text eol=lf
+
+# Packaging inputs are read by dpkg-deb, gzip and man on a Debian machine.
+# packaging/debark-gui.1 in particular is troff: man(7) tolerates CRLF badly
+# and lintian notices.
+packaging/**           text eol=lf
+
+# Binary, never converted and never diffed as text.
+*.png                  binary
+*.ico                  binary

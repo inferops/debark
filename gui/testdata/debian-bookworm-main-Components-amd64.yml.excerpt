@@ -1,0 +1,374 @@
+---
+File: DEP-11
+Version: '0.16'
+Origin: debian-bookworm-main
+MediaBaseUrl: https://appstream.debian.org/media/bookworm
+Time: 20230609T082314
+---
+Type: addon
+ID: eog-exif-display
+Package: eog-plugin-exif-display
+Extends:
+- eog.desktop
+Name:
+  he: הצגת Exif
+  fur: Schermi Exif
+  eu: Bistaratu Exif
+  ja: Exif データ表示
+  zh_CN: Exif 显示
+  pt_BR: Exibir Exif
+  de: Exif-Anzeige
+  oc: Afichatge Exif
+  pt: Mostrar exif
+  gl: Mostrar Exif
+  hr: Eksif prikaz
+  ro: Afișaj Exif
+  ru: Показывать данные EXIF
+  el: Εμφάνιση Exif
+  uk: Показ Exif
+  C: Exif Display
+  is: EXIF-birting
+  fr: Affichage Exif
+  lt: Exif vaizduoklis
+  sv: Exif-visning
+  sk: Zobrazenie údajov Exif
+  da: Exif-visning
+  ca: Visualitza l'EXIF
+  be: Паказваць даныя Exif
+  it: Visualizza Exif
+  ko: EXIF 표시
+  es: Pantalla Exif
+  sl: Prikaz Exif
+  en_GB: Exif Display
+  tr: Exif Görünümü
+  id: Tampilan Exif
+  cs: Zobrazení informací Exif
+  sr: Ексиф приказ
+  fi: Exif-näkymä
+  bs: Exif prikaz
+  lv: Exif attēlošana
+  hu: Exif megjelenítő
+  pl: Wyświetlanie danych Exif
+  sr@latin: Eksif prikaz
+  nl: Exif-weergave
+Summary:
+  he: הצגת תגיות Exif בלוח הצדי ואפשרי גם בשורת המצב
+  fur: Al mostre lis etichetis Exif intal panel laterâl e, se si vûl, te sbare di stât
+  eu: Exif etiketak bistaratzen ditu albo-panalean eta aukeran egoera-barran
+  ja: Exif タグをサイドパネルに表示します (オプションでステータスバーにも表示します)
+  zh_CN: 在侧面板和选择性地在状态栏里显示 Exif 标签
+  pt_BR: Exibe etiquetas Exif no painel lateral e, opcionalmente, a barra de status
+  de: Zeigt die Exif-Daten in der Seitenleiste und optional in der Statusleiste an
+  oc: Mòstra las balisas Exif pel panèl lateral e dins la barra d’estat, se demanda
+  pt: Mostrar etiquetas exif no painel lateral e, opcionalmente, a barra de estado
+  gl: Mostrar as etiquetas Exif no panel lateral e opcionalmente na barra de estado
+  hr: Prikazuje Exif oznake u bočnom panelu i neobavezno u traci stanja
+  ro: Afișează etichetele Exif în panoul lateral și opțional în bara de stare
+  ru: Показывать данные тегов EXIF в боковой панели и опционально в строке состояния
+  el: Εμφάνιση ετικετών Exif στην πλευρική στήλη και προαιρετικά στη γραμμή κατάστασης
+  uk: Показує мітки Exif на бічній панелі і, якщо вказано, на смужці стану
+  C: Displays Exif tags in the side panel and optionally the statusbar
+  is: Birtir EXIF-merkingar á hliðarspjaldi og mögulega í stöðustiku
+  fr: Affiche les balises Exif dans le panneau latéral et dans la barre d’état, si demandé
+  lt: Rodo Exif žymas šoniniame polangyje ir galimai būsenos juostoje
+  sv: Visar Exif-taggar i sidopanelen och valfritt även i statusraden
+  sk: Zobrazuje značky Exif v bočnom paneli a voliteľne v stavovej lište
+  da: Vis Exif-mærker i sidepanelet og eventuelt i statuslinjen
+  ca: Mostra les etiquetes Exif al panell lateral i opcionalment a la barra d'estat
+  be: Паказваць даныя Exif на бакавой панэлі і пры жаданні на панэлі стану
+  it: Visualizza le etichette Exif nel riquadro laterale e opzionalmente nella barra dello stato
+  ko: 가장자리 창에서 EXIF 태그를 표시하고, 선택에 따라 상태 표시줄에도 표시합니다
+  es: Muestra las etiquetas Exif en el panel lateral y, opcionalmente, en la barra de estado
+  sl: Omogoči prikaz oznak Exif v bočnem oknu in izbirno v vrstici stanja
+  en_GB: Displays Exif tags in the side panel and optionally the statusbar
+  tr: Exif etiketlerini yan panelde ve isteğe bağlı durum çubuğunda gösterir
+  id: Tampilkan tag Exif pada panel sisi dan secara opsional pada bilah status
+  cs: Zobrazí informace Exif v postranním panelu a volitelně ve stavové liště
+  sr: Прикажите Ексиф ознаке у бочној површи и по могућности у траци стања
+  fi: Näyttää Exif-tunnisteet sivupaneelissa ja valinnaisesti tilapalkissa
+  bs: Prikazuje Exif oznake na bočnoj ploči i eventualno na statusbaru
+  lv: Attēlo Exif tagus sānu rūtī un, iespējams, statusa joslā
+  hu: Megjeleníti az Exif címkéket az oldalsó panelen és opcionálisan az állapotsoron
+  pl: Wyświetla etykiety Exif w panelu bocznym i opcjonalnie na pasku stanu
+  sr@latin: Prikažite Eksif oznake u bočnoj površi i po mogućnosti u traci stanja
+  nl: Toont Exif-tags in het zijpaneel, en optioneel in de statusbalk
+ProjectLicense: GPL-2.0+
+Url:
+  homepage: https://wiki.gnome.org/Apps/EyeOfGnome/Plugins
+  bugtracker: https://gitlab.gnome.org/GNOME/eog-plugins/issues
+---
+Type: desktop-application
+ID: vdr-wlfe.desktop
+Package: xineliboutput-wlfe
+Name:
+  C: VDR X-Frontend
+Summary:
+  C: VDR Xineliboutput Client - Wayland-Frontend
+Description:
+  C: >-
+    <p>This Wayland remote frontend plays back streams provided by vdr-plugin-xineliboutput.</p>
+  da: >-
+    <p>Denne Wayland-eksterne brugerflade afspiller strømme tilbudt af vdr-plugin-xineliboutput.</p>
+  it: >-
+    <p>Questo frontend remoto per Wayland riproduce flussi forniti da vdr-plugin-xineliboutput.</p>
+  en: >-
+    <p>This Wayland remote frontend plays back streams provided by vdr-plugin-xineliboutput.</p>
+Categories:
+- AudioVideo
+- Video
+- Player
+- TV
+Icon:
+  cached:
+  - name: xineliboutput-wlfe_xineliboutput-wlfe.png
+    width: 64
+    height: 64
+Launchable:
+  desktop-id:
+  - vdr-wlfe.desktop
+---
+Type: addon
+ID: org.pwmt.zathura-cb
+Package: zathura-cb
+Extends:
+- org.pwmt.zathura
+Name:
+  C: Zathura-CB
+Summary:
+  C: Comic book plugin for zathura
+ProjectLicense: Zlib
+Url:
+  homepage: https://pwmt.org/projects/zathur-cb/
+---
+Type: desktop-application
+ID: io.github.sanger_pathogens.artemis.bamview
+Package: artemis
+Name:
+  C: bamview
+Summary:
+  C: standalone file viewer for genome sequencing data
+Description:
+  C: >-
+    <p>
+          BamView is an interactive Java application for visualising read-alignment data stored in BAM or CRAM files.
+        </p>
+ProjectLicense: GPL-3.0-only
+Categories:
+- Science
+- Biology
+- DataVisualization
+Keywords:
+  C:
+  - genomics
+Icon:
+  cached:
+  - name: artemis_helix.png
+    width: 48
+    height: 48
+  - name: artemis_helix.png
+    width: 64
+    height: 64
+  stock: helix
+Launchable:
+  desktop-id:
+  - bamview.desktop
+ContentRating:
+  oars-1.0: {}
+---
+Type: desktop-application
+ID: org.mrpt.rawlogviewer.desktop
+Package: mrpt-apps
+Name:
+  C: RawLogViewer
+Summary:
+  C: GUI to visualize and manipulate robotics datasets
+Description:
+  C: >-
+    <p>GUI to visualize and manipulate robotics datasets.</p>
+Categories:
+- Science
+- Robotics
+- ArtificialIntelligence
+Keywords:
+  C:
+  - mrpt
+  - dataset
+  - rawlog
+  - explore
+  - robotics
+  - browse
+Url:
+  homepage: https://www.mrpt.org/
+Icon:
+  cached:
+  - name: mrpt-apps_rawlogviewer.png
+    width: 64
+    height: 64
+  stock: rawlogviewer
+Launchable:
+  desktop-id:
+  - rawlogviewer.desktop
+Provides:
+  mediatypes:
+  - application/x-mrpt-rawlog
+Screenshots:
+- default: true
+  caption:
+    C: Application screenshot
+  thumbnails:
+  - url: org/mrpt/rawlogviewer.desktop/f7bf9e755ed242c41d2386ff73655506/screenshots/image-1_224x201.png
+    width: 224
+    height: 201
+  source-image:
+    url: org/mrpt/rawlogviewer.desktop/f7bf9e755ed242c41d2386ff73655506/screenshots/image-1_orig.png
+    width: 500
+    height: 450
+---
+Type: addon
+ID: io.github.Hexchat.Plugin.Lua
+Package: hexchat-lua
+Extends:
+- io.github.Hexchat.desktop
+Name:
+  C: Lua Plugin
+Summary:
+  C: Provides a scripting interface in Lua
+ProjectLicense: MIT
+Url:
+  homepage: https://hexchat.github.io/
+---
+Type: addon
+ID: libretro-gambatte
+Package: libretro-gambatte
+Extends:
+- org.gnome.Games.desktop
+- retroarch.desktop
+Name:
+  C: Gambatte
+Summary:
+  C: Game Boy and Game Boy Color emulator
+ProjectLicense: GPL-2.0+
+Url:
+  homepage: https://github.com/libretro/gambatte-libretro
+---
+Type: desktop-application
+ID: com.kroah.usbview
+Package: usbview
+Name:
+  C: USBView
+Summary:
+  C: A USB device tree viewer
+Description:
+  C: >-
+    <p>
+          USBView is a small application to show what the device tree of the USB bus looks like.
+          It shows a graphical representation of the devices that are currently plugged in,
+          showing the topology of the USB bus.
+          It also displays information on each individual device on the bus.
+        </p>
+ProjectLicense: GPL-2.0-only
+Categories:
+- System
+- HardwareSettings
+- Monitor
+Keywords:
+  C:
+  - USB
+  - devices
+  - connected
+  - removable
+Icon:
+  cached:
+  - name: usbview_usbview.png
+    width: 48
+    height: 48
+  - name: usbview_usbview.png
+    width: 64
+    height: 64
+  - name: usbview_usbview.png
+    width: 128
+    height: 128
+  remote:
+  - url: com/kroah/usbview/0601dc5ab886dbb0bf852e16b5f87470/icons/128x128/usbview_usbview.png
+    width: 128
+    height: 128
+  stock: usbview
+Launchable:
+  desktop-id:
+  - usbview.desktop
+ContentRating: {}
+---
+Type: addon
+ID: org.pwmt.zathura-pdf-poppler
+Package: zathura-pdf-poppler
+Extends:
+- org.pwmt.zathura
+Name:
+  C: Zathura-PDF-Poppler
+Summary:
+  C: PDF plugin for zathura based on Poppler
+ProjectLicense: Zlib
+Url:
+  homepage: https://pwmt.org/projects/zathura-pdf-poppler/
+---
+Type: codec
+ID: gstreamer1.0-gl
+Package: gstreamer1.0-gl
+Name:
+  C: GStreamer Multimedia Codecs
+Summary:
+  C: GStreamer plugins for GL
+  da: GStreamer-udvidelsesmoduler for GL
+  it: plugin GStreamer per GL
+  en: GStreamer plugins for GL
+---
+Type: generic
+ID: firmware-tomu
+Package: firmware-tomu
+Name:
+  C: firmware-tomu
+Summary:
+  C: Bootloader for the EFM32HG Tomu Board
+Description:
+  C: >-
+    <p>
+          Bootloader for the EFM32HG Tomu Board
+        </p>
+Provides:
+  modaliases:
+  - usb:v0483pCDABd*
+---
+Type: desktop-application
+ID: bcnc.desktop
+Package: bcnc
+Name:
+  en-US: bCNC
+  C: bCNC
+Summary:
+  C: bCNC Controller
+Description:
+  da: >-
+    <p>GrblHAL (tidligere GRBL) CNC-kommandosender, autoleveler, redigeringsprogram for g-code, digitizer, CAM og schweizerkniv
+    for alle dine CNC-behov.</p>
+  C: >-
+    <p>GrblHAL (formerly GRBL) CNC command sender, autoleveler, g-code editor, digitizer, CAM and swiss army knife for all
+    your CNC needs.</p>
+  en: >-
+    <p>GrblHAL (formerly GRBL) CNC command sender, autoleveler, g-code editor, digitizer, CAM and swiss army knife for all
+    your CNC needs.</p>
+Categories:
+- Science
+- Electronics
+- Engineering
+Keywords:
+  C:
+  - CNC
+  - PCB
+Icon:
+  cached:
+  - name: bcnc_bCNC.png
+    width: 64
+    height: 64
+Launchable:
+  desktop-id:
+  - bCNC.desktop

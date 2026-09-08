@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/policy/v1",
+  "title": "debark policy v1",
+  "description": "debark.policy/v1 - a local, operator-owned policy file evaluated against a resolved plan. Every field is optional: an empty policy is valid and finds nothing. This schema validates the JSON-equivalent structure of the policy file; debark's own policy files are conventionally authored as YAML, whose keys are identical to the json field names below.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version"],
+  "properties": {
+    "schema_version": { "const": "debark.policy/v1", "description": "Fixed schema identifier; always debark.policy/v1." },
+    "allow_components": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "When non-empty, the exhaustive list of archive components packages may come from (main, universe, ...). Anything else produces a finding at default_severity."
+    },
+    "deny_components": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Archive components that must not appear at all."
+    },
+    "allow_packages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Name glob patterns a package must match to be allowed."
+    },
+    "deny_packages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Name glob patterns a package must not match."
+    },
+    "require_signed_publisher": {
+      "type": "boolean",
+      "description": "When true, denies any file whose publisher_verification is url-unverified."
+    },
+    "allow_url_inputs": {
+      "type": "boolean",
+      "description": "Whether vendor URL inputs are permitted at all. Defaults to true when absent."
+    },
+    "approved_keys": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[0-9A-F]{40,64}$" },
+      "description": "Inline approved archive key fingerprint list, uppercase hex, equivalent to --approved-keys."
+    },
+    "deny_flags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["multiverse", "restricted", "non-free", "non-free-firmware", "network-postinst", "snap-shim", "dkms", "user-supplied"]
+      },
+      "description": "Denies any package carrying one of these lock flags."
+    },
+    "default_severity": {
+      "type": "string",
+      "enum": ["info", "warn", "deny"],
+      "description": "Severity applied to rules that do not state their own. Defaults to warn when absent."
+    }
+  }
+}

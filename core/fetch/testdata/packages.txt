@@ -1,0 +1,2483 @@
+# ===========================================================================
+# packages.txt - packages to bundle for the offline Ubuntu 26.04 desktop
+# ---------------------------------------------------------------------------
+# One entry per line. Blank lines and everything after "#" are ignored, so
+# inline comments are fine.
+#
+# ---------------------------------------------------------------------------
+# LINE SYNTAX
+# ---------------------------------------------------------------------------
+#   vlc                          a normal apt package (the default)
+#   vlc=3.0.21-1build1           pinned to an exact version
+#   apt:vlc                      the same as plain "vlc", written explicitly
+#
+#   https://host/path/x.deb      download this .deb AND resolve+download
+#                                everything it depends on
+#   url:https://host/get?fmt=deb same, for URLs that do not end in .deb
+#
+#   ./local-debs/zoom.deb        a .deb you already downloaded by hand; its
+#   /abs/path/x.deb              dependencies are resolved and downloaded too
+#   file:some/path.deb           the same, written explicitly
+#
+# Relative paths are resolved against the folder holding this file. Anything
+# you drop in ./local-debs/ next to this file is picked up automatically - you
+# do not have to list it. That is the easy way to feed the vendor .deb files
+# listed in the "not in apt" blocks below into the bundle, dependencies and all.
+#
+# Examples (uncomment to use):
+#   https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#   url:https://discord.com/api/download?platform=linux&format=deb
+#   ./local-debs/code_amd64.deb
+#
+# SIZE WARNING: the full active list resolves to roughly 12-20 GB of .deb files
+# once dependencies and Recommends are pulled in. Trim the sections you do not
+# need, or build with --no-recommends to cut it down substantially.
+#
+# VALIDATE THE LIST FIRST (on an online machine, before building the bundle):
+#     apt-get install --dry-run -qq $(sed 's/#.*//' packages.txt | awk 'NF{print $1}') \
+#         2>&1 | grep -i "unable to locate"
+# apt aborts on the first unknown name, so removing typos up front saves a
+# wasted download run.
+#
+# ---------------------------------------------------------------------------
+# EVERY SECTION ENDS WITH A "not in apt" BLOCK
+# ---------------------------------------------------------------------------
+# Those are commented pointers to software that is NOT in the Ubuntu archive.
+# Marked by how the vendor ships it:
+#     repo      an apt repository  <- ALWAYS PREFER THIS
+#     deb       a standalone .deb file you download by hand
+#     App       an AppImage: one executable, just copy it to the target
+#     tgz/zip   an archive to unpack by hand
+#     sh/run    a vendor installer script
+#
+# For a vendor REPO: add it to the OFFLINE machine's /etc/apt/sources.list.d/,
+# re-run snapshot-target.sh, and the normal flow resolves its dependencies for
+# you. This is by far the best option.
+#
+# For a standalone .deb:
+#     1. build the bundle:  ./download-packages.sh --state target-state.tar.gz
+#     2. drop the .deb files into  offline-bundle/debs/
+#     3. re-run the exact same command - it re-indexes debs/ and picks them up
+#     4. on the target:     sudo ./install-offline.sh --all
+#   A loose .deb's dependencies are NOT resolved for you. If apt reports one
+#   missing, add that name to this file and rebuild the bundle.
+#
+# Direct download URLs move around; where a URL looks fragile the vendor's
+# download page is given instead. Verify checksums/signatures where offered.
+#
+# See the very bottom for packages that DOWNLOAD during install and therefore
+# FAIL on an offline machine.
+# ===========================================================================
+
+
+# ===========================================================================
+# CORE SYSTEM AND CLI UTILITIES
+# ===========================================================================
+coreutils
+util-linux
+bsdextrautils
+bsdmainutils
+debianutils
+findutils
+grep
+sed
+gawk
+diffutils
+patch
+file
+which
+less
+most
+bc
+dc
+num-utils
+datamash
+miller
+csvkit
+moreutils
+parallel
+rename
+renameutils
+mmv
+time
+watch
+psmisc
+procps
+lsof
+strace
+ltrace
+sysstat
+acl
+attr
+uuid-runtime
+pv
+progress
+entr
+inotify-tools
+at
+cron
+anacron
+logrotate
+rsyslog
+lnav
+multitail
+plocate
+tree
+ncdu
+duf
+dos2unix
+recode
+uchardet
+expect
+rlwrap
+dialog
+whiptail
+hexedit
+colordiff
+wdiff
+icdiff
+fdupes
+rdfind
+jdupes
+rmlint
+trash-cli
+symlinks
+stow
+deborphan
+xdg-utils
+desktop-file-utils
+shared-mime-info
+lsb-release
+apt-utils
+manpages
+man-db
+texinfo
+locales
+tzdata
+console-setup
+asciinema
+figlet
+toilet
+lolcat
+cowsay
+fortune-mod
+sl
+cmatrix
+# --- not in apt ------------------------------------------------------------
+#   fastfetch        deb   https://github.com/fastfetch-cli/fastfetch/releases
+#   duf              deb   https://github.com/muesli/duf/releases
+#   dust             deb   https://github.com/bootandy/dust/releases
+#   procs            deb   https://github.com/dalance/procs/releases
+#   sd               tgz   https://github.com/chmln/sd/releases
+#   gdu              tgz   https://github.com/dundee/gdu/releases
+#   tealdeer         tgz   https://github.com/tealdeer-rs/tealdeer/releases
+
+
+# ===========================================================================
+# SHELL, TERMINAL AND MODERN CLI REPLACEMENTS
+# ===========================================================================
+bash
+bash-completion
+dash
+zsh
+zsh-syntax-highlighting
+zsh-autosuggestions
+fish
+ksh
+tcsh
+xonsh
+powerline
+fonts-powerline
+tmux
+tmate
+screen
+byobu
+mc
+ranger
+nnn
+fzf
+ripgrep
+fd-find
+bat
+eza
+jq
+yq
+htop
+btop
+bpytop
+atop
+glances
+iotop
+iftop
+nmon
+s-tui
+hyperfine
+neofetch
+autojump
+zoxide
+direnv
+starship
+thefuck
+httpie
+gnome-terminal
+konsole
+xfce4-terminal
+tilix
+terminator
+kitty
+alacritty
+foot
+guake
+yakuake
+rxvt-unicode
+xterm
+# --- not in apt ------------------------------------------------------------
+#   WezTerm          deb   https://github.com/wezterm/wezterm/releases
+#   Tabby            deb   https://github.com/Eugeny/tabby/releases
+#   Hyper            deb   https://github.com/vercel/hyper/releases
+#   Warp             deb   https://www.warp.dev/download
+#   Ghostty          deb   https://github.com/ghostty-org/ghostty/releases
+#   lazygit          tgz   https://github.com/jesseduffield/lazygit/releases
+#   lazydocker       tgz   https://github.com/jesseduffield/lazydocker/releases
+#   zellij           tgz   https://github.com/zellij-org/zellij/releases
+#   atuin            deb   https://github.com/atuinsh/atuin/releases
+
+
+# ===========================================================================
+# ARCHIVES AND COMPRESSION
+# ===========================================================================
+zip
+unzip
+unzip-doc
+7zip
+p7zip
+p7zip-full
+p7zip-rar
+unrar
+rar
+unar
+xz-utils
+bzip2
+pbzip2
+pigz
+lzip
+plzip
+pixz
+lzop
+zstd
+lz4
+zpaq
+arj
+lhasa
+cabextract
+unshield
+innoextract
+ncompress
+sharutils
+cpio
+tar
+libarchive-tools
+atool
+archivemount
+fuse-zip
+file-roller
+xarchiver
+ark
+engrampa
+zutils
+# --- not in apt ------------------------------------------------------------
+#   PeaZip           deb   https://peazip.github.io/peazip-linux.html
+
+
+# ===========================================================================
+# DISK, FILESYSTEM, BACKUP AND RECOVERY
+# ===========================================================================
+gparted
+gnome-disk-utility
+baobab
+filelight
+qdirstat
+agedu
+parted
+gdisk
+dosfstools
+exfatprogs
+ntfs-3g
+e2fsprogs
+xfsprogs
+btrfs-progs
+f2fs-tools
+jfsutils
+hfsprogs
+udftools
+zfsutils-linux
+bcache-tools
+thin-provisioning-tools
+multipath-tools
+open-iscsi
+nbd-client
+mtools
+lvm2
+mdadm
+snapper
+smartmontools
+gsmartcontrol
+hdparm
+nvme-cli
+disktype
+blktrace
+fio
+bonnie++
+testdisk
+ddrescue
+gddrescue
+safecopy
+partclone
+fsarchiver
+clonezilla
+extundelete
+ext4magic
+foremost
+scalpel
+nwipe
+dcfldd
+dc3dd
+rsync
+rclone
+unison
+syncthing
+nextcloud-desktop
+borgbackup
+vorta
+restic
+duplicity
+deja-dup
+rsnapshot
+rdiff-backup
+backintime-gnome
+luckybackup
+timeshift
+grsync
+udisks2
+udiskie
+autofs
+sshfs
+fuse3
+squashfs-tools
+genisoimage
+xorriso
+cdrdao
+wodim
+brasero
+usb-creator-gtk
+gnome-multi-writer
+woeusb
+# --- not in apt ------------------------------------------------------------
+#   balenaEtcher     deb   https://github.com/balena-io/etcher/releases
+#   Ventoy           tgz   https://github.com/ventoy/Ventoy/releases
+#   Insync           deb   https://www.insynchq.com/downloads
+#   Dropbox          deb   https://www.dropbox.com/install-linux
+#   MEGAsync         deb   https://mega.io/desktop
+#   pCloud Drive     App   https://www.pcloud.com/download-free-online-cloud-file-storage.html
+#   Syncthing        repo  https://apt.syncthing.net/
+#   Backblaze         -    no Linux client; rclone above covers B2
+
+
+# ===========================================================================
+# HARDWARE, DRIVERS, PRINTING AND SYSTEM INFORMATION
+# ===========================================================================
+lshw
+hwinfo
+inxi
+hardinfo2
+dmidecode
+pciutils
+usbutils
+lsscsi
+hwloc
+i2c-tools
+lm-sensors
+fancontrol
+psensor
+acpi
+acpica-tools
+upower
+powertop
+thermald
+tlp
+tlp-rdw
+cpufrequtils
+linux-cpupower
+cpuid
+msr-tools
+rasdaemon
+mcelog
+fwupd
+fwupd-signed
+ubuntu-drivers-common
+stress
+stress-ng
+memtester
+memtest86+
+sysbench
+laptop-detect
+read-edid
+edid-decode
+mesa-utils
+glmark2
+vulkan-tools
+clinfo
+ocl-icd-libopencl1
+intel-gpu-tools
+radeontop
+input-utils
+evtest
+joystick
+antimicrox
+solaar
+piper
+libimobiledevice-utils
+ifuse
+mtp-tools
+gvfs-backends
+gvfs-fuse
+v4l-utils
+v4l2loopback-dkms
+printer-driver-all
+printer-driver-cups-pdf
+foomatic-db
+openprinting-ppds
+hplip
+cups
+cups-bsd
+ipp-usb
+system-config-printer
+simple-scan
+sane-utils
+sane-airscan
+xsane
+# --- not in apt ------------------------------------------------------------
+#   NVIDIA driver    run   https://www.nvidia.com/en-us/drivers/  (prefer the
+#                          ubuntu-drivers / nvidia-driver-XXX debs instead)
+#   DisplayLink      run   https://www.synaptics.com/products/displaylink-graphics/downloads
+#   Brother printer  deb   https://support.brother.com/g/b/productsearch.aspx
+#   Epson printer    deb   https://download.ebz.epson.net/dsc/search/
+#   Canon printer    deb   https://www.canon.com/support/
+#   Logitech Options  -    no official Linux client; "solaar" above replaces it
+
+
+# ===========================================================================
+# FONTS
+# ===========================================================================
+fontconfig
+fontforge
+fonts-dejavu
+fonts-liberation
+fonts-liberation2
+fonts-freefont-ttf
+fonts-noto
+fonts-noto-mono
+fonts-noto-cjk
+fonts-noto-color-emoji
+fonts-noto-extra
+fonts-noto-ui-core
+fonts-firacode
+fonts-cascadia-code
+fonts-hack
+fonts-inconsolata
+fonts-jetbrains-mono
+fonts-terminus
+fonts-ubuntu
+fonts-cantarell
+fonts-crosextra-carlito
+fonts-crosextra-caladea
+fonts-open-sans
+fonts-roboto
+fonts-lato
+fonts-ebgaramond
+fonts-linuxlibertine
+fonts-lmodern
+fonts-texgyre
+fonts-urw-base35
+fonts-sil-gentium
+fonts-font-awesome
+fonts-symbola
+fonts-droid-fallback
+fonts-indic
+fonts-ipafont
+fonts-nanum
+fonts-wqy-zenhei
+fonts-hosny-amiri
+fonts-farsiweb
+unifont
+xfonts-base
+# --- not in apt ------------------------------------------------------------
+#   Nerd Fonts       zip   https://github.com/ryanoasis/nerd-fonts/releases
+#                          unzip into ~/.local/share/fonts && fc-cache -fv
+#   Google Fonts     zip   https://github.com/google/fonts
+#   MS core fonts     -    needs the network at install time, see the excluded
+#                          list at the bottom of this file
+
+
+# ===========================================================================
+# OFFICE AND PRODUCTIVITY
+# ===========================================================================
+libreoffice
+libreoffice-base
+libreoffice-gtk3
+libreoffice-java-common
+libreoffice-help-en-us
+libreoffice-style-breeze
+abiword
+gnumeric
+hunspell
+hunspell-en-us
+hunspell-en-gb
+hyphen-en-us
+mythes-en-us
+aspell
+aspell-en
+dictionaries-common
+evolution
+evolution-ews
+claws-mail
+mutt
+neomutt
+notmuch
+isync
+offlineimap3
+msmtp
+gnome-calendar
+gnome-contacts
+gnome-clocks
+gnome-weather
+gnome-maps
+gnome-calculator
+speedcrunch
+qalculate-gtk
+galculator
+units
+khal
+vdirsyncer
+remind
+taskwarrior
+timewarrior
+gnome-todo
+planner
+gnome-text-editor
+gedit
+gedit-plugins
+kate
+focuswriter
+ghostwriter
+zim
+cherrytree
+anki
+calibre
+sigil
+ebook-tools
+gnucash
+homebank
+xournalpp
+pdfarranger
+diffpdf
+pdfchain
+evince
+atril
+xreader
+okular
+zathura
+zathura-pdf-poppler
+mupdf
+mupdf-tools
+djvulibre-bin
+qpdf
+poppler-utils
+pdftk-java
+img2pdf
+unoconv
+wkhtmltopdf
+weasyprint
+ocrmypdf
+gscan2pdf
+tesseract-ocr
+tesseract-ocr-osd
+tesseract-ocr-eng
+tesseract-ocr-deu
+tesseract-ocr-fra
+tesseract-ocr-spa
+tesseract-ocr-ara
+tesseract-ocr-fas
+tesseract-ocr-chi-sim
+ghostscript
+pandoc
+texlive-latex-base
+texlive-latex-recommended
+texlive-latex-extra
+texlive-fonts-recommended
+texlive-xetex
+latexmk
+texstudio
+kile
+lyx
+jabref
+bibutils
+goldendict-ng
+translate-shell
+# --- not in apt ------------------------------------------------------------
+#   Obsidian         deb   https://obsidian.md/download
+#   Joplin           App   https://joplinapp.org/help/install/
+#   Logseq           App   https://github.com/logseq/logseq/releases
+#   Anytype          deb   https://download.anytype.io/
+#   Simplenote       deb   https://github.com/Automattic/simplenote-electron/releases
+#   Standard Notes   App   https://github.com/standardnotes/app/releases
+#   OnlyOffice       deb   https://www.onlyoffice.com/download-desktop.aspx
+#   WPS Office       deb   https://www.wps.com/office/linux/
+#   FreeOffice       deb   https://www.freeoffice.com/en/download/applications
+#   Master PDF Edit  deb   https://code-industry.net/free-pdf-editor/
+#   Foxit Reader     tgz   https://www.foxit.com/pdf-reader/
+#   Zotero           repo  https://github.com/retorquere/zotero-deb
+#   Mendeley         deb   https://www.mendeley.com/download-reference-manager/
+#   Thunderbird      repo  https://packages.mozilla.org/apt   (the archive's
+#                          "thunderbird" is a SNAP shim - see excluded list)
+#   Morgen           deb   https://morgen.so/download
+#   Notion            -    web only, no Linux client
+
+
+# ===========================================================================
+# GRAPHICS AND DESIGN
+# ===========================================================================
+gimp
+gimp-data-extras
+gimp-plugin-registry
+gimp-gmic
+gmic
+inkscape
+inkscape-open-symbols
+krita
+mypaint
+pinta
+drawing
+photoflare
+darktable
+rawtherapee
+digikam
+shotwell
+rapid-photo-downloader
+gthumb
+eog
+nomacs
+feh
+nsxiv
+imv
+imagemagick
+graphicsmagick
+optipng
+pngquant
+pngcrush
+jpegoptim
+webp
+gifsicle
+exiftool
+exiv2
+icc-profiles-free
+argyll
+hugin
+enblend
+luminance-hdr
+entangle
+scribus
+synfigstudio
+calligra
+blender
+freecad
+librecad
+openscad
+solvespace
+kicad
+meshlab
+povray
+xfig
+dia
+graphviz
+pstoedit
+potrace
+autotrace
+gcolor3
+gpick
+flameshot
+shutter
+gnome-screenshot
+peek
+kazam
+# --- not in apt ------------------------------------------------------------
+#   Figma             -    web only; unofficial desktop wrapper:
+#                          https://github.com/Figma-Linux/figma-linux/releases
+#   Penpot            -    self-hosted / web  https://penpot.app/
+#   Affinity suite    -    no Linux build
+#   Photopea          -    web only
+#   Aseprite         src   https://github.com/aseprite/aseprite  (build it)
+
+
+# ===========================================================================
+# MEDIA - PLAYBACK
+# ===========================================================================
+vlc
+vlc-plugin-access-extra
+mpv
+mpv-mpris
+smplayer
+celluloid
+totem
+kaffeine
+parole
+kodi
+rhythmbox
+audacious
+strawberry
+quodlibet
+elisa
+gnome-music
+cmus
+moc
+mpd
+mpc
+ncmpcpp
+mpg123
+sound-juicer
+asunder
+easytag
+picard
+pavucontrol
+easyeffects
+qpwgraph
+helvum
+carla
+jackd2
+qjackctl
+pipewire
+pipewire-audio
+wireplumber
+libspa-0.2-bluetooth
+pulseaudio-utils
+alsa-utils
+playerctl
+mediainfo
+mediainfo-gui
+ffmpegthumbnailer
+yt-dlp
+streamlink
+subtitleeditor
+gnome-subtitles
+aegisub
+cheese
+guvcview
+# --- not in apt ------------------------------------------------------------
+#   Spotify          repo  https://repository.spotify.com/
+#   Plex Media Srv   deb   https://www.plex.tv/media-server-downloads/
+#   Jellyfin         repo  https://repo.jellyfin.org/
+#   Emby Server      deb   https://emby.media/linux-server.html
+#   Stremio          deb   https://www.stremio.com/downloads
+#   Tidal (tidal-hifi) deb https://github.com/Mastermindzh/tidal-hifi/releases
+#   MakeMKV          src   https://www.makemkv.com/download/
+
+
+# ===========================================================================
+# MEDIA - CODECS AND CONVERSION
+# ===========================================================================
+ffmpeg
+libavcodec-extra
+gstreamer1.0-plugins-base
+gstreamer1.0-plugins-good
+gstreamer1.0-plugins-bad
+gstreamer1.0-plugins-ugly
+gstreamer1.0-libav
+gstreamer1.0-alsa
+gstreamer1.0-gl
+gstreamer1.0-x
+gstreamer1.0-gtk3
+gstreamer1.0-tools
+gstreamer1.0-vaapi
+gstreamer1.0-pipewire
+ubuntu-restricted-addons
+vainfo
+vdpauinfo
+intel-media-va-driver-non-free
+nvidia-vaapi-driver
+mesa-va-drivers
+mesa-vdpau-drivers
+x264
+x265
+vpx-tools
+svt-av1
+dav1d
+libfdk-aac2
+faad
+flac
+lame
+twolame
+wavpack
+shntool
+cuetools
+musepack-tools
+opus-tools
+vorbis-tools
+sox
+libsox-fmt-all
+id3v2
+atomicparsley
+mkvtoolnix
+mkvtoolnix-gui
+gpac
+libheif-examples
+libavif-bin
+libjxl-tools
+handbrake
+handbrake-cli
+soundconverter
+winff
+# --- not in apt ------------------------------------------------------------
+#   libdvdcss         -    not redistributable. "libdvd-pkg" builds it but
+#                          DOWNLOADS the source - see the excluded list.
+
+
+# ===========================================================================
+# MEDIA - EDITING AND RECORDING
+# ===========================================================================
+audacity
+ardour
+mixxx
+lmms
+hydrogen
+rosegarden
+qtractor
+musescore3
+zynaddsubfx
+yoshimi
+fluidsynth
+fluid-soundfont-gm
+timidity
+guitarix
+a2jmidid
+kdenlive
+pitivi
+openshot-qt
+shotcut
+flowblade
+obs-studio
+simplescreenrecorder
+vokoscreen-ng
+frei0r-plugins
+ladspa-sdk
+lsp-plugins
+calf-plugins
+x42-plugins
+zam-plugins
+dpf-plugins
+swh-plugins
+tap-plugins
+mda-lv2
+# --- not in apt ------------------------------------------------------------
+#   DaVinci Resolve  zip   https://www.blackmagicdesign.com/support/
+#   Reaper           tgz   https://www.reaper.fm/download.php
+#   Bitwig Studio    deb   https://www.bitwig.com/download/
+#   Renoise          tgz   https://www.renoise.com/download
+#   Audacity (new)   App   https://github.com/audacity/audacity/releases
+
+
+# ===========================================================================
+# BROWSERS
+# ---------------------------------------------------------------------------
+# NOTE: on Ubuntu, "firefox" and "chromium-browser" are transitional debs that
+# only install a SNAP - they are useless in an offline apt bundle. Everything
+# listed below is a real .deb in the Ubuntu archive.
+# ===========================================================================
+epiphany-browser
+falkon
+konqueror
+qutebrowser
+badwolf
+luakit
+surf
+netsurf-gtk
+lynx
+w3m
+w3m-img
+links2
+elinks
+# --- not in apt ------------------------------------------------------------
+#   Firefox (real)   repo  https://packages.mozilla.org/apt
+#   Google Chrome    deb   https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#   Microsoft Edge   repo  https://packages.microsoft.com/repos/edge
+#   Brave            repo  https://brave.com/linux/
+#                    deb   https://github.com/brave/brave-browser/releases
+#   Vivaldi          deb   https://vivaldi.com/download/
+#   Opera            repo  https://deb.opera.com/opera-stable
+#   LibreWolf        repo  https://librewolf.net/installation/debian/
+#   Waterfox         tgz   https://www.waterfox.net/download/
+#   Floorp           deb   https://github.com/Floorp-Projects/Floorp/releases
+#   Zen Browser      tgz   https://github.com/zen-browser/desktop/releases
+#   Min              deb   https://github.com/minbrowser/min/releases
+#   Ungoogled Chromium deb https://github.com/ungoogled-software/ungoogled-chromium-debian
+#   Tor Browser      tgz   https://www.torproject.org/download/  (do NOT use
+#                          torbrowser-launcher - it downloads at first run)
+
+
+# ===========================================================================
+# COMMUNICATION AND CHAT
+# ===========================================================================
+telegram-desktop
+hexchat
+weechat
+irssi
+polari
+konversation
+pidgin
+pidgin-otr
+dino-im
+gajim
+profanity
+nheko
+quaternion
+toxic
+mumble
+mumble-server
+linphone-desktop
+# --- not in apt ------------------------------------------------------------
+#   Signal Desktop   repo  https://updates.signal.org/desktop/apt
+#   Discord          deb   https://discord.com/api/download?platform=linux&format=deb
+#   Slack            deb   https://slack.com/downloads/instructions/linux
+#   Element (Matrix) repo  https://packages.element.io/debian
+#   Zoom             deb   https://zoom.us/client/latest/zoom_amd64.deb
+#   Teams (unoffic.) deb   https://github.com/IsmaelMartinez/teams-for-linux/releases
+#   Session          deb   https://github.com/session-foundation/session-desktop/releases
+#   Wire             deb   https://github.com/wireapp/wire-desktop/releases
+#   Mattermost       deb   https://mattermost.com/download/
+#   Rocket.Chat      deb   https://github.com/RocketChat/Rocket.Chat.Electron/releases
+#   Zulip            deb   https://zulip.com/apps/linux
+#   Ferdium          deb   https://github.com/ferdium/ferdium-app/releases
+#   Jami             repo  https://jami.net/download-jami-linux/
+#   WhatsApp          -    web only, no official Linux client
+
+
+# ===========================================================================
+# NETWORK - DIAGNOSTICS AND ANALYSIS
+# ===========================================================================
+net-tools
+iproute2
+iputils-ping
+iputils-tracepath
+iputils-arping
+fping
+hping3
+traceroute
+tcptraceroute
+mtr
+bind9-dnsutils
+bind9-host
+dnstracer
+ldnsutils
+knot-dnsutils
+whois
+ipcalc
+sipcalc
+netcat-openbsd
+netcat-traditional
+socat
+telnet
+tcpdump
+tshark
+wireshark
+termshark
+ngrep
+nmap
+zenmap
+zmap
+netdiscover
+arp-scan
+arping
+nbtscan
+ethtool
+iperf3
+netperf
+speedtest-cli
+bmon
+vnstat
+nload
+ifstat
+speedometer
+trickle
+wondershaper
+slurm
+darkstat
+iptraf-ng
+nethogs
+iptstate
+conntrack
+mitmproxy
+sslscan
+sslyze
+wavemon
+iwd
+snmp
+snmpd
+lldpd
+dnsmasq-utils
+# --- not in apt ------------------------------------------------------------
+#   Most modern Go/Rust network tools ship as static binaries on GitHub:
+#   bandwhich        tgz   https://github.com/imsnif/bandwhich/releases
+#   gping            deb   https://github.com/orf/gping/releases
+#   dog (dns)        tgz   https://github.com/ogham/dog/releases
+#   trippy           deb   https://github.com/fujiapple852/trippy/releases
+
+
+# ===========================================================================
+# NETWORK - TRANSFER, TORRENTS AND REMOTE ACCESS
+# ===========================================================================
+curl
+wget
+wget2
+aria2
+axel
+zsync
+lftp
+ftp
+ncftp
+tftp-hpa
+atftp
+filezilla
+curlftpfs
+davfs2
+magic-wormhole
+transmission-gtk
+transmission-cli
+transmission-daemon
+deluge
+qbittorrent
+rtorrent
+nicotine
+openssh-client
+openssh-server
+openssh-sftp-server
+autossh
+mosh
+sshpass
+remmina
+remmina-plugin-rdp
+remmina-plugin-vnc
+remmina-plugin-spice
+freerdp3-x11
+krdc
+tigervnc-viewer
+tigervnc-standalone-server
+x11vnc
+xrdp
+barrier
+input-leap
+kdeconnect
+gnome-connections
+gnome-remote-desktop
+minicom
+picocom
+putty
+putty-tools
+awscli
+s3cmd
+# --- not in apt ------------------------------------------------------------
+#   AnyDesk          deb   https://anydesk.com/en/downloads/linux
+#   TeamViewer       deb   https://www.teamviewer.com/en/download/linux/
+#   RustDesk         deb   https://github.com/rustdesk/rustdesk/releases
+#   NoMachine        deb   https://www.nomachine.com/download
+#   Parsec           deb   https://parsec.app/downloads
+#   Tailscale        repo  https://pkgs.tailscale.com/stable/
+#   ngrok            repo  https://ngrok.com/download
+#   Cloudflared      deb   https://github.com/cloudflare/cloudflared/releases
+#   Azure CLI        repo  https://packages.microsoft.com/repos/azure-cli
+#   Google Cloud SDK repo  https://packages.cloud.google.com/apt
+
+
+# ===========================================================================
+# NETWORK - VPN AND TUNNELLING
+# ===========================================================================
+openvpn
+openvpn-systemd-resolved
+network-manager-openvpn
+network-manager-openvpn-gnome
+wireguard
+wireguard-tools
+network-manager-l2tp
+network-manager-l2tp-gnome
+xl2tpd
+network-manager-openconnect
+network-manager-openconnect-gnome
+openconnect
+network-manager-vpnc
+vpnc
+network-manager-pptp
+pptp-linux
+network-manager-fortisslvpn
+network-manager-fortisslvpn-gnome
+openfortivpn
+network-manager-strongswan
+strongswan
+libreswan
+tinc
+n2n
+shadowsocks-libev
+sshuttle
+stunnel4
+proxychains4
+redsocks
+# --- not in apt ------------------------------------------------------------
+#   Mullvad VPN      deb   https://mullvad.net/en/download/vpn/linux
+#   ProtonVPN        deb   https://protonvpn.com/support/official-linux-vpn-ubuntu/
+#   NordVPN          deb   https://nordvpn.com/download/linux/
+#   ExpressVPN       deb   https://www.expressvpn.com/latest#linux
+#   Surfshark        repo  https://surfshark.com/download/linux
+#   ZeroTier         repo  https://www.zerotier.com/download/
+#   Tailscale        repo  https://pkgs.tailscale.com/stable/
+#   NetBird          repo  https://pkgs.netbird.io/
+
+
+# ===========================================================================
+# NETWORK - SHARING, SERVERS, DIRECTORY AND WIRELESS
+# ===========================================================================
+samba
+samba-common-bin
+smbclient
+cifs-utils
+nfs-common
+nfs-kernel-server
+nfs4-acl-tools
+netatalk
+minidlna
+rygel
+avahi-daemon
+avahi-utils
+avahi-discover
+nginx
+apache2
+lighttpd
+haproxy
+squid
+vsftpd
+proftpd-core
+tftpd-hpa
+postfix
+dovecot-core
+dovecot-imapd
+dnsmasq
+bind9
+unbound
+kea
+radvd
+bird2
+keepalived
+chrony
+slapd
+ldap-utils
+krb5-user
+sssd
+realmd
+adcli
+winbind
+libnss-winbind
+libpam-winbind
+cockpit
+network-manager
+network-manager-gnome
+netplan.io
+wpasupplicant
+wireless-tools
+wireless-regdb
+iw
+rfkill
+hostapd
+bluez
+bluez-tools
+bluez-obexd
+obexftp
+blueman
+modemmanager
+usb-modeswitch
+ppp
+# --- not in apt ------------------------------------------------------------
+#   Caddy            repo  https://caddyserver.com/docs/install
+#   Jellyfin         repo  https://repo.jellyfin.org/
+#   Pi-hole          sh    https://pi-hole.net/
+#   AdGuard Home     tgz   https://github.com/AdguardTeam/AdGuardHome/releases
+#   MongoDB          repo  https://www.mongodb.com/docs/manual/administration/install-on-linux/
+
+
+# ===========================================================================
+# ENCRYPTION AND KEY MANAGEMENT
+# ===========================================================================
+gnupg
+gnupg2
+dirmngr
+gnupg-pkcs11-scd
+signing-party
+gpa
+kleopatra
+seahorse
+paperkey
+pgpdump
+openssl
+gnutls-bin
+nettle-bin
+ca-certificates
+certbot
+python3-certbot-nginx
+python3-certbot-apache
+easy-rsa
+xmlsec1
+p11-kit
+cryptsetup
+cryptsetup-bin
+cryptmount
+clevis
+clevis-luks
+clevis-tpm2
+zulucrypt-gui
+ecryptfs-utils
+gocryptfs
+encfs
+age
+signify-openbsd
+minisign
+rhash
+md5deep
+cfv
+secure-delete
+wipe
+srm
+keepassxc
+pass
+pass-extension-otp
+qtpass
+pwgen
+diceware
+xkcdpass
+ssss
+oathtool
+libpam-google-authenticator
+libpam-mount
+libpam-u2f
+u2f-host
+libfido2-1
+fido2-tools
+yubikey-manager
+yubikey-personalization-gui
+yubico-piv-tool
+scdaemon
+pcscd
+pcsc-tools
+opensc
+opensc-pkcs11
+softhsm2
+keyutils
+haveged
+rng-tools5
+tpm2-tools
+tpm2-abrmd
+qrencode
+zbar-tools
+sbsigntool
+efitools
+# --- not in apt ------------------------------------------------------------
+#   VeraCrypt        deb   https://www.veracrypt.fr/en/Downloads.html
+#   Cryptomator      deb   https://cryptomator.org/downloads/
+#   Bitwarden        deb   https://bitwarden.com/download/
+#   1Password        deb   https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
+#   Proton Pass      deb   https://proton.me/pass/download
+#   Yubico Authent.  App   https://www.yubico.com/products/yubico-authenticator/
+#   age-plugin-yubikey tgz https://github.com/str4d/age-plugin-yubikey/releases
+#   sops             deb   https://github.com/getsops/sops/releases
+#   HashiCorp Vault  repo  https://apt.releases.hashicorp.com
+
+
+# ===========================================================================
+# SECURITY - HARDENING, FIREWALL AND ANTIVIRUS
+# ===========================================================================
+ufw
+gufw
+firewalld
+iptables
+iptables-persistent
+netfilter-persistent
+nftables
+ipset
+fail2ban
+sshguard
+knockd
+psad
+suricata
+arpwatch
+apparmor
+apparmor-utils
+apparmor-profiles
+apparmor-profiles-extra
+apparmor-notify
+libpam-apparmor
+auditd
+audispd-plugins
+aide
+aide-common
+libpam-pwquality
+libpam-tmpdir
+cracklib-runtime
+acct
+sudo
+policykit-1
+firejail
+firejail-profiles
+bubblewrap
+clamav
+clamav-daemon
+clamav-freshclam
+clamtk
+rkhunter
+chkrootkit
+unhide
+tiger
+lynis
+openscap-scanner
+debsums
+debian-goodies
+needrestart
+unattended-upgrades
+apt-listchanges
+apt-listbugs
+logwatch
+logcheck
+usbguard
+mokutil
+secureboot-db
+# --- not in apt ------------------------------------------------------------
+#   Nessus Essentials deb  https://www.tenable.com/downloads/nessus
+#   osquery          deb   https://github.com/osquery/osquery/releases
+#   Wazuh agent      repo  https://packages.wazuh.com/
+#   Falco            repo  https://falco.org/docs/setup/packages/
+#   CrowdStrike / SentinelOne  vendor-supplied licensed deb
+
+
+# ===========================================================================
+# SECURITY - AUDIT, FORENSICS AND REVERSE ENGINEERING
+# ===========================================================================
+nikto
+sqlmap
+dirb
+wfuzz
+whatweb
+wapiti
+skipfish
+hydra
+hydra-gtk
+medusa
+ncrack
+john
+john-data
+hashcat
+hashid
+crunch
+fcrackzip
+pdfcrack
+ophcrack
+chntpw
+samdump2
+aircrack-ng
+reaver
+kismet
+macchanger
+ettercap-text-only
+bettercap
+tcpflow
+tcpreplay
+dsniff
+p0f
+masscan
+onesixtyone
+enum4linux
+smbmap
+crackmapexec
+python3-impacket
+python3-pwntools
+binwalk
+sleuthkit
+autopsy
+guymager
+ewf-tools
+afflib-tools
+bulk-extractor
+volatility3
+yara
+ssdeep
+pev
+upx-ucl
+steghide
+outguess
+bless
+ghex
+okteta
+radare2
+rizin
+cutter
+gdb
+gdb-multiarch
+edb-debugger
+ltrace
+strace
+binutils
+binutils-multiarch
+patchelf
+checksec
+apktool
+dex2jar
+jadx
+android-tools-adb
+android-tools-fastboot
+# --- not in apt ------------------------------------------------------------
+#   Ghidra           zip   https://github.com/NationalSecurityAgency/ghidra/releases
+#   Burp Suite CE    sh    https://portswigger.net/burp/releases
+#   OWASP ZAP        tgz   https://github.com/zaproxy/zaproxy/releases
+#   IDA Free         run   https://hex-rays.com/ida-free/
+#   Binary Ninja     deb   https://binary.ninja/  (licensed)
+#   Metasploit       repo  https://apt.metasploit.com/
+#   Nuclei           zip   https://github.com/projectdiscovery/nuclei/releases
+#   ffuf             tgz   https://github.com/ffuf/ffuf/releases
+#   gobuster         tgz   https://github.com/OJ/gobuster/releases
+#   SecLists         zip   https://github.com/danielmiessler/SecLists
+
+
+# ===========================================================================
+# PRIVACY AND ANONYMITY
+# ===========================================================================
+tor
+tor-geoipdb
+torsocks
+nyx
+obfs4proxy
+i2pd
+yggdrasil
+gnunet
+onionshare
+privoxy
+dnscrypt-proxy
+stubby
+resolvconf
+mat2
+bleachbit
+nautilus-wipe
+opensnitch
+# --- not in apt ------------------------------------------------------------
+#   Tor Browser      tgz   https://www.torproject.org/download/
+#   Mullvad Browser  tgz   https://mullvad.net/en/download/browser/linux
+#   Proton Mail Bridge deb https://proton.me/mail/bridge
+#   Metadata Cleaner  -    flatpak only; mat2 above is the CLI equivalent
+
+
+# ===========================================================================
+# DEVELOPMENT - TOOLCHAIN AND BUILD
+# ===========================================================================
+build-essential
+gcc
+g++
+gcc-multilib
+g++-multilib
+libc6-dev-i386
+make
+cmake
+cmake-curses-gui
+cmake-qt-gui
+ninja-build
+meson
+autoconf
+automake
+autoconf-archive
+libtool
+pkg-config
+pkgconf
+ccache
+distcc
+icecc
+mold
+bear
+scons
+bison
+flex
+gperf
+swig
+nasm
+yasm
+gettext
+po4a
+intltool
+m4
+patchelf
+dpkg-dev
+debhelper
+dh-make
+devscripts
+fakeroot
+lintian
+piuparts
+autopkgtest
+pbuilder
+sbuild
+git-buildpackage
+dput
+reprepro
+equivs
+checkinstall
+alien
+flatpak-builder
+clang
+clang-format
+clang-tidy
+clangd
+lld
+lldb
+llvm
+llvm-dev
+libclang-dev
+gfortran
+gdb
+gdbserver
+rr
+valgrind
+massif-visualizer
+kcachegrind
+heaptrack
+sysprof
+linux-tools-common
+linux-tools-generic
+bpftrace
+bpfcc-tools
+gcovr
+lcov
+cppcheck
+flawfinder
+include-what-you-use
+astyle
+uncrustify
+indent
+shellcheck
+shfmt
+universal-ctags
+cscope
+global
+doxygen
+manpages-dev
+linux-headers-generic
+dkms
+crossbuild-essential-arm64
+crossbuild-essential-armhf
+gcc-arm-none-eabi
+gdb-arm-none-eabi
+picolibc-arm-none-eabi
+avr-libc
+avrdude
+openocd
+# --- not in apt ------------------------------------------------------------
+#   Bazel            repo  https://bazel.build/install/ubuntu
+#   Buf              deb   https://github.com/bufbuild/buf/releases
+#   sccache          tgz   https://github.com/mozilla/sccache/releases
+#   just             deb   https://github.com/casey/just/releases
+#   task (go-task)   deb   https://github.com/go-task/task/releases
+
+
+# ===========================================================================
+# DEVELOPMENT - VERSION CONTROL
+# ===========================================================================
+git
+git-lfs
+git-extras
+git-flow
+git-annex
+git-filter-repo
+git-crypt
+git-delta
+git-email
+git-svn
+gitk
+git-gui
+git-cola
+qgit
+gitg
+tig
+git-review
+stgit
+meld
+kdiff3
+diffstat
+patchutils
+quilt
+subversion
+mercurial
+breezy
+darcs
+fossil
+cvs
+rcs
+gitolite3
+pre-commit
+# --- not in apt ------------------------------------------------------------
+#   GitHub CLI (gh)  repo  https://cli.github.com/packages
+#                    deb   https://github.com/cli/cli/releases
+#   GitLab CLI (glab) deb  https://gitlab.com/gitlab-org/cli/-/releases
+#   lazygit          tgz   https://github.com/jesseduffield/lazygit/releases
+#   gitui            tgz   https://github.com/gitui-org/gitui/releases
+#   Sublime Merge    repo  https://download.sublimetext.com/
+#   GitKraken        deb   https://www.gitkraken.com/download/linux-deb
+#   SmartGit         deb   https://www.syntevo.com/smartgit/download/
+#   act (local CI)   deb   https://github.com/nektos/act/releases
+
+
+# ===========================================================================
+# DEVELOPMENT - EDITORS AND IDEs
+# ===========================================================================
+vim
+vim-gtk3
+vim-nox
+neovim
+neovim-qt
+emacs
+nano
+micro
+joe
+ne
+ed
+mousepad
+pluma
+xed
+geany
+geany-plugins
+kdevelop
+qtcreator
+codeblocks
+anjuta
+lazarus
+bluefish
+arduino
+thonny
+spyder
+ipython3
+jupyter-notebook
+# --- not in apt ------------------------------------------------------------
+#   VS Code          repo  https://packages.microsoft.com/repos/code
+#                    deb   https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+#   VSCodium         deb   https://github.com/VSCodium/vscodium/releases
+#   Cursor           App   https://cursor.com/downloads
+#   Windsurf         deb   https://windsurf.com/download
+#   Zed              tgz   https://github.com/zed-industries/zed/releases
+#   Sublime Text     repo  https://download.sublimetext.com/
+#   JetBrains (all)  tgz   https://www.jetbrains.com/toolbox-app/
+#   Android Studio   tgz   https://developer.android.com/studio
+#   Eclipse          tgz   https://www.eclipse.org/downloads/
+#   RStudio Desktop  deb   https://posit.co/download/rstudio-desktop/
+#   Postman          tgz   https://www.postman.com/downloads/
+#   Insomnia         deb   https://github.com/Kong/insomnia/releases
+#   Bruno            deb   https://github.com/usebruno/bruno/releases
+
+
+# ===========================================================================
+# DEVELOPMENT - PYTHON
+# ===========================================================================
+python3
+python3-full
+python3-dev
+python3-all-dev
+python3-pip
+python3-venv
+python3-virtualenv
+pipx
+python3-setuptools
+python3-wheel
+python3-build
+python3-poetry
+python3-pytest
+python3-pytest-cov
+python3-hypothesis
+python3-coverage
+python3-tox
+python3-mypy
+python3-pylint
+python3-flake8
+black
+isort
+ruff
+python3-sphinx
+python3-sphinx-rtd-theme
+python3-requests
+python3-httpx
+python3-aiohttp
+python3-websockets
+python3-urllib3
+python3-flask
+python3-django
+python3-fastapi
+python3-uvicorn
+python3-gunicorn
+python3-jinja2
+python3-sqlalchemy
+python3-alembic
+python3-psycopg2
+python3-asyncpg
+python3-pymysql
+python3-pymongo
+python3-redis
+python3-celery
+python3-lxml
+python3-bs4
+python3-scrapy
+python3-selenium
+python3-feedparser
+python3-markdown
+python3-yaml
+python3-toml
+python3-jsonschema
+python3-msgpack
+python3-protobuf
+python3-grpcio
+python3-click
+python3-typer
+python3-rich
+python3-textual
+python3-prompt-toolkit
+python3-tabulate
+python3-tqdm
+python3-dotenv
+python3-pydantic
+python3-dateutil
+python3-babel
+python3-psutil
+python3-watchdog
+python3-apscheduler
+python3-serial
+python3-usb
+python3-dnspython
+python3-netaddr
+python3-netifaces
+python3-cryptography
+python3-openssl
+python3-bcrypt
+python3-jwt
+python3-passlib
+python3-nacl
+python3-keyring
+python3-paramiko
+python3-scapy
+python3-docker
+python3-kubernetes
+python3-boto3
+python3-openpyxl
+python3-xlsxwriter
+python3-docx
+python3-pypdf
+python3-reportlab
+python3-pillow
+python3-pyqt5
+python3-gi
+python3-tk
+python3-typing-extensions
+cython3
+# --- not in apt ------------------------------------------------------------
+#   uv               tgz   https://github.com/astral-sh/uv/releases
+#   pyenv            git   https://github.com/pyenv/pyenv
+#   Miniconda        sh    https://repo.anaconda.com/miniconda/
+#   Anaconda         sh    https://www.anaconda.com/download
+#   Any pip-only wheel: mirror it on the online machine with
+#       pip download -r requirements.txt -d wheels/
+#   then install offline with
+#       pip install --no-index --find-links wheels/ -r requirements.txt
+
+
+# ===========================================================================
+# DEVELOPMENT - OTHER LANGUAGES AND RUNTIMES
+# ===========================================================================
+nodejs
+npm
+node-gyp
+node-typescript
+yarnpkg
+default-jdk
+default-jre
+openjdk-21-jdk
+openjdk-17-jdk
+maven
+gradle
+ant
+groovy
+clojure
+leiningen
+scala
+golang
+golang-doc
+gopls
+golang-golang-x-tools
+rustc
+cargo
+rustfmt
+rust-clippy
+ruby-full
+ruby-dev
+rake
+bundler
+php-cli
+php-dev
+php-fpm
+php-mbstring
+php-xml
+php-curl
+php-gd
+php-zip
+php-bcmath
+php-intl
+php-mysql
+php-pgsql
+php-sqlite3
+php-redis
+php-imagick
+php-xdebug
+phpunit
+composer
+perl
+perl-doc
+libperl-dev
+cpanminus
+lua5.4
+liblua5.4-dev
+luarocks
+tcl
+tk
+r-base
+r-recommended
+erlang
+elixir
+ocaml
+opam
+ghc
+cabal-install
+sbcl
+clisp
+gnu-smalltalk
+guile-3.0
+racket
+chicken-bin
+gforth
+julia
+mono-complete
+gnat
+fpc
+nim
+zig
+swi-prolog
+pari-gp
+# --- not in apt ------------------------------------------------------------
+#   Node (NodeSource) repo https://deb.nodesource.com/
+#   Bun              zip   https://github.com/oven-sh/bun/releases
+#   Deno             zip   https://github.com/denoland/deno/releases
+#   .NET SDK         repo  https://packages.microsoft.com/   (a "dotnet-sdk-*"
+#                          package may also exist in the archive - check first)
+#   Temurin JDK      repo  https://packages.adoptium.net/
+#   Kotlin           zip   https://github.com/JetBrains/kotlin/releases
+#   Dart / Flutter   repo  https://storage.googleapis.com/download.dartlang.org/linux/debian
+#   Crystal          repo  https://crystal-lang.org/install/
+#   PowerShell       repo  https://packages.microsoft.com/
+#   rustup           sh    https://rustup.rs   (needs network; the apt rustc
+#                          above is the offline-friendly option)
+
+
+# ===========================================================================
+# DEVELOPMENT - LIBRARIES AND HEADERS
+# ===========================================================================
+libssl-dev
+libgcrypt20-dev
+libgpg-error-dev
+libassuan-dev
+libksba-dev
+libsodium-dev
+libnss3-dev
+libffi-dev
+zlib1g-dev
+libbz2-dev
+liblzma-dev
+libzstd-dev
+libbrotli-dev
+libarchive-dev
+libreadline-dev
+libedit-dev
+libncurses-dev
+libpcre2-dev
+libicu-dev
+libmagic-dev
+libyaml-dev
+libjson-c-dev
+libxml2-dev
+libxslt1-dev
+libsqlite3-dev
+libpq-dev
+libmariadb-dev
+libcurl4-openssl-dev
+libnghttp2-dev
+libssh-dev
+libssh2-1-dev
+libgit2-dev
+libevent-dev
+libuv1-dev
+libzmq3-dev
+libmicrohttpd-dev
+libwebsockets-dev
+libsoup-3.0-dev
+libpcap-dev
+libnl-3-dev
+libmnl-dev
+libnetfilter-queue-dev
+libseccomp-dev
+libcap-dev
+libsystemd-dev
+libudev-dev
+libdbus-1-dev
+uuid-dev
+libjpeg-dev
+libpng-dev
+libtiff-dev
+libwebp-dev
+libheif-dev
+libavif-dev
+libopenjp2-7-dev
+liblcms2-dev
+libraw-dev
+libexif-dev
+libvips-dev
+libmagick++-dev
+libfreetype-dev
+libharfbuzz-dev
+libcairo2-dev
+libpango1.0-dev
+libgtk-3-dev
+libgtk-4-dev
+libwxgtk3.2-dev
+libfltk1.3-dev
+qtbase5-dev
+libqt5svg5-dev
+qt6-base-dev
+qt6-tools-dev
+libsdl2-dev
+libglfw3-dev
+libglew-dev
+libglm-dev
+libvulkan-dev
+libegl-dev
+libgles-dev
+libdrm-dev
+libgbm-dev
+libx11-dev
+libxcb1-dev
+libwayland-dev
+libinput-dev
+libasound2-dev
+libpulse-dev
+libavcodec-dev
+libavformat-dev
+libswscale-dev
+libv4l-dev
+libgphoto2-dev
+libsane-dev
+libcups2-dev
+libusb-1.0-0-dev
+libboost-all-dev
+libeigen3-dev
+libarmadillo-dev
+libgsl-dev
+libfftw3-dev
+libgmp-dev
+libmpfr-dev
+libmpc-dev
+libtbb-dev
+libomp-dev
+libopenmpi-dev
+libsuitesparse-dev
+libcgal-dev
+libceres-dev
+libopencv-dev
+libnetcdf-dev
+libgdal-dev
+libproj-dev
+libgeos-dev
+
+
+# ===========================================================================
+# DATABASES
+# ===========================================================================
+sqlite3
+sqlitebrowser
+postgresql
+postgresql-client
+postgresql-contrib
+pgcli
+pgbouncer
+pgloader
+pg-activity
+barman
+mariadb-server
+mariadb-client
+mycli
+mydumper
+percona-toolkit
+mysqltuner
+phpmyadmin
+adminer
+redis-server
+redis-tools
+memcached
+couchdb
+etcd-server
+etcd-client
+rabbitmq-server
+mosquitto
+mosquitto-clients
+unixodbc
+odbc-postgresql
+freetds-bin
+# --- not in apt ------------------------------------------------------------
+#   MongoDB          repo  https://www.mongodb.com/docs/manual/administration/install-on-linux/
+#   DBeaver CE       deb   https://dbeaver.io/download/
+#   Beekeeper Studio deb   https://github.com/beekeeper-studio/beekeeper-studio/releases
+#   pgAdmin 4        repo  https://www.pgadmin.org/download/pgadmin-4-apt/
+#   MySQL Workbench  deb   https://dev.mysql.com/downloads/workbench/
+#   ClickHouse       repo  https://clickhouse.com/docs/install
+#   InfluxDB         repo  https://docs.influxdata.com/influxdb/latest/install/
+#   Neo4j            repo  https://neo4j.com/docs/operations-manual/current/installation/linux/debian/
+#   DuckDB           zip   https://github.com/duckdb/duckdb/releases
+
+
+# ===========================================================================
+# CONTAINERS AND VIRTUALIZATION
+# ===========================================================================
+docker.io
+docker-compose-v2
+docker-buildx
+docker-registry
+containerd
+runc
+crun
+podman
+podman-compose
+buildah
+skopeo
+distrobox
+fuse-overlayfs
+slirp4netns
+uidmap
+netavark
+aardvark-dns
+qemu-system-x86
+qemu-system-arm
+qemu-system-misc
+qemu-utils
+qemu-user-static
+qemu-guest-agent
+binfmt-support
+libvirt-daemon-system
+libvirt-clients
+virt-manager
+virt-viewer
+virt-top
+virtinst
+virt-what
+libguestfs-tools
+guestfs-tools
+bridge-utils
+ovmf
+spice-client-gtk
+spice-vdagent
+gnome-boxes
+open-vm-tools
+virtualbox
+virtualbox-qt
+virtualbox-dkms
+virtualbox-guest-additions-iso
+lxc
+lxcfs
+incus
+systemd-container
+debootstrap
+mmdebstrap
+schroot
+cloud-image-utils
+cloud-init
+vagrant
+ansible
+ansible-lint
+# --- not in apt ------------------------------------------------------------
+#   Docker CE        repo  https://download.docker.com/linux/ubuntu
+#                          (docker.io above is Ubuntu's own build - pick one)
+#   Docker Desktop   deb   https://docs.docker.com/desktop/setup/install/linux/ubuntu/
+#   kubectl/kubeadm  repo  https://pkgs.k8s.io/
+#   Helm             repo  https://baltocdn.com/helm/stable/debian/
+#   minikube         deb   https://github.com/kubernetes/minikube/releases
+#   k9s              deb   https://github.com/derailed/k9s/releases
+#   Terraform/Packer repo  https://apt.releases.hashicorp.com
+#   VMware Workstation bundle  https://www.vmware.com/
+#   VirtualBox (Oracle) deb https://www.virtualbox.org/wiki/Linux_Downloads
+#   LXD               -    snap only on Ubuntu; use "incus" above instead
+
+
+# ===========================================================================
+# AI / ML / DATA SCIENCE
+# ---------------------------------------------------------------------------
+# Note: PyTorch/TensorFlow wheels from pip are NOT covered by apt. Mirror them
+# separately - see the pip note in the Python section above.
+# ===========================================================================
+python3-numpy
+python3-scipy
+python3-pandas
+python3-pyarrow
+python3-matplotlib
+python3-seaborn
+python3-plotly
+python3-bokeh
+python3-sklearn
+python3-sklearn-lib
+python3-statsmodels
+python3-sympy
+python3-networkx
+python3-skimage
+python3-imageio
+python3-opencv
+opencv-data
+python3-av
+python3-soundfile
+python3-torch
+python3-torchvision
+python3-torchaudio
+libtorch-dev
+python3-nltk
+python3-gensim
+python3-spacy
+python3-h5py
+python3-tables
+python3-zarr
+python3-dask
+python3-joblib
+python3-numba
+python3-mpi4py
+python3-xgboost
+python3-lightgbm
+python3-shap
+python3-datasets
+python3-tokenizers
+python3-safetensors
+python3-onnx
+python3-astropy
+python3-biopython
+python3-opengl
+python3-graphviz
+python3-pydot
+python3-notebook
+jupyter
+jupyter-nbconvert
+octave
+octave-statistics
+octave-image
+gnuplot
+maxima
+sagemath
+scilab
+r-cran-ggplot2
+r-cran-dplyr
+r-cran-data.table
+r-cran-caret
+r-cran-randomforest
+r-cran-e1071
+r-cran-shiny
+espeak-ng
+festival
+flite
+pocketsphinx
+hdf5-tools
+netcdf-bin
+libopenblas-dev
+liblapack-dev
+libhdf5-dev
+libprotobuf-dev
+protobuf-compiler
+# --- not in apt ------------------------------------------------------------
+#   Ollama           tgz   https://ollama.com/download/ollama-linux-amd64.tgz
+#                          (the install.sh script only fetches this tarball)
+#   LM Studio        App   https://lmstudio.ai/
+#   Jan              deb   https://github.com/menloresearch/jan/releases
+#   GPT4All          run   https://gpt4all.io/
+#   llama.cpp        zip   https://github.com/ggml-org/llama.cpp/releases
+#   ComfyUI          git   https://github.com/comfyanonymous/ComfyUI
+#   SD WebUI         git   https://github.com/AUTOMATIC1111/stable-diffusion-webui
+#   text-gen-webui   git   https://github.com/oobabooga/text-generation-webui
+#   CUDA Toolkit     deb   https://developer.nvidia.com/cuda-downloads
+#                          -> choose "deb (local)": it is a SELF-CONTAINED apt
+#                          repo inside one .deb, which is ideal for offline use
+#   cuDNN            deb   https://developer.nvidia.com/cudnn-downloads
+#   TensorRT         deb   https://developer.nvidia.com/tensorrt
+#   Model weights     -    on the online machine:
+#                          huggingface-cli download <repo> --local-dir <dir>
+#                          then copy the folder across by hand
+
+
+# ===========================================================================
+# GPU / CUDA - uncomment only if the target has an NVIDIA GPU.
+# Adds roughly 3-4 GB to the bundle.
+# ---------------------------------------------------------------------------
+# nvidia-driver-580
+# nvidia-cuda-toolkit
+# nvidia-cuda-dev
+# nvidia-cudnn
+# libnvidia-compute-580
+# nvtop
+# ===========================================================================
+
+
+# ===========================================================================
+# CRYPTO WALLETS
+# ---------------------------------------------------------------------------
+# Only a handful of wallets are packaged in the Ubuntu archive. Verify every
+# manual download's PGP signature or checksum - wallet binaries are a classic
+# supply-chain target, and this machine will never be able to auto-update.
+# ===========================================================================
+electrum
+monero
+python3-trezor
+trezor
+python3-ecdsa
+python3-mnemonic
+libhidapi-hidraw0
+libhidapi-libusb0
+libusb-1.0-0
+# --- not in apt ------------------------------------------------------------
+#   Trezor udev      deb   https://data.trezor.io/udev/trezor-udev_1_all.deb
+#   Ledger udev      sh    https://github.com/LedgerHQ/udev-rules
+#   Ledger Live      App   https://www.ledger.com/ledger-live/download
+#   Trezor Suite     App   https://trezor.io/trezor-suite
+#   Sparrow Wallet   deb   https://github.com/sparrowwallet/sparrow/releases
+#   Wasabi Wallet    deb   https://github.com/WalletWasabi/WalletWasabi/releases
+#   Exodus           deb   https://www.exodus.com/download/
+#   Atomic Wallet    deb   https://atomicwallet.io/downloads
+#   Feather (Monero) App   https://featherwallet.org/download/
+#   Monero GUI       tgz   https://www.getmonero.org/downloads/
+#   Bitcoin Core     tgz   https://bitcoincore.org/en/download/
+#   Electrum (App)   App   https://electrum.org/#download   (signed AppImage)
+#   Frame            deb   https://github.com/floating/frame/releases
+#   Cake / Guarda    App   vendor sites, AppImage only
+
+
+# ===========================================================================
+# GAMES
+# ===========================================================================
+supertuxkart
+supertux
+0ad
+extremetuxracer
+neverball
+frozen-bubble
+pingus
+hedgewars
+warzone2100
+teeworlds
+armagetronad
+wesnoth
+freeciv-client-gtk3
+openttd
+openttd-opengfx
+openttd-opensfx
+minetest
+gnome-sudoku
+gnome-mines
+gnome-chess
+gnome-2048
+gnome-tetravex
+gnome-nibbles
+gnome-robots
+gnome-mahjongg
+gnome-klotski
+four-in-a-row
+hitori
+iagno
+lightsoff
+swell-foop
+tali
+aisleriot
+quadrapassel
+nethack-console
+crawl
+angband
+moon-buggy
+ninvaders
+bastet
+wine
+winetricks
+lutris
+gamemode
+mangohud
+dosbox-staging
+scummvm
+mednafen
+mgba-qt
+snes9x-gtk
+# --- not in apt ------------------------------------------------------------
+#   Steam            deb   https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
+#                          (installs fine but downloads the real client on
+#                          first launch - useless on a permanently offline box)
+#   Heroic Launcher  deb   https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases
+#   Minecraft        deb   https://www.minecraft.net/en-us/download
+#   PrismLauncher    repo  https://prismlauncher.org/download/linux/
+#   itch.io app      zip   https://itch.io/app
+#   ProtonUp-Qt      App   https://github.com/DavidoTek/ProtonUp-Qt/releases
+#   Bottles           -    flatpak only
+
+
+# ===========================================================================
+# DESKTOP, THEMING AND ACCESSIBILITY
+# ===========================================================================
+gnome-tweaks
+gnome-shell-extensions
+gnome-shell-extension-manager
+gnome-shell-extension-prefs
+gnome-shell-extension-appindicator
+gnome-shell-extension-dashtodock
+gnome-shell-extension-gsconnect
+gnome-browser-connector
+dconf-editor
+gnome-system-monitor
+gnome-logs
+gnome-firmware
+gnome-characters
+gnome-font-viewer
+gnome-startup-applications
+gnome-sushi
+nautilus-admin
+nautilus-image-converter
+seahorse-nautilus
+nemo
+thunar
+pcmanfm
+papirus-icon-theme
+arc-theme
+breeze-icon-theme
+adwaita-icon-theme-full
+gnome-themes-extra
+qt5ct
+qt6ct
+lxappearance
+xdg-desktop-portal-gnome
+xdg-desktop-portal-gtk
+xdg-user-dirs
+xdg-user-dirs-gtk
+zenity
+yad
+kdialog
+libnotify-bin
+dunst
+rofi
+dmenu
+xclip
+xsel
+wl-clipboard
+xdotool
+wmctrl
+xbindkeys
+redshift
+redshift-gtk
+caffeine
+variety
+plank
+conky-all
+numlockx
+orca
+onboard
+brltty
+at-spi2-core
+mousetweaks
+ibus
+ibus-gtk3
+fcitx5
+language-pack-en
+language-pack-gnome-en
+synaptic
+gdebi
+aptitude
+apt-file
+apt-transport-https
+software-properties-gtk
+flatpak
+gnome-software-plugin-flatpak
+# --- not in apt ------------------------------------------------------------
+#   ULauncher        deb   https://github.com/Ulauncher/Ulauncher/releases
+#   Albert           repo  https://albertlauncher.github.io/installing/
+#   Stacer           deb   https://github.com/oguzhaninan/Stacer/releases
+#   GTK themes        -    usually a tarball into ~/.themes, no deb
+#   Nerd Fonts       zip   see the FONTS section above
+
+
+# ===========================================================================
+# ALTERNATIVE DESKTOPS AND WINDOW MANAGERS
+# Uncomment only what you want - each full desktop adds 1-3 GB.
+# ---------------------------------------------------------------------------
+# xfce4
+# xfce4-goodies
+# kde-plasma-desktop
+# lxqt
+# mate-desktop-environment
+# cinnamon-desktop-environment
+# budgie-desktop
+# i3
+# sway
+# swayidle
+# swaylock
+# waybar
+# openbox
+# awesome
+# bspwm
+# herbstluftwm
+# polybar
+# picom
+# nitrogen
+# ===========================================================================
+
+
+# ===========================================================================
+# SNAP-ONLY ON UBUNTU
+# ---------------------------------------------------------------------------
+# For these the archive "deb" is only a shim that installs a snap, so it cannot
+# work in an offline apt bundle:
+#   firefox, chromium-browser, thunderbird, lxd, snap-store,
+#   and most of Canonical's newer desktop apps.
+#
+# To carry a snap across offline:
+#     online:   snap download <name>
+#               -> produces <name>.snap and <name>.assert
+#     offline:  sudo snap ack <name>.assert
+#               sudo snap install <name>.snap
+# Snap dependencies (bases like core22/core24, plus gnome-* content snaps) must
+# be downloaded and acked the same way, BEFORE the app snap itself.
+# ===========================================================================
+
+
+# ===========================================================================
+# DELIBERATELY EXCLUDED - these DOWNLOAD during installation and will FAIL
+# on an offline machine even though the .deb itself installs fine:
+# ---------------------------------------------------------------------------
+#   ubuntu-restricted-extras   pulls ttf-mscorefonts-installer, which fetches
+#                              the fonts from sourceforge in its postinst.
+#                              "ubuntu-restricted-addons" (in the codecs
+#                              section above) is the safe subset.
+#   ttf-mscorefonts-installer  same reason
+#   libdvd-pkg                 downloads and compiles the libdvdcss source
+#   torbrowser-launcher        downloads the browser bundle on first run
+#   steam-installer            downloads the Steam client on first run
+#   flashplugin-installer      downloads from Adobe (and is dead anyway)
+#   clamav-freshclam           installs fine, but needs the network for virus
+#                              signatures. Fetch main.cvd, daily.cvd and
+#                              bytecode.cvd from https://database.clamav.net/
+#                              by hand and drop them in /var/lib/clamav/
+#   *-dkms packages            need matching kernel headers in the bundle;
+#                              linux-headers-generic is included above
+# ===========================================================================

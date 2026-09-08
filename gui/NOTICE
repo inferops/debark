@@ -1,0 +1,23 @@
+debark-gui
+Copyright 2026 The debark Authors
+
+This product includes software developed by The debark Authors
+(https://github.com/inferops/debark).
+
+debark-gui is the desktop application half of that repository; it is built
+from the source under gui/ and links the debark engine from the repository
+root. Both halves are covered by the same Apache-2.0 licence and the same
+copyright.
+
+This distribution may include third-party software. Such software is
+governed by the terms of its own licenses; see gui/go.sum and the module
+cache for the current dependency list, docs/dependency-review.md for what
+each module is used for and the licence file actually read for it, and
+NOTICE files bundled by those dependencies where they provide one.
+
+The Linux build links the system GTK 3 and WebKitGTK 4.1 libraries
+dynamically. Those are packaged by the distribution, are not redistributed
+here, and carry their own licences.
+
+Licensed under the Apache License, Version 2.0. See LICENSE for the full
+text.

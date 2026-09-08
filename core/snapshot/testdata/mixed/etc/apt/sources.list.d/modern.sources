@@ -1,0 +1,5 @@
+Types: deb
+URIs: https://example.invalid/repoB
+Suites: stable
+Components: main
+Signed-By: /usr/share/keyrings/keyB.gpg

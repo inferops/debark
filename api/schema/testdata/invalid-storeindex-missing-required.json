@@ -1,0 +1,23 @@
+{
+  "schema_version": "debark.storeindex/v1",
+  "entries": [
+    {
+      "name": "vlc",
+      "version": "3.0.21-1build1",
+      "arch": "amd64",
+      "size": 1957888,
+      "filename": "vlc_3.0.21-1build1_amd64.deb",
+      "added_at": "2026-09-01T09:00:00Z"
+    },
+    {
+      "digest": "5ca54ae935ebe6a895ac8f31606e4db256628778d35f562ff44ee0aba658c349",
+      "name": "acme-agent",
+      "version": "2.1.0",
+      "arch": "amd64",
+      "size": 88000,
+      "filename": "acme-agent_2.1.0_amd64.deb",
+      "added_at": "2026-09-03T12:00:00Z",
+      "user_supplied": true
+    }
+  ]
+}

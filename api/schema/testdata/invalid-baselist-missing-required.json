@@ -1,0 +1,17 @@
+{
+  "schema_version": "debark.baselist/v1",
+  "arch": "amd64",
+  "bases": [
+    {
+      "id": "ubuntu:26.04/desktop",
+      "description": "Ubuntu 26.04 (resolute) — a desktop install: the minimal system plus the default desktop environment",
+      "distro_id": "ubuntu",
+      "version_id": "26.04",
+      "codename": "resolute",
+      "variant": "desktop",
+      "arch": "amd64",
+      "seeds": ["ubuntu-desktop-minimal"],
+      "digest": "9d58c2c95545778e059c39e3c212fc8d0cf0e04293da986680c42fdb8d9f9e5f"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "debark.signature/v1",
+  "signatures": [
+    {
+      "signer_kind": "ed25519-file",
+      "key_id": "dGVzdC1rZXktaWQ",
+      "algorithm": "ed25519",
+      "created_at": "2026-09-03T12:11:00Z",
+      "signature": "ZGViZmVycnktdGVzdC1zaWduYXR1cmUtYnl0ZXMtMDE=",
+      "comment": "release engineering key, 2026"
+    },
+    {
+      "signer_kind": "plugin:acme-hsm",
+      "key_id": "75C83A893514F80FF134A58C6E5385BD3174138D",
+      "algorithm": "ecdsa-p256-sha256",
+      "created_at": "2026-09-03T12:11:05Z",
+      "signature": "ZGViZmVycnktdGVzdC1zaWduYXR1cmUtYnl0ZXMtMDItcGx1Z2lu"
+    }
+  ]
+}

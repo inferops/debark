@@ -1,0 +1,97 @@
+# Example debark local policy file (debark.policy/v1).
+#
+# This is documentation, not a recommended default: every rule below is
+# switched on so you can see its shape and its effect. A real policy file
+# should only set the rules your organisation actually wants enforced —
+# every field is optional, and an empty policy (or no --policy flag at all)
+# finds nothing.
+#
+# Load with:  debark build --policy examples/policy.yaml ...
+# Format: this file may equally be written as JSON; debark detects the
+# format from the file extension (.yaml/.yml/.json) or, if the extension does
+# not say, from the first non-whitespace byte in the file ('{' means JSON).
+#
+# Evaluation is local and pure: no network, no clock, nothing but the
+# resolved plan is consulted. A "deny" finding fails the build with exit 6
+# (core/dferr.Policy); every other severity is recorded and printed but never
+# blocks the build. See core/policy/iface.go for the authoritative field
+# documentation this file is illustrating.
+
+schema_version: debark.policy/v1
+
+# default_severity applies to every rule below — this policy schema has one
+# severity knob for the whole file, not one per rule. It defaults to "warn"
+# when omitted. Set it to "deny" to make any violation below fail the build
+# (exit 6); "info" to record findings without printing them as warnings.
+default_severity: warn
+
+# allow_components, when given, is the EXHAUSTIVE list of archive components
+# packages may come from. Anything resolved from a component not in this list
+# is a finding — including packages whose component could not be determined
+# at all. Leave this unset (the common case) to not constrain components by
+# an allow-list; use deny_components instead for a simpler "block a few
+# named components" policy.
+#
+# allow_components:
+#   - main
+#   - universe
+
+# deny_components lists components that must never appear in a build. The
+# canonical use is refusing the non-free-ish components outright.
+deny_components:
+  - multiverse
+  - restricted
+  - non-free
+  - non-free-firmware
+
+# allow_packages and deny_packages are package name GLOBS, matched with Go's
+# path.Match (see core/policy/evaluate.go): '*' matches any run of
+# characters, '?' matches exactly one character, and '[...]' is a character
+# class — ordinary shell-glob rules over the whole package name. Package
+# names never contain '/', so there is no path-segment subtlety to worry
+# about. A malformed pattern never matches anything (and never crashes a
+# build) rather than being rejected at load time.
+#
+# When allow_packages is set, every package must match at least one pattern
+# in it, or it is a finding — this is easy to misuse for a broad build (most
+# real builds don't want an allow-list at all); deny_packages is usually the
+# better fit.
+#
+# allow_packages:
+#   - "*"                # allow everything (a no-op allow-list, for illustration)
+
+deny_packages:
+  - "*-dbg"               # debug symbol packages: rarely wanted on the target
+  - "linux-image-*"       # never ship a foreign kernel image through debark
+
+# require_signed_publisher denies any package whose publisher_verification is
+# url-unverified: an external .deb fetched over HTTPS with no vendor
+# signature and no --digest supplied. HTTPS is not provenance — this rule is
+# how an organisation requires operators to supply one of those before a
+# vendor .deb crosses the gap.
+require_signed_publisher: true
+
+# allow_url_inputs, when explicitly false, denies any package that came from
+# a vendor URL input at all (as opposed to a local file, or the distro
+# archive). Default true (URL inputs are permitted) when this key is absent.
+allow_url_inputs: true
+
+# deny_flags denies any package carrying one of these lock flags — the same
+# vocabulary doctor's checks and the redistribution flags use
+# (core/lock.Flag*): multiverse, restricted, non-free, non-free-firmware,
+# network-postinst, snap-shim, dkms, user-supplied.
+deny_flags:
+  - network-postinst
+  - snap-shim
+
+# approved_keys is an inline archive-key allow-list, equivalent to passing
+# --approved-keys FILE at the command line (the two are unioned when both are
+# given). When this list is non-empty, EVERY package must carry an
+# Origin.KeyFingerprint that appears in it; a package with no recorded
+# fingerprint at all is itself a finding. Leave this empty (the default) to
+# not constrain archive keys — most builds should use --approved-keys FILE
+# instead of inlining fingerprints here, so the same policy file works across
+# organisations with different approved archives.
+#
+# approved_keys:
+#   - 0123456789ABCDEF0123456789ABCDEF01234567

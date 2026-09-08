@@ -1,0 +1,6 @@
+# Classic one-line format sources: apt trusts these via the ambient
+# trusted.gpg.d keyring, no signed-by= option needed.
+deb http://deb.debian.org/debian bookworm main
+deb-src http://deb.debian.org/debian bookworm main
+deb http://deb.debian.org/debian bookworm-updates main
+deb http://deb.debian.org/debian-security bookworm-security main

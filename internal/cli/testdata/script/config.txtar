@@ -1,0 +1,24 @@
+# config is entirely self-contained (owned by this package end to end), so
+# this exercises its real success path against the installed binary: init
+# writes a file, path reports it, show reflects it, and a second init
+# without --force refuses.
+
+env CFG=$WORK/config.yaml
+
+! exists $CFG
+
+exec debark --config $CFG config path
+stdout 'config\.yaml'
+
+exec debark --config $CFG config init
+stdout 'wrote'
+exists $CFG
+
+exec debark --config $CFG config show --json
+stdout '"backend": "auto"'
+
+debarkcode 1 --config $CFG config init
+stderr 'already exists'
+
+exec debark --config $CFG config init --force
+stdout 'wrote'

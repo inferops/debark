@@ -1,0 +1,13 @@
+debark
+Copyright 2026 The debark Authors
+
+This product includes software developed by The debark Authors
+(https://github.com/inferops/debark).
+
+This distribution may include third-party software. Such software is
+governed by the terms of its own licenses; see go.sum and the module cache
+for the current dependency list, and NOTICE files bundled by those
+dependencies where they provide one.
+
+Licensed under the Apache License, Version 2.0. See LICENSE for the full
+text.

@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import { acceptSelectionSummary, buildFulfilsDraft, createTerminalNoticeTracker } from '../../frontend/src/shell/job-state.js';
+
+const state = { selectionTotal: 1, selectionKeyRevision: 1, selectionRevision: 8 };
+assert(acceptSelectionSummary(state, { total: 0, revision: 2 }));
+assert.equal(state.selectionTotal, 0, 'Clear after digest-only edits must update the Packages stage');
+assert.equal(state.selectionRevision, 8, 'Key changes cannot replace the build-input checkpoint');
+assert(!acceptSelectionSummary(state, { total: 1, revision: 1 }), 'Late selection cannot resurrect the cleared count');
+const complete = { finished: true, running: false, cancelled: false, summary: { exit_class: 'success', bundle_path: '/bundle' }, target_generation: 3, selection_revision: 8 };
+assert(buildFulfilsDraft(complete, 3, 8));
+assert(!buildFulfilsDraft(complete, 3, 9), 'A later digest edit invalidates build completion');
+assert(!buildFulfilsDraft({ ...complete, cancelled: true }, 3, 8));
+assert(!buildFulfilsDraft({ ...complete, summary: { ...complete.summary, exit_class: 'incomplete' } }, 3, 8));
+assert(!buildFulfilsDraft({ ...complete, summary: { ...complete.summary, fetch_failed: ['missing.deb'] } }, 3, 8));
+console.log('Shell revisions: digest edits, clear, stale count and exact successful checkpoint passed.');
+
+const notices = createTerminalNoticeTracker();
+const terminal = { ...complete, started_at: '2026-09-07T12:00:00Z', finished_at: '2026-09-07T12:01:00Z' };
+notices.request('build'); // Delayed old build:finished while a newer build is running.
+assert.equal(notices.accept('build', { ...terminal, running: true, finished: false, started_at: '2026-09-07T12:02:00Z' }), null);
+assert.equal(notices.accept('build', terminal), null, 'A consumed late event cannot announce an older terminal snapshot');
+notices.request('build');
+assert.equal(notices.accept('build', terminal).kind, 'success');
+notices.request('build');
+assert.equal(notices.accept('build', terminal), null, 'Duplicate terminal notifications are suppressed even after navigation');
+notices.request('build');
+assert.equal(notices.accept('build', { error: { message: 'Transport unavailable' } }), null, 'Unknown status cannot announce an outcome');
+assert(notices.hasPending('build'), 'A later valid status read can recover a transient read failure');
+assert.equal(notices.accept('build', { ...terminal, finished_at: '2026-09-07T12:03:00Z', cancelled: true }).kind, 'info');
+notices.request('build');
+assert.equal(notices.accept('build', { ...terminal, summary: { ...terminal.summary, fetch_failed: ['missing.deb'] } }).kind, 'warning');
+notices.request('build');
+assert.equal(notices.accept('build', { ...terminal, error: { code: 'sign.failed', message: 'Signing failed.' } }).text, 'Signing failed.');
+const copy = { running: false, finished: true, cancelled: false, started_at: 'copy-start', finished_at: 'copy-end', verified: false, verify_skipped: true };
+notices.request('export');
+assert.equal(notices.accept('export', copy).kind, 'warning', 'Skipped verification is not a successful checked-copy toast');
+notices.request('export');
+assert.equal(notices.accept('export', { ...copy, verified: true, verify_skipped: false }).kind, 'success');
+notices.request('export');
+assert.equal(notices.accept('export', { ...copy, running: true, finished: false }), null);
+notices.request('verify');
+assert.equal(notices.accept('verify', { ...copy, ok: false }).kind, 'warning');
+console.log('Shell terminal notices: authoritative running/terminal states, duplicate events, read failure recovery, incomplete/signing/copy/verify outcomes passed.');

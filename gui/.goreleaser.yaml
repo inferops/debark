@@ -1,0 +1,447 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+#
+# Debark desktop GUI (debark-gui) release configuration.
+#
+#   Validate:      goreleaser check      (from this directory; needs a git remote,
+#                                         see "one release" below)
+#   Local dry run: make snapshot        == goreleaser release --snapshot --clean
+#   Real release:  push a "vX.Y.Z" tag; ../.github/workflows/release.yml runs
+#                  `goreleaser release --clean` with workdir=gui, after it has
+#                  run ../.goreleaser.yaml.
+#
+# ONE REPOSITORY, TWO GORELEASER CONFIGS, ONE RELEASE.
+# The CLI and this desktop application live in one repository and ship from one
+# `vX.Y.Z` tag onto one GitHub release. GoReleaser's `monorepo:` feature is
+# Pro-only, so the flow is explicit: release.yml runs ../.goreleaser.yaml first,
+# which CREATES the release, and then runs this config, which finds that release
+# and adds to it. Three settings below exist only because of that, and changing
+# any of them breaks the other half:
+#
+#   1. `release.mode: append` — goreleaser's release-notes mode. Without it the
+#      default (keep-existing) keeps the CLI's notes and this config's footer
+#      never appears; with it the body becomes "CLI notes\n\nGUI notes".
+#      goreleaser preserves the existing release's draft state when it updates,
+#      so this second run does not un-publish what the first one published.
+#   2. `checksum.name_template` is project-scoped rather than the default
+#      `checksums.txt`. The CLI publishes a checksums file too, and GitHub
+#      answers a duplicate asset name with 422, which goreleaser treats as
+#      unrecoverable — one collision is a failed release.
+#   3. `release.github` is NOT set. goreleaser derives owner/name from the git
+#      remote (`git ls-remote --get-url`), which works from this subdirectory
+#      and yields inferops/debark. The block that used to be here named
+#      `debark/debark-gui`, a repository that does not exist. The cost of
+#      inferring is that `goreleaser check` needs a checkout with a remote.
+#
+# The rest of this file deliberately follows ../.goreleaser.yaml rather than
+# inventing a second convention: same tool, same trimpath/mod_timestamp
+# discipline, same keyless cosign signature over the checksums file, same
+# SBOM-per-archive. Read docs/release.md for the parts that could NOT be
+# copied, and why. The short version, because it is the one thing about this
+# file that is genuinely different from the CLI's:
+#
+#   debark is CGO_ENABLED=0 everywhere and its binary is a pure function of
+#   (source, Go toolchain, flags). THIS APPLICATION LINKS GTK3 AND WEBKITGTK
+#   THROUGH CGO ON LINUX. The Linux binary is additionally a function of the C
+#   compiler, the system linker and the system headers. Measured, not assumed:
+#   the same source built with gcc 13.3.0 and with gcc 12.4.0 produces two
+#   different binaries of identical size. So the Linux reproducibility claim is
+#   conditioned on the build image, and release.yml pins the runner to
+#   `ubuntu-24.04` rather than `ubuntu-latest` for exactly that reason.
+#
+# Rule 3 and rule 4 of docs/dev/contract-brief.md hold here as everywhere: no
+# telemetry, no analytics, no crash reporting, and no network call to any
+# debark-operated endpoint anywhere in this pipeline or in the binary it
+# produces. Publishing a GitHub release is not such a call; an update check
+# would be, and there is none.
+
+version: 2
+
+project_name: debark-gui
+
+before:
+  hooks:
+    # go mod verify checks every module in the download cache against go.sum.
+    # It cannot check github.com/inferops/debark, which arrives through a
+    # `replace` off local disk with no version and no go.sum entry; that gap is
+    # the subject of docs/release.md's "The replace directive" section and of
+    # the provenance file written below.
+    - go mod verify
+
+    # The frontend "build". Contract rule 5: zero npm dependencies, no bundler,
+    # no JavaScript build step. hack/copyfrontend is a recursive copy of
+    # frontend/index.html, frontend/src and frontend/wailsjs into frontend/dist,
+    # which main.go embeds with //go:embed all:frontend/dist. Nothing here may
+    # ever become an `npm run build`.
+    - go run ./hack/copyfrontend
+
+builds:
+  # ---------------------------------------------------------------------------
+  # Linux/amd64 - the shipping target. cgo is not optional: Wails renders
+  # through WebKitGTK and the binding is cgo, so even `go build ./...` fails on
+  # Linux without libgtk-3-dev and libwebkit2gtk-4.1-dev.
+  #
+  # linux/arm64 is deliberately absent. Cross-compiling it would need an arm64
+  # cross toolchain plus an arm64 GTK/WebKitGTK sysroot, and a release that
+  # shipped an arm64 binary nobody had ever started would be worse than not
+  # shipping one. docs/release.md records this as an open item, not as a
+  # decision that arm64 does not matter.
+  # ---------------------------------------------------------------------------
+  - id: linux
+    main: .
+    binary: debark-gui
+    goos: [linux]
+    goarch: [amd64]
+    env:
+      - CGO_ENABLED=1
+    flags:
+      - -trimpath
+      # -buildmode=pie makes the shipped executable position-independent, so
+      # the kernel can load it at a random base address. Go with cgo defaults
+      # to buildmode=exe, and lintian reported `hardening-no-pie (W)` against
+      # the package because of it; packaging/verify-deb.sh is what reports
+      # that, and it now reports neither that tag nor `hardening-no-bindnow`,
+      # which pie cleared as well (Go's pie link is -z now, so the whole GOT
+      # moves under GNU_RELRO: 680 bytes of read-only relro became 1,406,224).
+      #
+      # This flag was measured on both sides before it landed, because a
+      # hardening flag that silently cost the reproducibility property in
+      # docs/release.md §4 would be a bad trade made invisibly. It does not:
+      # two builds, two absolute paths and a wiped GOCACHE are all
+      # byte-identical with it on, and gcc 13 vs gcc 12 still differ, so the
+      # claim and its conditioning are exactly what they were. It costs
+      # 1,411,288 bytes on the binary (+10.0%), 146,292 on the .deb (+3.4%),
+      # 220 extra dynamic relocations, and no measurable cold start:
+      # spawn-to-window-mapped over 15 interleaved pairs was -5 ms with a 95%
+      # interval of [-27, +16] ms. docs/release.md §4.7 has the numbers.
+      #
+      # Linux only, deliberately. windows/amd64 also builds and reproduces
+      # with it, and it is NOT enabled there - see the windows build below.
+      #
+      # The `-s -w` in ldflags below is the other half of the same decision.
+      # It clears lintian's `E: unstripped-binary-or-object`, costs neither
+      # `go version -m` nor the panic traceback (both measured, both intact),
+      # and costs one thing worth knowing: docs/security-review.md section 5
+      # row 16 corroborates the setuid-family imports through the
+      # `_cgo_libc_set*` wrappers in the STATIC symbol table, which `-s`
+      # removes - so the shipped package scores 19/20 on its own checklist
+      # with that row unprovable as written, while the property it asks about
+      # still holds. Do not "fix" that by dropping `-s -w`; that trades one
+      # red for a permanent lintian E. docs/release.md section 4.7 has both
+      # transcripts and what is owed to verify-deb.sh.
+      - -buildmode=pie
+    # desktop,production are MANDATORY on every target. Without them the binary
+    # compiles and then refuses to run, printing "Wails applications will not
+    # build without the correct build tags" - a release that shipped that is
+    # worse than no release. webkit2_41 selects the WebKitGTK 4.1 ABI, the only
+    # one Ubuntu 24.04 and Debian 13 carry; it is the same tag .golangci.yml and
+    # the Makefile's WEBKIT_TAG use.
+    tags:
+      - desktop
+      - production
+      - webkit2_41
+    # Pin the embedded module timestamp to the release commit, never to the
+    # machine's clock.
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+    # -------------------------------------------------------------------------
+    # The .deb has exactly ONE producer, and it is packaging/build-deb.sh, not
+    # goreleaser's nfpm pipe. Two producers of the same artefact is two
+    # artefacts: docs/security-review.md section 5 is a twenty-row checklist run
+    # by packaging/verify-deb.sh against a built package, and what that script
+    # proves has to be what actually ships. build-deb.sh is deliberately
+    # standalone (dpkg-deb alone, no goreleaser) so the package stays buildable
+    # and provable by anyone with a Debian box. Hence: no `nfpms:` section in
+    # this file, on purpose.
+    #
+    # A post hook runs after this build's binary exists and before checksums are
+    # computed, so the .deb lands in dist/ in time to be checksummed, signed and
+    # uploaded (see checksum.extra_files and release.extra_files below).
+    #
+    # The interface is environment variables rather than positional arguments so
+    # that neither side can silently misread the other's argument order. Until
+    # packaging/build-deb.sh exists this hook fails loudly - the same choice the
+    # core repository makes with its completions/man hook, and for the same
+    # reason: silently shipping no .deb is worse than a red build.
+    # -------------------------------------------------------------------------
+    hooks:
+      # -------------------------------------------------------------------------
+      # Provenance for the one dependency with no checksum. The engine is
+      # resolved through a replace directive, so it has no version and no
+      # go.sum entry - write down what it was built from and ship that inside
+      # every archive. The engine lives in this same repository, so one commit
+      # describes both halves and there is nothing to pin or look up.
+      #
+      # This is a per-build PRE hook rather than a `before` hook only because
+      # goreleaser refuses to start if dist/ is non-empty, and `before` runs
+      # before that check: a `before` hook writing into dist/ makes goreleaser
+      # abort with "dist is not empty". Pre hooks run after dist/ is created.
+      # The windows build aliases this same block (YAML anchor) so that either
+      # build alone still produces the file its archive needs.
+      # -------------------------------------------------------------------------
+      pre: &provenance-hook
+        - cmd: >-
+            sh -c 'rev="$(git rev-parse HEAD 2>/dev/null || echo UNKNOWN)";
+            dirty="$(git status --porcelain 2>/dev/null | head -c 1)";
+            { echo "debark-gui ${rev}";
+            echo "debark     ${rev}";
+            echo "go           $(go version)";
+            test -z "$dirty" || echo "WARNING: the checkout used for this build had uncommitted changes;
+            this artefact is not attributable to the commit above.";
+            echo;
+            echo "github.com/inferops/debark is resolved by a replace directive against the";
+            echo "engine in this same repository, not from a module proxy, so it has no";
+            echo "go.sum entry. To rebuild this artefact, check the repository out at the";
+            echo "commit above and see docs/release.md."; } > dist/PROVENANCE.txt'
+      post:
+        - cmd: ./packaging/build-deb.sh
+          env:
+            - DEBARK_GUI_BINARY={{ .Path }}
+            - DEBARK_GUI_VERSION={{ .Version }}
+            - DEBARK_GUI_ARCH={{ .Arch }}
+            - DEBARK_GUI_OUTDIR=dist
+            - SOURCE_DATE_EPOCH={{ .CommitTimestamp }}
+
+  # ---------------------------------------------------------------------------
+  # Windows/amd64 - built, not supported. .github/workflows/ci.yml says it
+  # plainly ("Windows is built and tested because it compiles and people develop
+  # on it, not because it is supported") and this file does not upgrade that to
+  # a commitment; the release notes repeat it.
+  #
+  # Wails on Windows drives WebView2 through github.com/wailsapp/go-webview2,
+  # which is pure Go, so this target IS CGO_ENABLED=0 - and that is what makes
+  # it the one artefact here with the same strong reproducibility property the
+  # core repository claims. Measured: byte-identical when cross-built on Ubuntu
+  # 24.04 and built natively on Windows 11 (docs/release.md).
+  #
+  # -H windowsgui suppresses the console window a GUI application must not open.
+  # Known difference from `wails build`: that command also compiles
+  # build/windows/icon.ico and build/windows/info.json into a .syso with winres,
+  # giving the executable its icon and its DPI-awareness manifest. goreleaser
+  # cannot run winres, and adding go-winres would be a new build-time Go
+  # dependency, which contract rule 6 says to report rather than adopt. So this
+  # binary has no icon and no manifest. That is now a DECISION rather than an
+  # open item - docs/release.md section 3.1 records it and what would reverse
+  # it - and it is deliberately not fixed here.
+  #
+  # No -buildmode=pie here, and that is a decision too. It was measured, not
+  # skipped: GOOS=windows CGO_ENABLED=0 -buildmode=pie builds, is byte-
+  # identical across two builds and two absolute paths, and is the same 15,381,504
+  # bytes as the non-pie build, so it would cost nothing measurable and would
+  # turn on ASLR for a target that has none. It is not enabled because nothing
+  # in this project can start a Windows GUI binary to prove the result still
+  # runs: the harness is Linux/WebKit2GTK, CI's Windows job builds and tests
+  # but never launches, and this repository's standard is that a shipped
+  # change is one that was run. Windows is built, not supported, and no
+  # lintian row is waiting on it. docs/release.md section 4.7 has the digests
+  # so whoever can run it does not have to re-measure.
+  # ---------------------------------------------------------------------------
+  - id: windows
+    main: .
+    binary: debark-gui
+    goos: [windows]
+    goarch: [amd64]
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    tags:
+      - desktop
+      - production
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    ldflags:
+      - -s -w
+      - -H windowsgui
+      - -X main.version={{ .Version }}
+    hooks:
+      pre: *provenance-hook
+
+# macOS is absent from this file for the same reason it is absent from
+# .github/workflows/ci.yml's matrix: it is out of scope for this application.
+
+archives:
+  - id: debark-gui
+    ids: [linux, windows]
+    formats: [tar.gz]
+    # uname-compatible OS/arch naming, matching ..'s archives, so a
+    # fetch script never has to special-case this project's own naming.
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    # ---------------------------------------------------------------------
+    # Every member's mtime is pinned to the release commit's date, and that
+    # is not decoration. Measured, twice, from one frozen source snapshot:
+    # without these the two archives from two runs of this pipeline DIFFER,
+    # and so does debark-gui_checksums.txt, which is the file cosign signs. The tar
+    # payloads differed in exactly two ustar mtime fields - the binary's and
+    # PROVENANCE.txt's, both stamped with the wall clock. On a CI runner it
+    # is worse than it looks locally, because LICENSE, README.md and
+    # docs/release.md get their mtime from when actions/checkout wrote them,
+    # so every member is wall-clock there.
+    #
+    # `mod_timestamp` on the build does not cover this: it pins what is
+    # EMBEDDED in the binary, not the mtime of the file on disk, which is
+    # what the archive reads. `builds_info` covers the binary; `info` covers
+    # each extra file. With both, two runs produce byte-identical archives
+    # and a byte-identical debark-gui_checksums.txt (docs/release.md section 4.8).
+    #
+    # .CommitDate rather than .Date: .Date is the moment goreleaser started,
+    # which is the wall clock this is trying to get rid of.
+    # ---------------------------------------------------------------------
+    builds_info:
+      mtime: "{{ .CommitDate }}"
+    files:
+      - src: LICENSE
+        info:
+          mtime: "{{ .CommitDate }}"
+      # Apache-2.0 section 4(d): the NOTICE travels with the distribution.
+      # This archive is distributed on its own -- a user who downloads the
+      # desktop application never sees the repository root -- so shipping the
+      # root NOTICE only, as the CLI's .goreleaser.yaml does, would leave this
+      # half of the release without one. mtime pinned like every other member
+      # here, for the reason the comment above gives.
+      - src: NOTICE
+        info:
+          mtime: "{{ .CommitDate }}"
+      - src: README.md
+        info:
+          mtime: "{{ .CommitDate }}"
+      # Written by the before hook above, into goreleaser's own output
+      # directory so that one .gitignore line covers every build artefact this
+      # pipeline produces. Its two commit hashes are the only thing that makes
+      # this artefact reproducible by a third party, because the engine half of
+      # the application has no go.sum entry.
+      - src: dist/PROVENANCE.txt
+        dst: PROVENANCE.txt
+        info:
+          mtime: "{{ .CommitDate }}"
+      - src: docs/release.md
+        dst: docs
+        info:
+          mtime: "{{ .CommitDate }}"
+
+checksum:
+  # Project-scoped, NOT the default "checksums.txt" — see point 2 in the header.
+  # The CLI's run publishes `debark_checksums.txt` onto this same release; this
+  # one is `debark-gui_checksums.txt`. Besides avoiding the 422, it removes a
+  # footgun for anyone verifying by hand: with two products on one release page,
+  # `sha256sum -c debark-gui_checksums.txt --ignore-missing` against the wrong file exits 0
+  # having checked nothing. The cosign .sig/.pem names follow this one, so they
+  # are scoped too.
+  name_template: "{{ .ProjectName }}_checksums.txt"
+  algorithm: sha256
+  # The .deb is produced by the linux build's post hook rather than by a
+  # goreleaser packaging pipe, so it is not an artefact goreleaser knows about.
+  # Adding it here is what puts its digest under the cosign signature below:
+  # verifying the signature on debark-gui_checksums.txt and then each file against that
+  # file authenticates the .deb transitively, exactly as it does the archives.
+  extra_files:
+    - glob: ./dist/*.deb
+
+# CycloneDX/SPDX SBOM per archive, produced by syft - the same shape as
+# ..'s release. Worth one honest caveat, recorded here rather than
+# discovered later: an SBOM of the Linux artefact describes the Go module graph
+# and does NOT describe the GTK3 and WebKitGTK libraries the binary dynamically
+# links, because they are system packages resolved by apt at build time. The
+# .deb's Depends: line is where those appear, and packaging/ owns it.
+sboms:
+  - id: archive-sbom
+    artifacts: archive
+    documents:
+      - "${artifact}.spdx.sbom.json"
+
+# Keyless cosign signing over the checksums file (Sigstore Fulcio/Rekor through
+# the release workflow's own OIDC token - see release.yml's `id-token: write`).
+# No private key exists anywhere, so there is none to leak and none to rotate.
+# Identical to ..'s signs block, deliberately.
+signs:
+  - id: checksums
+    cmd: cosign
+    certificate: "${artifact}.pem"
+    signature: "${artifact}.sig"
+    args:
+      - sign-blob
+      - --yes
+      - --output-certificate=${certificate}
+      - --output-signature=${signature}
+      - ${artifact}
+    artifacts: checksum
+    output: true
+
+changelog:
+  # Disabled here, and only because of the one-release flow in the header.
+  # `use: git` walks the repository's commits, and the CLI and this application
+  # are now the same repository - so ../.goreleaser.yaml's run has already put
+  # exactly this commit list into the release body. Generating it again would
+  # append a verbatim duplicate of it under `mode: append`.
+  #
+  # goreleaser applies `release.footer` in the release pipe, not the changelog
+  # pipe, so disabling this does NOT lose the footer below: what gets appended
+  # to the release body is the footer alone, which is precisely the desktop
+  # half's section of the notes. ../.goreleaser.yaml keeps the changelog
+  # settings that used to be duplicated here; change them there.
+  disable: true
+
+release:
+  # No `github: owner/name` block: goreleaser infers the repository from the git
+  # remote, which is inferops/debark, and stays correct if it ever moves. See
+  # point 3 in the header. The block that was here named `debark/debark-gui`,
+  # which does not exist and never did.
+  #
+  # `mode: append` is the whole of point 1: ../.goreleaser.yaml has already
+  # created this tag's release and written the changelog into it, so this run
+  # appends the notes below rather than keeping the existing body (the
+  # `keep-existing` default, which would drop this footer on the floor) or
+  # replacing it (which would drop the CLI's changelog). goreleaser reuses the
+  # existing release's draft/published state when it updates it, so appending
+  # here does not un-publish the CLI's half.
+  #
+  # `replace_existing_artifacts` is deliberately left off. If this run dies
+  # part-way through uploading, a re-run hits GitHub's 422 on the assets that
+  # already landed and fails loudly; the recovery is to delete the stray
+  # `debark-gui_*` assets (or the whole release) and run it again. Silently
+  # replacing already-published artefacts is not something this pipeline should
+  # do without someone deciding to.
+  mode: append
+  prerelease: auto
+  # The .deb again: uploaded as an extra file for the same reason it is
+  # checksummed as one - goreleaser did not build it, packaging/build-deb.sh
+  # did.
+  extra_files:
+    - glob: ./dist/*.deb
+  footer: >-
+    ---
+
+
+    ## Desktop application (`debark-gui`)
+
+
+    **Linux/amd64 is the supported target.** The Windows build is provided
+    because it compiles, not as a support commitment, and it carries no icon and
+    no DPI manifest. There is no macOS build and none is planned.
+
+
+    Verify these artefacts against `debark-gui_checksums.txt` (cosign-signed;
+    `.sig` and `.pem` beside it), **not** against the CLI's
+    `debark_checksums.txt` — `sha256sum -c --ignore-missing` against the wrong
+    file exits 0 having checked nothing.
+
+
+    Debark {{ .Tag }} — Apache-2.0. No telemetry, no analytics, no crash
+    reporting and no update check, by construction: see
+    [gui/docs/dependency-review.md](https://github.com/inferops/debark/blob/main/gui/docs/dependency-review.md).
+    This application never contacts a debark-operated endpoint; the only hosts
+    it reaches are the distro archives named in the target's own sources and
+    vendor `.deb` URLs the operator typed.
+
+
+    `PROVENANCE.txt` inside each archive names the exact `debark` engine commit
+    this build was linked against — which, now that the engine and the desktop
+    app live in one repository, is this release's own commit.
+    [gui/docs/release.md](https://github.com/inferops/debark/blob/main/gui/docs/release.md)
+    explains what is and is not reproducible here — in particular that the Linux
+    binary's reproducibility is conditioned on the build image, because it links
+    GTK3 and WebKitGTK through cgo.

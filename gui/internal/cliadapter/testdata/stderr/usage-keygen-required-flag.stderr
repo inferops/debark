@@ -1,0 +1,16 @@
+debark: required flag(s) "out" not set
+
+Usage:
+  debark keygen [flags]
+
+Flags:
+      --comment string   operator comment recorded in the key, e.g. "release engineering key, 2026"
+  -h, --help             help for keygen
+      --out string       path to write the private key to (required); the public key is written alongside it
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

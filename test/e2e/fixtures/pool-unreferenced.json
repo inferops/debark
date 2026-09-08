@@ -1,0 +1,82 @@
+/*
+ * pool-unreferenced — a .deb that crosses the gap without being installable.
+ *
+ * Protects: core/bundle/unreferenced.go, bundle.UnreferencedFile
+ * (last-run-unreferenced.txt) and the pool.unreferenced warning, plus the
+ * additive-run rule they exist to report on. This is the fixture
+ * test/e2e/harness/scenario.go's prior-build stage names in its own comment
+ * ("see fixtures/pool-unreferenced.json") and that did not exist, and it is
+ * the only fixture that exercises Request.PriorBuild at all — a mechanism
+ * that was implemented and documented with nothing running it.
+ *
+ * The state it constructs cannot be produced by any single build, which is
+ * why the prior-build stage exists. A run is additive and prune never
+ * removes the highest version of a (name, arch) group, so a package an
+ * EARLIER request named and this one does not has nothing to supersede it
+ * and survives in repo/pool regardless of the prune flag. Here: build once
+ * for tree, then again — into the same --out directory — for jq.
+ *
+ * What results is a file with two different answers to "what crossed the
+ * gap". tree's .deb is on the media and inside the manifest (manifest.Build
+ * walks the whole bundle directory), so it is covered by the operator's
+ * signature. It is absent from repo/Packages, which is written from this
+ * run's selections alone, and absent from last-run-removed.txt, because
+ * nothing removed it. An auditor reading Packages or lock.json is told the
+ * media holds strictly less than it does.
+ *
+ * The fixture asserts both halves of that, and the second half is the one
+ * that matters most:
+ *
+ *   - REPORTED: last-run-unreferenced.txt names tree, and lock.json carries
+ *     the pool.unreferenced warning. A file crossing an air gap unlisted is
+ *     precisely the thing an offline-bundle tool must not do quietly, and
+ *     the report IS the entire mitigation — core/bundle deliberately changes
+ *     nothing about what prune removes, so if the report regresses there is
+ *     no second line of defence.
+ *   - NOT INSTALLABLE: tree must be absent from the freshly installed
+ *     target. This is the property that makes the situation safe rather than
+ *     merely documented — the target's apt cannot see or select a pool file
+ *     repo/Packages does not index. packages_absent, not simply "not in
+ *     packages_present", so a regression that indexes or installs the
+ *     leftover is actually caught rather than passing unnoticed.
+ *
+ * Note what the fixture does NOT claim. A substring check cannot prove
+ * last-run-unreferenced.txt is otherwise empty, so this asserts the leftover
+ * IS reported, not that nothing else is. The stronger claim belongs to
+ * core/bundle's own tests, which own the file's exact shape.
+ *
+ * What would break if this regressed: an operator would carry media whose
+ * manifest and signature cover a package their own lock, repository index
+ * and run reports all fail to mention — either believing the media holds
+ * less than it does, or, if the indexing side regressed instead, installing
+ * a package no request ever asked for.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "pool-unreferenced",
+  "protects": "core/bundle/unreferenced.go; bundle.WarnUnreferenced.7 additive runs; Request.PriorBuild",
+  "tags": ["edge", "prune"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "prior_build": { "packages": ["tree"] },
+    "packages": ["jq"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["jq"],
+    "packages_absent": ["tree"],
+    "bundle_files": [
+      { "path": "last-run-unreferenced.txt", "contains": ["tree"] },
+      { "path": "lock.json", "contains": ["pool.unreferenced"] }
+    ],
+    "binaries": [
+      { "path": "/usr/bin/jq", "args": ["--version"], "exit_code": 0, "stdout_contains": "jq-" }
+    ]
+  }
+}

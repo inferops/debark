@@ -1,0 +1,4161 @@
+---
+File: DEP-11
+Version: '0.14'
+Origin: ubuntu-noble-main
+MediaBaseUrl: https://appstream.ubuntu.com/media/noble
+Time: 20231112T224135
+---
+Type: desktop-application
+ID: libreoffice-writer.desktop
+Package: libreoffice-writer
+Name:
+  C: LibreOffice Writer
+Summary:
+  C: Word processor part of the LibreOffice productivity suite
+Description:
+  C: >-
+    <p>
+
+    Writer is the word processor inside LibreOffice productivity suite.
+
+    Use it for everything, from dashing off a quick letter to producing an entire
+
+    book with tables of contents, embedded illustrations, bibliographies and diagrams.
+
+    The while-you-type auto-completion, auto-formatting and automatic spell-checking
+
+    make difficult tasks easy (but are easy to disable if you prefer).
+
+    Writer is powerful enough to tackle desktop publishing tasks such as creating
+
+    multi-column newsletters and brochures. The only limit is your imagination.
+
+    </p>
+
+    <p>
+
+    Based on the what-you-see-is-what-you-get principle, Writer allows you to apply
+
+    various styles and formatting effects to your document and view the results
+
+    immediately.
+
+    </p>
+
+    <p>
+
+    LibreOffice supports opening and saving into a wide variety of formats, so you
+
+    can easily share documents with users of other popular office suites without
+
+    worrying about compatibility.
+
+    </p>
+DeveloperName:
+  C: The Document Foundation
+ProjectLicense: MPL-2.0
+Categories:
+- Office
+- WordProcessor
+Keywords:
+  C:
+  - Text
+  - Letter
+  - Fax
+  - Document
+  - OpenDocument Text
+  - Microsoft Word
+  - Microsoft Works
+  - Lotus WordPro
+  - OpenOffice Writer
+  - CV
+  - odt
+  - doc
+  - docx
+  - rtf
+Url:
+  homepage: http://www.libreoffice.org/discover/writer/
+  bugtracker: https://bugs.documentfoundation.org/
+  help: http://www.libreoffice.org/get-help/documentation/
+  translate: https://hub.libreoffice.org/translate
+  faq: https://hub.libreoffice.org/faq
+  donation: https://donate.libreoffice.org/
+Icon:
+  cached:
+  - name: libreoffice-writer_libreoffice-writer.png
+    width: 48
+    height: 48
+  - name: libreoffice-writer_libreoffice-writer.png
+    width: 64
+    height: 64
+  - name: libreoffice-writer_libreoffice-writer.png
+    width: 128
+    height: 128
+  remote:
+  - url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/icons/128x128/libreoffice-writer_libreoffice-writer.png
+    width: 128
+    height: 128
+  stock: libreoffice-writer
+Launchable:
+  desktop-id:
+  - libreoffice-writer.desktop
+Provides:
+  mediatypes:
+  - application/vnd.oasis.opendocument.text
+  - application/vnd.oasis.opendocument.text-template
+  - application/vnd.oasis.opendocument.text-web
+  - application/vnd.oasis.opendocument.text-master
+  - application/vnd.oasis.opendocument.text-master-template
+  - application/vnd.sun.xml.writer
+  - application/vnd.sun.xml.writer.template
+  - application/vnd.sun.xml.writer.global
+  - application/msword
+  - application/vnd.ms-word
+  - application/x-doc
+  - application/x-hwp
+  - application/rtf
+  - text/rtf
+  - application/vnd.wordperfect
+  - application/wordperfect
+  - application/vnd.lotus-wordpro
+  - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  - application/vnd.ms-word.document.macroEnabled.12
+  - application/vnd.openxmlformats-officedocument.wordprocessingml.template
+  - application/vnd.ms-word.template.macroEnabled.12
+  - application/vnd.ms-works
+  - application/vnd.stardivision.writer-global
+  - application/x-extension-txt
+  - application/x-t602
+  - text/plain
+  - application/vnd.oasis.opendocument.text-flat-xml
+  - application/x-fictionbook+xml
+  - application/macwriteii
+  - application/x-aportisdoc
+  - application/prs.plucker
+  - application/vnd.palm
+  - application/clarisworks
+  - application/x-sony-bbeb
+  - application/x-abiword
+  - application/x-iwork-pages-sffpages
+  - application/vnd.apple.pages
+  - application/x-mswrite
+  - application/x-starwriter
+Screenshots:
+- default: true
+  caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-1_752x470.png
+    width: 752
+    height: 470
+  - url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-1_624x390.png
+    width: 624
+    height: 390
+  - url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-1_224x140.png
+    width: 224
+    height: 140
+  source-image:
+    url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-1_orig.png
+    width: 1129
+    height: 707
+- caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-2_752x472.png
+    width: 752
+    height: 472
+  - url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-2_624x391.png
+    width: 624
+    height: 391
+  - url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-2_224x140.png
+    width: 224
+    height: 140
+  source-image:
+    url: l/li/libreoffice-writer.desktop/d49020eeca581c367c5d5dd298594c7d/screenshots/image-2_orig.png
+    width: 1135
+    height: 713
+ContentRating:
+  oars-1.0: {}
+---
+Type: font
+ID: in.org.smc.uroob
+Package: fonts-smc-uroob
+Name:
+  C: Uroob font
+  ml: ഉറൂബ് അക്ഷരസഞ്ചയം
+Summary:
+  C: Uroob Malayalam Unicode font
+Description:
+  C: >-
+    <p>
+          Unicode font for traditional Malayalam script designed by Hussain K H
+          maintained by Swathanthra Malayalam Computing. Thick ornamental font
+          suitable for titles.
+        </p>
+ProjectLicense: OFL-1.1
+Url:
+  homepage: https://smc.org.in/fonts
+  bugtracker: https://gitlab.com/smc/fonts/uroob/issues
+Icon:
+  cached:
+  - name: fonts-smc-uroob_uroob-regular.png
+    width: 48
+    height: 48
+  - name: fonts-smc-uroob_uroob-regular.png
+    width: 48
+    height: 48
+    scale: 2
+  - name: fonts-smc-uroob_uroob-regular.png
+    width: 64
+    height: 64
+  - name: fonts-smc-uroob_uroob-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-smc-uroob_uroob-regular.png
+    width: 128
+    height: 128
+  - name: fonts-smc-uroob_uroob-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: in/org/smc.uroob/0DD8591380ECDB92D6F3DE0FDB42AFE5/icons/128x128/fonts-smc-uroob_uroob-regular.png
+    width: 128
+    height: 128
+  - url: in/org/smc.uroob/0DD8591380ECDB92D6F3DE0FDB42AFE5/icons/128x128@2/fonts-smc-uroob_uroob-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Uroob Regular
+Screenshots:
+- default: true
+  caption:
+    C: Uroob Regular
+  thumbnails:
+  - url: in/org/smc.uroob/0DD8591380ECDB92D6F3DE0FDB42AFE5/screenshots/image-uroob-regular_1024x78.png
+    width: 1024
+    height: 78
+  - url: in/org/smc.uroob/0DD8591380ECDB92D6F3DE0FDB42AFE5/screenshots/image-uroob-regular_640x48.png
+    width: 640
+    height: 48
+Languages:
+- locale: aa
+  percentage: 100
+- locale: an
+  percentage: 100
+- locale: ay
+  percentage: 100
+- locale: bi
+  percentage: 100
+- locale: br
+  percentage: 100
+- locale: ch
+  percentage: 100
+- locale: da
+  percentage: 100
+- locale: de
+  percentage: 100
+- locale: en
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: eu
+  percentage: 100
+- locale: fil
+  percentage: 100
+- locale: fj
+  percentage: 100
+- locale: fo
+  percentage: 100
+- locale: fur
+  percentage: 100
+- locale: fy
+  percentage: 100
+- locale: gd
+  percentage: 100
+- locale: gl
+  percentage: 100
+- locale: gv
+  percentage: 100
+- locale: ho
+  percentage: 100
+- locale: ht
+  percentage: 100
+- locale: ia
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: ie
+  percentage: 100
+- locale: io
+  percentage: 100
+- locale: is
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: jv
+  percentage: 100
+- locale: kj
+  percentage: 100
+- locale: kwm
+  percentage: 100
+- locale: lb
+  percentage: 100
+- locale: li
+  percentage: 100
+- locale: mg
+  percentage: 100
+- locale: ml
+  percentage: 100
+- locale: ms
+  percentage: 100
+- locale: nb
+  percentage: 100
+- locale: nds
+  percentage: 100
+- locale: ng
+  percentage: 100
+- locale: nl
+  percentage: 100
+- locale: nn
+  percentage: 100
+- locale: no
+  percentage: 100
+- locale: nr
+  percentage: 100
+- locale: oc
+  percentage: 100
+- locale: om
+  percentage: 100
+- locale: pap-an
+  percentage: 100
+- locale: pap-aw
+  percentage: 100
+- locale: pt
+  percentage: 100
+- locale: rm
+  percentage: 100
+- locale: rn
+  percentage: 100
+- locale: rw
+  percentage: 100
+- locale: sc
+  percentage: 100
+- locale: sg
+  percentage: 100
+- locale: sma
+  percentage: 100
+- locale: smj
+  percentage: 100
+- locale: sn
+  percentage: 100
+- locale: so
+  percentage: 100
+- locale: sq
+  percentage: 100
+- locale: ss
+  percentage: 100
+- locale: st
+  percentage: 100
+- locale: su
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: sw
+  percentage: 100
+- locale: tl
+  percentage: 100
+- locale: ts
+  percentage: 100
+- locale: uz
+  percentage: 100
+- locale: vo
+  percentage: 100
+- locale: wa
+  percentage: 100
+- locale: xh
+  percentage: 100
+- locale: yap
+  percentage: 100
+- locale: za
+  percentage: 100
+- locale: zu
+  percentage: 100
+---
+Type: font
+ID: io.pagure.lohit.assamese.font
+Package: fonts-lohit-beng-assamese
+Name:
+  C: Lohit Assamese
+Summary:
+  C: Lohit family font for the Assamese language
+Description:
+  C: "<p>\n\t    This package provides a free Assamese Script TrueType font.\n    </p>\n<p>\n\t    This font is part of the
+    Lohit font family, a set of fonts for \n\t    Indic languages originally created by Modular Infotech and\n\t    now maintained
+    by Red Hat. Lohit means “red” in Sanskrit.\n    </p>"
+ProjectLicense: OFL-1.1
+Url:
+  homepage: https://pagure.io/lohit
+  bugtracker: https://github.com/pravins/lohit/issues
+Icon:
+  cached:
+  - name: fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 48
+    height: 48
+  - name: fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 48
+    height: 48
+    scale: 2
+  - name: fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 64
+    height: 64
+  - name: fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 128
+    height: 128
+  - name: fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: io/pagure/lohit.assamese.font/1EABCAD71E4A9B30D2920F907B6A46D8/icons/128x128/fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 128
+    height: 128
+  - url: io/pagure/lohit.assamese.font/1EABCAD71E4A9B30D2920F907B6A46D8/icons/128x128@2/fonts-lohit-beng-assamese_lohitassamese-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Lohit Assamese
+Screenshots:
+- default: true
+  caption:
+    C: Lohit Assamese Regular
+  thumbnails:
+  - url: io/pagure/lohit.assamese.font/1EABCAD71E4A9B30D2920F907B6A46D8/screenshots/image-lohitassamese-regular_1024x78.png
+    width: 1024
+    height: 78
+  - url: io/pagure/lohit.assamese.font/1EABCAD71E4A9B30D2920F907B6A46D8/screenshots/image-lohitassamese-regular_640x48.png
+    width: 640
+    height: 48
+Languages:
+- locale: as
+  percentage: 100
+- locale: bn
+  percentage: 100
+- locale: mni
+  percentage: 100
+---
+Type: console-application
+ID: org.freedesktop.fwupd
+Package: fwupd
+Name:
+  C: fwupd
+Summary:
+  C: Update device firmware on Linux
+Description:
+  C: >-
+    <p>
+          This project aims to make updating firmware on Linux automatic, safe and
+          reliable.
+          You can either use a GUI software manager like GNOME Software to view and
+          apply updates, the command-line tool or the D-Bus interface directly.
+        </p>
+    <p>
+          The fwupd process is a system daemon to allow session software to update
+          device firmware on your local machine.
+          It is designed for desktops, but this project is also usable on phones,
+          tablets and on headless servers.
+        </p>
+ProjectLicense: LGPL-2.0+
+Url:
+  bugtracker: https://github.com/fwupd/fwupd/issues
+  homepage: https://fwupd.org/
+  translate: https://www.transifex.com/freedesktop/fwupd/
+Provides:
+  binaries:
+  - fwupdmgr
+  - fwupdtool
+Languages:
+- locale: af
+  percentage: 32
+- locale: am
+  percentage: 88
+- locale: bs
+  percentage: 100
+- locale: ca
+  percentage: 99
+- locale: cs
+  percentage: 100
+- locale: da
+  percentage: 88
+- locale: de
+  percentage: 100
+- locale: en_US
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: et
+  percentage: 64
+- locale: fi
+  percentage: 96
+- locale: fr
+  percentage: 39
+- locale: fur
+  percentage: 83
+- locale: gl
+  percentage: 100
+- locale: he
+  percentage: 53
+- locale: hr
+  percentage: 100
+- locale: hu
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: ko
+  percentage: 94
+- locale: lt
+  percentage: 100
+- locale: nl
+  percentage: 100
+- locale: oc
+  percentage: 42
+- locale: pl
+  percentage: 100
+- locale: pt
+  percentage: 60
+- locale: pt_BR
+  percentage: 100
+- locale: ru
+  percentage: 100
+- locale: sk
+  percentage: 84
+- locale: sr
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: tr
+  percentage: 100
+- locale: uk
+  percentage: 100
+- locale: zh_CN
+  percentage: 100
+- locale: zh_TW
+  percentage: 99
+Releases:
+- version: 1.9.6
+  type: stable
+  unix-timestamp: 1696550400
+  description:
+    C: >-
+      <p>
+                This release adds the following features:
+              </p>
+      <ul>
+        <li>Add a launchd agent for macOS</li>
+        <li>Add a new security attribute for BIOS capsule updates to be enabled</li>
+        <li>Add functionality to fix specific host security attributes</li>
+        <li>Add global information from the context into the report data</li>
+        <li>Add support for coSWID payload sections</li>
+        <li>Add support for parsing the EDID</li>
+        <li>Allow adding only-quirk instance IDs from quirk files</li>
+        <li>Install a sysusers.d systemd file when using -Dsystemd_unit_user</li>
+      </ul>
+
+      <p>This release fixes the following bugs:</p>
+
+      <ul>
+        <li>Allow devices to require a connected display</li>
+        <li>Allow Wacom modules to specify a status polling interval</li>
+        <li>Do not show Intel CET unsupported as success</li>
+        <li>Do not show multiple Genesys GL32xx devices for the same physical device</li>
+        <li>Fix a fuzzing timeout in the HID descriptor parser</li>
+        <li>Recalculate the SUPPORTED flag after adopting a child device</li>
+        <li>Reduce the amount of memory used when chunking large firmware</li>
+        <li>Speed up logitech-bulkcontroller firmware updates</li>
+        <li>Stop reading ownership and TPM flashes left in Dell plugin</li>
+        <li>Try to use the LVFS when using report-history --force</li>
+        <li>Write the coSWID TAG_ID as a bytestring when possible</li>
+      </ul>
+
+      <p>This release adds support for the following hardware:</p>
+
+      <ul>
+        <li>AMD dGPUs, Navi3x and above</li>
+        <li>Foxconn SDX12, SDX55 and SDX6X devices</li>
+        <li>Google Rex Intel USB-4 retimers</li>
+        <li>MediaTek DP AUX Scalers</li>
+        <li>Quectel EM160 module</li>
+        <li>Star Labs StarBook Mk VIr2</li>
+        <li>VLI VL105-VL109</li>
+        <li>Wacom DTH134 and DTC121 Tablets</li>
+      </ul>
+- version: 1.9.5
+  type: stable
+  unix-timestamp: 1693785600
+  description:
+    C: >-
+      <p>
+                This release adds the following features:
+              </p>
+      <ul>
+        <li>Add optional support for Passim, a local caching server</li>
+        <li>Allow using fwupdtool get-devices --json</li>
+      </ul>
+
+      <p>This release fixes the following bugs:</p>
+
+      <ul>
+        <li>Allow adding UF2 devices without a filesystem UUID</li>
+        <li>Correctly read the size of Synaptics Panamera MST firmware</li>
+        <li>Do not return historical results with no AppStream ID</li>
+        <li>Fix parallel build when using a machine with a lot of cores</li>
+        <li>Fix uninhibiting ModemManager after the fastboot flash has completed</li>
+        <li>Make firmware USI dock flashing more reliable</li>
+        <li>Record the update state of success when the device is returned to runtime</li>
+        <li>Remove the default-installed fwupd-refresh systemd preset</li>
+        <li>Sort composite updates by the device order when required</li>
+      </ul>
+
+      <p>This release adds support for the following hardware:</p>
+
+      <ul>
+        <li>EPOS ADAPT 1x5</li>
+        <li>Fibocom FM101</li>
+        <li>Foxconn T99W373</li>
+        <li>Genesys GL3525S USB Hub</li>
+        <li>HP Rata/Remi BLE Mice</li>
+        <li>Luxshare Quad USB4 Dock</li>
+        <li>System76 Launch 3, Launch Heavy 3 and Thelio IO 2</li>
+      </ul>
+- version: 1.9.4
+  type: stable
+  unix-timestamp: 1691971200
+  description:
+    C: >-
+      <p>
+                This release adds the following features:
+              </p>
+      <ul>
+        <li>Add a new HSI attribute that detects any missing Intel GDS mitigation</li>
+        <li>Allow configuring the refresh interval per-remote rather than per-system</li>
+        <li>Remove the libsoup-2.4 compatibility code</li>
+        <li>Show the firmware release checksum in CLI tools</li>
+      </ul>
+
+      <p>This release fixes the following bugs:</p>
+
+      <ul>
+        <li>Correctly query the Steelseries Fizz version on reconnect</li>
+        <li>Correctly wait for USB replug on macOS</li>
+        <li>Do not add gl32xx disk partitions as extra devices</li>
+        <li>Do not assume the logical block size is always 0x200</li>
+        <li>Ensure the AppStream ID is set on historical releases</li>
+        <li>Enumerate Synaptics MST devices correctly</li>
+        <li>Fix a possible CFU crash when adding modules</li>
+        <li>Fix 'fwupdmgr get-history --json' output to only show one release</li>
+        <li>Fix 'fwupdmgr modify-remote' on ChromeOS</li>
+        <li>Fix incorrect OEM trusted reports flags being set when not matching</li>
+        <li>Fix regression in returning device history with libxmlb 0.3.12</li>
+        <li>Fix some Wacom hardware by only attempting retries for the busy error state</li>
+        <li>Fix transaction timed out issue for T99W373 QDU device</li>
+        <li>Handle cros-ec boards with '_v' in their name</li>
+        <li>Ignore the authentication when username and password are both empty</li>
+        <li>Load the effective size of a PE section instead of raw size</li>
+        <li>Set some feature flags when non-interactive</li>
+        <li>Set the HWIDs correctly when running macOS</li>
+        <li>Use a much larger USB timeout for STM32 erase operations</li>
+        <li>Use the correct offsets when checking Synaptics MST Spyder devices</li>
+        <li>Use the correct URI when downloading from authenticated remotes</li>
+        <li>Use /var/run when /run/lock does not exist</li>
+      </ul>
+
+      <p>This release adds support for the following hardware:</p>
+
+      <ul>
+        <li>Genesys GL352350 and GL3590</li>
+        <li>Logitech Huddle</li>
+        <li>Microsoft USB-C Travel Hub</li>
+        <li>PixArt BLE HPAC OTA</li>
+        <li>Quectel RM520</li>
+        <li>Synaptics Triton devices</li>
+        <li>VIA VL122, VL817S and VL822T</li>
+        <li>Wacom One 13 and One 12 Tablets</li>
+      </ul>
+- version: 1.9.3
+  type: stable
+  unix-timestamp: 1689033600
+  description:
+    C: >-
+      <p>
+                This release adds the following features:
+              </p>
+      <ul>
+        <li>Add the expected result to each HSI test attribute</li>
+        <li>Allow autodetection when using fwupdtool firmware-parse</li>
+        <li>Allow devices to only accept explicitly specified release versions</li>
+        <li>Allow filtering by release flags from fwupdtool and fwupdmgr</li>
+        <li>Allow filtering by remote when looking for trusted reports</li>
+        <li>Drop the libefiboot dependency and generate UEFI DPs directly</li>
+        <li>Ensure that BootService-only variables cannot be read in runtime mode</li>
+        <li>Parse the various SBAT sections from PE firmware</li>
+        <li>Record the NVRAM space used as report metadata</li>
+        <li>Show the user a warning when the ESP may not be valid</li>
+        <li>Speed up the daemon startup by 35% and reduce RSS by 12%</li>
+        <li>Support reading and writing EFI variables on Windows</li>
+      </ul>
+
+      <p>This release fixes the following bugs:</p>
+
+      <ul>
+        <li>Check only the EFI executables from the boot menu when using --force</li>
+        <li>Correctly obtain the Thunderbolt is_native controller attribute</li>
+        <li>Deduplicate the remotes as required</li>
+        <li>Do not accidentally depend on python 3.9</li>
+        <li>Do not misuse the offset as an address in the SREC parser</li>
+        <li>Do not truncate feature reports to fix Wacom ID6 update</li>
+        <li>Fix parsing of IGSC code firmware</li>
+        <li>Get the Jabra GNP device name from the device</li>
+        <li>Ignore small ESP block devices if there are multiple choices</li>
+        <li>Never install a shim too new for the system</li>
+        <li>Only add the little-used _REV instance IDs by request</li>
+        <li>Use a CapsuleOnDisk filename supported by InsydeH2O</li>
+      </ul>
+
+      <p>This release adds support for the following hardware:</p>
+
+      <ul>
+        <li>Belkin Thunderbolt 4 Core Hub dock</li>
+        <li>CE-LINK TB4 Docks</li>
+        <li>Genesys GL32XX SD readers</li>
+        <li>Genesys GL352350 USB 3.1 hub</li>
+        <li>Nordic HID devices without DFU support</li>
+        <li>TUXEDO InfinityBook Pro 13 v3</li>
+        <li>Wacom tablets with ID9 Bluetooth chipsets</li>
+      </ul>
+ContentRating:
+  oars-1.0:
+    social-info: moderate
+---
+Type: font
+ID: com.latofonts.Lato
+Package: fonts-lato
+Name:
+  C: Lato
+Summary:
+  C: A sanserif type­face fam­ily
+Description:
+  C: >-
+    <p>
+          Lato is a sanserif type­face family designed in the Summer 2010 by Warsaw-based designer
+          Łukasz Dziedzic (“Lato” means “Summer” in Polish). In December 2010 the Lato family
+          was published under the open-source Open Font License by his foundry tyPoland, with
+          support from Google.
+        </p>
+ProjectLicense: OFL-1.1
+Url:
+  homepage: http://www.latofonts.com/
+Icon:
+  cached:
+  - name: fonts-lato_lato-blackitalic.png
+    width: 48
+    height: 48
+  - name: fonts-lato_lato-blackitalic.png
+    width: 48
+    height: 48
+    scale: 2
+  - name: fonts-lato_lato-blackitalic.png
+    width: 64
+    height: 64
+  - name: fonts-lato_lato-blackitalic.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-lato_lato-blackitalic.png
+    width: 128
+    height: 128
+  - name: fonts-lato_lato-blackitalic.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: com/latofonts/Lato/9449157299f1463198960f6ebb66c319/icons/128x128/fonts-lato_lato-blackitalic.png
+    width: 128
+    height: 128
+  - url: com/latofonts/Lato/9449157299f1463198960f6ebb66c319/icons/128x128@2/fonts-lato_lato-blackitalic.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Lato Black Italic
+  - name: Lato Black
+  - name: Lato Bold Italic
+  - name: Lato Bold
+  - name: Lato Hairline Italic
+  - name: Lato Hairline
+  - name: Lato Heavy Italic
+  - name: Lato Heavy
+  - name: Lato Italic
+  - name: Lato Light Italic
+  - name: Lato Light
+  - name: Lato Medium Italic
+  - name: Lato Medium
+  - name: Lato Regular
+  - name: Lato Semibold Italic
+  - name: Lato Semibold
+  - name: Lato Thin Italic
+  - name: Lato Thin
+Languages:
+- locale: aa
+  percentage: 100
+- locale: ab
+  percentage: 100
+- locale: af
+  percentage: 100
+- locale: ak
+  percentage: 100
+- locale: an
+  percentage: 100
+- locale: ast
+  percentage: 100
+- locale: av
+  percentage: 100
+- locale: ay
+  percentage: 100
+- locale: az-az
+  percentage: 100
+- locale: ba
+  percentage: 100
+- locale: be
+  percentage: 100
+- locale: ber-dz
+  percentage: 100
+- locale: bg
+  percentage: 100
+- locale: bi
+  percentage: 100
+- locale: bin
+  percentage: 100
+- locale: bm
+  percentage: 100
+- locale: br
+  percentage: 100
+- locale: bs
+  percentage: 100
+- locale: bua
+  percentage: 100
+- locale: ca
+  percentage: 100
+- locale: ce
+  percentage: 100
+- locale: ch
+  percentage: 100
+- locale: chm
+  percentage: 100
+- locale: co
+  percentage: 100
+- locale: crh
+  percentage: 100
+- locale: cs
+  percentage: 100
+- locale: csb
+  percentage: 100
+- locale: cu
+  percentage: 100
+- locale: cv
+  percentage: 100
+- locale: cy
+  percentage: 100
+- locale: da
+  percentage: 100
+- locale: de
+  percentage: 100
+- locale: ee
+  percentage: 100
+- locale: el
+  percentage: 100
+- locale: en
+  percentage: 100
+- locale: eo
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: et
+  percentage: 100
+- locale: eu
+  percentage: 100
+- locale: fat
+  percentage: 100
+- locale: ff
+  percentage: 100
+- locale: fi
+  percentage: 100
+- locale: fil
+  percentage: 100
+- locale: fj
+  percentage: 100
+- locale: fo
+  percentage: 100
+- locale: fr
+  percentage: 100
+- locale: fur
+  percentage: 100
+- locale: fy
+  percentage: 100
+- locale: ga
+  percentage: 100
+- locale: gd
+  percentage: 100
+- locale: gl
+  percentage: 100
+- locale: gn
+  percentage: 100
+- locale: gv
+  percentage: 100
+- locale: ha
+  percentage: 100
+- locale: haw
+  percentage: 100
+- locale: ho
+  percentage: 100
+- locale: hr
+  percentage: 100
+- locale: hsb
+  percentage: 100
+- locale: ht
+  percentage: 100
+- locale: hu
+  percentage: 100
+- locale: hz
+  percentage: 100
+- locale: ia
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: ie
+  percentage: 100
+- locale: ig
+  percentage: 100
+- locale: ik
+  percentage: 100
+- locale: io
+  percentage: 100
+- locale: is
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: jv
+  percentage: 100
+- locale: kaa
+  percentage: 100
+- locale: kab
+  percentage: 100
+- locale: ki
+  percentage: 100
+- locale: kj
+  percentage: 100
+- locale: kk
+  percentage: 100
+- locale: kl
+  percentage: 100
+- locale: kr
+  percentage: 100
+- locale: ku-tr
+  percentage: 100
+- locale: kum
+  percentage: 100
+- locale: kv
+  percentage: 100
+- locale: kw
+  percentage: 100
+- locale: kwm
+  percentage: 100
+- locale: ky
+  percentage: 100
+- locale: la
+  percentage: 100
+- locale: lb
+  percentage: 100
+- locale: lez
+  percentage: 100
+- locale: lg
+  percentage: 100
+- locale: li
+  percentage: 100
+- locale: ln
+  percentage: 100
+- locale: lt
+  percentage: 100
+- locale: lv
+  percentage: 100
+- locale: mg
+  percentage: 100
+- locale: mh
+  percentage: 100
+- locale: mi
+  percentage: 100
+- locale: mk
+  percentage: 100
+- locale: mn-mn
+  percentage: 100
+- locale: mo
+  percentage: 100
+- locale: ms
+  percentage: 100
+- locale: mt
+  percentage: 100
+- locale: na
+  percentage: 100
+- locale: nb
+  percentage: 100
+- locale: nds
+  percentage: 100
+- locale: ng
+  percentage: 100
+- locale: nl
+  percentage: 100
+- locale: nn
+  percentage: 100
+- locale: no
+  percentage: 100
+- locale: nr
+  percentage: 100
+- locale: nso
+  percentage: 100
+- locale: nv
+  percentage: 100
+- locale: ny
+  percentage: 100
+- locale: oc
+  percentage: 100
+- locale: om
+  percentage: 100
+- locale: os
+  percentage: 100
+- locale: pap-an
+  percentage: 100
+- locale: pap-aw
+  percentage: 100
+- locale: pl
+  percentage: 100
+- locale: pt
+  percentage: 100
+- locale: qu
+  percentage: 100
+- locale: quz
+  percentage: 100
+- locale: rm
+  percentage: 100
+- locale: rn
+  percentage: 100
+- locale: ro
+  percentage: 100
+- locale: ru
+  percentage: 100
+- locale: rw
+  percentage: 100
+- locale: sah
+  percentage: 100
+- locale: sc
+  percentage: 100
+- locale: sco
+  percentage: 100
+- locale: se
+  percentage: 100
+- locale: sel
+  percentage: 100
+- locale: sg
+  percentage: 100
+- locale: sh
+  percentage: 100
+- locale: shs
+  percentage: 100
+- locale: sk
+  percentage: 100
+- locale: sl
+  percentage: 100
+- locale: sm
+  percentage: 100
+- locale: sma
+  percentage: 100
+- locale: smj
+  percentage: 100
+- locale: smn
+  percentage: 100
+- locale: sms
+  percentage: 100
+- locale: sn
+  percentage: 100
+- locale: so
+  percentage: 100
+- locale: sq
+  percentage: 100
+- locale: sr
+  percentage: 100
+- locale: ss
+  percentage: 100
+- locale: st
+  percentage: 100
+- locale: su
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: sw
+  percentage: 100
+- locale: tg
+  percentage: 100
+- locale: tk
+  percentage: 100
+- locale: tl
+  percentage: 100
+- locale: tn
+  percentage: 100
+- locale: to
+  percentage: 100
+- locale: tr
+  percentage: 100
+- locale: ts
+  percentage: 100
+- locale: tt
+  percentage: 100
+- locale: tw
+  percentage: 100
+- locale: ty
+  percentage: 100
+- locale: tyv
+  percentage: 100
+- locale: uk
+  percentage: 100
+- locale: uz
+  percentage: 100
+- locale: ve
+  percentage: 100
+- locale: vi
+  percentage: 100
+- locale: vo
+  percentage: 100
+- locale: vot
+  percentage: 100
+- locale: wa
+  percentage: 100
+- locale: wen
+  percentage: 100
+- locale: wo
+  percentage: 100
+- locale: xh
+  percentage: 100
+- locale: yap
+  percentage: 100
+- locale: yo
+  percentage: 100
+- locale: za
+  percentage: 100
+- locale: zu
+  percentage: 100
+---
+Type: addon
+ID: evince-tiffdocument
+Package: evince
+Extends:
+- org.gnome.Evince
+Name:
+  bn_IN: TIFF ডকুমেন্ট
+  oc: Documents TIFF
+  be: Дакументы TIFF
+  ie: Documentes TIFF
+  ca@valencia: Documents TIFF
+  nb: TIFF-dokumenter
+  ml: ടിഫ്ഫ് രേഖകള്‍
+  lv: TIFF dokumenti
+  sv: TIFF-dokument
+  cs: Dokumenty TIFF
+  fa: سندهای TIFF
+  pt_BR: Documentos TIFF
+  ta: TIFF ஆவணங்கள்
+  C: TIFF Documents
+  ru: Документы формата TIFF
+  sk: Dokumenty typu TIFF
+  he: מסמכי TIFF
+  mjw: TIFF Documents
+  bg: Документи TIFF
+  el: Έγγραφα TIFF
+  sl: Dokumenti TIFF
+  gd: Sgrìobhainnean TIFF
+  bs: TIFF dokumenti
+  is: TIFF skjöl
+  af: TIFF-dokumente
+  kk: TIFF құжаттары
+  ar: مستندات TIFF
+  hr: TIFF dokumenti
+  or: TIFF ଦଲିଲଗୁଡ଼ିକ
+  ne: TIFF कागजात
+  it: Documenti TIFF
+  pt: Documentos TIFF
+  as: Tiff দস্তাবেজসমূহ
+  sr@latin: TIFF dokumenti
+  ka: TIFF დოკუმენტები
+  da: TIFF-dokumenter
+  km: ឯកសារ TIFF
+  zh_CN: TIFF 文档
+  eo: TIFF-dokumentoj
+  te: TIFF పత్రములు
+  zh_HK: TIFF 文件
+  ug: TIFF پۈتۈكلىرى
+  hi: टिफ दस्तावेज़
+  kn: TIFF ದಸ್ತಾವೇಜುಗಳು
+  vi: Tài liệu TIFF
+  ja: TIFF ドキュメント
+  hu: TIFF-dokumentumok
+  fr: Documents TIFF
+  mr: TIFF दस्तऐवज
+  tr: TIFF Belgeleri
+  ko: TIFF 문서
+  ro: Documente TIFF
+  tg: Ҳуҷҷатҳои TIFF
+  pl: Dokumenty TIFF
+  ms: Dokumen-dokumen TIFF
+  pa: TIFF ਦਸਤਾਵੇਜ਼
+  gu: TIFF દસ્તાવેજો
+  th: เอกสาร TIFF
+  sr: ТИФФ документи
+  de: TIFF-Dokumente
+  ca: Documents TIFF
+  fi: TIFF-asiakirjat
+  es: Documentos TIFF
+  zh_TW: TIFF 文件
+  uk: Документи TIFF
+  en_GB: TIFF Documents
+  et: TIFF-dokumendid
+  lt: TIFF dokumentai
+  gl: Documentos TIFF
+  nl: TIFF-documenten
+  fur: Documents TIFF
+  id: Dokumen TIFF
+  an: Documentos TIFF
+  ga: Cáipéisí TIFF
+  eu: TIFF dokumentuak
+Summary:
+  oc: Apond la presa en carga de la lectura dels documents TIFF
+  be: Дадае падтрымку прагляду дакументаў у фармаце TIFF
+  ie: Adjunte li subtention de leer documentes TIFF
+  ca@valencia: Permet la lectura de documents TIFF
+  nb: Legger til støtte for å lese TIFF-dokumenter
+  lv: Pievieno atbalstu TIFF dokumentu lasīšanai
+  sv: Lägger till stöd för att läsa TIFF-dokument
+  cs: Přidává podporu pro čtení dokumentů TIFF
+  fa: پشتیبانی از خواندن سندهای TIFF را اضافه می‌کند
+  pt_BR: Adiciona suporte para leitura de documentos TIFF
+  ta: TIFF ஆவணங்களைப் படிப்பதற்கான ஆதரவைச் சேர்க்கிறது
+  C: Adds support for reading TIFF documents
+  ru: Добавляет поддержку для чтения документов в формате TIFF
+  sk: Pridá podporu na čítanie dokumentov typu TIFF
+  he: הוספת תמיכה לקריאת מסמכי TIFF
+  bg: Добавя поддръжка за четене на документи TIFF
+  el: Προσθέτει υποστήριξη για την ανάγνωση εγγράφων TIFF
+  sl: Doda podporo za branje datotek TIFF
+  gd: Cuiridh seo taic gus sgrìobhainnean TIFF a leughadh ris
+  bs: Dodaje podršku za čitanje TIFF dokumenata
+  is: Bætir við stuðningi til lestrar á TIFF skjölum
+  kk: TIFF құжаттарын оқу мүмкіндігін қосады
+  hr: Dodaje podršku za čitanje TIFF dokumenata
+  ne: TIFF कागजात पढ्न समर्थन थप्नुहोस्
+  it: Aggiunge il supporto per la lettura dei documenti TIFF
+  pt: Adiciona suporte para ler documentos TIFF
+  as: TIFF দস্তাবেজসমূহ পঢ়াৰ সমৰ্থন যোগ কৰিছে
+  da: Tilføjer understøttelse af TIFF-dokumenter
+  ka: TIFF დოკუმენტების კითხვის მხარდაჭერის დამატება
+  sr@latin: Dodajte podršku za čitanje TIFF dokumenata
+  zh_CN: 增加支持阅读 TIFF 文档的功能
+  eo: Aldonas subtenon por legi TIFF-dokumentojn
+  te: TIFF పత్రములు చదువుటకు తోడ్పాటు జతచేయును
+  zh_HK: 加入讀取 TIFF 文件的支援
+  hi: TIFF दस्तावेज़ पढ़ने के लिए समर्थन देता है
+  kn: TIFF ದಸ್ತಾವೇಜುಗಳನ್ನು ಓದುವುದಕ್ಕಾಗಿ ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ
+  vi: Thêm hỗ trợ đọc các tài liệu dạng TIFF
+  ja: TIFF ドキュメントの読み取りサポートを追加する
+  ca: Permet la lectura de documents TIFF
+  hu: Támogatást nyújt TIFF dokumentumok olvasásához
+  fr: Ajoute la prise en charge de la lecture des documents TIFF
+  mr: TIFF दस्तऐवज वाचण्याकरिता समर्थन समाविष्ट करते
+  tr: TIFF belgelerini görüntüleme desteği ekler
+  ko: TIFF 문서를 읽는 기능을 추가합니다
+  ro: Adaugă support pentru citirea documentelor TIFF
+  tg: Барои хониши ҳуҷҷатҳои TIFF дастгириро илова мекунад
+  pl: Dodaje obsługę dokumentów w formacie TIFF
+  ms: Tambah sokongan untuk pembacaan dokumen TIFF
+  pa: TIFF ਦਸਤਾਵੇਜ਼ ਪੜ੍ਹਨ ਲਈ ਸਹਾਇਤਾ ਜੋੜਦੀ ਹੈ
+  gu: TIFF દસ્તાવેજોને વાંચવા માટે આધારને ઉમેરે છે
+  th: เพิ่มการรองรับการอ่านเอกสาร TIFF
+  de: Fügt Unterstützung für das Lesen von TIFF-Dokumenten hinzu
+  sr: Додајте подршку за читање ТИФФ докумената
+  fi: Lisää tuen TIFF-asiakirjojen lukemiselle
+  es: Añade soporte para leer documentos TIFF
+  zh_TW: 加入讀取 TIFF 文件的支援
+  uk: Додає підтримування читання документів TIFF
+  en_GB: Adds support for reading TIFF documents
+  lt: Prideda TIFF dokumentų palaikymą
+  gl: Engade compatibilidade para ler documentos TIFF
+  fur: Al zonte il supuart par lei i documents TIFF
+  nl: Voegt ondersteuning toe voor het lezen TIFF-documenten
+  id: Menambahkan dukungan untuk membaca dokumen TIFF
+  an: Anyade capacidat ta leyer documentos TIFF
+  bn_IN: TIFF নথিপত্র পড়ার জন্য সহায়তা যোগ করে
+  eu: TIFF dokumentuak irakurtzeko euskarria gehitzen du
+ProjectLicense: GPL-2.0+
+Url:
+  homepage: https://wiki.gnome.org/Apps/Evince/SupportedDocumentFormats
+Provides:
+  mediatypes:
+  - image/tiff
+---
+Type: addon
+ID: evince-xpsdocument
+Package: evince
+Extends:
+- org.gnome.Evince
+Name:
+  bn_IN: XPS ডকুমেন্ট
+  oc: Documents XPS
+  be: Дакументы XPS
+  ie: Documentes XPS
+  ca@valencia: Documents XPS
+  nb: XPS-dokumenter
+  ml: XPS രേഖകള്‍
+  lv: XPS dokumenti
+  sv: XPS-dokument
+  cs: Dokumenty XPS
+  fa: سندهای XPS
+  pt_BR: Documentos XPS
+  ta: XPS ஆவணங்கள்
+  C: XPS Documents
+  ru: Документы формата XPS
+  sk: Dokumenty typu XPS
+  he: מסמכי XPS
+  mjw: XPS Documents
+  bg: Документи XPS
+  el: Έγγραφα XPS
+  sl: Dokumenti XPS
+  gd: Sgrìobhainnean XPS
+  bs: XPS dokumentu
+  is: XPS skjöl
+  af: XPS-dokumente
+  kk: XPS құжаттары
+  ar: مستندات XPS
+  hr: XPS dokumenti
+  or: XPS ଦଲିଲଗୁଡ଼ିକ
+  ne: XPS कागजात
+  it: Documenti XPS
+  pt: Documentos XPS
+  as: XPS দস্তাবেজসমূহ
+  sr@latin: IksPS dokumenti
+  ka: XPS დოკუმენტები
+  da: XPS-dokumenter
+  km: ឯកសារ XPS
+  zh_CN: XPS 文档
+  eo: XPS-dokumentoj
+  te: XPS పత్రములు
+  zh_HK: XPS 文件
+  ug: XPS پۈتۈكلىرى
+  hi: एक्सपीएस दस्तावेज़
+  kn: XPS ದಸ್ತಾವೇಜುಗಳು
+  vi: Tài liệu XPS
+  ja: XPS ドキュメント
+  hu: XPS-dokumentumok
+  fr: Documents XPS
+  mr: XPS दस्तऐवज
+  tr: XPS Belgeleri
+  ko: XPS 문서
+  ro: Documente XPS
+  tg: Ҳуҷҷатҳои XPS
+  pl: Dokumenty XPS
+  ms: Dokumen-dokumen XPS
+  pa: XPS ਦਸਤਾਵੇਜ਼
+  gu: XPS દસ્તાવેજો
+  th: เอกสาร XPS
+  sr: ИксПС документи
+  de: XPS-Dokumente
+  ca: Documents XPS
+  fi: XPS-asiakirjat
+  es: Documentos XPS
+  zh_TW: XPS 文件
+  uk: Документи XPS
+  en_GB: XPS Documents
+  et: XPS-dokumendid
+  lt: XPS dokumentai
+  gl: Documentos XPS
+  nl: XPS-documenten
+  fur: Documents XPS
+  id: Dokumen XPS
+  an: Documentos XPS
+  ga: Cáipéisí XPS
+  eu: XPS dokumentuak
+Summary:
+  oc: Apond la presa en carga de la lectura dels documents XPS
+  be: Дадае падтрымку прагляду дакументаў у фармаце XPS
+  ca@valencia: Permet la lectura de documents XPS
+  nb: Legger til støtte for å lese XPS-dokumenter
+  lv: Pievieno atbalstu XPS dokumentu lasīšanai
+  sv: Lägger till stöd för att läsa XPS-dokument
+  cs: Přidává podporu pro čtení dokumentů XPS
+  fa: پشتیبانی از خواندن سندهای XPS را اضافه می‌کند
+  pt_BR: Adiciona suporte para leitura de documentos XPS
+  ta: XPS ஆவணங்களைப் படிப்பதற்கான ஆதரவைச் சேர்க்கிறது
+  C: Adds support for reading XPS documents
+  ru: Добавляет поддержку для чтения документов в формате XPS
+  sk: Pridá podporu na čítanie dokumentov typu XPS
+  he: הוספת תמיכה לקריאת מסמכי XPS
+  bg: Добавя поддръжка за четене на документи XPS
+  el: Προσθέτει υποστήριξη για την ανάγνωση εγγράφων XPS
+  sl: Doda podporo za branje datotek XPS
+  gd: Cuiridh seo taic gus sgrìobhainnean XPS a leughadh ris
+  bs: Dodaje podršku za čitanje XPS dokumenata
+  is: Bætir við stuðningi til lestrar á XPS skjölum
+  kk: XPS құжаттарын оқу мүмкіндігін қосады
+  hr: Dodaje podršku za čitanje XPS dokumenata
+  ne: XPS कागजात पढ्न समर्थन थप्नुहोस्
+  it: Aggiunge il supporto per la lettura dei documenti XPS
+  pt: Adiciona suporte para ler documentos XPS
+  as: XPS দস্তাবেজসমূহ পঢ়াৰ সমৰ্থন যোগ কৰিছে
+  da: Tilføjer understøttelse af XPS-dokumenter
+  ka: XPS დოკუმენტების კითხვის მხარდაჭერის დამატება
+  sr@latin: Dodajte podršku za čitanje IksPS dokumenata
+  zh_CN: 增加支持阅读 XPS 文档的功能
+  eo: Aldonas subtenon por legi XPS-dokumentojn
+  te: XPS పత్రములు చదువుటకు తోడ్పాటు జతచేయును
+  zh_HK: 加入讀取 XPS 文件的支援
+  hi: XPS दस्तावेज़ पढ़ने के लिए समर्थन देता है
+  kn: XPS ದಸ್ತಾವೇಜುಗಳನ್ನು ಓದುವುದಕ್ಕಾಗಿ ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ
+  vi: Thêm hỗ trợ đọc các tài liệu dạng XPS
+  ja: XPS ドキュメントの読み取りサポートを追加する
+  ca: Permet la lectura de documents XPS
+  hu: Támogatást nyújt XPS dokumentumok olvasásához
+  fr: Ajoute la prise en charge de la lecture des documents XPS
+  mr: XPS दस्तऐवज वाचण्याकरिता समर्थन समाविष्ट करते
+  tr: XPS belgelerini görüntüleme desteği ekler
+  ko: XPS 문서를 읽는 기능을 추가합니다
+  ro: Adaugă suport pentru citirea documentelor XPS
+  tg: Барои хониши ҳуҷҷатҳои XPS дастгириро илова мекунад
+  pl: Dodaje obsługę dokumentów w formacie XPS
+  ms: Tambah sokongan untuk pembacaan dokumen XPS
+  pa: XPS ਦਸਤਾਵੇਜ਼ ਪੜ੍ਹਨ ਲਈ ਸਹਾਇਤਾ ਜੋੜਦੀ ਹੈ
+  gu: XPS દસ્તાવેજોને વાંચવા માટે આધારને ઉમેરે છે
+  th: เพิ่มการรองรับการอ่านเอกสาร XPS
+  de: Fügt Unterstützung für das Lesen von XPS-Dokumenten hinzu
+  sr: Додајте подршку за читање ИксПС докумената
+  fi: Lisää tuen XPS-asiakirjojen lukemiselle
+  es: Añade soporte para leer documentos XPS
+  zh_TW: 加入讀取 XPS 文件的支援
+  uk: Додає підтримування читання документів XPS
+  en_GB: Adds support for reading XPS documents
+  lt: Prideda XPS dokumentų palaikymą
+  bn_IN: XPS নথিপত্র পড়ার জন্য সহায়তা যোগ করে
+  fur: Al zonte il supuart par lei i documents XPS
+  nl: Voegt ondersteuning toe voor het lezen van XPS-documenten
+  gl: Engade compatibilidade para ler documentos XPS
+  id: Menambahkan dukungan untuk membaca dokumen XPS
+  an: Anyade capacidat ta leyer documentos XPS
+  eu: XPS dokumentuak irakurtzeko euskarria gehitzen du
+ProjectLicense: GPL-2.0+
+Url:
+  homepage: https://wiki.gnome.org/Apps/Evince/SupportedDocumentFormats
+Provides:
+  mediatypes:
+  - application/oxps
+  - application/vnd.ms-xpsdocument
+---
+Type: codec
+ID: gstreamer1.0-gtk3
+Package: gstreamer1.0-gtk3
+Name:
+  C: GStreamer Multimedia Codecs
+Summary:
+  C: GStreamer plugin for GTK+3
+  en: GStreamer plugin for GTK+3
+---
+Type: font
+ID: in.org.smc.keraleeyam
+Package: fonts-smc-keraleeyam
+Name:
+  C: Keraleeyam font
+  ml: കേരളീയം അക്ഷരസഞ്ചയം
+Summary:
+  C: Keraleeyam Malayalam Unicode font
+Description:
+  C: >-
+    <p>
+          Unicode font for traditional Malayalam script designed by Hussain K H
+          maintained by Swathanthra Malayalam Computing. Thick ornamental font
+          suitable for titles.
+        </p>
+ProjectLicense: OFL-1.1
+Url:
+  homepage: https://smc.org.in/fonts
+  bugtracker: https://gitlab.com/smc/fonts/keraleeyam/issues
+Icon:
+  cached:
+  - name: fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 48
+    height: 48
+  - name: fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 48
+    height: 48
+    scale: 2
+  - name: fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 64
+    height: 64
+  - name: fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 128
+    height: 128
+  - name: fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: in/org/smc.keraleeyam/9F042A58BD2223892E536F5147D1C5C5/icons/128x128/fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 128
+    height: 128
+  - url: in/org/smc.keraleeyam/9F042A58BD2223892E536F5147D1C5C5/icons/128x128@2/fonts-smc-keraleeyam_keraleeyam-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Keraleeyam Regular
+Screenshots:
+- default: true
+  caption:
+    C: Keraleeyam Regular
+  thumbnails:
+  - url: in/org/smc.keraleeyam/9F042A58BD2223892E536F5147D1C5C5/screenshots/image-keraleeyam-regular_1024x78.png
+    width: 1024
+    height: 78
+  - url: in/org/smc.keraleeyam/9F042A58BD2223892E536F5147D1C5C5/screenshots/image-keraleeyam-regular_640x48.png
+    width: 640
+    height: 48
+Languages:
+- locale: aa
+  percentage: 100
+- locale: an
+  percentage: 100
+- locale: ay
+  percentage: 100
+- locale: bi
+  percentage: 100
+- locale: br
+  percentage: 100
+- locale: ch
+  percentage: 100
+- locale: da
+  percentage: 100
+- locale: de
+  percentage: 100
+- locale: en
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: eu
+  percentage: 100
+- locale: fil
+  percentage: 100
+- locale: fj
+  percentage: 100
+- locale: fo
+  percentage: 100
+- locale: fur
+  percentage: 100
+- locale: fy
+  percentage: 100
+- locale: gd
+  percentage: 100
+- locale: gl
+  percentage: 100
+- locale: gv
+  percentage: 100
+- locale: ho
+  percentage: 100
+- locale: ht
+  percentage: 100
+- locale: ia
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: ie
+  percentage: 100
+- locale: io
+  percentage: 100
+- locale: is
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: jv
+  percentage: 100
+- locale: kj
+  percentage: 100
+- locale: kwm
+  percentage: 100
+- locale: lb
+  percentage: 100
+- locale: li
+  percentage: 100
+- locale: mg
+  percentage: 100
+- locale: ml
+  percentage: 100
+- locale: ms
+  percentage: 100
+- locale: nb
+  percentage: 100
+- locale: nds
+  percentage: 100
+- locale: ng
+  percentage: 100
+- locale: nl
+  percentage: 100
+- locale: nn
+  percentage: 100
+- locale: no
+  percentage: 100
+- locale: nr
+  percentage: 100
+- locale: oc
+  percentage: 100
+- locale: om
+  percentage: 100
+- locale: pap-an
+  percentage: 100
+- locale: pap-aw
+  percentage: 100
+- locale: pt
+  percentage: 100
+- locale: rm
+  percentage: 100
+- locale: rn
+  percentage: 100
+- locale: rw
+  percentage: 100
+- locale: sc
+  percentage: 100
+- locale: sg
+  percentage: 100
+- locale: sma
+  percentage: 100
+- locale: smj
+  percentage: 100
+- locale: sn
+  percentage: 100
+- locale: so
+  percentage: 100
+- locale: sq
+  percentage: 100
+- locale: ss
+  percentage: 100
+- locale: st
+  percentage: 100
+- locale: su
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: sw
+  percentage: 100
+- locale: tl
+  percentage: 100
+- locale: ts
+  percentage: 100
+- locale: uz
+  percentage: 100
+- locale: vo
+  percentage: 100
+- locale: wa
+  percentage: 100
+- locale: xh
+  percentage: 100
+- locale: yap
+  percentage: 100
+- locale: za
+  percentage: 100
+- locale: zu
+  percentage: 100
+---
+Type: inputmethod
+ID: org.freedesktop.ibus.engine.m17n
+Package: ibus-m17n
+Name:
+  C: Ibus M17N
+Summary:
+  C: M17N input engine for IBus
+Description:
+  C: >-
+    <p>
+          This multilingualization input method allows entering many
+          languages using the input methods from the m17n library.
+        </p>
+DeveloperName:
+  C: Parag Nemade, Mike FABIAN
+ProjectLicense: GPL-2
+Keywords:
+  C:
+  - input-method
+  - multilingual
+Url:
+  homepage: https://github.com/ibus/ibus-m17n
+  bugtracker: https://github.com/ibus/ibus-m17n/issues
+  help: https://github.com/ibus/ibus-m17n
+  translate: https://translate.fedoraproject.org/projects/ibus-m17n/
+Screenshots:
+- default: true
+  caption:
+    C: ibus-m17n screenshot
+  thumbnails:
+  - url: org/freedesktop/ibus.engine.m17n/b578143754cf0a2869c8ae38137af640/screenshots/image-1_752x564.png
+    width: 752
+    height: 564
+  - url: org/freedesktop/ibus.engine.m17n/b578143754cf0a2869c8ae38137af640/screenshots/image-1_624x468.png
+    width: 624
+    height: 468
+  - url: org/freedesktop/ibus.engine.m17n/b578143754cf0a2869c8ae38137af640/screenshots/image-1_224x168.png
+    width: 224
+    height: 168
+  source-image:
+    url: org/freedesktop/ibus.engine.m17n/b578143754cf0a2869c8ae38137af640/screenshots/image-1_orig.png
+    width: 1024
+    height: 768
+Languages:
+- locale: ar
+  percentage: 100
+- locale: bn
+  percentage: 100
+- locale: de
+  percentage: 100
+- locale: en_US
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: fr
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: ja
+  percentage: 100
+- locale: ka
+  percentage: 100
+- locale: pt_BR
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: tr
+  percentage: 100
+- locale: uk
+  percentage: 100
+- locale: zh_CN
+  percentage: 100
+- locale: zh_TW
+  percentage: 28
+Releases:
+- version: 1.4.22
+  type: stable
+  unix-timestamp: 1692576000
+  urgency: medium
+  description:
+    C: >-
+      <p>This new stable release includes these changes:</p>
+
+      <ul>
+        <li>
+                  Translation update from Weblate (Lithuanian, lt 100%)
+                </li>
+      </ul>
+  url:
+    details: https://github.com/ibus/ibus-m17n/releases/tag/1.4.22
+- version: 1.4.21
+  type: stable
+  unix-timestamp: 1691366400
+  urgency: medium
+  description:
+    C: >-
+      <p>This new stable release includes these changes:</p>
+
+      <ul>
+        <li>
+                  Translation update from Weblate (Swedish, sv 100%)
+                </li>
+      </ul>
+  url:
+    details: https://github.com/ibus/ibus-m17n/releases/tag/1.4.21
+- version: 1.4.20
+  type: stable
+  unix-timestamp: 1690675200
+  urgency: medium
+  description:
+    C: >-
+      <p>This new stable release includes these changes:</p>
+
+      <ul>
+        <li>
+                  Reduce preedit flicker (Resolves: github-ibus-issues#2536)
+                </li>
+        <li>
+                  Remove `xml:lang="en"` from the screenshot in appdata.xml
+                  (There must be one image in the default locale, and there
+                  can be some translated ones, but having only translated
+                  images is not okay).
+                </li>
+        <li>
+                  Use ibus_text_new_from_string (string) instead of ibus_text_new_from_static_string (string) in ibus_m17n_engine_commit_string()
+                </li>
+        <li>
+                  Add missing g_free (buf) in ibus_m17n_mtext_to_utf8()
+                </li>
+      </ul>
+  url:
+    details: https://github.com/ibus/ibus-m17n/releases/tag/1.4.20
+  issues:
+  - id: github-ibus-issues#2536
+    url: https://github.com/ibus/ibus/issues/2536
+- version: 1.4.19
+  type: stable
+  unix-timestamp: 1676764800
+  urgency: medium
+  description:
+    C: >-
+      <p>This new stable release includes these changes:</p>
+
+      <ul>
+        <li>
+                  Translation update from Weblate (Sinhala, si 100%)
+                </li>
+      </ul>
+  url:
+    details: https://github.com/ibus/ibus-m17n/releases/tag/1.4.19
+ContentRating:
+  oars-1.1: {}
+---
+Type: desktop-application
+ID: libreoffice-impress.desktop
+Package: libreoffice-impress
+Name:
+  C: LibreOffice Impress
+Summary:
+  C: Presentation program of the LibreOffice productivity suite
+Description:
+  C: >-
+    <p>
+
+    Impress is a presentation program and part of the LibreOffice productivity suite.
+
+    Impress is the fastest and easiest way to create effective multimedia presentations.
+
+    Stunning animation and sensational special effects help you convince your audience.
+
+    Create presentations that look even more professional than the standard
+
+    presentations you commonly see at work. Get your colleagues’ and bosses’ attention
+
+    by creating something a little bit different.
+
+    </p>
+
+    <p>
+
+    LibreOffice supports opening and saving into a wide variety of formats, so you
+
+    can easily share presentations with users of other popular office suites without
+
+    worrying about compatibility.
+
+    </p>
+DeveloperName:
+  C: The Document Foundation
+ProjectLicense: MPL-2.0
+Categories:
+- Office
+- Presentation
+Keywords:
+  C:
+  - Slideshow
+  - Slides
+  - OpenDocument Presentation
+  - Microsoft PowerPoint
+  - Microsoft Works
+  - OpenOffice Impress
+  - odp
+  - ppt
+  - pptx
+Url:
+  homepage: http://www.libreoffice.org/discover/impress/
+  bugtracker: https://bugs.documentfoundation.org/
+  help: http://www.libreoffice.org/get-help/documentation/
+  translate: https://hub.libreoffice.org/translate
+  faq: https://hub.libreoffice.org/faq
+  donation: https://donate.libreoffice.org/
+Icon:
+  cached:
+  - name: libreoffice-impress_libreoffice-impress.png
+    width: 48
+    height: 48
+  - name: libreoffice-impress_libreoffice-impress.png
+    width: 64
+    height: 64
+  - name: libreoffice-impress_libreoffice-impress.png
+    width: 128
+    height: 128
+  remote:
+  - url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/icons/128x128/libreoffice-impress_libreoffice-impress.png
+    width: 128
+    height: 128
+  stock: libreoffice-impress
+Launchable:
+  desktop-id:
+  - libreoffice-impress.desktop
+Provides:
+  mediatypes:
+  - application/vnd.oasis.opendocument.presentation
+  - application/vnd.oasis.opendocument.presentation-template
+  - application/vnd.sun.xml.impress
+  - application/vnd.sun.xml.impress.template
+  - application/mspowerpoint
+  - application/vnd.ms-powerpoint
+  - application/vnd.openxmlformats-officedocument.presentationml.presentation
+  - application/vnd.ms-powerpoint.presentation.macroEnabled.12
+  - application/vnd.openxmlformats-officedocument.presentationml.template
+  - application/vnd.ms-powerpoint.template.macroEnabled.12
+  - application/vnd.openxmlformats-officedocument.presentationml.slide
+  - application/vnd.openxmlformats-officedocument.presentationml.slideshow
+  - application/vnd.ms-powerpoint.slideshow.macroEnabled.12
+  - application/vnd.oasis.opendocument.presentation-flat-xml
+  - application/x-iwork-keynote-sffkey
+  - application/vnd.apple.keynote
+Screenshots:
+- default: true
+  caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-1_752x469.png
+    width: 752
+    height: 469
+  - url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-1_624x389.png
+    width: 624
+    height: 389
+  - url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-1_224x139.png
+    width: 224
+    height: 139
+  source-image:
+    url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-1_orig.png
+    width: 1122
+    height: 701
+- caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-2_752x469.png
+    width: 752
+    height: 469
+  - url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-2_624x389.png
+    width: 624
+    height: 389
+  - url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-2_224x139.png
+    width: 224
+    height: 139
+  source-image:
+    url: l/li/libreoffice-impress.desktop/708cfcee8043c2371376d3c8967fd09a/screenshots/image-2_orig.png
+    width: 1122
+    height: 701
+ContentRating:
+  oars-1.0: {}
+---
+Type: font
+ID: in.org.smc.suruma
+Package: fonts-smc-suruma
+Name:
+  C: Suruma font
+  ml: സുറുമ അക്ഷരസഞ്ചയം
+Summary:
+  C: Suruma Malayalam Unicode font
+Description:
+  C: >-
+    <p>
+          Unicode font for traditional Malayalam script designed by Suresh P
+          maintained by Swathanthra Malayalam Computing.
+        </p>
+ProjectLicense: GPL-3.0-only WITH Font-exception-2.0
+Url:
+  homepage: https://smc.org.in/fonts
+  bugtracker: https://gitlab.com/smc/fonts/suruma/issues
+Icon:
+  cached:
+  - name: fonts-smc-suruma_suruma-medium.png
+    width: 48
+    height: 48
+  - name: fonts-smc-suruma_suruma-medium.png
+    width: 48
+    height: 48
+    scale: 2
+  - name: fonts-smc-suruma_suruma-medium.png
+    width: 64
+    height: 64
+  - name: fonts-smc-suruma_suruma-medium.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-smc-suruma_suruma-medium.png
+    width: 128
+    height: 128
+  - name: fonts-smc-suruma_suruma-medium.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: in/org/smc.suruma/0312D476C2BA198D0926E7F592F162C3/icons/128x128/fonts-smc-suruma_suruma-medium.png
+    width: 128
+    height: 128
+  - url: in/org/smc.suruma/0312D476C2BA198D0926E7F592F162C3/icons/128x128@2/fonts-smc-suruma_suruma-medium.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Suruma
+Screenshots:
+- default: true
+  caption:
+    C: Suruma Medium
+  thumbnails:
+  - url: in/org/smc.suruma/0312D476C2BA198D0926E7F592F162C3/screenshots/image-suruma-medium_1024x78.png
+    width: 1024
+    height: 78
+  - url: in/org/smc.suruma/0312D476C2BA198D0926E7F592F162C3/screenshots/image-suruma-medium_640x48.png
+    width: 640
+    height: 48
+Languages:
+- locale: fj
+  percentage: 100
+- locale: ho
+  percentage: 100
+- locale: ia
+  percentage: 100
+- locale: ie
+  percentage: 100
+- locale: io
+  percentage: 100
+- locale: kj
+  percentage: 100
+- locale: kwm
+  percentage: 100
+- locale: ml
+  percentage: 100
+- locale: ms
+  percentage: 100
+- locale: ng
+  percentage: 100
+- locale: nr
+  percentage: 100
+- locale: om
+  percentage: 100
+- locale: rn
+  percentage: 100
+- locale: rw
+  percentage: 100
+- locale: sn
+  percentage: 100
+- locale: so
+  percentage: 100
+- locale: ss
+  percentage: 100
+- locale: st
+  percentage: 100
+- locale: sw
+  percentage: 100
+- locale: ts
+  percentage: 100
+- locale: uz
+  percentage: 100
+- locale: xh
+  percentage: 100
+- locale: za
+  percentage: 100
+- locale: zu
+  percentage: 100
+---
+Type: desktop-application
+ID: org.gnome.Shotwell-Profile-Browser
+Package: shotwell
+Name:
+  C: Shotwell Profile Browser
+Summary:
+  C: Manage Different Profiles In Shotwell
+Description:
+  C: >-
+    <p>Shotwell is a digital photo organizer designed for the GNOME desktop environment. It allows you to import photos, pictures,
+    images and videos from disk or camera. Shotwell can organize them in collections and in other various ways. The viewer
+    shows them in full-window or fullscreen mode and presents them as galleries or slideshows. The integrated editor can rotate,
+    flip, crop and tag the photos, adjust the colors und remove red eyes. Export is possible to facebook, Flickr or Youtube
+    to share with others. It is able to manage a lot of image formats such as JPEG, PNG, BMP, TIFF and Raw CR2.</p>
+  en: >-
+    <p>Shotwell is a digital photo organizer designed for the GNOME desktop environment. It allows you to import photos, pictures,
+    images and videos from disk or camera. Shotwell can organize them in collections and in other various ways. The viewer
+    shows them in full-window or fullscreen mode and presents them as galleries or slideshows. The integrated editor can rotate,
+    flip, crop and tag the photos, adjust the colors und remove red eyes. Export is possible to facebook, Flickr or Youtube
+    to share with others. It is able to manage a lot of image formats such as JPEG, PNG, BMP, TIFF and Raw CR2.</p>
+Categories:
+- Graphics
+- Photography
+Icon:
+  cached:
+  - name: shotwell_org.gnome.Shotwell.png
+    width: 48
+    height: 48
+  - name: shotwell_org.gnome.Shotwell.png
+    width: 64
+    height: 64
+  - name: shotwell_org.gnome.Shotwell.png
+    width: 128
+    height: 128
+  remote:
+  - url: org/gnome/Shotwell-Profile-Browser/cdd4cced3bc0d8a8463a77a153e54596/icons/128x128/shotwell_org.gnome.Shotwell.png
+    width: 128
+    height: 128
+  stock: org.gnome.Shotwell
+Launchable:
+  desktop-id:
+  - org.gnome.Shotwell-Profile-Browser.desktop
+---
+Type: generic
+ID: io.github.feralinteractive.gamemode
+Package: gamemode
+Name:
+  C: gamemode
+Summary:
+  C: daemon that allows games to request a set of optimizations be temporarily applied
+Description:
+  C: >-
+    <p>
+          GameMode is a daemon/lib combo for Linux that allows games to request a set of optimisations be temporarily applied
+    to the host OS and/or a game process.
+        </p>
+    <p>
+          It was designed primarily as a stop-gap solution to problems with the Intel and AMD CPU powersave or ondemand governors,
+    but is now host to a range of optimisation features and configurations.
+        </p>
+    <p>Currently GameMode includes support for optimisations including:</p>
+
+    <ul>
+      <li>CPU governor</li>
+      <li>I/O priority</li>
+      <li>Process niceness</li>
+      <li>Kernel scheduler (SCHED_ISO)</li>
+      <li>Screensaver inhibiting</li>
+      <li>GPU performance mode (NVIDIA and AMD)</li>
+      <li>GPU overclocking (NVIDIA)</li>
+      <li>Custom scripts</li>
+    </ul>
+DeveloperName:
+  C: Feral Interactive
+ProjectLicense: BSD-3-Clause
+Categories:
+- Utility
+- Game
+ContentRating:
+  oars-1.1: {}
+---
+Type: desktop-application
+ID: libreoffice-calc.desktop
+Package: libreoffice-calc
+Name:
+  C: LibreOffice Calc
+Summary:
+  C: Spreadsheet program of the LibreOffice productivity suite
+Description:
+  C: >-
+    <p>
+
+    Calc is a powerful and extensible spreadsheet program, part of the LibreOffice
+
+    productivity suite.
+
+    Newcomers find it intuitive and easy to learn.
+
+    Professional data miners and number crunchers will appreciate the comprehensive
+
+    range of advanced functions.
+
+    </p>
+
+    <p>
+
+    LibreOffice supports opening and saving into a wide variety of formats, so you
+
+    can easily share spreadsheets with users of other popular office suites without
+
+    worrying about compatibility.
+
+    </p>
+DeveloperName:
+  C: The Document Foundation
+ProjectLicense: MPL-2.0
+Categories:
+- Office
+- Spreadsheet
+Keywords:
+  C:
+  - Accounting
+  - Stats
+  - OpenDocument Spreadsheet
+  - Chart
+  - Microsoft Excel
+  - Microsoft Works
+  - OpenOffice Calc
+  - ods
+  - xls
+  - xlsx
+Url:
+  homepage: http://www.libreoffice.org/discover/calc/
+  bugtracker: https://bugs.documentfoundation.org/
+  help: http://www.libreoffice.org/get-help/documentation/
+  translate: https://hub.libreoffice.org/translate
+  faq: https://hub.libreoffice.org/faq
+  donation: https://donate.libreoffice.org/
+Icon:
+  cached:
+  - name: libreoffice-calc_libreoffice-calc.png
+    width: 48
+    height: 48
+  - name: libreoffice-calc_libreoffice-calc.png
+    width: 64
+    height: 64
+  - name: libreoffice-calc_libreoffice-calc.png
+    width: 128
+    height: 128
+  remote:
+  - url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/icons/128x128/libreoffice-calc_libreoffice-calc.png
+    width: 128
+    height: 128
+  stock: libreoffice-calc
+Launchable:
+  desktop-id:
+  - libreoffice-calc.desktop
+Provides:
+  mediatypes:
+  - application/vnd.oasis.opendocument.spreadsheet
+  - application/vnd.oasis.opendocument.spreadsheet-template
+  - application/vnd.sun.xml.calc
+  - application/vnd.sun.xml.calc.template
+  - application/msexcel
+  - application/vnd.ms-excel
+  - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+  - application/vnd.ms-excel.sheet.macroEnabled.12
+  - application/vnd.openxmlformats-officedocument.spreadsheetml.template
+  - application/vnd.ms-excel.template.macroEnabled.12
+  - application/vnd.ms-excel.sheet.binary.macroEnabled.12
+  - text/csv
+  - application/x-dbf
+  - text/spreadsheet
+  - application/csv
+  - application/excel
+  - application/tab-separated-values
+  - application/vnd.lotus-1-2-3
+  - application/vnd.oasis.opendocument.chart
+  - application/vnd.oasis.opendocument.chart-template
+  - application/x-dbase
+  - application/x-dos_ms_excel
+  - application/x-excel
+  - application/x-msexcel
+  - application/x-ms-excel
+  - application/x-quattropro
+  - application/x-123
+  - text/comma-separated-values
+  - text/tab-separated-values
+  - text/x-comma-separated-values
+  - text/x-csv
+  - application/vnd.oasis.opendocument.spreadsheet-flat-xml
+  - application/vnd.ms-works
+  - application/clarisworks
+  - application/x-iwork-numbers-sffnumbers
+  - application/vnd.apple.numbers
+  - application/x-starcalc
+Screenshots:
+- default: true
+  caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-1_752x469.png
+    width: 752
+    height: 469
+  - url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-1_624x389.png
+    width: 624
+    height: 389
+  - url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-1_224x139.png
+    width: 224
+    height: 139
+  source-image:
+    url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-1_orig.png
+    width: 1130
+    height: 705
+- caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-2_752x469.png
+    width: 752
+    height: 469
+  - url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-2_624x389.png
+    width: 624
+    height: 389
+  - url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-2_224x139.png
+    width: 224
+    height: 139
+  source-image:
+    url: l/li/libreoffice-calc.desktop/a7b309b3ce20bcc8b4b7e8e23b9a5515/screenshots/image-2_orig.png
+    width: 1130
+    height: 705
+ContentRating:
+  oars-1.0: {}
+---
+Type: desktop-application
+ID: vim.desktop
+Package: vim-common
+Name:
+  ca: Vim
+  es: Vim
+  fr: Vim
+  sr: Vim
+  de: Vim
+  zh_CN: Vim
+  tr: Vim
+  fi: Vim
+  it: Vim
+  ga: Vim
+  eo: Vim
+  ru: Vim
+  uk: Vim
+  C: Vim
+Summary:
+  tk: Metin faýllary editle
+  az: Mətn fayllarını redaktə edin
+  be: Рэдагаваньне тэкставых файлаў
+  nb: Rediger tekstfiler
+  ml: വാചക രചനകള് തിരുത്തുക
+  lv: Rediģēt teksta failus
+  sv: Redigera textfiler
+  cs: Úprava textových souborů
+  nn: Rediger tekstfiler
+  fa: ویرایش پرونده‌های متنی
+  pt_BR: Edite arquivos de texto
+  ta: உரை கோப்புகளை தொகுக்கவும்
+  C: Edit text files
+  ru: Редактирование текстовых файлов
+  sk: Úprava textových súborov
+  he: ערוך קבצי טקסט
+  'no': Rediger tekstfiler
+  bg: Редактиране на текстови файлове
+  el: Επεξεργασία αρχείων κειμένου
+  sl: Urejanje datotek z besedili
+  bs: Izmijeni tekstualne datoteke
+  mn: Текст файл боловсруулах
+  af: Redigeer tekslêers
+  is: Vinna með textaskrár
+  ar: حرّر ملفات نصية
+  hr: Uređivanje tekstualne datoteke
+  or: ପାଠ୍ଯ ଫାଇଲଗୁଡ଼ିକୁ ସମ୍ପାଦନ କରନ୍ତୁ
+  sr@Latn: Izmeni tekstualne datoteke
+  ne: पाठ फाइललाई संशोधन गर्नुहोस्
+  it: Edita file di testo
+  pt: Editar ficheiros de texto
+  en_CA: Edit text files
+  da: Rediger tekstfiler
+  zh_CN: 编辑文本文件
+  eo: Redakti tekstajn dosierojn
+  hi: पाठ फ़ाइलें संपादित करें
+  kn: ಪಠ್ಯ ಕಡತಗಳನ್ನು ಸಂಪಾದಿಸು
+  ca: Edita fitxers de text
+  ja: テキストファイルを編集します
+  hu: Szövegfájlok szerkesztése
+  fr: Éditer des fichiers texte
+  mr: गद्य फाइल संपादित करा
+  tr: Metin dosyaları düzenleyin
+  cy: Golygu ffeiliau testun
+  ro: Editare fişiere text
+  ko: 텍스트 파일을 편집합니다
+  pl: Edytuj pliki tekstowe
+  sq: Përpuno files teksti
+  ms: Edit fail teks
+  pa: ਪਾਠ ਫਾਇਲਾਂ ਸੰਪਾਦਨ
+  gu: લખાણ ફાઇલોમાં ફેરફાર કરો
+  wa: Asspougnî des fitchîs tecses
+  th: แก้ไขแฟ้มข้อความ
+  de: Textdateien bearbeiten
+  sr: Уређујте текст фајлове
+  vi: Soạn thảo tập tin văn bản
+  fi: Muokkaa tekstitiedostoja
+  es: Editar archivos de texto
+  bn: টেক্স্ট ফাইল এডিট করুন
+  zh_TW: 編輯文字檔
+  uk: Редагувати текстові файли
+  am: የጽሑፍ ፋይሎች ያስተካክሉ
+  en_GB: Edit text files
+  et: Redigeeri tekstifaile
+  lt: Redaguoti tekstines bylas
+  nl: Tekstbestanden bewerken
+  id: Edit file teks
+  ga: Cuir comhaid téacs in eagar
+  mk: Уреди текстуални фајлови
+  eu: Editatu testu-fitxategiak
+Description:
+  C: >-
+    <p>Vim is an almost compatible version of the UNIX editor Vi.</p>
+
+    <p>This package contains files shared by all non GUI-enabled vim variants available in Debian.  Examples of such shared
+    files are: manpages and configuration files.</p>
+  en: >-
+    <p>Vim is an almost compatible version of the UNIX editor Vi.</p>
+
+    <p>This package contains files shared by all non GUI-enabled vim variants available in Debian.  Examples of such shared
+    files are: manpages and configuration files.</p>
+Categories:
+- Utility
+- TextEditor
+Keywords:
+  ca:
+  - Text
+  - editor
+  es:
+  - Texto
+  - editor
+  fr:
+  - Texte
+  - éditeur
+  sr:
+  - Текст
+  - едитор
+  de:
+  - Text
+  - Editor
+  uk:
+  - текст
+  - редактор
+  ja:
+  - テキスト
+  - エディタ
+  fi:
+  - Teksti
+  - muokkain
+  - editori
+  it:
+  - Testo
+  - editor
+  ga:
+  - Téacs
+  - eagarthóir
+  eo:
+  - Teksto
+  - redaktilo
+  ru:
+  - текст
+  - текстовый редактор
+  tr:
+  - Metin
+  - düzenleyici
+  zh_CN:
+  - Text
+  - editor
+  - 文本
+  - 编辑器
+  C:
+  - Text
+  - editor
+Icon:
+  cached:
+  - name: vim-common_gvim.png
+    width: 48
+    height: 48
+  - name: vim-common_gvim.png
+    width: 64
+    height: 64
+  - name: vim-common_gvim.png
+    width: 128
+    height: 128
+  remote:
+  - url: v/vi/vim.desktop/56f85edcf9063f71f53f776723034a46/icons/128x128/vim-common_gvim.png
+    width: 128
+    height: 128
+  stock: gvim
+Launchable:
+  desktop-id:
+  - vim.desktop
+Provides:
+  mediatypes:
+  - text/english
+  - text/plain
+  - text/x-makefile
+  - text/x-c++hdr
+  - text/x-c++src
+  - text/x-chdr
+  - text/x-csrc
+  - text/x-java
+  - text/x-moc
+  - text/x-pascal
+  - text/x-tcl
+  - text/x-tex
+  - application/x-shellscript
+  - text/x-c
+  - text/x-c++
+---
+Type: font
+ID: io.pagure.lohit.devanagari.font
+Package: fonts-lohit-deva
+Name:
+  C: Lohit Devanagari
+Summary:
+  C: Lohit family font supporting all languages using Devanagari script
+Description:
+  C: "<p>\n\t    This package provides a free Devanagari Script TrueType font.\n    </p>\n<p>\n\t    This package provides
+    a free Devanagari script truetype/opentype font.\n\t    Support Marathi, Hindi, Konkani, Maithili, Sindhi, Kashmiri, Nepali,\n\t
+    \   Dogri and Santali languages.\n    </p>"
+ProjectLicense: OFL-1.1
+Url:
+  homepage: https://pagure.io/lohit
+  bugtracker: https://github.com/pravins/lohit/issues
+Icon:
+  cached:
+  - name: fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 64
+    height: 64
+  - name: fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 128
+    height: 128
+  - name: fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: io/pagure/lohit.devanagari.font/c1a224bcd81d85d525dc050bf2250690/icons/64x64/fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 64
+    height: 64
+  - url: io/pagure/lohit.devanagari.font/c1a224bcd81d85d525dc050bf2250690/icons/128x128/fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 128
+    height: 128
+  - url: io/pagure/lohit.devanagari.font/c1a224bcd81d85d525dc050bf2250690/icons/64x64@2/fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - url: io/pagure/lohit.devanagari.font/c1a224bcd81d85d525dc050bf2250690/icons/128x128@2/fonts-lohit-deva_lohitdevanagari-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Lohit Devanagari
+Languages:
+- locale: aa
+  percentage: 100
+- locale: an
+  percentage: 100
+- locale: ay
+  percentage: 100
+- locale: bh
+  percentage: 100
+- locale: bho
+  percentage: 100
+- locale: bi
+  percentage: 100
+- locale: br
+  percentage: 100
+- locale: brx
+  percentage: 100
+- locale: bs
+  percentage: 100
+- locale: ca
+  percentage: 100
+- locale: ch
+  percentage: 100
+- locale: co
+  percentage: 100
+- locale: crh
+  percentage: 100
+- locale: cs
+  percentage: 100
+- locale: csb
+  percentage: 100
+- locale: da
+  percentage: 100
+- locale: de
+  percentage: 100
+- locale: doi
+  percentage: 100
+- locale: en
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: et
+  percentage: 100
+- locale: eu
+  percentage: 100
+- locale: fi
+  percentage: 100
+- locale: fil
+  percentage: 100
+- locale: fj
+  percentage: 100
+- locale: fo
+  percentage: 100
+- locale: fr
+  percentage: 100
+- locale: fur
+  percentage: 100
+- locale: fy
+  percentage: 100
+- locale: gd
+  percentage: 100
+- locale: gl
+  percentage: 100
+- locale: gv
+  percentage: 100
+- locale: hi
+  percentage: 100
+- locale: hne
+  percentage: 100
+- locale: ho
+  percentage: 100
+- locale: hr
+  percentage: 100
+- locale: hsb
+  percentage: 100
+- locale: ht
+  percentage: 100
+- locale: hu
+  percentage: 100
+- locale: ia
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: ie
+  percentage: 100
+- locale: io
+  percentage: 100
+- locale: is
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: jv
+  percentage: 100
+- locale: kj
+  percentage: 100
+- locale: kok
+  percentage: 100
+- locale: ku-tr
+  percentage: 100
+- locale: kwm
+  percentage: 100
+- locale: lb
+  percentage: 100
+- locale: li
+  percentage: 100
+- locale: lt
+  percentage: 100
+- locale: lv
+  percentage: 100
+- locale: mai
+  percentage: 100
+- locale: mg
+  percentage: 100
+- locale: mh
+  percentage: 100
+- locale: mr
+  percentage: 100
+- locale: ms
+  percentage: 100
+- locale: nb
+  percentage: 100
+- locale: nds
+  percentage: 100
+- locale: ne
+  percentage: 100
+- locale: ng
+  percentage: 100
+- locale: nl
+  percentage: 100
+- locale: nn
+  percentage: 100
+- locale: no
+  percentage: 100
+- locale: nr
+  percentage: 100
+- locale: nso
+  percentage: 100
+- locale: oc
+  percentage: 100
+- locale: om
+  percentage: 100
+- locale: pap-an
+  percentage: 100
+- locale: pap-aw
+  percentage: 100
+- locale: pl
+  percentage: 100
+- locale: pt
+  percentage: 100
+- locale: rm
+  percentage: 100
+- locale: rn
+  percentage: 100
+- locale: ro
+  percentage: 100
+- locale: rw
+  percentage: 100
+- locale: sa
+  percentage: 100
+- locale: sat
+  percentage: 100
+- locale: sc
+  percentage: 100
+- locale: sg
+  percentage: 100
+- locale: sk
+  percentage: 100
+- locale: sl
+  percentage: 100
+- locale: sma
+  percentage: 100
+- locale: smj
+  percentage: 100
+- locale: sn
+  percentage: 100
+- locale: so
+  percentage: 100
+- locale: sq
+  percentage: 100
+- locale: ss
+  percentage: 100
+- locale: st
+  percentage: 100
+- locale: su
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: sw
+  percentage: 100
+- locale: tk
+  percentage: 100
+- locale: tl
+  percentage: 100
+- locale: tn
+  percentage: 100
+- locale: tr
+  percentage: 100
+- locale: ts
+  percentage: 100
+- locale: ty
+  percentage: 100
+- locale: uz
+  percentage: 100
+- locale: vo
+  percentage: 100
+- locale: vot
+  percentage: 100
+- locale: wa
+  percentage: 100
+- locale: wen
+  percentage: 100
+- locale: xh
+  percentage: 100
+- locale: yap
+  percentage: 100
+- locale: za
+  percentage: 100
+- locale: zu
+  percentage: 100
+---
+Type: desktop-application
+ID: info.desktop
+Package: info
+Name:
+  C: TeXInfo
+Summary:
+  C: The viewer for TexInfo documents
+Description:
+  C: >-
+    <p>The Info file format is an easily-parsable representation for online documents. This program allows you to view Info
+    documents, like the ones stored in /usr/share/info.</p>
+
+    <p>Much of the software in Debian comes with its online documentation in the form of Info files, so it is most likely
+    you will want to install it.</p>
+  en: >-
+    <p>The Info file format is an easily-parsable representation for online documents. This program allows you to view Info
+    documents, like the ones stored in /usr/share/info.</p>
+
+    <p>Much of the software in Debian comes with its online documentation in the form of Info files, so it is most likely
+    you will want to install it.</p>
+Categories:
+- Utility
+- Documentation
+- ConsoleOnly
+Keywords:
+  C:
+  - TeXInfo
+  - Documentation
+Icon:
+  cached:
+  - name: info_dialog-information.png
+    width: 48
+    height: 48
+  - name: info_dialog-information.png
+    width: 64
+    height: 64
+  - name: info_dialog-information.png
+    width: 128
+    height: 128
+  remote:
+  - url: i/in/info.desktop/daacc7adc0cefdd7e8c8cdf815e9a95c/icons/128x128/info_dialog-information.png
+    width: 128
+    height: 128
+  stock: dialog-information
+Launchable:
+  desktop-id:
+  - info.desktop
+---
+Type: inputmethod
+ID: org.freedesktop.ibus.engine.table.cangjie
+Package: ibus-table-cangjie
+Name:
+  C: Cangjie input methods
+Summary:
+  C: Chinese input method
+Description:
+  C: >-
+    <p>
+          Cangjie based input methods, includes: Cangjie3, Canjie5, and
+          Cangjie big tables.
+        </p>
+    <p>
+          Input methods are typing systems allowing users to input complex
+          languages.  They are necessary because these contain too many
+          characters to simply be laid out on a traditional keyboard.
+        </p>
+ProjectLicense: GPL-3.0-or-later
+Keywords:
+  C:
+  - input-method
+  - Chinese
+Url:
+  homepage: https://github.com/mike-fabian/ibus-table
+  bugtracker: https://github.com/mike-fabian/ibus-table/issues
+  help: https://mike-fabian.github.io/ibus-table
+  translate: https://translate.fedoraproject.org/projects/ibus-table/
+Languages:
+- locale: zh_CN
+  percentage: 100
+- locale: zh_HK
+  percentage: 100
+- locale: zh_SG
+  percentage: 100
+- locale: zh_TW
+  percentage: 100
+ContentRating:
+  oars-1.1: {}
+---
+Type: inputmethod
+ID: libpinyin.xml
+Package: ibus-libpinyin
+Name:
+  C: Pinyin
+Summary:
+  C: Chinese Pinyin and Zhuyin input method
+Description:
+  C: >-
+    <p>
+          The Pinyin input method is designed for entering Chinese text by
+          using Pinyin or Zhuyin.
+        </p>
+    <p>
+          Input methods are typing systems allowing users to input complex languages.
+          They are necessary because these contain too many characters to simply be laid
+          out on a traditional keyboard.
+        </p>
+DeveloperName:
+  C: The GNOME Project
+ProjectGroup: GNOME
+CompulsoryForDesktops:
+- GNOME
+Url:
+  homepage: https://github.com/libpinyin/ibus-libpinyin
+  bugtracker: https://code.google.com/p/ibus/issues/list
+  help: https://code.google.com/p/ibus/wiki/FAQ
+  donation: http://www.gnome.org/friends/
+---
+Type: font
+ID: de.urwpp.URWCoreFontSetLevel2
+Package: fonts-urw-base35
+Name:
+  C: (URW)++ Core Font Set [Level 2]
+Summary:
+  C: Core Font Set containing 35 freely distributable fonts from (URW)++
+Description:
+  C: >-
+    <p>
+          The Level 2 Core Font Set is a PostScript specification of 35 base fonts
+          that can be used with any PostScript file. These fonts are provided
+          freely by (URW++) company, and are mainly utilized by Ghostscript,
+          or other applications using it.
+        </p>
+    <p>
+          This packages will install all these 35 fonts to your system.
+        </p>
+DeveloperName:
+  C: URW++ Design and Development GmbH
+ProjectLicense: AGPL-3.0
+Url:
+  homepage: https://www.urwpp.de/en/
+  bugtracker: https://bugs.ghostscript.com/
+Icon:
+  cached:
+  - name: fonts-urw-base35_d050000l-regular.png
+    width: 64
+    height: 64
+  - name: fonts-urw-base35_d050000l-regular.png
+    width: 128
+    height: 128
+  - name: fonts-urw-base35_d050000l-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-urw-base35_d050000l-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: de/urwpp/URWCoreFontSetLevel2/2934ae6bc4507a76cdf40727f949124c/icons/64x64/fonts-urw-base35_d050000l-regular.png
+    width: 64
+    height: 64
+  - url: de/urwpp/URWCoreFontSetLevel2/2934ae6bc4507a76cdf40727f949124c/icons/128x128/fonts-urw-base35_d050000l-regular.png
+    width: 128
+    height: 128
+  - url: de/urwpp/URWCoreFontSetLevel2/2934ae6bc4507a76cdf40727f949124c/icons/64x64@2/fonts-urw-base35_d050000l-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - url: de/urwpp/URWCoreFontSetLevel2/2934ae6bc4507a76cdf40727f949124c/icons/128x128@2/fonts-urw-base35_d050000l-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: C059 Roman
+  - name: C059 Italic
+  - name: C059 Bold
+  - name: C059 Bold Italic
+  - name: D050000L
+  - name: Nimbus Mono PS Regular
+  - name: Nimbus Mono PS Italic
+  - name: Nimbus Mono PS Bold
+  - name: Nimbus Mono PS Bold Italic
+  - name: Nimbus Roman Regular
+  - name: Nimbus Roman Italic
+  - name: Nimbus Roman Bold
+  - name: Nimbus Roman Bold Italic
+  - name: Nimbus Sans Regular
+  - name: Nimbus Sans Italic
+  - name: Nimbus Sans Bold
+  - name: Nimbus Sans Bold Italic
+  - name: Nimbus Sans Narrow Regular
+  - name: Nimbus Sans Narrow Oblique
+  - name: Nimbus Sans Narrow Bold
+  - name: Nimbus Sans Narrow Bold Oblique
+  - name: P052 Roman
+  - name: P052 Italic
+  - name: P052 Bold
+  - name: P052 Bold Italic
+  - name: Standard Symbols PS
+  - name: URW Bookman Light
+  - name: URW Bookman Light Italic
+  - name: URW Bookman Demi
+  - name: URW Bookman Demi Italic
+  - name: URW Gothic Book
+  - name: URW Gothic Book Oblique
+  - name: URW Gothic Demi
+  - name: URW Gothic Demi Oblique
+  - name: Z003 Medium Italic
+Languages:
+- locale: aa
+  percentage: 100
+- locale: af
+  percentage: 100
+- locale: an
+  percentage: 100
+- locale: av
+  percentage: 100
+- locale: ay
+  percentage: 100
+- locale: ba
+  percentage: 100
+- locale: be
+  percentage: 100
+- locale: bg
+  percentage: 100
+- locale: bi
+  percentage: 100
+- locale: br
+  percentage: 100
+- locale: bs
+  percentage: 100
+- locale: bua
+  percentage: 100
+- locale: ca
+  percentage: 100
+- locale: ce
+  percentage: 100
+- locale: ch
+  percentage: 100
+- locale: co
+  percentage: 100
+- locale: crh
+  percentage: 100
+- locale: cs
+  percentage: 100
+- locale: csb
+  percentage: 100
+- locale: cy
+  percentage: 100
+- locale: da
+  percentage: 100
+- locale: de
+  percentage: 100
+- locale: el
+  percentage: 100
+- locale: en
+  percentage: 100
+- locale: eo
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: et
+  percentage: 100
+- locale: eu
+  percentage: 100
+- locale: fi
+  percentage: 100
+- locale: fil
+  percentage: 100
+- locale: fj
+  percentage: 100
+- locale: fo
+  percentage: 100
+- locale: fr
+  percentage: 100
+- locale: fur
+  percentage: 100
+- locale: fy
+  percentage: 100
+- locale: gd
+  percentage: 100
+- locale: gl
+  percentage: 100
+- locale: gv
+  percentage: 100
+- locale: ho
+  percentage: 100
+- locale: hr
+  percentage: 100
+- locale: hsb
+  percentage: 100
+- locale: ht
+  percentage: 100
+- locale: hu
+  percentage: 100
+- locale: ia
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: ie
+  percentage: 100
+- locale: ik
+  percentage: 100
+- locale: io
+  percentage: 100
+- locale: is
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: jv
+  percentage: 100
+- locale: kaa
+  percentage: 100
+- locale: ki
+  percentage: 100
+- locale: kj
+  percentage: 100
+- locale: kk
+  percentage: 100
+- locale: kl
+  percentage: 100
+- locale: ku-tr
+  percentage: 100
+- locale: kum
+  percentage: 100
+- locale: kwm
+  percentage: 100
+- locale: ky
+  percentage: 100
+- locale: la
+  percentage: 100
+- locale: lb
+  percentage: 100
+- locale: lez
+  percentage: 100
+- locale: lg
+  percentage: 100
+- locale: li
+  percentage: 100
+- locale: lt
+  percentage: 100
+- locale: lv
+  percentage: 100
+- locale: mg
+  percentage: 100
+- locale: mh
+  percentage: 100
+- locale: mk
+  percentage: 100
+- locale: mn-mn
+  percentage: 100
+- locale: mo
+  percentage: 100
+- locale: ms
+  percentage: 100
+- locale: mt
+  percentage: 100
+- locale: na
+  percentage: 100
+- locale: nb
+  percentage: 100
+- locale: nds
+  percentage: 100
+- locale: ng
+  percentage: 100
+- locale: nl
+  percentage: 100
+- locale: nn
+  percentage: 100
+- locale: no
+  percentage: 100
+- locale: nr
+  percentage: 100
+- locale: nso
+  percentage: 100
+- locale: ny
+  percentage: 100
+- locale: oc
+  percentage: 100
+- locale: om
+  percentage: 100
+- locale: os
+  percentage: 100
+- locale: pap-an
+  percentage: 100
+- locale: pap-aw
+  percentage: 100
+- locale: pl
+  percentage: 100
+- locale: pt
+  percentage: 100
+- locale: rm
+  percentage: 100
+- locale: rn
+  percentage: 100
+- locale: ro
+  percentage: 100
+- locale: ru
+  percentage: 100
+- locale: rw
+  percentage: 100
+- locale: sc
+  percentage: 100
+- locale: se
+  percentage: 100
+- locale: sel
+  percentage: 100
+- locale: sg
+  percentage: 100
+- locale: sh
+  percentage: 100
+- locale: sk
+  percentage: 100
+- locale: sl
+  percentage: 100
+- locale: sma
+  percentage: 100
+- locale: smj
+  percentage: 100
+- locale: smn
+  percentage: 100
+- locale: sn
+  percentage: 100
+- locale: so
+  percentage: 100
+- locale: sq
+  percentage: 100
+- locale: sr
+  percentage: 100
+- locale: ss
+  percentage: 100
+- locale: st
+  percentage: 100
+- locale: su
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: sw
+  percentage: 100
+- locale: tg
+  percentage: 100
+- locale: tk
+  percentage: 100
+- locale: tl
+  percentage: 100
+- locale: tn
+  percentage: 100
+- locale: tr
+  percentage: 100
+- locale: ts
+  percentage: 100
+- locale: tt
+  percentage: 100
+- locale: tyv
+  percentage: 100
+- locale: uk
+  percentage: 100
+- locale: uz
+  percentage: 100
+- locale: vo
+  percentage: 100
+- locale: vot
+  percentage: 100
+- locale: wa
+  percentage: 100
+- locale: wen
+  percentage: 100
+- locale: wo
+  percentage: 100
+- locale: xh
+  percentage: 100
+- locale: yap
+  percentage: 100
+- locale: za
+  percentage: 100
+- locale: zu
+  percentage: 100
+Releases:
+- version: '20170801'
+  type: stable
+  unix-timestamp: 1501545600
+- version: '20160926'
+  type: stable
+  unix-timestamp: 1474848000
+---
+Type: inputmethod
+ID: org.freedesktop.ibus.engine.hangul
+Package: ibus-hangul
+Name:
+  C: ibus-hangul
+Summary:
+  C: Hangul engine for IBus
+Description:
+  C: >-
+    <p>IBus-Hangul is a Korean input method engine for IBus.</p>
+ProjectGroup: IBus
+ProjectLicense: GPL-2
+Url:
+  homepage: https://github.com/libhangul/ibus-hangul
+  bugtracker: https://github.com/libhangul/ibus-hangul/issues
+Languages:
+- locale: en_US
+  percentage: 100
+---
+Type: font
+ID: in.org.smc.raghumalayalamsans
+Package: fonts-smc-raghumalayalamsans
+Name:
+  C: RaghuMalayalamSans font
+  ml: രഘുമലയാളംസാൻസ് അക്ഷരസഞ്ചയം
+Summary:
+  C: RaghuMalayalamSans Malayalam Unicode font
+Description:
+  C: >-
+    <p>
+          Unicode font for new lipi Malayalam script designed by Prof. R K Joshi
+          et al. maintained by Swathanthra Malayalam Computing. Sans-serif font.
+        </p>
+ProjectLicense: GPL-2.0-only
+Url:
+  homepage: https://smc.org.in/fonts
+  bugtracker: https://gitlab.com/smc/fonts/raghumalayalamsans/issues
+Icon:
+  cached:
+  - name: fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 48
+    height: 48
+  - name: fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 48
+    height: 48
+    scale: 2
+  - name: fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 64
+    height: 64
+  - name: fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 128
+    height: 128
+  - name: fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: in/org/smc.raghumalayalamsans/1E7F4FC047AC97660783071F78363029/icons/128x128/fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 128
+    height: 128
+  - url: in/org/smc.raghumalayalamsans/1E7F4FC047AC97660783071F78363029/icons/128x128@2/fonts-smc-raghumalayalamsans_raghumalayalamsans-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: RaghuMalayalamSans Regular
+Screenshots:
+- default: true
+  caption:
+    C: RaghuMalayalamSans Regular
+  thumbnails:
+  - url: in/org/smc.raghumalayalamsans/1E7F4FC047AC97660783071F78363029/screenshots/image-raghumalayalamsans-regular_1024x78.png
+    width: 1024
+    height: 78
+  - url: in/org/smc.raghumalayalamsans/1E7F4FC047AC97660783071F78363029/screenshots/image-raghumalayalamsans-regular_640x48.png
+    width: 640
+    height: 48
+Languages:
+- locale: ml
+  percentage: 100
+---
+Type: desktop-application
+ID: htop.desktop
+Package: htop
+Name:
+  C: Htop
+Summary:
+  nl: Systeemprocessen tonen
+  es: Mostrar procesos del sistema
+  sv: Visa systemprocesser
+  sr@ijekavianlatin: Prikaz sistemskih procesa
+  sk: Zobraziť systémové procesy
+  en_GB: Show System Processes
+  fi: Katsele järjestelmän prosesseja
+  ca: Visualitzeu els processos del sistema
+  it: Mostra processi di sistema
+  pt: Mostrar os Processos do Sistema
+  tr: Sistem Süreçlerini Göster
+  de: Systemprozesse anzeigen
+  fr: Affiche les processus système
+  nb: Vis systemprosesser
+  pl: Pokaż procesy systemowe
+  sl: Prikaz sistemskih opravil
+  zh_TW: 顯示系統行程
+  C: Show System Processes
+  sr@latin: Prikaz sistemskih procesa
+  sr@ijekavian: Приказ системских процеса
+  nn: Vis systemprosessar
+  sr: Приказ системских процеса
+  uk: Перегляд системних процесів
+  pt_BR: Mostra os processos do sistema
+  zh_CN: 显示系统进程
+  ko: 시스템 프로세스 보기
+  da: Vis systemprocesser
+  gl: Mostrar os procesos do sistema.
+  ru: Просмотр списка процессов в системе
+Description:
+  C: >-
+    <p>Htop is an ncursed-based process viewer similar to top, but it allows one to scroll the list vertically and horizontally
+    to see all processes and their full command lines.</p>
+
+    <p>Tasks related to processes (killing, renicing) can be done without entering their PIDs.</p>
+  en: >-
+    <p>Htop is an ncursed-based process viewer similar to top, but it allows one to scroll the list vertically and horizontally
+    to see all processes and their full command lines.</p>
+
+    <p>Tasks related to processes (killing, renicing) can be done without entering their PIDs.</p>
+Categories:
+- System
+- Monitor
+- ConsoleOnly
+Keywords:
+  C:
+  - system
+  - process
+  - task
+Icon:
+  cached:
+  - name: htop_htop.png
+    width: 48
+    height: 48
+  - name: htop_htop.png
+    width: 64
+    height: 64
+  - name: htop_htop.png
+    width: 128
+    height: 128
+  remote:
+  - url: h/ht/htop.desktop/df546ab0ecc422b4b27db6922a907065/icons/128x128/htop_htop.png
+    width: 128
+    height: 128
+  stock: htop
+Launchable:
+  desktop-id:
+  - htop.desktop
+---
+Type: desktop-application
+ID: nvidia-settings.desktop
+Package: nvidia-settings
+Name:
+  C: NVIDIA X Server Settings
+Summary:
+  C: Configure NVIDIA X Server Settings
+Description:
+  C: >-
+    <p>The nvidia-settings utility is a tool for configuring the NVIDIA Linux graphics driver.  It operates by communicating
+    with the NVIDIA X driver, querying and updating state as appropriate.  This communication is done with the NV-CONTROL
+    X extension.</p>
+
+    <p>Values such as brightness and gamma, XVideo attributes, temperature, and OpenGL settings can be queried and configured
+    via nvidia-settings.</p>
+  en: >-
+    <p>The nvidia-settings utility is a tool for configuring the NVIDIA Linux graphics driver.  It operates by communicating
+    with the NVIDIA X driver, querying and updating state as appropriate.  This communication is done with the NV-CONTROL
+    X extension.</p>
+
+    <p>Values such as brightness and gamma, XVideo attributes, temperature, and OpenGL settings can be queried and configured
+    via nvidia-settings.</p>
+Categories:
+- System
+- Settings
+Icon:
+  cached:
+  - name: nvidia-settings_nvidia-settings.png
+    width: 64
+    height: 64
+  stock: nvidia-settings
+Launchable:
+  desktop-id:
+  - nvidia-settings.desktop
+---
+Type: desktop-application
+ID: libreoffice-draw.desktop
+Package: libreoffice-draw
+Name:
+  C: LibreOffice Draw
+Summary:
+  C: Graphics editor part of the LibreOffice productivity suite
+Description:
+  C: >-
+    <p>
+
+    LibreOffice Draw is an easy-to-use graphics editor, which empowers you to create
+
+    anything from quick sketches to complex diagrams.
+
+    It provides a powerful set of tools and shapes for producing technical drawings,
+
+    charts, and much else.
+
+    </p>
+
+    <p>
+
+    Draw allows you to create, manipulate and arrange different objects - it offers
+
+    a number of tools for editing, resizing, rotating, grouping and styling them!
+
+    It also provides smart connectors that make it easy for you to build charts and
+
+    diagrams, and make beautiful drawings composed of different objects.
+
+    </p>
+
+    <p>
+
+    LibreOffice supports opening and saving into a wide variety of formats, so you
+
+    can easily share drawings with users of other popular office suites without
+
+    worrying about compatibility.
+
+    </p>
+DeveloperName:
+  C: The Document Foundation
+ProjectLicense: MPL-2.0
+Categories:
+- Office
+- FlowChart
+- Graphics
+- 2DGraphics
+- VectorGraphics
+Keywords:
+  C:
+  - Vector
+  - Schema
+  - Diagram
+  - Layout
+  - OpenDocument Graphics
+  - Microsoft Publisher
+  - Microsoft Visio
+  - Corel Draw
+  - cdr
+  - odg
+  - svg
+  - pdf
+  - vsd
+Url:
+  homepage: http://www.libreoffice.org/discover/draw/
+  bugtracker: https://bugs.documentfoundation.org/
+  help: http://www.libreoffice.org/get-help/documentation/
+  translate: https://hub.libreoffice.org/translate
+  faq: https://hub.libreoffice.org/faq
+  donation: https://donate.libreoffice.org/
+Icon:
+  cached:
+  - name: libreoffice-draw_libreoffice-draw.png
+    width: 48
+    height: 48
+  - name: libreoffice-draw_libreoffice-draw.png
+    width: 64
+    height: 64
+  - name: libreoffice-draw_libreoffice-draw.png
+    width: 128
+    height: 128
+  remote:
+  - url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/icons/128x128/libreoffice-draw_libreoffice-draw.png
+    width: 128
+    height: 128
+  stock: libreoffice-draw
+Launchable:
+  desktop-id:
+  - libreoffice-draw.desktop
+Provides:
+  mediatypes:
+  - application/vnd.oasis.opendocument.graphics
+  - application/vnd.oasis.opendocument.graphics-flat-xml
+  - application/vnd.oasis.opendocument.graphics-template
+  - application/vnd.sun.xml.draw
+  - application/vnd.sun.xml.draw.template
+  - application/vnd.visio
+  - application/x-wpg
+  - application/vnd.corel-draw
+  - application/vnd.ms-publisher
+  - image/x-freehand
+  - application/clarisworks
+  - application/x-pagemaker
+  - application/pdf
+  - application/x-stardraw
+  - image/x-emf
+  - image/x-wmf
+Screenshots:
+- default: true
+  caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-1_752x470.png
+    width: 752
+    height: 470
+  - url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-1_624x390.png
+    width: 624
+    height: 390
+  - url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-1_224x140.png
+    width: 224
+    height: 140
+  source-image:
+    url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-1_orig.png
+    width: 1136
+    height: 710
+- caption: {}
+  thumbnails:
+  - url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-2_752x470.png
+    width: 752
+    height: 470
+  - url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-2_624x390.png
+    width: 624
+    height: 390
+  - url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-2_224x140.png
+    width: 224
+    height: 140
+  source-image:
+    url: l/li/libreoffice-draw.desktop/813db760da52ad42c2591410879424dc/screenshots/image-2_orig.png
+    width: 1132
+    height: 709
+ContentRating:
+  oars-1.0: {}
+---
+Type: font
+ID: io.pagure.lohit.gurmukhi.font
+Package: fonts-lohit-guru
+Name:
+  C: Lohit Gurmukhi
+Summary:
+  C: Lohit family font for the Punjabi language and Gurmukhi script
+Description:
+  C: "<p>\n\t    This package provides a free Gurmukhi Script TrueType font.\n    </p>\n<p>\n\t    This font is part of the
+    Lohit font family, a set of fonts for\n\t    Indic languages originally created by Modular Infotech and\n\t    now maintained
+    by Red Hat. Lohit means “red” in Sanskrit.\n    </p>"
+ProjectLicense: OFL-1.1
+Url:
+  homepage: https://pagure.io/lohit
+  bugtracker: https://github.com/pravins/lohit/issues
+Icon:
+  cached:
+  - name: fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 64
+    height: 64
+  - name: fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 128
+    height: 128
+  - name: fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: io/pagure/lohit.gurmukhi.font/44f7f5399774f5b6c6085c1b7bb2d8af/icons/64x64/fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 64
+    height: 64
+  - url: io/pagure/lohit.gurmukhi.font/44f7f5399774f5b6c6085c1b7bb2d8af/icons/128x128/fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 128
+    height: 128
+  - url: io/pagure/lohit.gurmukhi.font/44f7f5399774f5b6c6085c1b7bb2d8af/icons/64x64@2/fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - url: io/pagure/lohit.gurmukhi.font/44f7f5399774f5b6c6085c1b7bb2d8af/icons/128x128@2/fonts-lohit-guru_lohitgurmukhi-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Lohit Gurmukhi
+Languages:
+- locale: pa
+  percentage: 100
+---
+Type: generic
+ID: org.gphoto.libgphoto2
+Package: libgphoto2-6
+Name:
+  C: libgphoto2
+Summary:
+  C: gphoto2 digital camera library
+Description:
+  C: >-
+    <p>
+        The gphoto2 library can be used by applications to access various
+        digital camera models, via standard protocols such as USB Mass Storage
+        and PTP, or vendor-specific protocols.
+        </p>
+Provides:
+  modaliases:
+  - usb:v1908p1320d*
+  - usb:v1908p1320d*
+  - usb:v1908p0102d*
+  - usb:v1908p3335d*
+  - usb:v04B0p0116d*
+  - usb:v04B0p0108d*
+  - usb:v04B0p0110d*
+  - usb:v04B0p010Ed*
+  - usb:v04B0p0104d*
+  - usb:v04B0p0401d*
+  - usb:v07B4p0105d*
+  - usb:v07B4p0109d*
+  - usb:v25FBp0130d*
+  - usb:v25FBp0164d*
+  - usb:v25FBp0132d*
+  - usb:v25FBp017Ad*
+  - usb:v25FBp0160d*
+  - usb:v25FBp0102d*
+  - usb:v25FBp0148d*
+  - usb:v25FBp014Ad*
+  - usb:v25FBp017Cd*
+  - usb:v0A17p0070d*
+  - usb:v0A17p00A1d*
+  - usb:v0A17p006Ed*
+  - usb:v0A17p0093d*
+  - usb:v0A17p0091d*
+  - usb:v0A17p0009d*
+  - usb:v0A17p0007d*
+  - usb:v1403p0001d*
+  - usb:v0168p3011d*
+---
+Type: generic
+ID: org.a11y.brltty
+Package: brltty
+Name:
+  C: BRLTTY
+Summary:
+  C: Support for braille devices
+DeveloperName:
+  C: The BRLTTY Developers
+ProjectLicense: GPL-2.0
+Url:
+  homepage: http://brltty.app/
+Provides:
+  modaliases:
+  - usb:v0403p6001*
+  - usb:v0403pDE58*
+  - usb:v0403pDE59*
+  - usb:v0403pF208*
+  - usb:v0403pFE70*
+  - usb:v0403pFE71*
+  - usb:v0403pFE72*
+  - usb:v0403pFE73*
+  - usb:v0403pFE74*
+  - usb:v0403pFE75*
+  - usb:v0403pFE76*
+  - usb:v0403pFE77*
+  - usb:v0452p0100*
+  - usb:v045Ep930A*
+  - usb:v045Ep930B*
+  - usb:v0483pA1D3*
+  - usb:v0483pA366*
+  - usb:v06B0p0001*
+  - usb:v0798p0001*
+  - usb:v0798p0600*
+  - usb:v0798p0624*
+  - usb:v0798p0640*
+  - usb:v0798p0680*
+  - usb:v0904p1016*
+  - usb:v0904p1017*
+  - usb:v0904p2000*
+  - usb:v0904p2001*
+  - usb:v0904p2002*
+  - usb:v0904p2007*
+  - usb:v0904p2008*
+  - usb:v0904p2009*
+  - usb:v0904p2010*
+  - usb:v0904p2011*
+  - usb:v0904p2014*
+  - usb:v0904p2015*
+  - usb:v0904p2016*
+  - usb:v0904p3000*
+  - usb:v0904p3001*
+  - usb:v0904p4004*
+  - usb:v0904p4005*
+  - usb:v0904p4007*
+  - usb:v0904p4008*
+  - usb:v0904p6001*
+  - usb:v0904p6002*
+  - usb:v0904p6003*
+  - usb:v0904p6004*
+  - usb:v0904p6005*
+  - usb:v0904p6006*
+  - usb:v0904p6007*
+  - usb:v0904p6008*
+  - usb:v0904p6009*
+  - usb:v0904p600A*
+  - usb:v0904p6011*
+  - usb:v0904p6012*
+  - usb:v0904p6013*
+  - usb:v0904p6101*
+  - usb:v0904p6102*
+  - usb:v0904p6103*
+  - usb:v0921p1200*
+  - usb:v0F4Ep0100*
+  - usb:v0F4Ep0111*
+  - usb:v0F4Ep0112*
+  - usb:v0F4Ep0114*
+  - usb:v10C4pEA60*
+  - usb:v10C4pEA80*
+  - usb:v1148p0301*
+  - usb:v1209pABC0*
+  - usb:v16C0p05E1*
+  - usb:v1A86p7523*
+  - usb:v1C71pC004*
+  - usb:v1C71pC005*
+  - usb:v1C71pC006*
+  - usb:v1C71pC00A*
+  - usb:v1C71pC021*
+  - usb:v1C71pC101*
+  - usb:v1C71pC104*
+  - usb:v1C71pC111*
+  - usb:v1C71pC114*
+  - usb:v1C71pC121*
+  - usb:v1C71pC124*
+  - usb:v1C71pC131*
+  - usb:v1C71pC141*
+  - usb:v1C71pCE01*
+  - usb:v1C71pCE04*
+  - usb:v1FE4p0003*
+  - usb:v1FE4p0044*
+  - usb:v1FE4p0054*
+  - usb:v1FE4p0055*
+  - usb:v1FE4p0061*
+  - usb:v1FE4p0064*
+  - usb:v1FE4p0074*
+  - usb:v1FE4p0081*
+  - usb:v1FE4p0082*
+  - usb:v1FE4p0083*
+  - usb:v1FE4p0084*
+  - usb:v1FE4p0086*
+  - usb:v1FE4p0087*
+  - usb:v1FE4p008A*
+  - usb:v1FE4p008B*
+  - usb:v1FE4p00A4*
+  - usb:v4242p0001*
+  - usb:vC251p1122*
+  - usb:vC251p1123*
+  - usb:vC251p1124*
+  - usb:vC251p1125*
+  - usb:vC251p1126*
+  - usb:vC251p1127*
+  - usb:vC251p1128*
+  - usb:vC251p1129*
+  - usb:vC251p112A*
+  - usb:vC251p112B*
+  - usb:vC251p112C*
+  - usb:vC251p112D*
+  - usb:vC251p112E*
+  - usb:vC251p112F*
+  - usb:vC251p1130*
+  - usb:vC251p1131*
+  - usb:vC251p1132*
+---
+Type: font
+ID: io.pagure.lohit.telugu.font
+Package: fonts-lohit-telu
+Name:
+  C: Lohit Telugu
+Summary:
+  C: Lohit family font for the Telugu language
+Description:
+  C: "<p>\n\t    This package provides a free Telugu script TrueType font.\n    </p>\n<p>\n\t    This font is part of the
+    Lohit font family, a set of fonts for\n\t    Indic languages originally created by Modular Infotech and\n\t    now maintained
+    by Red Hat. Lohit means “red” in Sanskrit.\n    </p>"
+ProjectLicense: OFL-1.1
+Url:
+  homepage: https://pagure.io/lohit
+  bugtracker: https://github.com/pravins/lohit/issues
+Icon:
+  cached:
+  - name: fonts-lohit-telu_lohittelugu-regular.png
+    width: 48
+    height: 48
+  - name: fonts-lohit-telu_lohittelugu-regular.png
+    width: 48
+    height: 48
+    scale: 2
+  - name: fonts-lohit-telu_lohittelugu-regular.png
+    width: 64
+    height: 64
+  - name: fonts-lohit-telu_lohittelugu-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-lohit-telu_lohittelugu-regular.png
+    width: 128
+    height: 128
+  - name: fonts-lohit-telu_lohittelugu-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: io/pagure/lohit.telugu.font/9412ED28388751041FB292E110BDBF39/icons/128x128/fonts-lohit-telu_lohittelugu-regular.png
+    width: 128
+    height: 128
+  - url: io/pagure/lohit.telugu.font/9412ED28388751041FB292E110BDBF39/icons/128x128@2/fonts-lohit-telu_lohittelugu-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Lohit Telugu
+Screenshots:
+- default: true
+  caption:
+    C: Lohit Telugu Regular
+  thumbnails:
+  - url: io/pagure/lohit.telugu.font/9412ED28388751041FB292E110BDBF39/screenshots/image-lohittelugu-regular_1024x78.png
+    width: 1024
+    height: 78
+  - url: io/pagure/lohit.telugu.font/9412ED28388751041FB292E110BDBF39/screenshots/image-lohittelugu-regular_640x48.png
+    width: 640
+    height: 48
+Languages:
+- locale: aa
+  percentage: 100
+- locale: an
+  percentage: 100
+- locale: ay
+  percentage: 100
+- locale: bi
+  percentage: 100
+- locale: br
+  percentage: 100
+- locale: bs
+  percentage: 100
+- locale: ca
+  percentage: 100
+- locale: ch
+  percentage: 100
+- locale: co
+  percentage: 100
+- locale: crh
+  percentage: 100
+- locale: cs
+  percentage: 100
+- locale: csb
+  percentage: 100
+- locale: da
+  percentage: 100
+- locale: de
+  percentage: 100
+- locale: en
+  percentage: 100
+- locale: es
+  percentage: 100
+- locale: et
+  percentage: 100
+- locale: eu
+  percentage: 100
+- locale: fi
+  percentage: 100
+- locale: fil
+  percentage: 100
+- locale: fj
+  percentage: 100
+- locale: fo
+  percentage: 100
+- locale: fr
+  percentage: 100
+- locale: fur
+  percentage: 100
+- locale: fy
+  percentage: 100
+- locale: gd
+  percentage: 100
+- locale: gl
+  percentage: 100
+- locale: gv
+  percentage: 100
+- locale: ho
+  percentage: 100
+- locale: hr
+  percentage: 100
+- locale: hsb
+  percentage: 100
+- locale: ht
+  percentage: 100
+- locale: hu
+  percentage: 100
+- locale: ia
+  percentage: 100
+- locale: id
+  percentage: 100
+- locale: ie
+  percentage: 100
+- locale: io
+  percentage: 100
+- locale: is
+  percentage: 100
+- locale: it
+  percentage: 100
+- locale: jv
+  percentage: 100
+- locale: kj
+  percentage: 100
+- locale: ku-tr
+  percentage: 100
+- locale: kwm
+  percentage: 100
+- locale: lb
+  percentage: 100
+- locale: li
+  percentage: 100
+- locale: lt
+  percentage: 100
+- locale: lv
+  percentage: 100
+- locale: mg
+  percentage: 100
+- locale: mh
+  percentage: 100
+- locale: ms
+  percentage: 100
+- locale: nb
+  percentage: 100
+- locale: nds
+  percentage: 100
+- locale: ng
+  percentage: 100
+- locale: nl
+  percentage: 100
+- locale: nn
+  percentage: 100
+- locale: no
+  percentage: 100
+- locale: nr
+  percentage: 100
+- locale: nso
+  percentage: 100
+- locale: oc
+  percentage: 100
+- locale: om
+  percentage: 100
+- locale: pap-an
+  percentage: 100
+- locale: pap-aw
+  percentage: 100
+- locale: pl
+  percentage: 100
+- locale: pt
+  percentage: 100
+- locale: rm
+  percentage: 100
+- locale: rn
+  percentage: 100
+- locale: ro
+  percentage: 100
+- locale: rw
+  percentage: 100
+- locale: sc
+  percentage: 100
+- locale: sg
+  percentage: 100
+- locale: sk
+  percentage: 100
+- locale: sl
+  percentage: 100
+- locale: sma
+  percentage: 100
+- locale: smj
+  percentage: 100
+- locale: sn
+  percentage: 100
+- locale: so
+  percentage: 100
+- locale: sq
+  percentage: 100
+- locale: ss
+  percentage: 100
+- locale: st
+  percentage: 100
+- locale: su
+  percentage: 100
+- locale: sv
+  percentage: 100
+- locale: sw
+  percentage: 100
+- locale: te
+  percentage: 100
+- locale: tk
+  percentage: 100
+- locale: tl
+  percentage: 100
+- locale: tn
+  percentage: 100
+- locale: tr
+  percentage: 100
+- locale: ts
+  percentage: 100
+- locale: ty
+  percentage: 100
+- locale: uz
+  percentage: 100
+- locale: vo
+  percentage: 100
+- locale: vot
+  percentage: 100
+- locale: wa
+  percentage: 100
+- locale: wen
+  percentage: 100
+- locale: xh
+  percentage: 100
+- locale: yap
+  percentage: 100
+- locale: za
+  percentage: 100
+- locale: zu
+  percentage: 100
+---
+Type: codec
+ID: gstreamer1.0-plugins-good
+Package: gstreamer1.0-plugins-good
+Name:
+  C: GStreamer Multimedia Codecs
+Summary:
+  C: GStreamer plugins from the "good" set
+  en: GStreamer plugins from the "good" set
+---
+Type: font
+ID: io.pagure.lohit.bengali.font
+Package: fonts-lohit-beng-bengali
+Name:
+  C: Lohit Bengali
+Summary:
+  C: Lohit family font for the Bengali language
+Description:
+  C: "<p>\n\t    This package provides a free Bengali Script TrueType font.\n    </p>\n<p>\n\t    This font is part of the
+    Lohit font family, a set of fonts for \n\t    Indic languages originally created by Modular Infotech and\n\t    now maintained
+    by Red Hat. Lohit means “red” in Sanskrit.\n    </p>"
+ProjectLicense: OFL-1.1
+Url:
+  homepage: https://pagure.io/lohit
+  bugtracker: https://github.com/pravins/lohit/issues
+Icon:
+  cached:
+  - name: fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 64
+    height: 64
+  - name: fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 128
+    height: 128
+  - name: fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - name: fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 128
+    height: 128
+    scale: 2
+  remote:
+  - url: io/pagure/lohit.bengali.font/280c33276b67e87ea177aed1f3b43220/icons/64x64/fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 64
+    height: 64
+  - url: io/pagure/lohit.bengali.font/280c33276b67e87ea177aed1f3b43220/icons/128x128/fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 128
+    height: 128
+  - url: io/pagure/lohit.bengali.font/280c33276b67e87ea177aed1f3b43220/icons/64x64@2/fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 64
+    height: 64
+    scale: 2
+  - url: io/pagure/lohit.bengali.font/280c33276b67e87ea177aed1f3b43220/icons/128x128@2/fonts-lohit-beng-bengali_lohitbengali-regular.png
+    width: 128
+    height: 128
+    scale: 2
+Provides:
+  fonts:
+  - name: Lohit Bengali
+Languages:
+- locale: as
+  percentage: 100
+- locale: bn
+  percentage: 100
+- locale: mni
+  percentage: 100

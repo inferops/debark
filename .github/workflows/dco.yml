@@ -1,0 +1,68 @@
+name: DCO
+
+# Every commit must carry a "Signed-off-by" trailer (see DCO and
+# CONTRIBUTING.md). This is a self-contained check with no third-party
+# GitHub App and no marketplace action beyond the standard checkout — one
+# less thing to trust in a project whose whole point is a trustworthy supply
+# chain. That one action is pinned to a full commit SHA with the release tag
+# in a trailing comment, for the reason ci.yml's header gives at length.
+#
+# It only ever looks at BASE..HEAD of a pull request, so it says nothing
+# about commits that were already on main before it existed — which is what
+# makes it safe against a squashed or rewritten history. It is also the whole
+# reason it runs on `pull_request` and not on `push`.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dco-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Signed-off-by check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check every commit for a DCO sign-off
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+
+          # Belt and suspenders: make sure both endpoints are reachable
+          # locally even if fetch-depth: 0 did not pull the base branch tip.
+          git fetch --no-tags --prune origin "${BASE_SHA}" "${HEAD_SHA}" || true
+
+          missing=0
+          while IFS= read -r sha; do
+            [ -z "$sha" ] && continue
+            subject="$(git log -1 --format='%s' "$sha")"
+            body="$(git log -1 --format='%B' "$sha")"
+            if ! printf '%s\n' "$body" \
+                | grep -qE '^Signed-off-by: .+ <[^<>[:space:]]+@[^<>[:space:]]+>$'; then
+              echo "::error::Commit $sha (\"$subject\") has no DCO Signed-off-by trailer."
+              missing=$((missing + 1))
+            fi
+          done < <(git rev-list --no-merges "${BASE_SHA}..${HEAD_SHA}")
+
+          if [ "$missing" -gt 0 ]; then
+            echo ""
+            echo "$missing commit(s) are missing a DCO sign-off (see ./DCO)."
+            echo "Fix a single commit:   git commit --amend -s"
+            echo "Fix a whole branch:    git rebase \${BASE_SHA} --exec 'git commit --amend --no-edit -s'"
+            echo "Then force-push the branch. See CONTRIBUTING.md."
+            exit 1
+          fi
+
+          echo "All commits in this pull request are signed off."

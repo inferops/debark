@@ -1,0 +1,98 @@
+Package: jq
+Version: 1.6-2.1+deb12u2
+Architecture: amd64
+Maintainer: ChangZhuo Chen (陳昌倬) <czchen@debian.org>
+Installed-Size: 111
+Depends: libjq1 (= 1.6-2.1+deb12u2), libc6 (>= 2.34)
+Section: utils
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://github.com/stedolan/jq
+Description: lightweight and flexible command-line JSON processor
+ jq is like sed for JSON data – you can use it to slice
+ and filter and map and transform structured data with
+ the same ease that sed, awk, grep and friends let you
+ play with text.
+ .
+ It is written in portable C, and it has minimal runtime
+ dependencies.
+ .
+ jq can mangle the data format that you have into the
+ one that you want with very little effort, and the
+ program to do so is often shorter and simpler than
+ you’d expect.
+Filename: ./jq_1.6-2.1+deb12u2_amd64.deb
+Size: 63984
+MD5sum: b9aca00e056b5365d65597df4b338cee
+SHA256: f2303584378ac85f6d3a9ae8e46412196061681e81610d3b020abe4b5d389eb0
+
+Package: libjq1
+Source: jq
+Version: 1.6-2.1+deb12u2
+Architecture: amd64
+Maintainer: ChangZhuo Chen (陳昌倬) <czchen@debian.org>
+Installed-Size: 366
+Depends: libc6 (>= 2.36), libonig5 (>= 6.8.1)
+Section: utils
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/stedolan/jq
+Description: lightweight and flexible command-line JSON processor - shared library
+ jq is like sed for JSON data – you can use it to slice
+ and filter and map and transform structured data with
+ the same ease that sed, awk, grep and friends let you
+ play with text.
+ .
+ It is written in portable C, and it has minimal runtime
+ dependencies.
+ .
+ jq can mangle the data format that you have into the
+ one that you want with very little effort, and the
+ program to do so is often shorter and simpler than
+ you’d expect.
+ .
+ This package contains the shared library.
+Filename: ./libjq1_1.6-2.1+deb12u2_amd64.deb
+Size: 135656
+MD5sum: 60ea2d4f3dc5c0f760769ecc3ff0a999
+SHA256: f501b6349a3c2462af59e7a598ebd71e7889de46c9ddf852eb12ebeba7df21a2
+
+Package: libonig5
+Source: libonig
+Version: 6.9.8-1
+Architecture: amd64
+Maintainer: Jörg Frings-Fürst <debian@jff.email>
+Installed-Size: 666
+Depends: libc6 (>= 2.14)
+Section: libs
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/kkos/oniguruma
+Description: regular expressions library
+ Oniguruma is a library for working with regular expressions.
+ .
+ Different character encoding for every regular expression object can
+ be specified.
+Filename: ./libonig5_6.9.8-1_amd64.deb
+Size: 187828
+MD5sum: 7e359432d638eee2be29dfd20ddcd493
+SHA256: 59ecfce6d88c7c4b09496ce182b3b8303e8e8477664e009b16ae83a09cd12be7
+
+Package: tree
+Version: 2.1.0-1
+Architecture: amd64
+Maintainer: Florian Ernst <florian@debian.org>
+Installed-Size: 113
+Depends: libc6 (>= 2.34)
+Section: utils
+Priority: optional
+Homepage: http://mama.indstate.edu/users/ice/tree/
+Description: displays an indented directory tree, in color
+ Tree is a recursive directory listing command that produces a depth indented
+ listing of files, which is colorized ala dircolors if the LS_COLORS environment
+ variable is set and output is to tty.
+Filename: ./tree_2.1.0-1_amd64.deb
+Size: 52464
+MD5sum: a12f30705b94d891f14bd5199fe6f4f2
+SHA256: 4c0dc6088e801285717bae2a98a7672f1e4d2eed4e918355987bc6617a8f490b
+

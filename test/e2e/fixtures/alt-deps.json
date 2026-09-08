@@ -1,0 +1,54 @@
+/*
+ * alt-deps — alternative dependencies ("a | b").
+ *
+ * Protects: the edge-fixture list, "alternative dependencies
+ * (a | b)". apt's own dependency grammar lets a Depends line offer a choice;
+ * the private-root resolve must leave that choice entirely
+ * to apt (ADR-001, "apt is the oracle") rather than debark code trying to
+ * interpret, split or pre-filter the alternatives itself.
+ *
+ * The vendor package's Depends line lists a name that cannot possibly exist
+ * FIRST, and a real, always-available package second
+ * ("nonexistent-package-xyz-does-not-exist-9999 | jq"). This is deliberately
+ * more discriminating than a real-archive example: if any layer of
+ * resolution treated the first-listed alternative as *the* dependency
+ * instead of falling through the "|" chain the way apt does, this fixture
+ * fails loudly (build exit 5, resolution) instead of silently choosing the
+ * wrong side on some other package where either side happens to work.
+ *
+ * What would break if this regressed: a real vendor package that lists a
+ * preferred-but-optional dependency (a common real pattern — e.g. offering
+ * "libssl3 | libssl1.1" across releases) would either fail to resolve at
+ * all, or resolve to the wrong alternative, producing a bundle that looks
+ * complete and fails offline (the exact kill scenario).
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "alt-deps",
+  "protects": "edge fixtures: alternative dependencies (a | b)",
+  "tags": ["edge"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "vendor_debs": [
+      {
+        "name": "acme-alt-deps-demo",
+        "version": "1.0",
+        "depends": "nonexistent-package-xyz-does-not-exist-9999 | jq",
+        "bin": true
+      }
+    ]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-alt-deps-demo", "jq"],
+    "binaries": [
+      { "path": "/usr/bin/acme-alt-deps-demo", "exit_code": 0, "stdout_contains": "acme-alt-deps-demo 1.0" },
+      { "path": "/usr/bin/jq", "args": ["--version"], "exit_code": 0 }
+    ]
+  }
+}

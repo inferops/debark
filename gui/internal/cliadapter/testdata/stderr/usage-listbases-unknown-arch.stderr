@@ -1,0 +1,15 @@
+debark: base: unknown architecture "not-an-arch"; known architectures are amd64, arm64, armel, armhf, i386, ppc64el, riscv64, s390x
+
+Usage:
+  debark snapshot list-bases [flags]
+
+Flags:
+      --arch string   dpkg architecture to render the bases for (default: this machine's)
+  -h, --help          help for list-bases
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

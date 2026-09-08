@@ -1,0 +1,49 @@
+/*
+ * foreign-arch-i386 — foreign-arch (i386).
+ *
+ * Protects: the edge-fixture list, "foreign-arch (i386)" as its
+ * own named case distinct from general multi-arch (see
+ * multiarch-coexist.json). Here the target enables i386 as a foreign
+ * architecture (dpkg --add-architecture i386) with *nothing* of that
+ * architecture installed yet, and the whole request is a single foreign-arch
+ * package. This is the "install a 32-bit library on a 64-bit machine for the
+ * first time" case — historically the single most common real foreign-arch
+ * scenario (Steam, Wine, proprietary 32-bit vendor tools).
+ *
+ * zlib1g is a library with no executable of its own, so the assertion is an
+ * elf_checks entry rather than a binaries entry: it confirms the installed
+ * file is genuinely i386 (ELF32) machine code, not merely that dpkg believes
+ * a package by that name is configured — the same "truly usable, not merely
+ * dpkg-registered" standard the task asks binaries to meet, applied to a
+ * package that has nothing to execute.
+ *
+ * What would break if this regressed: APT::Architecture vs
+ * APT::Architectures:: confusion is an easy private-root
+ * construction bug — get it backwards and the private root resolves for the
+ * wrong primary architecture, or never offers the foreign one at all, and a
+ * bundle meant to add 32-bit support to a target silently ships nothing
+ * useful.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "foreign-arch-i386",
+  "protects": "edge fixtures: foreign-arch (i386)",
+  "tags": ["edge", "multiarch"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "foreign_archs": ["i386"],
+    "installed": {}
+  },
+  "request": {
+    "packages": ["zlib1g:i386"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["zlib1g:i386"],
+    "elf_checks": [
+      { "package": "zlib1g:i386", "class": "ELF32" }
+    ]
+  }
+}

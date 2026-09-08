@@ -1,0 +1,10 @@
+# Recorded output, not synthesised.
+# Image: debian:bookworm-slim (Docker Hub), pulled and run 2026-09-03.
+# Command (after `apt-get install -y -qq jq` in the same container):
+#   apt-get -s install jq
+# Reproduce: see apt-sim-install-new.txt; run the real install first.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+jq is already the newest version (1.6-2.1+deb12u2).
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.

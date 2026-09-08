@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/baselist/v1",
+  "title": "debark base listing v1",
+  "description": "debark.baselist/v1 - the machine-readable answer to `debark snapshot list-bases --json`: which baseline definitions (debark.base/v1, docs/formats.md section 3.13) this binary has compiled in, projected for one architecture. A listing, not an artefact: never written into a bundle, never hashed and never signed. It is versioned all the same because ADR-012 makes every --json output a versioned, schema-published object rather than ad hoc JSON. Base definitions come only from this binary or from a file the operator passes by path; there is no hosted catalogue and this document is never fetched over the network.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "arch", "bases"],
+  "properties": {
+    "schema_version": { "const": "debark.baselist/v1", "description": "Fixed schema identifier; always debark.baselist/v1." },
+    "arch": {
+      "type": "string",
+      "description": "The dpkg architecture the listing was rendered for, from --arch or this machine's own. Part of the answer rather than context around it: a base's sources, and so its digest, differ per architecture, so \"which bases exist\" has no architecture-free answer."
+    },
+    "bases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Base" },
+      "description": "One entry per compiled-in definition, in the same order the human table prints them - by release, then variant. Deliberately not re-sorted here, so the two renderings of one listing agree row for row."
+    }
+  },
+  "$defs": {
+    "Base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "distro_id", "version_id", "codename", "arch", "seeds", "recommends", "digest"],
+      "description": "One baseline, as a listing shows it. A projection of the base definition, not the definition itself: sources and keyrings are omitted because they are long and are the part an operator overrides, and the definition's digest is added because it is the only thing here that tells two builds claiming the same id apart.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The base id, \"<distro>:<version>/<variant>\", e.g. \"ubuntu:26.04/desktop\". This is what an operator passes to `snapshot from-base` or `build --base`, and what a synthesized snapshot records in origin.base_id."
+        },
+        "description": {
+          "type": "string",
+          "description": "One line saying what a stock install of this baseline is taken to be. Absent when the definition carries none."
+        },
+        "distro_id": { "type": "string", "description": "The ID a target running this baseline would report in /etc/os-release, e.g. \"debian\" or \"ubuntu\"." },
+        "version_id": { "type": "string", "description": "The VERSION_ID a target running this baseline would report, e.g. \"26.04\"." },
+        "codename": { "type": "string", "description": "The VERSION_CODENAME a target running this baseline would report, e.g. \"resolute\". Every suite name in the definition's sources is built from it." },
+        "variant": {
+          "type": "string",
+          "description": "Which flavour of the release this baseline stands for - desktop, server, minimal, or an operator's own word. Documentation rather than behaviour: seeds is what actually differs between two variants of one release. Absent when the definition names none."
+        },
+        "arch": {
+          "type": "string",
+          "description": "The dpkg architecture this row was materialised for. Equals the listing's own arch, restated so one entry stays meaningful when a consumer pulls rows out of the array."
+        },
+        "seeds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "The metapackages whose closure stands for a stock install of this baseline. What the closure actually contains is decided by the release's own apt at synthesis time and is not listed here: no package set in debark was written by hand (ADR-001)."
+        },
+        "excludes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Packages that closure names which this baseline nonetheless does not claim the target already has, each one recorded from a measurement (docs/experiments/E8-base-fidelity.md). Shown because it changes the claim: two bases with the same seeds and different excludes assume different machines. An exclusion can only ever make a bundle larger, never shorter, which is what makes a hand-written name acceptable here and nowhere else. Absent when the definition excludes nothing."
+        },
+        "recommends": {
+          "type": "boolean",
+          "description": "Whether the seed resolution runs with APT::Install-Recommends on. False for every builtin, and that default is load-bearing: a recommended package apt would pull in but the real installer did not take is one this baseline would claim as already installed when it is not, which is the direction that produces a short bundle."
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of the canonicalised definition, lowercase hex - the same value a snapshot synthesized from it records in origin.source_digest. An id is a name and a name can mean different things at different times; this is what lets an operator tell which listed base a snapshot in hand was actually built from."
+        }
+      }
+    }
+  }
+}

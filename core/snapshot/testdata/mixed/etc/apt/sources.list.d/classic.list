@@ -1,0 +1,2 @@
+# one-line format entry with signed-by=
+deb [signed-by=/usr/share/keyrings/keyA.gpg] https://example.invalid/repoA stable main

@@ -1,0 +1,791 @@
+{
+  "schema_version": "debark.e2e.matrixresult/v1",
+  "generated_at": "2026-09-03T22:07:59.6298331Z",
+  "host": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.26.0"
+  },
+  "config": {
+    "workers": 4
+  },
+  "rows": [
+    {
+      "fixture": "alt-deps",
+      "protects": "edge fixtures: alternative dependencies (a | b)",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme-alt-deps-demo_1-0_amd64.deb: store: hash /tmp/debark-build-2466670497/archives/vendor-0-acme-alt-deps-demo_1-0_amd64.deb: open /tmp/debark-build-2466670497/archives/vendor-0-acme-alt-deps-demo_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:07:59.8005185-07:00",
+      "finished_at": "2026-09-03T15:08:34.2206727-07:00",
+      "total_ms": 34420,
+      "stage_ms": {
+        "build": 13923,
+        "build-binary": 2898,
+        "snapshot-create": 437,
+        "target-setup": 6454
+      },
+      "log_path": "matrix-work/rbf989290/alt-deps-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3068 vs 3068 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5119 vs 5119 bytes); repo/Release: differs between two builds of the same request (574 vs 574 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:07:59.7890363-07:00",
+      "finished_at": "2026-09-03T15:08:38.5073577-07:00",
+      "total_ms": 38718,
+      "stage_ms": {
+        "build": 11946,
+        "build-binary": 2907,
+        "bundle-transfer": 177,
+        "determinism": 9677,
+        "snapshot-create": 388,
+        "target-setup": 5149
+      },
+      "bundle_size_bytes": 475112,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "arm64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3068 vs 3068 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5119 vs 5109 bytes); repo/Release: differs between two builds of the same request (574 vs 574 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:08:00.7290139-07:00",
+      "finished_at": "2026-09-03T15:10:38.2510476-07:00",
+      "total_ms": 157522,
+      "stage_ms": {
+        "build": 57722,
+        "build-binary": 2057,
+        "bundle-transfer": 207,
+        "determinism": 68325,
+        "snapshot-create": 1035,
+        "target-setup": 17270
+      },
+      "bundle_size_bytes": 450304,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-debian-12-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "13",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3069 vs 3069 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5136 vs 5126 bytes); repo/Release: differs between two builds of the same request (572 vs 572 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:07:59.7939393-07:00",
+      "finished_at": "2026-09-03T15:08:45.0419352-07:00",
+      "total_ms": 45247,
+      "stage_ms": {
+        "build": 14641,
+        "build-binary": 2903,
+        "bundle-transfer": 167,
+        "determinism": 10364,
+        "snapshot-create": 533,
+        "target-setup": 6631
+      },
+      "bundle_size_bytes": 530777,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-debian-13-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "13",
+      "arch": "arm64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3069 vs 3069 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5136 vs 5126 bytes); repo/Release: differs between two builds of the same request (572 vs 572 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:08:35.6010992-07:00",
+      "finished_at": "2026-09-03T15:11:35.9536874-07:00",
+      "total_ms": 180352,
+      "stage_ms": {
+        "build": 76390,
+        "build-binary": 0,
+        "bundle-transfer": 634,
+        "determinism": 72716,
+        "snapshot-create": 2205,
+        "target-setup": 14649
+      },
+      "bundle_size_bytes": 503594,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-debian-13-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "22.04",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3077 vs 3077 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5159 vs 5159 bytes); repo/Release: differs between two builds of the same request (571 vs 571 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:08:38.7229031-07:00",
+      "finished_at": "2026-09-03T15:11:05.7633098-07:00",
+      "total_ms": 147040,
+      "stage_ms": {
+        "build": 39622,
+        "build-binary": 0,
+        "bundle-transfer": 974,
+        "determinism": 48745,
+        "snapshot-create": 344,
+        "target-setup": 43132
+      },
+      "bundle_size_bytes": 432056,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-ubuntu-22.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "22.04",
+      "arch": "arm64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3077 vs 3077 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5147 vs 5157 bytes); repo/Release: differs between two builds of the same request (571 vs 571 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:08:46.3638034-07:00",
+      "finished_at": "2026-09-03T15:14:10.6643007-07:00",
+      "total_ms": 324300,
+      "stage_ms": {
+        "build": 168485,
+        "build-binary": 0,
+        "bundle-transfer": 147,
+        "determinism": 100044,
+        "snapshot-create": 1412,
+        "target-setup": 39704
+      },
+      "bundle_size_bytes": 419711,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-ubuntu-22.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3102 vs 3102 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5240 vs 5240 bytes); repo/Release: differs between two builds of the same request (571 vs 571 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:10:38.7937903-07:00",
+      "finished_at": "2026-09-03T15:12:22.4837647-07:00",
+      "total_ms": 103689,
+      "stage_ms": {
+        "build": 25776,
+        "build-binary": 0,
+        "bundle-transfer": 356,
+        "determinism": 32787,
+        "snapshot-create": 752,
+        "target-setup": 24167
+      },
+      "bundle_size_bytes": 454403,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "arm64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3102 vs 3102 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5238 vs 5238 bytes); repo/Release: differs between two builds of the same request (571 vs 571 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:11:08.9003653-07:00",
+      "finished_at": "2026-09-03T15:15:11.6656226-07:00",
+      "total_ms": 242765,
+      "stage_ms": {
+        "build": 110623,
+        "build-binary": 0,
+        "bundle-transfer": 3074,
+        "determinism": 93761,
+        "snapshot-create": 818,
+        "target-setup": 25092
+      },
+      "bundle_size_bytes": 444640,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-ubuntu-24.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "26.04",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3075 vs 3075 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5147 vs 5157 bytes); repo/Release: differs between two builds of the same request (574 vs 574 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:11:36.2154746-07:00",
+      "finished_at": "2026-09-03T15:13:03.3362923-07:00",
+      "total_ms": 87120,
+      "stage_ms": {
+        "build": 28288,
+        "build-binary": 0,
+        "bundle-transfer": 313,
+        "determinism": 33612,
+        "snapshot-create": 477,
+        "target-setup": 11866
+      },
+      "bundle_size_bytes": 473372,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-ubuntu-26.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "26.04",
+      "arch": "arm64",
+      "status": "fail",
+      "stage": "determinism",
+      "blocker": "not byte-identical: debark.manifest.json: differs between two builds of the same request (3075 vs 3075 bytes); debark.manifest.sig: differs between two builds of the same request (421 vs 421 bytes); lock.json: differs between two builds of the same request (5145 vs 5145 bytes); repo/Release: differs between two builds of the same request (574 vs 574 bytes)",
+      "exit_classes": {
+        "build": "success"
+      },
+      "started_at": "2026-09-03T15:12:24.1924641-07:00",
+      "finished_at": "2026-09-03T15:15:18.4951925-07:00",
+      "total_ms": 174302,
+      "stage_ms": {
+        "build": 70293,
+        "build-binary": 0,
+        "bundle-transfer": 105,
+        "determinism": 72935,
+        "snapshot-create": 598,
+        "target-setup": 22767
+      },
+      "bundle_size_bytes": 462943,
+      "package_count": 4,
+      "determinism_ok": false,
+      "log_path": "matrix-work/rbf989290/basic-install-matrix-ubuntu-26.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "dkms-without-headers",
+      "protects": "edge fixtures: DKMS package without headers; core/doctor checkDKMSHeaders",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme-driver-dkms_1-0_amd64.deb: store: hash /tmp/debark-build-4208653709/archives/vendor-0-acme-driver-dkms_1-0_amd64.deb: open /tmp/debark-build-4208653709/archives/vendor-0-acme-driver-dkms_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:13:03.3373202-07:00",
+      "finished_at": "2026-09-03T15:13:22.8809645-07:00",
+      "total_ms": 19543,
+      "stage_ms": {
+        "build": 7187,
+        "build-binary": 0,
+        "snapshot-create": 159,
+        "target-setup": 6395
+      },
+      "log_path": "matrix-work/rbf989290/dkms-without-headers-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "external-deb-closure",
+      "protects": "external .deb dependency closure",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme-mytool_1-0_amd64.deb: store: hash /tmp/debark-build-2720477803/archives/vendor-0-acme-mytool_1-0_amd64.deb: open /tmp/debark-build-2720477803/archives/vendor-0-acme-mytool_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:13:22.8814932-07:00",
+      "finished_at": "2026-09-03T15:14:09.1535676-07:00",
+      "total_ms": 46272,
+      "stage_ms": {
+        "build": 12959,
+        "build-binary": 0,
+        "snapshot-create": 1622,
+        "target-setup": 19372
+      },
+      "log_path": "matrix-work/rbf989290/external-deb-closure-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "external-deb-missing-deps",
+      "protects": "edge fixtures: external .deb with missing dependencies; §3.10 exit 3; §3.6",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 5 (resolution), want 3 (incomplete): resolution  /work/bundle\n  target:     debian 12 (bookworm) amd64\n  packages:   0 packages in the bundle (0 added, 0 unchanged, 0 removed this run)\n  size:       0 B total, 0 B fetched this run\n  trust:      unsigned\n  warning: dropped Dir::Cache::pkgcache from etc/apt/apt.conf.d/docker-clean: Dir override: a private apt root sets every Dir::* path explicitly and never trusts a captured one\n  warning: dropped Dir::Cache::srcpkgcache from etc/apt/apt.conf.d/docker-clean: Dir override: a private apt root sets every Dir::* path explicitly and never trusts a captured one\n  warning: closed-world check skipped: this bundle may not install cleanly with no network. install set is empty\n  warning: this bundle is unsigned; verify will refuse it unless --allow-unsigned is given. Pass --sign or config...(truncated)",
+      "exit_classes": {
+        "build": "resolution"
+      },
+      "started_at": "2026-09-03T15:14:09.1545933-07:00",
+      "finished_at": "2026-09-03T15:14:30.5811719-07:00",
+      "total_ms": 21426,
+      "stage_ms": {
+        "build": 5565,
+        "build-binary": 0,
+        "snapshot-create": 170,
+        "target-setup": 10827
+      },
+      "log_path": "matrix-work/rbf989290/external-deb-missing-deps-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "foreign-arch-i386",
+      "protects": "edge fixtures: foreign-arch (i386); §3.5.6",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store zlib1g_1.2.13.dfsg-1_i386.deb: store: hash /tmp/debark-build-961601861/archives/zlib1g_1.2.13.dfsg-1_i386.deb: open /tmp/debark-build-961601861/archives/zlib1g_1.2.13.dfsg-1_i386.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:14:10.6649006-07:00",
+      "finished_at": "2026-09-03T15:15:00.1618346-07:00",
+      "total_ms": 49496,
+      "stage_ms": {
+        "build": 29646,
+        "build-binary": 0,
+        "snapshot-create": 185,
+        "target-setup": 11004
+      },
+      "log_path": "matrix-work/rbf989290/foreign-arch-i386-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "held-package",
+      "protects": "edge fixtures: held packages; §3.5.7",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 5 (resolution), want 0 (success): debark: apt-get install --print-uris -y acme-held-demo:amd64=2.0 acme-other-demo:amd64=2.0: exit 100: apt-get exit 100: The following packages will be upgraded: |   acme-held-demo acme-other-demo | 2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded. | E: Held packages were changed and -y was used without --allow-change-held-packages.\n",
+      "exit_classes": {
+        "build": "resolution"
+      },
+      "started_at": "2026-09-03T15:14:30.5817592-07:00",
+      "finished_at": "2026-09-03T15:15:12.070639-07:00",
+      "total_ms": 41488,
+      "stage_ms": {
+        "build": 7637,
+        "build-binary": 0,
+        "snapshot-create": 494,
+        "target-setup": 14659
+      },
+      "log_path": "matrix-work/rbf989290/held-package-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "multiarch-coexist",
+      "protects": "edge fixtures: multi-arch; §3.5.6",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store zlib1g_1.3.dfsg-3.1ubuntu2.2_amd64.deb: store: hash /tmp/debark-build-1789089835/archives/zlib1g_1.3.dfsg-3.1ubuntu2.2_amd64.deb: open /tmp/debark-build-1789089835/archives/zlib1g_1.3.dfsg-3.1ubuntu2.2_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:15:00.3997411-07:00",
+      "finished_at": "2026-09-03T15:16:16.0841514-07:00",
+      "total_ms": 75684,
+      "stage_ms": {
+        "build": 39452,
+        "build-binary": 0,
+        "snapshot-create": 138,
+        "target-setup": 30813
+      },
+      "log_path": "matrix-work/rbf989290/multiarch-coexist-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "no-recommends-target",
+      "protects": "edge fixtures: Install-Recommends=false target; experiment E4",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme-recommends-demo_1-0_amd64.deb: store: hash /tmp/debark-build-3295815970/archives/vendor-0-acme-recommends-demo_1-0_amd64.deb: open /tmp/debark-build-3295815970/archives/vendor-0-acme-recommends-demo_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:15:11.6667781-07:00",
+      "finished_at": "2026-09-03T15:15:32.8118628-07:00",
+      "total_ms": 21145,
+      "stage_ms": {
+        "build": 8111,
+        "build-binary": 0,
+        "snapshot-create": 198,
+        "target-setup": 7640
+      },
+      "log_path": "matrix-work/rbf989290/no-recommends-target-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "origin-release-pin",
+      "protects": "edge fixtures: origin and release pins; §3.5.5",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store acme-pin-demo_1-0_amd64.deb: store: hash /tmp/debark-build-2100100689/archives/acme-pin-demo_1-0_amd64.deb: open /tmp/debark-build-2100100689/archives/acme-pin-demo_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:15:12.0711543-07:00",
+      "finished_at": "2026-09-03T15:15:36.2832352-07:00",
+      "total_ms": 24212,
+      "stage_ms": {
+        "build": 7685,
+        "build-binary": 0,
+        "snapshot-create": 169,
+        "target-setup": 10694
+      },
+      "log_path": "matrix-work/rbf989290/origin-release-pin-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "phased-updates",
+      "protects": "edge fixtures: phased updates; §3.5.4",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store acme-phased-demo_2-0_amd64.deb: store: hash /tmp/debark-build-2652549717/archives/acme-phased-demo_2-0_amd64.deb: open /tmp/debark-build-2652549717/archives/acme-phased-demo_2-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:15:18.495708-07:00",
+      "finished_at": "2026-09-03T15:16:06.0902424-07:00",
+      "total_ms": 47594,
+      "stage_ms": {
+        "build": 19901,
+        "build-binary": 0,
+        "snapshot-create": 132,
+        "target-setup": 22660
+      },
+      "log_path": "matrix-work/rbf989290/phased-updates-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "snap-shim-package",
+      "protects": "edge fixtures: snap-shim package; core/doctor checkSnapShim",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme-snap-shim-demo_1-0_amd64.deb: store: hash /tmp/debark-build-1981831026/archives/vendor-0-acme-snap-shim-demo_1-0_amd64.deb: open /tmp/debark-build-1981831026/archives/vendor-0-acme-snap-shim-demo_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:15:32.8123719-07:00",
+      "finished_at": "2026-09-03T15:16:27.472102-07:00",
+      "total_ms": 54659,
+      "stage_ms": {
+        "build": 35999,
+        "build-binary": 0,
+        "snapshot-create": 154,
+        "target-setup": 13620
+      },
+      "log_path": "matrix-work/rbf989290/snap-shim-package-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "stale-installed-version",
+      "protects": "edge fixtures: a stale installed version",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store acme-stale-demo_2-0_amd64.deb: store: hash /tmp/debark-build-3484229948/archives/acme-stale-demo_2-0_amd64.deb: open /tmp/debark-build-3484229948/archives/acme-stale-demo_2-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:15:36.2837475-07:00",
+      "finished_at": "2026-09-03T15:16:04.2226847-07:00",
+      "total_ms": 27938,
+      "stage_ms": {
+        "build": 10542,
+        "build-binary": 0,
+        "snapshot-create": 126,
+        "target-setup": 12572
+      },
+      "log_path": "matrix-work/rbf989290/stale-installed-version-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-added-file",
+      "protects": "tamper matrix: added file; verify.ProblemFileUnexpected",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-03T15:16:04.2244645-07:00",
+      "finished_at": "2026-09-03T15:16:26.8867831-07:00",
+      "total_ms": 22662,
+      "stage_ms": {
+        "build": 9915,
+        "build-binary": 0,
+        "bundle-transfer": 103,
+        "snapshot-create": 175,
+        "tamper": 0,
+        "target-setup": 4717,
+        "verify": 122
+      },
+      "bundle_size_bytes": 420437,
+      "package_count": 3,
+      "log_path": "matrix-work/rbf989290/tamper-added-file-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-edited-manifest",
+      "protects": "tamper matrix: edited manifest; D6; verify.ProblemManifestDigest",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-03T15:16:06.0912923-07:00",
+      "finished_at": "2026-09-03T15:16:29.843452-07:00",
+      "total_ms": 23752,
+      "stage_ms": {
+        "build": 10007,
+        "build-binary": 0,
+        "bundle-transfer": 85,
+        "snapshot-create": 252,
+        "tamper": 5,
+        "target-setup": 5742,
+        "verify": 154
+      },
+      "bundle_size_bytes": 420437,
+      "package_count": 3,
+      "log_path": "matrix-work/rbf989290/tamper-edited-manifest-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-modified-deb",
+      "protects": "tamper matrix: modified deb; D6, §3.8",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-03T15:16:16.084802-07:00",
+      "finished_at": "2026-09-03T15:16:40.1518527-07:00",
+      "total_ms": 24067,
+      "stage_ms": {
+        "build": 9902,
+        "build-binary": 0,
+        "bundle-transfer": 110,
+        "snapshot-create": 169,
+        "tamper": 5,
+        "target-setup": 5710,
+        "verify": 154
+      },
+      "bundle_size_bytes": 420437,
+      "package_count": 3,
+      "log_path": "matrix-work/rbf989290/tamper-modified-deb-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-removed-file",
+      "protects": "tamper matrix: removed file; verify.ProblemFileMissing",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-03T15:16:26.8872907-07:00",
+      "finished_at": "2026-09-03T15:16:54.9087998-07:00",
+      "total_ms": 28021,
+      "stage_ms": {
+        "build": 11473,
+        "build-binary": 0,
+        "bundle-transfer": 155,
+        "snapshot-create": 189,
+        "tamper": 0,
+        "target-setup": 6063,
+        "verify": 262
+      },
+      "bundle_size_bytes": 420437,
+      "package_count": 3,
+      "log_path": "matrix-work/rbf989290/tamper-removed-file-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-swapped-signature",
+      "protects": "tamper matrix: swapped signature; core/sign SignPurpose; verify.ProblemManifestDigest",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-03T15:16:27.473135-07:00",
+      "finished_at": "2026-09-03T15:17:05.5695364-07:00",
+      "total_ms": 38096,
+      "stage_ms": {
+        "build": 11191,
+        "build-binary": 0,
+        "bundle-transfer": 101,
+        "snapshot-create": 184,
+        "tamper": 0,
+        "target-setup": 7121,
+        "verify": 178
+      },
+      "bundle_size_bytes": 420427,
+      "package_count": 3,
+      "log_path": "matrix-work/rbf989290/tamper-swapped-signature-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-wrong-key",
+      "protects": "tamper matrix: wrong key; §3.8 trust model; verify.ProblemSignatureUntrusted",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-03T15:16:29.8439697-07:00",
+      "finished_at": "2026-09-03T15:17:00.8196454-07:00",
+      "total_ms": 30975,
+      "stage_ms": {
+        "build": 13299,
+        "build-binary": 0,
+        "bundle-transfer": 180,
+        "snapshot-create": 210,
+        "tamper": 0,
+        "target-setup": 6916,
+        "verify": 213
+      },
+      "bundle_size_bytes": 420427,
+      "package_count": 3,
+      "log_path": "matrix-work/rbf989290/tamper-wrong-key-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "third-party-repo",
+      "protects": "edge fixtures: third-party repository; §3.4.1",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store acme-vendor-tool_1-0_amd64.deb: store: hash /tmp/debark-build-107607755/archives/acme-vendor-tool_1-0_amd64.deb: open /tmp/debark-build-107607755/archives/acme-vendor-tool_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:16:40.1939345-07:00",
+      "finished_at": "2026-09-03T15:17:04.4005226-07:00",
+      "total_ms": 24206,
+      "stage_ms": {
+        "build": 12008,
+        "build-binary": 0,
+        "snapshot-create": 489,
+        "target-setup": 6419
+      },
+      "log_path": "matrix-work/rbf989290/third-party-repo-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "virtual-provides",
+      "protects": "edge fixtures: virtual packages and Provides",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 2 (environment), want 0 (success): debark: engine: store vendor-1-acme-app_1-0_amd64.deb: store: hash /tmp/debark-build-1246679938/archives/vendor-1-acme-app_1-0_amd64.deb: open /tmp/debark-build-1246679938/archives/vendor-1-acme-app_1-0_amd64.deb: no such file or directory\n",
+      "exit_classes": {
+        "build": "environment"
+      },
+      "started_at": "2026-09-03T15:16:54.9093258-07:00",
+      "finished_at": "2026-09-03T15:17:13.6554643-07:00",
+      "total_ms": 18746,
+      "stage_ms": {
+        "build": 6738,
+        "build-binary": 0,
+        "snapshot-create": 271,
+        "target-setup": 5312
+      },
+      "log_path": "matrix-work/rbf989290/virtual-provides-debian-12-amd64/transcript.log"
+    }
+  ],
+  "summary": {
+    "total": 30,
+    "pass": 6,
+    "fail": 24,
+    "blocked": 0,
+    "skipped": 0
+  }
+}

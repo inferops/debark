@@ -1,0 +1,13 @@
+debark-gui (@VERSION@) @DISTRIBUTION@; urgency=medium
+
+  * Debark packaged as a .deb for the first time.
+  * Ships one binary, one desktop entry, one icon theme set, one AppStream
+    component and the licence. No maintainer scripts of any kind: the
+    desktop-file and icon-cache updates are dpkg triggers owned by
+    desktop-file-utils and hicolor-icon-theme, so nothing in this package
+    runs as root at install time.
+  * Depends are derived from the built binary with dpkg-shlibdeps, never
+    hand-written. The package therefore declares the GTK 3 and WebKitGTK 4.1
+    runtimes it actually links.
+
+ -- @MAINTAINER@  @DATE@

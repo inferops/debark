@@ -1,0 +1,7 @@
+// Nested-block form: apt treats this identically to the dotted form
+// "APT::Install-Recommends "false";" / "APT::Default-Release "bookworm";".
+APT
+{
+  Install-Recommends "false";
+  Default-Release "bookworm";
+};

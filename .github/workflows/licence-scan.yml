@@ -1,0 +1,221 @@
+name: Dependency licence scan
+
+# Fails the build if a runtime Go dependency carries a copyleft licence
+# (forbidden: GPL/AGPL-family; restricted: LGPL/MPL-family reciprocal
+# licences). Apache-2.0, BSD, MIT and similar permissive licences are fine
+# and expected — see NOTICE and go.sum.
+#
+# BOTH MODULES ARE SCANNED, in two jobs, because they have different
+# dependency sets and the GUI's cannot be reached from the engine's:
+#
+#   core  the root module (github.com/inferops/debark). Pure Go, no tags,
+#         no system libraries.
+#   gui   the gui/ module (github.com/inferops/debark/gui). cgo on Linux, so
+#         it needs the webview headers before go-licenses' type checker can
+#         load a single package, and it is scanned with the SHIPPING build
+#         tags — Wails selects its whole frontend implementation by build
+#         tag, so without them this would scan a different set of packages
+#         from the one that actually links.
+#
+# go-licenses is PINNED for both, to gui/Makefile's GO_LICENSES_VERSION. The
+# tool that decides whether this project's licensing is acceptable must not
+# change under it between two runs with no diff anywhere, which is what
+# `@latest` (what the core job used to install) allows. The root Makefile has
+# no GO_LICENSES_VERSION of its own yet; when it grows one, read it there for
+# the core job and delete the cross-module read below.
+#
+# NOTE on apt: debark's dependency-resolution oracle is the system `apt`,
+# invoked as an external process via os/exec (ADR-001).
+# apt/dpkg are GPL-licensed, but they are never linked into, vendored into,
+# or distributed with the debark binary — they are a separate program this
+# binary shells out to, exactly like a shell script calling `apt-get` would.
+# Their licence does not attach to this binary, and go-licenses does not
+# (and should not) see them at all, because they are not a Go import; they
+# never appear in go.mod/go.sum. If a future dependency change ever made
+# `apt` or `dpkg` a linked library instead of an external process, that
+# would be a licensing regression requiring its own ADR — see ADR-001 and
+# `docs/dev/contract-brief.md` rule 1.
+#
+# NOTE on the system libraries, which is the GUI's version of that same
+# point. GTK3 and WebKitGTK are LGPL-family libraries and debark-gui links
+# them DYNAMICALLY, through cgo, against the copies the operator's own
+# distribution installed. go-licenses does not see them and should not: they
+# are not Go imports and appear in no go.mod or go.sum. The licence question
+# they raise is a packaging question — the .deb's Depends: line — and it
+# belongs with gui/packaging/, not here. LGPL dynamic linking against system
+# copies is the ordinary, intended arrangement for a Debian package; what
+# would be a regression is vendoring or statically linking them, and that
+# would need its own review rather than a green tick from this job.
+#
+# Actions are pinned to a full commit SHA with the release tag in a trailing
+# comment, for the reason ci.yml's header gives at length.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "go.mod"
+      - "go.sum"
+      - "gui/go.mod"
+      - "gui/go.sum"
+      - "gui/Makefile"
+      - ".github/workflows/licence-scan.yml"
+  pull_request:
+    paths:
+      - "go.mod"
+      - "go.sum"
+      - "gui/go.mod"
+      - "gui/go.sum"
+      - "gui/Makefile"
+      - ".github/workflows/licence-scan.yml"
+  schedule:
+    # Weekly: catches an upstream relicense even on a week with no local
+    # go.mod/go.sum diff.
+    - cron: "23 5 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: licence-scan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GOTOOLCHAIN: local
+
+jobs:
+  core:
+    name: go-licenses (root module)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+
+      # The version lives in gui/Makefile (see the header). Parsed with sed
+      # rather than `make -s print-go-licenses-version` only so that the two
+      # jobs in this file read it identically; the shape is asserted so a
+      # reformatted Makefile fails loudly here instead of silently
+      # installing something else.
+      - name: Resolve the pinned go-licenses version
+        run: |
+          set -euo pipefail
+          value="$(sed -n 's/^GO_LICENSES_VERSION[[:space:]]*:=[[:space:]]*\([^[:space:]]*\).*/\1/p' gui/Makefile)"
+          case "${value}" in
+            v[0-9]*.[0-9]*.[0-9]*) ;;
+            *)
+              echo "Could not read a version number for GO_LICENSES_VERSION from" >&2
+              echo "gui/Makefile (got: '${value}'). Fix the Makefile or this parser." >&2
+              exit 1
+              ;;
+          esac
+          echo "GO_LICENSES_VERSION=${value}" >> "$GITHUB_ENV"
+          echo "go-licenses ${value}"
+
+      - name: Install the pinned go-licenses
+        run: |
+          set -euo pipefail
+          go install "github.com/google/go-licenses/v2@${GO_LICENSES_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Full licence report (informational; never fails the job)
+        run: |
+          {
+            echo '### Dependency licences — root module (debark)'
+            echo
+            echo '| Package | Licence | Source |'
+            echo '|---|---|---|'
+            go-licenses report ./... 2>/dev/null \
+              | awk -F',' '{printf "| %s | %s | %s |\n", $1, $3, $2}'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail on forbidden/restricted (copyleft) licences
+        run: |
+          go-licenses check ./... --disallowed_types=forbidden,restricted
+
+  gui:
+    name: go-licenses (gui module)
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: gui
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: gui/go.mod
+          cache-dependency-path: gui/go.sum
+
+      # go-licenses runs the type checker, and on Linux this module tree is
+      # cgo: without the headers the scan fails in cgo rather than reporting
+      # licences.
+      - name: Install Linux webview build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev \
+            libwebkit2gtk-4.1-dev
+
+      - name: Resolve the pinned go-licenses version from gui/Makefile
+        run: |
+          set -euo pipefail
+          value="$(sed -n 's/^GO_LICENSES_VERSION[[:space:]]*:=[[:space:]]*\([^[:space:]]*\).*/\1/p' Makefile)"
+          case "${value}" in
+            v[0-9]*.[0-9]*.[0-9]*) ;;
+            *)
+              echo "Could not read a version number for GO_LICENSES_VERSION from the" >&2
+              echo "Makefile (got: '${value}'). Fix the Makefile or this parser." >&2
+              exit 1
+              ;;
+          esac
+          echo "GO_LICENSES_VERSION=${value}" >> "$GITHUB_ENV"
+          echo "go-licenses ${value}"
+
+      - name: Install the pinned go-licenses
+        run: |
+          set -euo pipefail
+          go install "github.com/google/go-licenses/v2@${GO_LICENSES_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      # The frontend bundle has to exist before anything typechecks the root
+      # package of this module: main.go embeds it with
+      # //go:embed all:frontend/dist, and frontend/dist is gitignored apart
+      # from a committed .gitkeep.
+      - name: Build the frontend bundle
+        run: go run ./hack/copyfrontend
+
+      # The shipping tags. gui/Makefile's RELEASE_TAGS, and what
+      # gui/.goreleaser.yaml builds with.
+      - name: Select build tags
+        run: echo "GOFLAGS=-tags=desktop,production,webkit2_41" >> "$GITHUB_ENV"
+
+      - name: Full licence report (informational; never fails the job)
+        run: |
+          {
+            echo '### Dependency licences — gui module (debark-gui)'
+            echo
+            echo 'Scanned with the shipping Linux build tags'
+            echo '(`desktop,production,webkit2_41`).'
+            echo
+            echo '| Package | Licence | Source |'
+            echo '|---|---|---|'
+            go-licenses report ./... 2>/dev/null \
+              | awk -F',' '{printf "| %s | %s | %s |\n", $1, $3, $2}'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # One row of that report always reads "Unknown" in the Source column:
+      # github.com/inferops/debark. go-licenses correctly reads Apache-2.0
+      # from the engine's own LICENSE file, but it cannot produce a source
+      # URL for a module resolved by a filesystem replace directive (it tries
+      # to resolve ".." as a hostname). That is the monorepo's replace
+      # directive showing through, not a licence problem.
+      - name: Fail on forbidden/restricted (copyleft) licences
+        run: |
+          go-licenses check ./... --disallowed_types=forbidden,restricted

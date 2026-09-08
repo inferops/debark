@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-09-03T12:12:00Z",
+  "context": {
+    "tool_version": "1.0.0",
+    "edition": "community",
+    "backend": "local"
+  },
+  "events": [
+    {
+      "schema": "debark.events/v1",
+      "ts": "2026-09-03T12:00:01Z",
+      "type": "snapshot.loaded",
+      "level": "info",
+      "msg": "snapshot loaded",
+      "attrs": {
+        "snapshot_digest": "94a1a6bd87442a401b30634b46577a677f31a4ad066a943fb646ff6899054df0"
+      }
+    },
+    {
+      "schema": "debark.events/v1",
+      "ts": "2026-09-03T12:00:09Z",
+      "type": "warning",
+      "level": "warn",
+      "msg": "external package acme-agent is url-unverified"
+    }
+  ]
+}

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>picker-search.js — standalone harness</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="../design/components.css">
+<style>
+/* Harness-only page chrome. Not part of the design system; uses only its
+   tokens. Nothing here styles a df- component. */
+body { background: var(--color-surface-1); margin: 0; }
+.g-top {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: var(--space-3);
+  height: var(--headerbar-height); padding: 0 var(--space-5);
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-1);
+}
+.g-spacer { flex: 1 1 auto; }
+.g-main { padding: var(--space-5); max-width: 1400px; margin: 0 auto; }
+.g-grid { display: grid; grid-template-columns: minmax(420px, 1fr) minmax(380px, 1fr); gap: var(--space-5); align-items: start; }
+@media (max-width: 980px) { .g-grid { grid-template-columns: 1fr; } }
+.g-h2 { font-size: var(--font-size-lg); margin: 0 0 var(--space-3); }
+.g-h3 { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin: var(--space-4) 0 var(--space-2); }
+.g-note { color: var(--color-text-secondary); font-size: var(--font-size-sm); max-width: var(--measure-prose); margin: 0 0 var(--space-3); }
+.g-note code { font-family: var(--font-family-mono); }
+.g-log { max-height: 340px; }
+.g-stats { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+.g-stats th, .g-stats td { text-align: left; padding: var(--space-1) var(--space-2); border-bottom: 1px solid var(--color-border-subtle); }
+.g-stats th { color: var(--color-text-secondary); font-weight: var(--font-weight-regular); white-space: nowrap; }
+.g-stats td { font-family: var(--font-family-mono); text-align: right; }
+.g-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.g-ctl label.g-inline { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-md); }
+.g-select { min-height: var(--control-height); padding: 0 var(--space-2); border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md); background: var(--color-surface-2); color: var(--color-text-primary);
+  font-family: inherit; font-size: var(--font-size-md); }
+.g-json { font-family: var(--font-family-mono); font-size: var(--font-size-sm); color: var(--color-text-secondary);
+  background: var(--color-surface-inset); border-radius: var(--radius-sm); padding: var(--space-2); margin: 0; white-space: pre-wrap; }
+.g-mount { padding: var(--space-4); }
+</style>
+</head>
+<body>
+
+<header class="g-top">
+  <div><strong>picker-search.js</strong> <span class="df-text-secondary">standalone harness</span></div>
+  <div class="g-spacer"></div>
+  <div role="group" aria-label="Theme" class="g-ctl">
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" data-set-theme="system" aria-pressed="true">System</button>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" data-set-theme="light" aria-pressed="false">Light</button>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" data-set-theme="dark" aria-pressed="false">Dark</button>
+  </div>
+</header>
+
+<main class="g-main">
+
+  <div id="modwarn-wrap" hidden>
+    <div class="df-banner df-banner--warning" role="status">
+      <svg class="df-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3.5 1.7 21h20.6L12 3.5Z"/><path d="M12 10v4.5"/><path d="M12 17.6v.01"/>
+      </svg>
+      <div class="df-banner__body">
+        <p class="df-banner__title">The module did not load</p>
+        <p class="df-banner__text">Browsers refuse <span class="df-mono">import</span> over
+          <span class="df-mono">file://</span>. Serve this directory and open the page over HTTP —
+          from <span class="df-mono">frontend/src/screens/</span>, run
+          <span class="df-mono">python3 -m http.server 8080</span> in
+          <span class="df-mono">frontend/</span> and open
+          <span class="df-mono">http://localhost:8080/src/screens/picker-search.demo.html</span>.
+          Nothing here contacts the network; that server only serves these files from disk.</p>
+      </div>
+      <div class="df-banner__actions"></div>
+    </div>
+  </div>
+
+  <div class="g-grid">
+
+    <!-- ============================ the component ======================= -->
+    <section>
+      <div class="df-panel g-mount">
+        <h2 class="g-h2">The component</h2>
+        <p class="g-note">Everything below the heading is
+          <span class="df-mono">createSearchField()</span>'s <span class="df-mono">el</span> &mdash; and
+          it is <strong>one row</strong>: a search box, one filter button, a result count. It used to be
+          five rows holding four independent filtering mechanisms plus an &ldquo;active filters&rdquo; echo.
+          The scope toggle, the application categories and the section list all live inside the filter
+          popover now, and the button&rsquo;s own label states what is filtered, which is why there is no
+          longer an echo row for it to state.</p>
+        <p class="g-note">Tab through it: search box, filter button, and that is the whole chrome.
+          Open the popover (Enter or Space) and the category list is <em>one</em> more tab stop with arrow
+          keys inside it &mdash; seventy categories are never seventy tab stops. Escape closes the popover
+          and puts focus back on the button; Escape in the search box clears it and does not leave the
+          field. The popover is a <span class="df-mono">.df-popover</span>, not a
+          <span class="df-mono">&lt;details&gt;</span>: an inline disclosure above a virtualised list
+          reflows it, which moves its scroll position and its keyboard cursor every time a filter is
+          touched.</p>
+        <div id="mount"></div>
+      </div>
+
+      <h3 class="g-h3">Live query state — <span class="df-mono">getQuery()</span></h3>
+      <pre class="g-json" id="qstate">{}</pre>
+
+      <h3 class="g-h3">Stubbed result (what <span class="df-mono">picker-list.js</span> would render)</h3>
+      <div class="df-panel g-mount" id="resultbox">
+        <div class="df-state">
+          <span class="df-state__title" id="rtitle">No search yet</span>
+          <p class="df-state__text" id="rtext">Type in the box above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ the harness ========================= -->
+    <section>
+      <div class="df-panel g-mount">
+        <h2 class="g-h2">Stub backend</h2>
+        <p class="g-note">No <span class="df-mono">SearchPackages</span> exists here. This harness
+          answers with a plausible count after a configurable delay, then calls
+          <span class="df-mono">setBusy(false, {total, text})</span>. The component never fetches
+          anything itself.</p>
+        <div class="g-ctl">
+          <label class="g-inline" for="lat">Bridge latency</label>
+          <select id="lat" class="g-select">
+            <option value="8">8 ms — fast bridge</option>
+            <option value="25" selected>25 ms — realistic p95</option>
+            <option value="120">120 ms — slow</option>
+            <option value="600">600 ms — very slow (watch the spinner)</option>
+            <option value="jitter">jittery 15–450 ms (out-of-order responses)</option>
+          </select>
+        </div>
+        <div class="g-ctl" style="margin-top: var(--space-3)">
+          <label class="g-inline" for="cats">Category set</label>
+          <select id="cats" class="g-select">
+            <option value="real" selected>noble main+universe — 13 app + 58 sections</option>
+            <option value="tail">full DEP-11 vocabulary — 135 app categories</option>
+            <option value="nodep11">no DEP-11 — sections only</option>
+            <option value="error">error from the backend</option>
+            <option value="empty">empty catalogue</option>
+          </select>
+        </div>
+
+        <h3 class="g-h3">Drive the frozen surface directly</h3>
+        <div class="g-ctl">
+          <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="b-focus">focus()</button>
+          <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="b-clear">clearFilters()</button>
+          <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="b-clearsilent">clear()</button>
+          <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="b-clearall">clearFilters({includeText:true})</button>
+          <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="b-busy-on">setBusy(true)</button>
+          <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="b-busy-off">setBusy(false)</button>
+        </div>
+      </div>
+
+      <div class="df-panel g-mount" style="margin-top: var(--space-4)">
+        <h2 class="g-h2">Keystroke → rendered results</h2>
+        <p class="g-note" id="budget-note"></p>
+        <table class="g-stats">
+          <tbody>
+            <tr><th scope="row">samples</th><td id="s-n">0</td></tr>
+            <tr><th scope="row">last</th><td id="s-last">—</td></tr>
+            <tr><th scope="row">p50</th><td id="s-p50">—</td></tr>
+            <tr><th scope="row">p95</th><td id="s-p95">—</td></tr>
+            <tr><th scope="row">max</th><td id="s-max">—</td></tr>
+            <tr><th scope="row">emits per keystroke</th><td id="s-ratio">—</td></tr>
+          </tbody>
+        </table>
+        <p class="g-note" style="margin-top: var(--space-3)">These numbers measure this harness's
+          stubbed latency, not the real Wails bridge. They are here so the debounce's contribution
+          is visible and arguable, not to satisfy the definition-of-done measurement.</p>
+        <div class="g-ctl">
+          <button type="button" class="df-btn df-btn--ghost df-btn--sm" id="b-reset-stats">Reset</button>
+        </div>
+      </div>
+
+      <div class="df-panel g-mount" style="margin-top: var(--space-4)">
+        <h2 class="g-h2">Callback log</h2>
+        <p class="g-note">Keystrokes are dim. <span class="df-mono">onQueryChange</span> and
+          <span class="df-mono">onCategoryChange</span> are the component's only outputs; the
+          bracketed figure on those lines is the delay since the keystroke that caused them,
+          which is the debounce doing its job.</p>
+        <div class="df-disclosure">
+          <pre class="df-log g-log" id="log"></pre>
+        </div>
+        <div class="g-ctl" style="margin-top: var(--space-3)">
+          <button type="button" class="df-btn df-btn--ghost df-btn--sm" id="b-clearlog">Clear log</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+// The theme toggle. Sets data-theme on the root element, per the design
+// system's theming contract; absent means "follow the system".
+(function () {
+  var buttons = document.querySelectorAll('[data-set-theme]');
+  function apply(choice) {
+    if (choice === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', choice);
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute('aria-pressed',
+        String(buttons[i].getAttribute('data-set-theme') === choice));
+    }
+  }
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function (e) {
+      apply(e.currentTarget.getAttribute('data-set-theme'));
+    });
+  }
+})();
+// If the module never ran, say why. file:// blocks ES module imports.
+setTimeout(function () {
+  if (!window.__pickerSearchDemoLoaded) document.getElementById('modwarn-wrap').hidden = false;
+}, 1500);
+</script>
+
+<script type="module">
+import { createSearchField, SEARCH_DEBOUNCE_MS } from './picker-search.js';
+window.__pickerSearchDemoLoaded = true;
+
+// ---------------------------------------------------------------------------
+// Stub catalogue data.
+//
+// Counts for the application tier are the real figures from
+// docs/dev/index-formats.md section 6.4 (Ubuntu noble main+universe,
+// desktop-application components whose package exists). The section counts are
+// plausible rather than exact; CategoriesResult.total is stated explicitly, as
+// the real binding does.
+// ---------------------------------------------------------------------------
+
+const CATALOGUE_TOTAL = 70412;
+
+const APP_MAIN = [
+  ['Game', 426], ['Utility', 390], ['AudioVideo', 287], ['System', 211],
+  ['Education', 205], ['Audio', 198], ['Network', 197], ['Science', 184],
+  ['Graphics', 160], ['Development', 140], ['Office', 133], ['Settings', 102],
+  ['Video', 43],
+];
+
+// The 122-item subsidiary vocabulary that makes "show every category" a bad
+// design. Real freedesktop additional-category names; counts follow the shape
+// of the real tail (99 down to 1).
+const APP_TAIL_NAMES = [
+  'LogicGame','ArcadeGame','Math','Viewer','StrategyGame','Player','TextEditor','BoardGame',
+  'Physics','Biology','ActionGame','Chemistry','Astronomy','IDE','Debugger','FileTools',
+  'Emulator','Engineering','AudioVideoEditing','Photography','Music','Recorder',
+  'TerminalEmulator','Monitor','Archiving','Compression','Filesystem','Security',
+  'Accessibility','WebBrowser','Email','Chat','InstantMessaging','IRCClient','FileTransfer',
+  'News','P2P','RemoteAccess','Telephony','2DGraphics','3DGraphics','VectorGraphics',
+  'RasterGraphics','Scanning','OCR','Publishing','TextTools','DesktopSettings',
+  'HardwareSettings','Printing','PackageManager','Dialup','Feed','HamRadio','TelephonyTools',
+  'WebDevelopment','Midi','Mixer','Sequencer','Tuner','TV','DiscBurning','AdventureGame',
+  'BlocksGame','CardGame','KidsGame','RolePlaying','Shooter','Simulation','SportsGame',
+  'Art','Construction','Languages','ArtificialIntelligence','ComputerScience',
+  'DataVisualization','Economy','Electricity','Geography','Geology','Geoscience','History',
+  'Humanities','ImageProcessing','Literature','Maps','NumericalAnalysis','MedicalSoftware',
+  'Robotics','Spirituality','Sports','ParallelComputing','Amusement','Electronics',
+  'FileManager','Calculator','Clock','Documentation','Building','GUIDesigner','Profiling',
+  'RevisionControl','Translation','Calendar','ContactManagement','Database','Dictionary',
+  'Chart','Finance','FlowChart','PDA','ProjectManagement','Presentation','Spreadsheet',
+  'WordProcessor','Adult','Core','KDE','GNOME','XFCE','GTK','Qt','ConsoleOnly',
+];
+
+const SECTIONS = [
+  ['devel', 7695], ['libs', 6142], ['python', 4488], ['doc', 3910], ['perl', 3601],
+  ['libdevel', 3452], ['rust', 3287], ['utils', 2903], ['haskell', 2411], ['net', 2298],
+  ['games', 1876], ['science', 1804], ['golang', 1690], ['ruby', 1512], ['java', 1466],
+  ['text', 1310], ['gnome', 1288], ['javascript', 1201], ['misc', 1155], ['x11', 1094],
+  ['admin', 1046], ['graphics', 998], ['sound', 962], ['kde', 941], ['web', 874],
+  ['php', 812], ['ocaml', 766], ['electronics', 704], ['math', 688], ['editors', 651],
+  ['mail', 612], ['localization', 588], ['fonts', 566], ['database', 531], ['video', 498],
+  ['httpd', 462], ['interpreters', 441], ['lisp', 402], ['embedded', 366], ['vcs', 341],
+  ['tex', 322], ['comm', 298], ['shells', 271], ['gnu-r', 254], ['introspection', 233],
+  ['metapackages', 214], ['kernel', 198], ['otherosfs', 176], ['news', 151],
+  ['hamradio', 138], ['education', 126], ['debug', 112], ['cli-mono', 98], ['zope', 76],
+  ['gnustep', 61], ['tasks', 44], ['oldlibs', 27], ['xfce', 19],
+];
+
+function appCat(name, count) { return { id: 'app:' + name, tier: 'application', name: name, count: count }; }
+function sectionCat(name, count) { return { id: 'section:' + name, tier: 'section', name: name, count: count }; }
+
+function buildCategories(kind) {
+  const apps = APP_MAIN.map(function (p) { return appCat(p[0], p[1]); });
+  const sections = SECTIONS.map(function (p) { return sectionCat(p[0], p[1]); });
+
+  if (kind === 'tail') {
+    APP_TAIL_NAMES.forEach(function (name, i) {
+      // 99 down to 1, in the shape of the real distribution.
+      const count = Math.max(1, Math.round(99 * Math.pow(0.965, i)));
+      apps.push(appCat(name, count));
+    });
+  }
+  if (kind === 'nodep11') {
+    return { categories: sections, total: CATALOGUE_TOTAL };
+  }
+  if (kind === 'empty') {
+    return { categories: [], total: 0 };
+  }
+  if (kind === 'error') {
+    return {
+      categories: [],
+      total: 0,
+      error: { summary: 'the catalogue cache for this target could not be opened.' },
+    };
+  }
+  // Both tiers, each ordered by name ascending, as the binding promises.
+  const byName = function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; };
+  return { categories: apps.sort(byName).concat(sections.sort(byName)), total: CATALOGUE_TOTAL };
+}
+
+// ---------------------------------------------------------------------------
+// Stub search. Deterministic in the query, so repeating a search repeats its
+// answer, and narrowing text narrows the count the way a real archive does.
+// ---------------------------------------------------------------------------
+
+let categoryIndex = new Map();
+
+function hash(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 4294967295;
+}
+
+function stubTotal(q) {
+  let base = CATALOGUE_TOTAL;
+  const cat = q.category ? categoryIndex.get(q.category) : null;
+  if (cat) base = cat.count;
+  else if (q.appsOnly) base = 1878; // DEP-11 desktop-applications with a package
+  if (q.appsOnly && cat && cat.tier === 'section') base = Math.round(base * 0.02);
+  const t = q.text.trim();
+  if (t === '') return base;
+  // Each additional character cuts the field, with a query-stable wobble.
+  const factor = Math.pow(0.28 + 0.12 * hash(t), t.length);
+  return Math.max(0, Math.round(base * factor * (0.6 + 0.8 * hash(t + '#'))));
+}
+
+function latencyMs() {
+  const v = document.getElementById('lat').value;
+  if (v !== 'jitter') return Number(v);
+  return 15 + Math.round(Math.random() * 435);
+}
+
+// ---------------------------------------------------------------------------
+// Logging
+// ---------------------------------------------------------------------------
+
+const logEl = document.getElementById('log');
+let lineCount = 0;
+
+function stamp() {
+  const d = new Date();
+  const p = function (n, w) { return String(n).padStart(w || 2, '0'); };
+  return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + '.' + p(d.getMilliseconds(), 3);
+}
+
+function log(text, variant) {
+  const line = document.createElement('span');
+  line.className = 'df-log__line' + (variant ? ' df-log__line--' + variant : '');
+  line.textContent = stamp() + '  ' + text;
+  logEl.appendChild(line);
+  if (++lineCount > 400) { logEl.removeChild(logEl.firstChild); lineCount--; }
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+document.getElementById('b-clearlog').addEventListener('click', function () {
+  while (logEl.firstChild) logEl.removeChild(logEl.firstChild);
+  lineCount = 0;
+});
+
+// ---------------------------------------------------------------------------
+// Timing
+// ---------------------------------------------------------------------------
+
+let lastKeystrokeAt = 0;      // performance.now() of the most recent keystroke
+let keystrokes = 0;
+let emits = 0;
+const samples = [];
+
+function recordSample(ms) {
+  samples.push(ms);
+  if (samples.length > 500) samples.shift();
+  renderStats();
+}
+
+function pct(sorted, p) {
+  if (!sorted.length) return null;
+  const i = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
+  return sorted[i];
+}
+
+function renderStats() {
+  const sorted = samples.slice().sort(function (a, b) { return a - b; });
+  const f = function (v) { return v == null ? '—' : v.toFixed(1) + ' ms'; };
+  document.getElementById('s-n').textContent = String(samples.length);
+  document.getElementById('s-last').textContent = f(samples.length ? samples[samples.length - 1] : null);
+  document.getElementById('s-p50').textContent = f(pct(sorted, 50));
+  document.getElementById('s-p95').textContent = f(pct(sorted, 95));
+  document.getElementById('s-max').textContent = f(sorted.length ? sorted[sorted.length - 1] : null);
+  document.getElementById('s-ratio').textContent =
+    keystrokes ? (emits / keystrokes).toFixed(2) : '—';
+}
+
+document.getElementById('b-reset-stats').addEventListener('click', function () {
+  samples.length = 0; keystrokes = 0; emits = 0; renderStats();
+});
+
+document.getElementById('budget-note').textContent =
+  'The component debounces at ' + SEARCH_DEBOUNCE_MS + ' ms (SEARCH_DEBOUNCE_MS). The budget is ' +
+  '100 ms p95 from keystroke to rendered results, including the bridge, so the debounce plus the ' +
+  'round trip below has to stay under it.';
+
+// ---------------------------------------------------------------------------
+// Wire the component up.
+// ---------------------------------------------------------------------------
+
+let inFlight = 0;
+let latestSeq = 0;
+
+function runSearch(q, causedByKeystrokeAt) {
+  const seq = ++latestSeq;
+  const started = performance.now();
+  const delay = latencyMs();
+  field.setBusy(true);
+  inFlight++;
+  setTimeout(function () {
+    inFlight--;
+    const total = stubTotal(q);
+    const elapsed = performance.now() - started;
+    if (seq !== latestSeq) {
+      log('  <- stale response dropped (seq ' + seq + ' of ' + latestSeq + ', ' +
+          elapsed.toFixed(0) + ' ms) — picker-list compares SearchResult.query', 'warn');
+      if (inFlight === 0) field.setBusy(false);
+      return;
+    }
+    field.setBusy(inFlight > 0, { total: total, text: q.text });
+    renderResult(q, total, elapsed);
+    log('  <- ' + total + ' rows in ' + elapsed.toFixed(0) + ' ms  ->  setBusy(false, {total})');
+    if (causedByKeystrokeAt) recordSample(performance.now() - causedByKeystrokeAt);
+  }, delay);
+}
+
+function describe(q) {
+  return 'text=' + JSON.stringify(q.text) +
+         ' category=' + JSON.stringify(q.category) +
+         ' appsOnly=' + q.appsOnly;
+}
+
+function sinceKeystroke() {
+  if (!lastKeystrokeAt) return '';
+  return '  [+' + (performance.now() - lastKeystrokeAt).toFixed(0) + ' ms since keystroke]';
+}
+
+const field = createSearchField({
+  onQueryChange: function (text, q) {
+    emits++;
+    log('onQueryChange(' + JSON.stringify(text) + ')  ' + describe(q) + sinceKeystroke());
+    runSearch(q, lastKeystrokeAt);
+    renderQueryState();
+  },
+  onCategoryChange: function (category, q) {
+    emits++;
+    log('onCategoryChange(' + JSON.stringify(category) + ')  ' + describe(q) + sinceKeystroke());
+    runSearch(q, 0);
+    renderQueryState();
+  },
+});
+
+document.getElementById('mount').appendChild(field.el);
+
+// Log raw keystrokes so the debounce is visible as a gap in the log. A real
+// host would never reach into the component like this; the harness does it to
+// timestamp the input the component is reacting to.
+// Scoped to the search box: the filter popover holds a second
+// .df-search__input (its category type-ahead), and this must not log that one.
+const inputEl = field.el.querySelector('.picker-search__box .df-search__input');
+inputEl.addEventListener('input', function () {
+  lastKeystrokeAt = performance.now();
+  keystrokes++;
+  log('keystroke: ' + JSON.stringify(inputEl.value), 'muted');
+  renderQueryState();
+  renderStats();
+});
+
+function renderQueryState() {
+  document.getElementById('qstate').textContent = JSON.stringify(field.getQuery(), null, 2);
+}
+
+function renderResult(q, total, elapsed) {
+  const box = document.getElementById('resultbox');
+  while (box.firstChild) box.removeChild(box.firstChild);
+  const state = document.createElement('div');
+  state.className = 'df-state';
+  const title = document.createElement('span');
+  title.className = 'df-state__title';
+  const text = document.createElement('p');
+  text.className = 'df-state__text';
+
+  if (total === 0) {
+    title.textContent = 'No packages match';
+    text.textContent = 'Nothing in the catalogue matches ' + describe(q) + '.';
+    const actions = document.createElement('div');
+    actions.className = 'df-state__actions';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'df-btn df-btn--primary df-btn--sm';
+    btn.textContent = 'Clear the filters';
+    // This is the call the real empty state in picker-list.js needs and that
+    // the frozen factory shape does not provide.
+    btn.addEventListener('click', function () {
+      log('picker-list empty state -> field.clearFilters()');
+      field.clearFilters();
+    });
+    actions.appendChild(btn);
+    state.appendChild(title);
+    state.appendChild(text);
+    state.appendChild(actions);
+  } else {
+    title.textContent = total.toLocaleString() + ' rows';
+    text.textContent = describe(q) + ' — stub replied in ' + elapsed.toFixed(0) + ' ms.';
+    state.appendChild(title);
+    state.appendChild(text);
+  }
+  box.appendChild(state);
+}
+
+// -- category set switching --------------------------------------------------
+
+function applyCategorySet(kind) {
+  const result = buildCategories(kind);
+  categoryIndex = new Map();
+  result.categories.forEach(function (c) { categoryIndex.set(c.id, c); });
+  // Two call shapes, both supported. picker-list.js uses the first: the array
+  // and the total as separate arguments, because CategoriesResult.total is a
+  // sibling of .categories and the frozen signature names one parameter. The
+  // whole-result form is the only one that can carry an error.
+  if (result.error) {
+    field.setCategories(result);
+    log('setCategories(CategoriesResult) — ' + kind + ', with an error');
+  } else {
+    field.setCategories(result.categories, result.total);
+    log('setCategories(array, total) — ' + kind + ', ' + result.categories.length +
+        ' categories, total ' + result.total);
+  }
+  renderQueryState();
+}
+
+document.getElementById('cats').addEventListener('change', function (e) {
+  applyCategorySet(e.target.value);
+});
+
+// -- direct calls into the frozen surface -----------------------------------
+
+document.getElementById('b-focus').addEventListener('click', function () {
+  log('focus()'); field.focus();
+});
+document.getElementById('b-clear').addEventListener('click', function () {
+  log('clearFilters()  — emits, so the host refetches'); field.clearFilters();
+});
+document.getElementById('b-clearsilent').addEventListener('click', function () {
+  log('clear()  — silent: the host has already reset and refetched itself');
+  field.clear(); renderQueryState();
+});
+document.getElementById('b-clearall').addEventListener('click', function () {
+  log('clearFilters({includeText:true})'); field.clearFilters({ includeText: true });
+});
+document.getElementById('b-busy-on').addEventListener('click', function () {
+  log('setBusy(true)'); field.setBusy(true);
+});
+document.getElementById('b-busy-off').addEventListener('click', function () {
+  log('setBusy(false)'); field.setBusy(false);
+});
+
+// -- boot --------------------------------------------------------------------
+
+applyCategorySet('real');
+renderStats();
+log('harness ready — SEARCH_DEBOUNCE_MS = ' + SEARCH_DEBOUNCE_MS + ' ms');
+
+// Reproducible behavior check for the shortcut setter and full callback
+// snapshots. The native review harness may await this function; no result is
+// claimed until it has actually run in that engine.
+window.__SEARCH_UX_CHECK__ = async function () {
+  const calls = [];
+  const test = createSearchField({
+    onQueryChange: (text, query) => calls.push({ kind: 'query', text, query }),
+    onCategoryChange: (category, query) => calls.push({ kind: 'category', category, query }),
+  });
+  document.body.appendChild(test.el);
+  try {
+    const problems = [];
+    test.setCategories({ categories: [{ id: 'section:utils', name: 'Utilities', count: 12, tier: 'section' }], total: 12 });
+    test.setQuery({ text: 'curl', category: 'section:utils', appsOnly: false });
+    if (calls.length) problems.push('silent shortcut setter emitted a query');
+    const input = test.el.querySelector('input[type="search"]');
+    if (input.value !== 'curl' || test.getQuery().category !== 'section:utils') problems.push('shortcut state and controls disagree');
+    input.value = 'wget';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, SEARCH_DEBOUNCE_MS + 20));
+    const last = calls[calls.length - 1];
+    if (!last || last.text !== 'wget' || last.query.text !== 'wget' || last.query.category !== 'section:utils' || last.query.appsOnly !== false) {
+      problems.push('typing after a category shortcut lost part of the full query');
+    }
+    const copy = test.getQuery(); copy.category = 'tampered';
+    if (test.getQuery().category !== 'section:utils') problems.push('getQuery exposed mutable component state');
+    test.setQuery({ text: '', category: '', appsOnly: false });
+    if (test.getQuery().appsOnly || test.getQuery().text || test.getQuery().category) problems.push('empty reset introduced a hidden filter');
+    return { ok: problems.length === 0, problems };
+  } finally { test.destroy(); test.el.remove(); }
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>picker-tray — standalone harness</title>
+
+<!--
+  Standalone harness for frontend/src/screens/picker-tray.js .
+
+  ES modules are blocked over file:// in Chromium-family engines, so serve the
+  frontend directory rather than double-clicking this file:
+
+      cd frontend && python3 -m http.server 8000
+      # then open http://localhost:8000/src/screens/picker-tray.demo.html
+
+  The backend below is a STUB. It mirrors the semantics of internal/app
+  (selection order, page clamping, name validation, warning attachment) closely
+  enough to exercise the tray, and nothing else. It makes no network request of
+  any kind, and neither does the tray: that is a product constraint, not an
+  omission in the stub.
+
+  ChooseLocalDebs returns canned absolute paths. A browser file input cannot
+  give a real path, and the real binding is a native GTK/Win32 dialog; the
+  paths are what matters to the tray, so the stub supplies them directly.
+-->
+
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="../design/components.css">
+
+<style>
+  /* Harness chrome only. This is a test page, not the app; the tray itself
+     uses the design system and a small token-only layout block of its own. */
+  html, body { height: 100%; }
+  body { margin: 0; }
+  .h-split {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    height: calc(100% - var(--headerbar-height));
+    box-sizing: border-box;
+  }
+  .h-controls {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .h-tray {
+    flex: none;
+    width: var(--tray-width);
+    display: flex;
+    border: var(--border-width-hairline) solid var(--color-border-default);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: var(--color-surface-2);
+  }
+  .h-tray > * { flex: 1 1 auto; min-width: 0; }
+  .h-sec { display: flex; flex-direction: column; gap: var(--space-2); }
+  .h-sec h2 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+  }
+  .h-sec p {
+    margin: 0;
+    max-width: var(--measure-prose);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+  }
+  .h-log {
+    max-height: 220px;
+    overflow: auto;
+    background-color: var(--color-surface-inset);
+    border: var(--border-width-hairline) solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+  }
+</style>
+</head>
+<body class="df-app">
+
+<header class="df-headerbar">
+  <span class="df-headerbar__title">picker-tray</span>
+  <span class="df-headerbar__subtitle df-mono">standalone harness · stubbed backend</span>
+  <div class="df-spacer"></div>
+  <div class="df-toolbar__group" role="group" aria-label="Theme">
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" data-theme-set="light">Light</button>
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" data-theme-set="dark">Dark</button>
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" data-theme-set="">System</button>
+  </div>
+</header>
+
+<main class="h-split">
+  <div class="h-controls">
+
+    <section class="h-sec">
+      <div class="df-toolbar">
+        <button type="button" class="df-btn df-btn--secondary" id="add-menu">Add…</button>
+        <span id="selected-count">Selected (0)</span>
+        <button type="button" class="df-btn df-btn--ghost" id="undo-selection" hidden>Undo</button>
+      </div>
+      <h2>Scenarios</h2>
+      <p>Each button replaces the stub backend's selection and re-renders the
+        tray from <code class="df-mono">Selection()</code>, exactly as
+        <code class="df-mono">picker-list.js</code> would on a
+        <code class="df-mono">selection:changed</code> event.</p>
+      <div class="df-cluster" id="scenarios"></div>
+    </section>
+
+    <section class="h-sec">
+      <h2>Dialogs</h2>
+      <p>The three input paths. Each opens with <code class="df-mono">showModal()</code>,
+        traps focus, closes on Escape and restores focus to the button that
+        opened it.</p>
+      <div class="df-cluster" id="dialogs"></div>
+    </section>
+
+    <section class="h-sec">
+      <h2>Backend behaviour</h2>
+      <p>The fixture uses the current URL/digest and Undo signatures. Native binding
+        acceptance is recorded separately in the integrated review harness.</p>
+      <div class="df-cluster" id="switches"></div>
+    </section>
+
+    <section class="h-sec">
+      <h2>Calls the tray made</h2>
+      <div class="h-log"><pre class="df-log" id="log"></pre></div>
+    </section>
+
+  </div>
+
+  <aside class="h-tray" id="tray-host" aria-label="Selection tray under test"></aside>
+</main>
+
+<script type="module">
+import { createTray } from './picker-tray.js';
+
+/* =========================================================================
+   Stub backend — internal/app, in miniature.
+   ========================================================================= */
+
+const SELECTION_PAGE_MAX = 500;
+const ADD_PACKAGES_MAX = 5000;
+const PACKAGE_LIST_MAX_BYTES = 4 * 1024 * 1024;
+
+const logEl = document.getElementById('log');
+function log(line, kind) {
+  const span = document.createElement('span');
+  span.className = 'df-log__line' + (kind ? ' df-log__line--' + kind : '');
+  span.textContent = line;
+  logEl.appendChild(span);
+  logEl.parentNode.scrollTop = logEl.parentNode.scrollHeight;
+}
+
+/* -- a small stand-in catalogue ------------------------------------------ */
+
+const SECTIONS = ['net', 'devel', 'libs', 'python', 'utils', 'admin'];
+const catalogue = new Map();
+
+function catEntry(name, version, summary, installedKiB, downloadBytes) {
+  catalogue.set(name, {
+    name,
+    version,
+    summary,
+    installed_size_bytes: installedKiB * 1024,
+    download_size_bytes: downloadBytes,
+  });
+}
+
+catEntry('nginx-full', '1.24.0-2ubuntu7.1', 'nginx web server with standard modules', 2280, 704512);
+catEntry('postgresql-16', '16.4-0ubuntu0.24.04.2', 'object-relational SQL database, version 16 server', 45120, 15728640);
+catEntry('redis-server', '5:7.0.15-1build2', 'persistent key-value database with network interface', 3960, 1153433);
+catEntry('build-essential', '12.10ubuntu1', 'informational list of build-essential packages', 20, 4736);
+catEntry('python3-pip', '24.0+dfsg-1ubuntu1', 'Python package installer', 5840, 1418035);
+catEntry('openssh-server', '1:9.6p1-3ubuntu13.5', 'secure shell (SSH) server, for secure access from remote machines', 1880, 512000);
+catEntry('git', '1:2.43.0-1ubuntu7.1', 'fast, scalable, distributed revision control system', 22400, 3670016);
+catEntry('curl', '8.5.0-2ubuntu10.6', 'command line tool for transferring data with URL syntax', 620, 227328);
+catEntry('vim', '2:9.1.0016-1ubuntu7.4', 'Vi IMproved - enhanced vi editor', 4020, 1795162);
+catEntry('htop', '3.3.0-4build1', 'interactive processes viewer', 328, 148480);
+catEntry('firefox', '1:1snap1-0ubuntu5', 'Transitional package - firefox -> firefox snap', 12, 4400);
+catEntry('thunderbird', '1:1snap1-0ubuntu4', 'Transitional package - thunderbird -> thunderbird snap', 12, 4300);
+catEntry('docker.io', '26.1.3-0ubuntu1~24.04.1', 'Linux container runtime', 128400, 40894464);
+catEntry('ansible', '9.2.0+dfsg-0ubuntu5', 'Configuration management, deployment, and task execution system', 391000, 27262976);
+catEntry('rsync', '3.2.7-1ubuntu1.2', 'fast, versatile, remote (and local) file-copying tool', 1180, 436224);
+
+// A few hundred more, so the "300 items" scenario has real rows behind it.
+for (let i = 1; i <= 400; i += 1) {
+  const section = SECTIONS[i % SECTIONS.length];
+  catEntry(
+    'lib' + section + i + '-dev',
+    '1.' + (i % 20) + '.' + (i % 7) + '-1ubuntu2',
+    'development files for the ' + section + ' helper library ' + i,
+    120 + (i % 900),
+    40960 + i * 733
+  );
+}
+
+/* -- warning policy (this is BACKEND behaviour; the tray reads the flag) -- */
+
+// The frontend never carries a list like this. It lives here because the stub
+// is standing in for internal/app's policy, which is where the real one lives.
+const SNAP_SHIMS = new Set(['firefox', 'thunderbird', 'chromium-browser']);
+
+function warningsFor(entry) {
+  const out = [];
+  if (entry.source === 'apt' && SNAP_SHIMS.has(entry.name)) {
+    out.push({
+      kind: 'snap-transitional',
+      package: entry.name,
+      message:
+        'The ' + entry.name + ' deb on this target is a transitional package that installs a snap.',
+      hint:
+        'A bundle containing it will not contain ' +
+        entry.name +
+        '. Remove it and install it from the vendor .deb, or accept that the target needs snapd and a network.',
+      doc_url: 'https://example.invalid/debark/docs/snap-transitional',
+    });
+  }
+  if (entry.source === 'apt' && !entry.known) {
+    out.push({
+      kind: 'unknown-package',
+      package: entry.name,
+      message: entry.name + ' is not in this target’s catalogue.',
+      hint: 'It is kept anyway. debark gives the authoritative answer at build time.',
+    });
+  }
+  if (entry.source === 'url') {
+    out.push({
+      kind: 'external-url',
+      package: entry.key,
+      message: 'This .deb is fetched from outside the target’s own archive.',
+      hint: 'Supply the vendor’s expected SHA-256 so the file is operator-attested.',
+    });
+  }
+  if (entry.source === 'file' && /_i386\.deb$/i.test(entry.name)) {
+    out.push({
+      kind: 'arch-mismatch',
+      package: entry.key,
+      message: entry.name + ' is an i386 package and this target is amd64.',
+      hint: 'Ask the vendor for the amd64 build, or change the target’s architecture.',
+    });
+  }
+  return out;
+}
+
+function selectionWarnings(summary) {
+  const out = [];
+  if (summary.download_size_bytes > 1024 * 1024 * 1024) {
+    out.push({
+      kind: 'large-download',
+      message: 'This selection downloads more than a gigabyte before dependencies are added.',
+      hint: 'Check the free space on the drive you are exporting to.',
+    });
+  }
+  return out;
+}
+
+/* -- validation, mirroring internal/app/bindings.go ----------------------- */
+
+function validPackageName(raw) {
+  let s = raw;
+  if (s.length < 2) return false;
+  const eq = s.indexOf('=');
+  if (eq > 0) s = s.slice(0, eq);
+  if (s === '') return false;
+  if (/[A-Z]/.test(s)) return false;
+  return /^[a-z0-9][a-z0-9+.-]*$/.test(s);
+}
+
+function pathBase(u) {
+  const q = u.split('?')[0];
+  const i = q.lastIndexOf('/');
+  return i >= 0 && i + 1 < q.length ? q.slice(i + 1) : q;
+}
+
+function newSelectionEntry(v, src) {
+  if (src === 'url') {
+    if (v.indexOf('https://') !== 0 && v.indexOf('http://') !== 0) {
+      return [null, { value: v, reason: 'That is not an http or https URL.',
+        hint: 'Paste the full download address of the .deb, starting with https://.' }];
+    }
+    return [{ key: v, name: pathBase(v), url: v, source: 'url', known: true,
+      installed_size_bytes: 0, download_size_bytes: 0 }, null];
+  }
+  if (src === 'file') {
+    if (!/\.deb$/i.test(v)) {
+      return [null, { value: v, reason: 'That file is not a .deb.',
+        hint: 'Pick the .deb the vendor gave you.' }];
+    }
+    const base = v.split(/[\\/]/).pop();
+    return [{ key: v, name: base, path: v, source: 'file', known: true,
+      installed_size_bytes: 0, download_size_bytes: 0 }, null];
+  }
+  if (!validPackageName(v)) {
+    return [null, { value: v, reason: 'That is not a package name.',
+      hint: 'Package names are lower case letters, digits, plus, minus and dots.' }];
+  }
+  return [{ key: v, name: v, source: 'apt', known: false,
+    installed_size_bytes: 0, download_size_bytes: 0 }, null];
+}
+
+function parseNameList(text) {
+  const names = [];
+  const rejected = [];
+  const seen = new Set();
+  let duplicates = 0;
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i += 1) {
+    let line = lines[i];
+    const hash = line.indexOf('#');
+    if (hash >= 0) line = line.slice(0, hash);
+    const fields = line.split(/\s+/).filter(Boolean);
+    for (let j = 0; j < fields.length; j += 1) {
+      const f = fields[j];
+      if (seen.has(f)) { duplicates += 1; continue; }
+      seen.add(f);
+      if (!validPackageName(f)) {
+        rejected.push({ value: f, reason: 'That is not a package name.',
+          hint: 'Remove it, or add it as a URL or a local .deb instead.' });
+        continue;
+      }
+      names.push(f);
+    }
+  }
+  return { names, rejected, duplicates };
+}
+
+/* -- the selection itself ------------------------------------------------- */
+
+const store = {
+  order: [],
+  byKey: new Map(),
+  revision: 0, undo: null, keySerial: 0, locked: false, hidePane: false,
+  failNextRead: false,
+};
+
+function hydrate(entry) {
+  if (entry.source !== 'apt') return entry;
+  const cat = catalogue.get(entry.name);
+  if (!cat) return entry;
+  entry.known = true;
+  entry.version = cat.version;
+  entry.summary = cat.summary;
+  entry.installed_size_bytes = cat.installed_size_bytes;
+  entry.download_size_bytes = cat.download_size_bytes;
+  return entry;
+}
+
+function addEntries(values, src, digests) {
+  const rejected = [];
+  let added = 0;
+  for (let i = 0; i < values.length; i += 1) {
+    const v = String(values[i]).trim();
+    if (v === '') continue;
+    const [entry, rej] = newSelectionEntry(v, src);
+    if (rej) { rejected.push(rej); continue; }
+    hydrate(entry);
+    if (digests && digests[v]) entry.sha256 = digests[v];
+    if (src === 'url' && /[?@]/.test(v)) entry.viewKey = 'url:fixture-' + (++store.keySerial);
+    entry.warnings = warningsFor(entry);
+    if (!store.byKey.has(entry.key)) {
+      store.byKey.set(entry.key, entry);
+      store.order.push(entry.key);
+      added += 1;
+    }
+  }
+  if (added) { store.revision++; store.undo = null; }
+  const s = summary();
+  s.added = added;
+  s.rejected = rejected;
+  return s;
+}
+
+function entries() {
+  return store.order.map((k) => store.byKey.get(k));
+}
+
+function summary() {
+  const s = {
+    total: 0, package_count: 0, url_count: 0, file_count: 0, unknown_count: 0,
+    installed_size_bytes: 0, download_size_bytes: 0,
+    warnings: [], rejected: [], added: 0, removed: 0,
+    revision: store.revision, undo_token: store.undo?.token || '', undo_label: store.undo?.label || '',
+  };
+  const seen = new Set();
+  const all = entries();
+  for (let i = 0; i < all.length; i += 1) {
+    const e = all[i];
+    s.total += 1;
+    if (e.source === 'url') s.url_count += 1;
+    else if (e.source === 'file') s.file_count += 1;
+    else s.package_count += 1;
+    if (!e.known && e.source === 'apt') s.unknown_count += 1;
+    s.installed_size_bytes += e.installed_size_bytes || 0;
+    s.download_size_bytes += e.download_size_bytes || 0;
+    const ws = e.warnings || [];
+    for (let j = 0; j < ws.length; j += 1) {
+      const k = ws[j].kind + '\u0000' + (ws[j].package || '');
+      if (seen.has(k)) continue;
+      seen.add(k);
+      s.warnings.push(ws[j]);
+    }
+  }
+  const sel = selectionWarnings(s);
+  for (let i = 0; i < sel.length; i += 1) {
+    const k = sel[i].kind + '\u0000' + (sel[i].package || '');
+    if (seen.has(k)) continue;
+    seen.add(k);
+    s.warnings.push(sel[i]);
+  }
+  return s;
+}
+
+/** Bindings are async across the Wails bridge; the stub is too. */
+function bridge(name, fn) {
+  return async function () {
+    const args = Array.prototype.slice.call(arguments);
+    log('App.' + name + '(' + args.map(short).join(', ') + ')');
+    await new Promise((r) => setTimeout(r, 12));
+    if (store.locked && ['AddPackages', 'AddURLs', 'AddLocalDebs', 'AddPackageList', 'RemovePackages', 'ClearSelection', 'UndoSelection'].includes(name)) return { ...summary(), error: { code: 'app.busy', message: 'Selection changes are unavailable during a build or copy.' } };
+    return fn.apply(null, args);
+  };
+}
+
+function short(v) {
+  if (Array.isArray(v)) return '[' + v.length + ' items]';
+  const s = String(v);
+  return s.length > 48 ? JSON.stringify(s.slice(0, 45) + '…') : JSON.stringify(s);
+}
+
+const App = {
+  Selection: bridge('Selection', () => {
+    if (store.failNextRead) {
+      const s = summary();
+      s.error = {
+        code: 'catalog.not_ready',
+        message: 'The catalogue for this target has not finished building.',
+        hint: 'Go back to the target screen and build the catalogue, then return here.',
+        details: 'catalog: cache miss for ubuntu:24.04/server amd64 (main, universe)',
+        command: ['debark', 'snapshot', 'list-bases', '--json'],
+        exit_class: 'environment',
+      };
+      return s;
+    }
+    return summary();
+  }),
+
+  SelectionPage: bridge('SelectionPage', (offset, limit) => {
+    let off = offset < 0 ? 0 : offset;
+    let lim = limit <= 0 || limit > SELECTION_PAGE_MAX ? SELECTION_PAGE_MAX : limit;
+    const all = entries();
+    const page = { entries: [], total: all.length, offset: off, limit: lim };
+    if (store.failNextRead) {
+      page.error = {
+        code: 'catalog.not_ready',
+        message: 'The selection could not be read.',
+        hint: 'Rebuild the catalogue for this target and try again.',
+        details: 'catalog: cache miss',
+      };
+      return page;
+    }
+    if (off >= all.length) return page;
+    page.entries = all.slice(off, Math.min(off + lim, all.length)).map(entry => {
+      if (!entry.viewKey) return { ...entry };
+      const address = new URL(entry.url); address.username = ''; address.password = ''; address.search = '?token=REDACTED';
+      return { ...entry, key: entry.viewKey, url: address.href, warnings: entry.warnings.map(w => ({ ...w, package: entry.viewKey })) };
+    });
+    return page;
+  }),
+
+  AddPackages: bridge('AddPackages', (names) => {
+    if (names.length > ADD_PACKAGES_MAX) {
+      const s = summary();
+      s.error = { code: 'input.too_many', message: 'Too many at once.', hint: 'Split the list.' };
+      return s;
+    }
+    return addEntries(names, 'apt');
+  }),
+
+  AddURLs: bridge('AddURLs', (inputs) => addEntries(inputs.map(input => input.url), 'url', Object.fromEntries(inputs.map(input => [input.url, input.sha256])))),
+
+  AddLocalDebs: bridge('AddLocalDebs', (paths) => addEntries(paths, 'file')),
+
+  ChooseLocalDebs: bridge('ChooseLocalDebs', () => {
+    // The real binding opens a native multi-select dialog. Nothing is uploaded
+    // anywhere; only the paths travel, and only to the local backend.
+    const picked = [
+      '/home/operator/vendor/acme-agent_2.1.0_amd64.deb',
+      '/home/operator/vendor/acme-tools_2.1.0_amd64.deb',
+      '/home/operator/vendor/legacy-probe_1.4.2_i386.deb',
+      '/home/operator/vendor/notes.txt',
+    ];
+    return { path: picked[0], paths: picked, cancelled: false };
+  }),
+
+  RemovePackages: bridge('RemovePackages', (keys) => {
+    const before = entries().map(entry => ({ ...entry }));
+    keys = keys.map(key => entries().find(entry => entry.viewKey === key)?.key || key);
+    let removed = 0;
+    for (let i = 0; i < keys.length; i += 1) {
+      if (store.byKey.delete(keys[i])) {
+        store.order.splice(store.order.indexOf(keys[i]), 1);
+        removed += 1;
+      }
+    }
+    if (removed) { store.revision++; store.undo = { token: 'undo-' + store.revision, label: 'Undo removal', entries: before }; }
+    const s = summary();
+    s.removed = removed;
+    return s;
+  }),
+
+  ClearSelection: bridge('ClearSelection', () => {
+    const before = entries().map(entry => ({ ...entry }));
+    const removed = store.order.length;
+    store.order = [];
+    store.byKey = new Map();
+    if (removed) { store.revision++; store.undo = { token: 'undo-' + store.revision, label: 'Undo clear', entries: before }; }
+    const s = summary();
+    s.removed = removed;
+    return s;
+  }),
+
+  UndoSelection: bridge('UndoSelection', (token) => {
+    if (!token || token !== store.undo?.token) return { ...summary(), error: { code: 'input.invalid', message: 'That change can no longer be undone.', hint: 'Only the most recent removal or clear can be restored.' } };
+    const before = store.order.length;
+    store.order = store.undo.entries.map(entry => entry.key);
+    store.byKey = new Map(store.undo.entries.map(entry => [entry.key, entry]));
+    store.undo = null; store.revision++;
+    return { ...summary(), added: store.order.length - before };
+  }),
+
+  ParsePackageList: bridge('ParsePackageList', (text) => {
+    const res = { count: 0, new_count: 0, known_count: 0, unknown: [], unknown_count: 0,
+      duplicates: 0, sample: [], rejected: [], warnings: [] };
+    if (text.length > PACKAGE_LIST_MAX_BYTES) {
+      res.error = {
+        code: 'input.too_many',
+        message: 'That list is ' + text.length + ' bytes, and the limit is ' + PACKAGE_LIST_MAX_BYTES + '.',
+        hint: 'Split it, or point the build at the file with a packages.txt input instead.',
+      };
+      return res;
+    }
+    const parsed = parseNameList(text);
+    res.rejected = parsed.rejected;
+    res.duplicates = parsed.duplicates;
+    res.count = parsed.names.length;
+    for (let i = 0; i < parsed.names.length; i += 1) {
+      const n = parsed.names[i];
+      if (!store.byKey.has(n)) res.new_count += 1;
+      const cat = catalogue.get(n.split('=')[0]);
+      if (!cat) {
+        res.unknown_count += 1;
+        if (res.unknown.length < 100) res.unknown.push(n);
+        continue;
+      }
+      res.known_count += 1;
+      if (res.sample.length < 50) {
+        res.sample.push({
+          name: cat.name, version: cat.version, summary: cat.summary,
+          installed_size_bytes: cat.installed_size_bytes,
+          download_size_bytes: cat.download_size_bytes,
+          selected: store.byKey.has(n), source: 'apt', is_app: false,
+          warnings: SNAP_SHIMS.has(cat.name)
+            ? [{ kind: 'snap-transitional', package: cat.name,
+                message: 'The ' + cat.name + ' deb is a transitional package that installs a snap.' }]
+            : [],
+        });
+      }
+    }
+    if (parsed.names.some((n) => SNAP_SHIMS.has(n))) {
+      res.warnings.push({
+        kind: 'snap-transitional',
+        message: 'This list includes packages that are transitional stubs for snaps.',
+        hint: 'They will be added, but the bundle will not contain the applications themselves.',
+      });
+    }
+    return res;
+  }),
+
+  AddPackageList: bridge('AddPackageList', (text) => {
+    if (text.length > PACKAGE_LIST_MAX_BYTES) {
+      const s = summary();
+      s.error = { code: 'input.too_many', message: 'That list is too large.', hint: 'Split it.' };
+      return s;
+    }
+    const parsed = parseNameList(text);
+    const s = addEntries(parsed.names, 'apt');
+    s.rejected = s.rejected.concat(parsed.rejected);
+    return s;
+  }),
+
+  CopyToClipboard: bridge('CopyToClipboard', (text) => {
+    if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+    return { ok: true };
+  }),
+};
+
+// The tray resolves bindings from window.go.app.App when nothing is injected,
+// exactly as the shell provides them.
+window.go = { app: { App } };
+
+/* =========================================================================
+   The host — what picker-list.js does around the tray.
+   ========================================================================= */
+
+const countEl = document.getElementById('selected-count');
+const undoBtn = document.getElementById('undo-selection');
+const addBtn = document.getElementById('add-menu');
+const trayHost = document.getElementById('tray-host');
+let undoToken = '';
+function updateHost(summary) {
+  countEl.textContent = 'Selected (' + summary.total + ')';
+  trayHost.hidden = !summary.total || store.hidePane;
+}
+const tray = createTray({
+  bindings: App,
+  onRemove: keys => App.RemovePackages(keys),
+  onClear: () => App.ClearSelection(),
+  onPaste: text => App.AddPackageList(text),
+  onAddURL: (url, sha256) => App.AddURLs([{ url, sha256 }]),
+  onAddFile: () => App.ChooseLocalDebs(),
+  onChange: updateHost,
+  onUndoState: state => { undoToken = state.token; undoBtn.hidden = !state.token; undoBtn.textContent = state.label; },
+  toast: (kind, message) => log('toast[' + kind + '] ' + message, 'muted'),
+});
+addBtn.addEventListener('click', () => tray.openAddMenu(addBtn));
+undoBtn.addEventListener('click', () => tray.undo(undoToken));
+
+document.getElementById('tray-host').appendChild(tray.el);
+
+// Exposed for poking at from the devtools console. This is a harness; the
+// real screen does not put anything on window.
+window.__tray = tray;
+window.__App = App;
+
+async function refresh() {
+  const summary = await App.Selection();
+  updateHost(summary);
+  await tray.render(summary);
+}
+
+/* =========================================================================
+   Scenarios.
+   ========================================================================= */
+
+function reset() {
+  store.revision++; store.undo = null;
+  store.order = [];
+  store.byKey = new Map();
+  store.failNextRead = false;
+}
+
+function seed(names, urls, files) {
+  reset();
+  if (names && names.length) addEntries(names, 'apt');
+  if (urls && urls.length) addEntries(urls, 'url');
+  if (files && files.length) addEntries(files, 'file');
+}
+
+const BULK = [];
+for (let i = 1; i <= 300; i += 1) {
+  BULK.push('lib' + SECTIONS[i % SECTIONS.length] + i + '-dev');
+}
+
+const REALISTIC_PASTE = [
+  '# packages.txt — offline builder, ops toolbox',
+  '# generated 2026-08-14 by hand, do not judge',
+  '',
+  'nginx-full',
+  'postgresql-16',
+  'redis-server',
+  'build-essential',
+  'python3-pip',
+  'openssh-server',
+  'git',
+  'curl',
+  'vim',
+  'htop',
+  'rsync',
+  'ansible',
+  '',
+  '# the browser — this one is a shim, we keep finding out the hard way',
+  'firefox',
+  'thunderbird',
+  '',
+  '# duplicates from the other team’s list',
+  'git',
+  'curl',
+  '',
+  '# things somebody typed from memory',
+  'Firefox',
+  'postgres-16-server',
+  'https://vendor.example/pool/acme-agent_2.1.0_amd64.deb',
+  '/home/operator/vendor/acme-tools.deb',
+  'node_exporter',
+  'docker.io',
+  'this is not a package name',
+].join('\n');
+
+const SCENARIOS = [
+  {
+    label: 'Empty',
+    note: 'The empty state names what happened and what to do next.',
+    run: () => reset(),
+  },
+  {
+    label: 'Small selection (6)',
+    run: () => seed(['nginx-full', 'postgresql-16', 'redis-server', 'build-essential', 'git', 'curl']),
+  },
+  {
+    label: '300 items (paged)',
+    note: 'Drawn 100 at a time through SelectionPage; the counts are always for the whole selection.',
+    run: () => seed(BULK),
+  },
+  {
+    label: 'Mixed provenance',
+    note: 'apt, URL and local file as ordinary rows in one list, distinguished by a quiet badge.',
+    run: () => seed(
+      ['nginx-full', 'postgresql-16', 'docker.io', 'rsync'],
+      ['https://vendor.example/pool/acme-agent_2.1.0_amd64.deb',
+       'https://downloads.example.net/stable/telemetry-off_4.0.1_amd64.deb'],
+      ['/home/operator/vendor/acme-tools_2.1.0_amd64.deb',
+       '/opt/vendor-drop/site-config_11.2_all.deb']
+    ),
+  },
+  {
+    label: 'Credentialed URL + digest',
+    note: 'Removal receives an opaque key. Undo restores the fixture backend original and digest.',
+    run: () => { reset(); addEntries(['https://operator:fixture-secret@vendor.example/agent.deb?token=fixture-token'], 'url', { 'https://operator:fixture-secret@vendor.example/agent.deb?token=fixture-token': 'a'.repeat(64) }); },
+  },
+  {
+    label: 'Snap shim warning',
+    note: 'Surfaced at selection time, on the chip and in a banner, from the backend flag — never a hardcoded list.',
+    run: () => seed(['firefox', 'thunderbird', 'nginx-full', 'git', 'vim']),
+  },
+  {
+    label: 'Architecture mismatch',
+    note: 'A danger-role warning on a local .deb, with the affected file named.',
+    run: () => seed(['git'], [], ['/home/operator/vendor/legacy-probe_1.4.2_i386.deb']),
+  },
+  {
+    label: 'Unknown names',
+    note: 'Names the catalogue does not know are kept, not dropped, and marked.',
+    run: () => seed(['nginx-full', 'node-exporter', 'acme-internal-agent', 'git']),
+  },
+  {
+    label: 'Large download',
+    note: 'A selection-wide warning, deduplicated by the backend.',
+    run: () => seed(['ansible', 'docker.io', 'postgresql-16'].concat(BULK.slice(0, 120))),
+  },
+  {
+    label: 'Backend error',
+    note: 'Selection() and SelectionPage() both fail; message, hint and the raw evidence drawer.',
+    run: () => { seed(['nginx-full', 'git']); store.failNextRead = true; },
+  },
+];
+
+const scenarioBar = document.getElementById('scenarios');
+SCENARIOS.forEach((s) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'df-btn df-btn--secondary df-btn--sm';
+  b.textContent = s.label;
+  if (s.note) b.title = s.note;
+  b.addEventListener('click', async () => {
+    logEl.textContent = '';
+    log('--- ' + s.label + ' ---', 'muted');
+    s.run();
+    await refresh();
+  });
+  scenarioBar.appendChild(b);
+});
+
+/* -- dialogs -------------------------------------------------------------- */
+
+const dialogBar = document.getElementById('dialogs');
+
+function dialogButton(label, onClick, title) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'df-btn df-btn--secondary df-btn--sm';
+  b.textContent = label;
+  if (title) b.title = title;
+  b.addEventListener('click', () => onClick(b));
+  dialogBar.appendChild(b);
+  return b;
+}
+
+dialogButton('Paste dialog (realistic list)', async (b) => {
+  seed(['git', 'curl']);
+  await refresh();
+  tray.openPasteDialog(b, REALISTIC_PASTE);
+}, 'Includes comments, blanks, duplicates, two snap shims, an uppercase name, a URL, a path and a sentence.');
+
+dialogButton('Paste dialog (empty)', async (b) => {
+  await refresh();
+  tray.openPasteDialog(b, '');
+});
+
+dialogButton('URL dialog (with digest)', (b) => {
+  tray.openURLDialog(
+    b,
+    'https://vendor.example/pool/acme-agent_2.1.0_amd64.deb',
+    '9f2c1a4be3d7085c6f1e2b8a4d7c3e9f0a1b2c3d4e5f60718293a4b5c6d7e8f9'
+  );
+});
+
+dialogButton('URL dialog (no digest)', (b) => {
+  tray.openURLDialog(b, 'https://vendor.example/pool/acme-agent_2.1.0_amd64.deb', '');
+});
+
+dialogButton('URL dialog (plain http)', (b) => {
+  tray.openURLDialog(b, 'http://mirror.internal.example/deb/agent_1.0_amd64.deb', '');
+});
+
+dialogButton('URL dialog (broken input)', (b) => {
+  tray.openURLDialog(b, 'vendor.example/agent.deb', 'not-a-digest');
+});
+
+dialogButton('Clear selection (Undo available)', async (b) => {
+  if (store.order.length === 0) {
+    seed(['nginx-full', 'postgresql-16', 'git'], ['https://vendor.example/pool/acme-agent_2.1.0_amd64.deb'], []);
+    await refresh();
+  }
+  tray.openClearDialog(b);
+});
+
+dialogButton('Add menu (including local files)', b => tray.openAddMenu(b));
+
+/* -- switches ------------------------------------------------------------- */
+
+const switchBar = document.getElementById('switches');
+
+function toggle(label, get, set) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'df-chip df-chip--filter';
+  b.setAttribute('aria-pressed', String(get()));
+  b.textContent = label;
+  b.addEventListener('click', () => {
+    set(!get());
+    b.setAttribute('aria-pressed', String(get()));
+  });
+  switchBar.appendChild(b);
+  return b;
+}
+
+toggle('Hide pane (test external Add)', () => store.hidePane, value => { store.hidePane = value; updateHost(summary()); });
+
+const busyBtn = document.createElement('button');
+busyBtn.type = 'button';
+busyBtn.className = 'df-chip df-chip--filter';
+busyBtn.setAttribute('aria-pressed', 'false');
+busyBtn.textContent = 'setBusy(true)';
+let busy = false;
+busyBtn.addEventListener('click', () => {
+  busy = !busy;
+  store.locked = busy;
+  tray.setBusy(busy);
+  addBtn.disabled = busy;
+  undoBtn.disabled = busy;
+  busyBtn.setAttribute('aria-pressed', String(busy));
+});
+switchBar.appendChild(busyBtn);
+
+/* -- theme ---------------------------------------------------------------- */
+
+document.querySelectorAll('[data-theme-set]').forEach((b) => {
+  b.addEventListener('click', () => {
+    const v = b.getAttribute('data-theme-set');
+    if (v) document.documentElement.setAttribute('data-theme', v);
+    else document.documentElement.removeAttribute('data-theme');
+  });
+});
+
+/* -- go ------------------------------------------------------------------- */
+
+seed(['nginx-full', 'postgresql-16', 'redis-server', 'build-essential', 'firefox'],
+     ['https://vendor.example/pool/acme-agent_2.1.0_amd64.deb'],
+     ['/home/operator/vendor/acme-tools_2.1.0_amd64.deb']);
+refresh();
+</script>
+</body>
+</html>

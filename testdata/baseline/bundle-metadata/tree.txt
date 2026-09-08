@@ -1,0 +1,14 @@
+./bundle-info.txt
+./debs/Packages
+./debs/Packages.gz
+./debs/jq_1.6-2.1+deb12u2_amd64.deb
+./debs/libjq1_1.6-2.1+deb12u2_amd64.deb
+./debs/libonig5_6.9.8-1_amd64.deb
+./debs/tree_2.1.0-1_amd64.deb
+./external/.urls
+./install-offline.sh
+./last-run-added.txt
+./last-run-removed.txt
+./manifest.txt
+./packages.source.txt
+./packages.txt

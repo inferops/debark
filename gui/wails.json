@@ -1,0 +1,50 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "debark-gui",
+  "outputfilename": "debark-gui",
+
+  "//": [
+    "This project has zero npm dependencies and no JavaScript build step.",
+    "The three frontend keys below are what enforces that, and each is set to",
+    "a non-default value on purpose:",
+    "",
+    "  frontend:install is empty, so Wails runs no package manager at all.",
+    "    There is no frontend/package.json for it to install from.",
+    "",
+    "  frontend:build is the copy step: frontend/index.html, frontend/src and",
+    "    frontend/wailsjs are copied verbatim into frontend/dist, which",
+    "    main.go embeds. Wails runs this command with the working directory",
+    "    set to frontend/, which is why the path is '../hack/copyfrontend';",
+    "    the command itself finds the project root either way, so 'make",
+    "    frontend' runs the same tool from the repository root. Wails splits",
+    "    this string on spaces and execs it - there is no shell, so no",
+    "    pipes, redirects or quoting.",
+    "",
+    "  frontend:dev:serverUrl is empty, so 'wails dev' serves the app from",
+    "    its own AssetServer instead of waiting for an external dev server.",
+    "    The default ('auto') makes Wails probe for a Vite server that will",
+    "    never appear and then time out.",
+    "",
+    "assetdir points 'wails dev' at frontend/dist on disk rather than the",
+    "embedded copy, so re-running 'make frontend' refreshes a running dev",
+    "session without a rebuild. There is no watcher: nothing here compiles,",
+    "so a watcher would only be re-running a file copy on every keystroke.",
+    "",
+    "This '//' key and $schema are ignored on load, but 'wails dev -save'",
+    "rewrites this file from its own struct and would delete both. Do not",
+    "pass -save; change settings here by hand."
+  ],
+
+  "frontend:install": "",
+  "frontend:build": "go run ../hack/copyfrontend",
+  "frontend:dev:watcher": "",
+  "frontend:dev:serverUrl": "",
+
+  "assetdir": "frontend/dist",
+  "reloaddirs": "frontend/dist",
+
+  "author": {
+    "name": "Iman Kamyabi",
+    "email": "imankamyabi@pm.me"
+  }
+}

@@ -1,0 +1,294 @@
+Package: accountsservice
+Description-md5: 8aeed0a03c7cd494f0c4b8d977483d7e
+Description-en: query and manipulate user account information
+ The AccountService project provides a set of D-Bus
+ interfaces for querying and manipulating user account
+ information and an implementation of these interfaces,
+ based on the useradd, usermod and userdel commands.
+
+Package: acct
+Description-md5: 2411ebcaa9bca02b21c19f927d3e1bda
+Description-en: GNU Accounting utilities for process and login accounting
+ GNU Accounting Utilities is a set of utilities which reports and summarizes
+ data about user connect times and process execution statistics.
+ .
+ "Login accounting" provides summaries of system resource usage based on connect
+ time, and "process accounting" provides summaries based on the commands
+ executed on the system.
+ .
+ The 'last' command is provided by the util-linux package and not included here.
+
+Package: acl
+Description-md5: b83fc53f6059dbeb88f11752e70968e7
+Description-en: access control list - utilities
+ This package contains the getfacl and setfacl utilities needed for
+ manipulating access control lists. It also contains the chacl IRIX
+ compatible utility.
+
+Package: acpid
+Description-md5: 6a7c4e4695f570d8fbcaec667cdcfcfe
+Description-en: Advanced Configuration and Power Interface event daemon
+ Modern computers support the Advanced Configuration and Power Interface (ACPI)
+ to allow intelligent power management on your system and to query battery and
+ configuration status.
+ .
+ ACPID is a completely flexible, totally extensible daemon for delivering
+ ACPI events. It listens on netlink interface (or on the deprecated file
+ /proc/acpi/event), and when an event occurs, executes programs to handle the
+ event. The programs it executes are configured through a set of configuration
+ files, which can be dropped into place by packages or by the admin.
+
+Package: adduser
+Description-md5: a5681e7bad8d90695043c6eab9784701
+Description-en: add and remove users and groups
+ This package includes the 'adduser' and 'deluser' commands for creating
+ and removing users.
+ .
+  - 'adduser' creates new users and groups and adds existing users to
+    existing groups;
+  - 'deluser' removes users and groups and removes users from a given
+    group.
+ .
+ Adding users with 'adduser' is much easier than adding them manually.
+ 'Adduser' will choose UID and GID values that conform to Debian policy,
+ create a home directory, copy skeletal user configuration, and
+ automate setting initial values for the user's password, real name
+ and so on.
+ .
+ 'Deluser' can back up and remove users' home directories
+ and mail spool or all the files they own on the system.
+ .
+ A custom script can be executed after each of the commands.
+ .
+ 'Adduser' and 'Deluser' are intended to be used by the local
+ administrator in lieu of the tools from the 'useradd' suite, and
+ they provide support for easy use from Debian package maintainer
+ scripts, functioning as kind of a policy layer to make those scripts
+ easier and more stable to write and maintain.
+
+Package: apt
+Description-md5: 9fb97a88cb7383934ef963352b53b4a7
+Description-en: commandline package manager
+ This package provides commandline tools for searching and
+ managing as well as querying information about packages
+ as a low-level access to all features of the libapt-pkg library.
+ .
+ These include:
+  * apt-get for retrieval of packages and information about them
+    from authenticated sources and for installation, upgrade and
+    removal of packages together with their dependencies
+  * apt-cache for querying available information about installed
+    as well as installable packages
+  * apt-cdrom to use removable media as a source for packages
+  * apt-config as an interface to the configuration settings
+  * apt-key as an interface to manage authentication keys
+
+Package: base-files
+Description-md5: 6d16337f57b84c4747f56438355b2395
+Description-en: Debian base system miscellaneous files
+ This package contains the basic filesystem hierarchy of a Debian system, and
+ several important miscellaneous files, such as /etc/debian_version,
+ /etc/host.conf, /etc/issue, /etc/motd, /etc/profile, and others,
+ and the text of several common licenses in use on Debian systems.
+
+Package: bash
+Description-md5: 3522aa7b4374048d6450e348a5bb45d9
+Description-en: GNU Bourne Again SHell
+ Bash is an sh-compatible command language interpreter that executes
+ commands read from the standard input or from a file.  Bash also
+ incorporates useful features from the Korn and C shells (ksh and csh).
+ .
+ Bash is ultimately intended to be a conformant implementation of the
+ IEEE POSIX Shell and Tools specification (IEEE Working Group 1003.2).
+ .
+ The Programmable Completion Code, by Ian Macdonald, is now found in
+ the bash-completion package.
+
+Package: coreutils
+Description-md5: d0d975dec3625409d24be1238cede238
+Description-en: GNU core utilities
+ This package contains the basic file, shell and text manipulation
+ utilities which are expected to exist on every operating system.
+ .
+ Specifically, this package includes:
+ arch base64 basename cat chcon chgrp chmod chown chroot cksum comm cp
+ csplit cut date dd df dir dircolors dirname du echo env expand expr
+ factor false flock fmt fold groups head hostid id install join link ln
+ logname ls md5sum mkdir mkfifo mknod mktemp mv nice nl nohup nproc numfmt
+ od paste pathchk pinky pr printenv printf ptx pwd readlink realpath rm
+ rmdir runcon sha*sum seq shred sleep sort split stat stty sum sync tac
+ tail tee test timeout touch tr true truncate tsort tty uname unexpand
+ uniq unlink users vdir wc who whoami yes
+
+Package: dpkg
+Description-md5: 2f156c6a30cc39895ad3487111e8c190
+Description-en: Debian package management system
+ This package provides the low-level infrastructure for handling the
+ installation and removal of Debian software packages.
+ .
+ For Debian package development tools, install dpkg-dev.
+
+Package: gnome-themes-extra
+Description-md5: f3db194ed48f162a1b53a54e177a1e06
+Description-en: Adwaita GTK 2 theme — engine
+ This is the version of Adwaita, the standard GNOME theme, for the
+ GTK 2.x toolkit.
+ .
+ The GTK 3.x version is already included in libgtk-3-0.
+ .
+ This package contains the Adwaita theme engine.
+
+Package: language-pack-gnome-nb
+Description-md5: 6a1b73da105a57b595b139f8bf97ef1f
+Description-en: GNOME translation updates for language Bokmål, Norwegian; Norwegian Bokmål
+ Translation data updates for all supported GNOME packages for:
+ Bokmål, Norwegian; Norwegian Bokmål
+ .
+ language-pack-gnome-nb-base provides the bulk of translation data
+ and is updated only seldom. This package provides frequent translation
+ updates.
+
+Package: perl
+Description-md5: 603cb1e5fe66da8106c364f4e9b84082
+Description-en: Larry Wall's Practical Extraction and Report Language
+ Perl is a highly capable, feature-rich programming language with over
+ 20 years of development. Perl 5 runs on over 100 platforms from
+ portables to mainframes. Perl is suitable for both rapid prototyping
+ and large scale development projects.
+ .
+ Perl 5 supports many programming styles, including procedural,
+ functional, and object-oriented. In addition to this, it is supported
+ by an ever-growing collection of reusable modules which accelerate
+ development. Some of these modules include Web frameworks, database
+ integration, networking protocols, and encryption. Perl provides
+ interfaces to C and C++ for custom extension development.
+
+Package: python3-heat
+Description-md5: 629282ce985f23f67d27069faeb1ca0b
+Description-en: OpenStack orchestration service - Python 3 files
+ Heat is a service to orchestrate multiple composite cloud applications using
+ templates, through both an OpenStack-native ReST API and a
+ CloudFormation-compatible Query API.
+ .
+ This package contains the Python 3 libraries.
+
+Package: casper
+Description-md5: 9be0120948307c7e897a16c45a69ba0f
+Description-en: Run a "live" preinstalled system from read-only media
+
+Package: libc6
+Description-md5: fc3001b0b90a1c8e6690b283a619d57f
+Description-en: GNU C Library: Shared libraries
+ Contains the standard libraries that are used by nearly all programs on
+ the system. This package includes shared versions of the standard C library
+ and the standard math library, as well as many others.
+
+Package: util-linux
+Description-md5: 33d0291a69ffd307cfba295915df602a
+Description-en: miscellaneous system utilities
+ This package contains a number of important utilities, most of which
+ are oriented towards maintenance of your system. Some of the more
+ important utilities included in this package allow you to view kernel
+ messages, create new filesystems, view block device information,
+ interface with real time clock, etc.
+
+Package: e2fsprogs
+Description-md5: 92d0fdf684262bbfa702eaea3f50b97e
+Description-en: ext2/ext3/ext4 file system utilities
+ The ext2, ext3 and ext4 file systems are successors of the original ext
+ ("extended") file system. They are the main file system types used for
+ hard disks on Debian and other Linux systems.
+ .
+ This package contains programs for creating, checking, and maintaining
+ ext2/3/4-based file systems.  It also includes the "badblocks" program,
+ which can be used to scan for bad blocks on a disk or other storage device.
+
+Package: grub-efi-amd64-bin
+Description-md5: f6ad99c32640061c96401d0bc70e2f8a
+Description-en: GRand Unified Bootloader, version 2 (EFI-AMD64 modules)
+ GRUB is a portable, powerful bootloader.  This version of GRUB is based on a
+ cleaner design than its predecessors, and provides the following new features:
+ .
+  - Scripting in grub.cfg using BASH-like syntax.
+  - Support for modern partition maps such as GPT.
+  - Modular generation of grub.cfg via update-grub.  Packages providing GRUB
+    add-ons can plug in their own script rules and trigger updates by invoking
+    update-grub.
+ .
+ This package contains GRUB modules that have been built for use with the
+ EFI-AMD64 architecture, as used by Intel Macs (unless a BIOS interface has
+ been activated).  It can be installed in parallel with other flavours, but
+ will not automatically install GRUB as the active boot loader nor
+ automatically update grub.cfg on upgrade unless grub-efi-amd64 is also
+ installed.
+
+Package: postgresql-16
+Description-md5: d7367291c15795e56aa78252604f9ced
+Description-en: The World's Most Advanced Open Source Relational Database
+ PostgreSQL, also known as Postgres, is a free and open-source relational
+ database management system (RDBMS) emphasizing extensibility and SQL
+ compliance. It features transactions with Atomicity, Consistency, Isolation,
+ Durability (ACID) properties, automatically updatable views, materialized
+ views, triggers, foreign keys, and stored procedures. It is designed to handle
+ a range of workloads, from single machines to data warehouses or Web services
+ with many concurrent users.
+ .
+ This package provides the database server for PostgreSQL 16.
+
+Package: gstreamer1.0-alsa
+Description-md5: 339f038172c486f3cef220df0c0e5ac4
+Description-en: GStreamer plugin for ALSA
+ GStreamer is a streaming media framework, based on graphs of filters
+ which operate on media data.  Applications using this library can do
+ anything from real-time sound processing to playing videos, and just
+ about anything else media-related.  Its plugin-based architecture means
+ that new data types or processing capabilities can be added simply by
+ installing new plug-ins.
+ .
+ This package contains the GStreamer plugin for the ALSA library.  ALSA
+ is the Advanced Linux Sound Architecture.
+
+Package: qemu-block-extra
+Description-md5: b5e1c6baef0716841da073a7551acbc5
+Description-en: extra block backend modules for qemu-system and qemu-utils
+ QEMU is a fast processor emulator: currently the package supports Alpha, ARM,
+ CRIS, i386, LoongArch, M68k (ColdFire), MicroBlaze, MIPS, PowerPC, RISC-V,
+ S390x, SH4, SPARC, x86-64, Xtensa and other emulations. By using dynamic
+ translation it achieves reasonable speed while being easy to port on new host
+ CPUs.
+ .
+ This package provides extra block device backend modules for qemu-system
+ emulation and qemu-img from qemu-utils package, which are rarely used and
+ has extra dependencies.
+
+Package: glibc-doc
+Description-md5: ec34f59d4398ff8ca003177c6585bf0a
+Description-en: GNU C Library: Documentation
+ Contains man pages for libpthread functions and the complete GNU C Library
+ ChangeLog.  The GNU C Library Reference manual has been moved into
+ glibc-doc-reference for licensing reasons.
+
+Package: rake
+Description-md5: 13b953bd84607c7631a72c5bf042fc1f
+Description-en: ruby make-like utility
+ Rake is a simple ruby build program with capabilities similar to make.
+ .
+ Rake has the following features:
+   * Rakefiles (rakes version of Makefiles) are completely defined in
+     standard Ruby syntax. No XML files to edit. No quirky Makefile
+     syntax to worry about (is that a tab or a space?)
+   * Users can specify tasks with prerequisites.
+   * Rake supports rule patterns to sythesize implicit tasks.
+   * Rake is lightweight. It can be distributed with other
+     projects as a single file. Projects that depend upon
+     rake do not require that rake be installed on target
+     systems.
+
+Package: mdevctl
+Description-md5: 0fb9bffbdd19e2db98b5338bc7bb5a16
+Description-en: Mediated device management utility for Linux
+ mdevctl is a utility for managing and persisting devices in the mediated
+ device framework of the Linux kernel. Mediated devices are sub-devices
+ of a parent device (ex. a vGPU) which can be dynamically created and
+ potentially used by drivers like vfio-mdev for assignment to virtual machines.
+

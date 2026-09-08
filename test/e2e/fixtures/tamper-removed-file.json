@@ -1,0 +1,39 @@
+/*
+ * tamper-removed-file — corrupted bundle: a manifest-listed file is missing.
+ *
+ * Protects: the tamper matrix ("removed file"). The harness
+ * deletes the first .deb file the manifest lists
+ * (test/e2e/harness/tamper.go's ApplyTamper) without touching the manifest
+ * itself, exercising verify/iface.go's check 4 from the opposite direction
+ * to tamper-modified-deb.json: "every file listed in the manifest exists"
+ * (verify.ProblemFileMissing) — a file that is simply *absent* rather than
+ * changed.
+ *
+ * What would break if this regressed: an incomplete copy to media (a
+ * truncated USB write, a sync job interrupted partway) would be accepted as
+ * a valid bundle, and apt would either fail confusingly mid-install or,
+ * worse, silently install everything else and leave the operator believing
+ * they have the complete, requested closure.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "tamper-removed-file",
+  "protects": "tamper matrix: removed file; verify.ProblemFileMissing",
+  "tags": ["edge", "tamper"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "verify": { "exit_class": "verification" },
+    "install": { "exit_class": "skip" }
+  },
+  "tamper": { "kind": "removed-file" }
+}

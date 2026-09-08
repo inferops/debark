@@ -1,0 +1,44 @@
+/*
+ * tamper-modified-deb — corrupted bundle: a .deb's bytes were changed.
+ *
+ * Protects: the tamper matrix ("modified deb") and D6's
+ * core promise: "verification on the target happens before apt ever sees
+ * the repository". After a normal signed build, the harness flips one byte
+ * in the middle of the first .deb file in repo/pool/ (test/e2e/harness/
+ * tamper.go's ApplyTamper) — the manifest and its signature are untouched,
+ * so only a real per-file digest check (verify.iface.go's check 4: "every
+ * file listed in the manifest exists with the recorded size and digest")
+ * can catch this, not merely re-checking the signature.
+ *
+ * expect.install is "skip": debark install must never call apt on this
+ * bundle at all, so there is nothing to install and nothing further to
+ * assert — the whole claim is that verify refuses it first.
+ *
+ * What would break if this regressed: media corrupted in transit (a bad USB
+ * sector, an interrupted copy) or deliberately tampered with would be
+ * accepted and handed to apt, which trusts the local repository's own
+ * Packages hashes but has no way to know the manifest's promise about that
+ * file no longer holds — apt would install corrupted bytes.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "tamper-modified-deb",
+  "protects": "tamper matrix: modified deb; D6",
+  "tags": ["edge", "tamper"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "verify": { "exit_class": "verification" },
+    "install": { "exit_class": "skip" }
+  },
+  "tamper": { "kind": "modified-deb" }
+}

@@ -1,0 +1,14 @@
+# The line every mainstream vendor's install script writes.
+deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu noble stable
+
+# Several options, a comma-separated arch list, and quoting.
+deb [arch=amd64,arm64 signed-by="/usr/share/keyrings/vscode.gpg" trusted=no] https://packages.microsoft.com/repos/code stable main
+
+# arm64 only: nothing for an amd64 catalogue.
+deb [arch=arm64 signed-by=/usr/share/keyrings/pi.gpg] https://archive.raspberrypi.org/debian bookworm main
+
+# Tabs instead of spaces, and a trailing comment.
+deb	http://archive.ubuntu.com/ubuntu	noble-proposed	main universe	# opt-in, off by default
+
+# arch=any keeps the entry whatever the target is.
+deb [arch=any] https://vendor.example/apt stable main

@@ -1,0 +1,39 @@
+[Desktop Entry]
+# Debark — the desktop front end for debark.
+#
+# Two rules govern this file and neither is negotiable:
+#
+#   * Exec= is the plain binary. No pkexec, no sudo, no gksu, no wrapper
+#     script, no Terminal=true. This application needs no privilege at any
+#     point (docs/security-review.md §5, row 15), and the moment a launcher
+#     acquires one, the product's whole posture is gone.
+#   * No MimeType= and no file associations. The app opens a snapshot the
+#     operator chooses in a file dialog; it does not want to be the system
+#     handler for anything.
+Type=Application
+Version=1.5
+
+# The product is Debark. The binary it drives is debark; the binary this
+# entry launches is debark-gui. All three names are deliberate — see
+# main.go's Title comment.
+Name=Debark
+GenericName=Offline package bundler
+Comment=Prepare Debian and Ubuntu software transfers for air-gapped machines
+
+Exec=/usr/bin/debark-gui
+Icon=debark-gui
+Terminal=false
+StartupNotify=true
+
+# main.go sets options.Linux.ProgramName to "debark", which is what
+# g_set_prgname reports and therefore what GTK puts in WM_CLASS. Without this
+# key the window does not match this entry and loses its icon in the dock and
+# the alt-tab list. Verified against the running app with xprop; see
+# docs/packaging.md.
+StartupWMClass=debark-gui
+
+# PackageManager is a registered Additional Category and requires a Main
+# Category alongside it; System is that. Utility is deliberately not here —
+# this is not an accessory.
+Categories=System;PackageManager;
+Keywords=apt;deb;debian;ubuntu;offline;airgap;air-gap;bundle;packages;debark;

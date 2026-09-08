@@ -1,0 +1,43 @@
+# Real debark stderr, captured against a real binary. Not hand-written.
+#
+# Binary:   debark dev (community), commit 94612f558cd26fa57d6c0185956ff153c5162833,
+#           built 2026-09-06T22:20:14Z, go1.26.0, windows/amd64 — the same commit
+#           docs/dev/cli-surface.md was verified against.
+# Captured: 2026-09-06, from a scratch directory, redirecting stderr to a file.
+# Encoding: LF line endings exactly as the binary wrote them. Byte-exact, with
+#           one exception noted below.
+#
+# `build` and `install` were never run. Every `build` sample below is a cobra
+# flag-validation failure, which happens before RunE and therefore before any
+# work: no network, no container, no bundle directory.
+#
+# Format: <file> TAB <exit code> TAB <the invocation that produced it>
+# Lines beginning with # are comments. errors_test.go reads this file.
+#
+# Redaction: usage-verify-missing-bundle.stderr had the capturing directory's
+# absolute path in it (it names the resolved bundle path twice). The session
+# temp prefix was replaced with C:\Users\operator\bundles. Nothing else in any
+# sample was edited.
+#
+# The two zero-byte samples are the point of the exercise, not an accident:
+# `verify` renders its --json report and then returns a SILENCED error, exactly
+# as `build` does (cli-surface.md C1). Exit 4, and not one byte on stderr.
+
+usage-verify-missing-bundle.stderr		1	debark verify ./no-such-bundle --json
+usage-snapshot-inspect-missing-file.stderr	1	debark snapshot inspect ./no-such.snapshot.json --json
+usage-unknown-command.stderr			1	debark frobnicate --json
+usage-unknown-flag.stderr			1	debark verify ./b --nonexistent-flag --json
+usage-keygen-required-flag.stderr		1	debark keygen --json
+usage-doctor-no-target.stderr			1	debark doctor --json
+usage-build-no-target.stderr			1	debark build --json
+usage-build-mutually-exclusive.stderr		1	debark build --base ubuntu-24.04-minimal --snapshot ./x.json --json
+usage-listbases-unknown-arch.stderr		1	debark snapshot list-bases --arch not-an-arch --json
+usage-inspect-no-args.stderr			1	debark inspect --json
+usage-inspect-not-a-bundle.stderr		1	debark inspect ./emptydir --json
+usage-config-parse.stderr			1	debark --config ./bad-config.yaml config show --json
+usage-frombase-unknown-base.stderr		1	debark snapshot from-base not-a-base --json
+usage-store-gc-not-a-bundle.stderr		1	debark store gc ./emptydir --json
+environment-snapshot-create-not-linux.stderr	2	debark snapshot create --out ./tmp-snap.tar.zst --json
+verification-snapshot-not-zstd.stderr		4	debark snapshot inspect ./bad.snapshot.json --json
+verification-verify-silent.stderr		4	debark verify ./emptydir --json
+verification-verify-missing-key-silent.stderr	4	debark verify ./emptydir --key ./no-such.pub --json

@@ -1,0 +1,8 @@
+{
+  "id": "1",
+  "params": {
+    "purpose": "debark.manifest/v1",
+    "payload": "ZGViZmVycnktdGVzdC1jYW5vbmljYWwtcGF5bG9hZA==",
+    "key_ref": "acme-hsm:org-key-1"
+  }
+}

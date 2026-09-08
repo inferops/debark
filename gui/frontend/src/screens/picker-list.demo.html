@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>picker-list — 60,000-row virtualiser harness</title>
+
+<!--
+  The measurement harness for picker-list.js. It has no backend, makes no
+  network request, and loads nothing but the two design-system stylesheets
+  and picker-list.js.
+
+  WHY IT EXISTS
+  -------------
+  "A 60,000-row result set scrolls without dropped frames" is a definition-of-
+  done item and the contract brief says budgets are measured and recorded,
+  never asserted. This page is where the measurement happens: it synthesises
+  60,000 rows, answers page requests with a configurable artificial delay, and
+  reports frame timings, page-request latency and rows rendered per frame from
+  a scripted fling. It also runs correctness checks that a human eye cannot
+  perform — that no row ever renders at the wrong index, that out-of-order and
+  stale responses are dropped, and that the three properties a RECYCLING list
+  loses silently hold: aria-setsize carries the true match count, the listbox
+  clears aria-activedescendant the moment the cursor leaves the rendered
+  window, and DOM focus survives eighty frames of node recycling instead of
+  falling onto <body> and killing the arrow keys.
+
+  HOW TO RUN IT
+  -------------
+  ES modules are blocked over file:// by both engines, so serve the directory:
+
+      cd frontend/src && python3 -m http.server 8000
+      xdg-open http://localhost:8000/screens/picker-list.demo.html
+
+  Query parameters (for a scripted/headless run):
+      ?autorun=1     run the full suite on load and put the report in
+                     window.__BENCH__.results
+      ?rows=60000    result-set size
+      ?delay=40      artificial page latency, ms
+      ?jitter=60     random extra latency, ms — this is what makes responses
+                     arrive out of order
+      ?chaos=1       backend also answers ~15% of requests with a page computed
+                     for a query the operator has already replaced
+
+  RE-POINTING AT THE REAL BACKEND
+  -------------------------------
+  The virtualiser's only seam is its `search` option, and the stub below
+  implements the same shape as `App.SearchPackages` — same request keys, same
+  `SearchResult` reply including the echoed `query`. Tick "use real bindings"
+  (or load this page inside the running app) and `window.go.app.App` is used
+  instead, with no other change. That is the whole point of the seam.
+-->
+
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="../design/components.css">
+
+<style>
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background-color: var(--color-surface-1, #f2f4f6);
+    color: var(--color-text-primary, #14181d);
+    font-family: var(--font-family-sans, system-ui, sans-serif);
+    font-size: var(--font-size-base, 14px);
+  }
+  .h { display: flex; flex-direction: column; height: 100%; gap: var(--space-3, 12px); padding: var(--space-3, 12px); box-sizing: border-box; }
+  .h__bar { flex: 0 0 auto; display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3, 12px); }
+  .h__body { flex: 1 1 auto; min-height: 0; display: flex; gap: var(--space-3, 12px); }
+  .h__list { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; }
+  .h__list > .df-list { flex: 1 1 auto; min-height: 0; }
+  .h__side { flex: 0 0 400px; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: var(--space-3, 12px); }
+  .h__field { display: flex; flex-direction: column; gap: var(--space-1, 4px); }
+  .h__field > label { font-size: var(--font-size-xs, 11px); color: var(--color-text-secondary, #545b66); text-transform: uppercase; letter-spacing: .06em; }
+  .h__field input, .h__field select { width: 8ch; }
+  .h__field input[type="search"] { width: 22ch; }
+  .h__num { font-family: var(--font-family-mono, ui-monospace, monospace); }
+  table.h__t { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm, 12px); }
+  table.h__t th, table.h__t td { text-align: left; padding: 2px var(--space-2, 8px); border-bottom: 1px solid var(--color-border-subtle, #dce0e6); vertical-align: top; }
+  table.h__t td:last-child, table.h__t th:last-child { text-align: right; font-family: var(--font-family-mono, ui-monospace, monospace); }
+  .h__ok { color: var(--color-success-text, #1a6b3c); font-weight: 600; }
+  .h__bad { color: var(--color-danger-text, #a3121b); font-weight: 700; }
+  .h__live { display: flex; gap: var(--space-4, 16px); flex-wrap: wrap; font-family: var(--font-family-mono, ui-monospace, monospace); font-size: var(--font-size-sm, 12px); }
+  .h__live b { font-weight: 600; }
+  h2.h__h { margin: 0; font-size: var(--font-size-md, 13px); text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-secondary, #545b66); }
+  #boot { padding: var(--space-6, 24px); font-family: var(--font-family-mono, ui-monospace, monospace); }
+</style>
+</head>
+<body>
+
+<div id="boot">
+  Loading the harness…
+  <p>If this message stays, the page was opened over <code>file://</code>. ES modules
+  are blocked there. Serve it instead:</p>
+  <pre>cd frontend/src &amp;&amp; python3 -m http.server 8000
+open http://localhost:8000/screens/picker-list.demo.html</pre>
+</div>
+
+<div class="h" id="app" hidden>
+  <div class="h__bar">
+    <div class="h__field">
+      <label for="q">query</label>
+      <input id="q" type="search" class="df-input" placeholder="substring of name or summary" autocomplete="off">
+    </div>
+    <div class="h__field"><label for="rows">rows</label><input id="rows" class="df-input h__num" type="number" min="0" step="1000" value="60000"></div>
+    <div class="h__field"><label for="delay">delay ms</label><input id="delay" class="df-input h__num" type="number" min="0" step="5" value="40"></div>
+    <div class="h__field"><label for="jitter">jitter ms</label><input id="jitter" class="df-input h__num" type="number" min="0" step="5" value="60"></div>
+    <div class="h__field"><label for="pagesize">page</label><input id="pagesize" class="df-input h__num" type="number" min="10" step="10" value="50"></div>
+    <div class="h__field"><label for="cachep">cache pages</label><input id="cachep" class="df-input h__num" type="number" min="3" step="1" value="24"></div>
+    <div class="h__field">
+      <label for="chaos">backend</label>
+      <select id="chaos" class="df-input" style="width:16ch">
+        <option value="0">well behaved</option>
+        <option value="1">chaotic (stale echoes)</option>
+      </select>
+    </div>
+    <div class="h__field">
+      <label for="real">source</label>
+      <select id="real" class="df-input" style="width:14ch">
+        <option value="0">synthetic</option>
+        <option value="1">real bindings</option>
+      </select>
+    </div>
+    <div class="df-spacer"></div>
+    <button id="run" type="button" class="df-btn df-btn--primary">Run full suite</button>
+    <button id="fling" type="button" class="df-btn df-btn--secondary">Fling only</button>
+    <button id="checks" type="button" class="df-btn df-btn--secondary">Checks only</button>
+    <button id="reset" type="button" class="df-btn df-btn--ghost">Rebuild</button>
+  </div>
+
+  <div class="h__body">
+    <div class="h__list" id="listhost"></div>
+    <div class="h__side">
+      <div class="df-panel">
+        <h2 class="h__h">Live</h2>
+        <div class="h__live" id="live"></div>
+      </div>
+      <div class="df-panel">
+        <h2 class="h__h">Report</h2>
+        <div id="report"><p class="df-text-secondary df-text-sm">Run the suite to produce numbers.</p></div>
+      </div>
+      <div class="df-panel">
+        <h2 class="h__h">Selection (backend-side, in this harness)</h2>
+        <div id="sel" class="df-text-sm df-text-secondary">nothing selected</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import pickerScreen, { createVirtualList, readRowHeight, summarise } from './picker-list.js';
+
+const boot = document.getElementById('boot');
+const app = document.getElementById('app');
+boot.hidden = true;
+app.hidden = false;
+
+const params = new URLSearchParams(location.search);
+const $ = (id) => document.getElementById(id);
+
+// ---------------------------------------------------------------------------
+// The synthetic backend.
+//
+// It answers the exact shape `App.SearchPackages` answers, including the echoed
+// `query`, so that the virtualiser cannot tell the difference and so that
+// swapping in `window.go.app.App` is a one-line change. Search runs over the
+// whole 60,000-row set here for the same reason it runs in Go in the real app:
+// the frontend must never be the thing that holds it.
+// ---------------------------------------------------------------------------
+
+const PREFIX = ['', '', '', 'lib', 'lib', 'python3-', 'golang-', 'ruby-', 'node-', 'php-', 'r-cran-', 'texlive-', 'gir1.2-', 'fonts-'];
+const STEM = ('accountsservice aalib acl adwaita alsa apparmor apt aspell atk attr audit avahi bash binutils bison blas bluez '
+  + 'boost brotli bsdutils btrfs bzip2 cairo cups curl cyrus dbus dconf debconf devscripts dhcpcd diffutils djvu dnsmasq docbook '
+  + 'dpkg e2fsprogs efibootmgr eigen elfutils enchant espeak evolution exiv2 expat ffmpeg fftw file findutils flac fontconfig '
+  + 'freetype fribidi gawk gcc gcr gdbm gdk-pixbuf geoclue gettext ghostscript giflib git glib glslang gmp gnupg gnutls gobject '
+  + 'gpgme graphene graphviz grep grub gsettings gsl gstreamer gtk gzip harfbuzz hdf5 hunspell hwdata icu idn imagemagick '
+  + 'imlib initramfs iproute iptables iso-codes jansson jbig json kbd kerberos keyutils krb5 lame lapack lcms ldap less lex '
+  + 'libarchive libassuan libcap libevent libffi libgcrypt libinput libjpeg libnl libpng libpsl libraw librsvg libseccomp '
+  + 'libsecret libsndfile libsoup libssh libtasn1 libtiff libtool libusb libwebp libxml libxslt lldb llvm lm-sensors lua lz4 '
+  + 'lzma make mesa meson mime modemmanager mpfr mtdev mysql nano ncurses netbase nettle networkmanager nghttp nspr nss ntfs '
+  + 'numactl ocaml openal opencv openexr openjpeg openssh openssl opus orc p11-kit pam pango pcre perl pipewire pixman pkgconf '
+  + 'poppler popt postgresql procps protobuf pulseaudio python qemu qt raptor rasqal readline rsync rtmp ruby samba sdl sed '
+  + 'sensors serd shadow shared-mime slang smartmontools snappy sord speex spirv sqlite squashfs ssh sudo systemd taglib tar '
+  + 'tcl tdb tesseract thunar tiff tk tzdata udev unbound unzip usb-modeswitch util-linux v4l vala vim vorbis vte vulkan wayland '
+  + 'wget wireplumber woff x11 x264 x265 xapian xcb xdg xfce xkbcommon xml xorg xz yaml zlib zstd zsh').split(/\s+/);
+const SUFFIX = ['', '', '', '-dev', '-common', '-doc', '-utils', '-tools', '-data', '-bin', '-runtime', '0', '2', '3', '-perl', '-plugins'];
+const SECTION = ['admin', 'devel', 'doc', 'editors', 'games', 'graphics', 'libs', 'math', 'net', 'python', 'science', 'sound', 'text', 'utils', 'video', 'web'];
+const COMPONENT = ['main', 'main', 'main', 'universe', 'universe', 'universe', 'universe', 'multiverse', 'restricted'];
+const VERB = ['library for', 'command-line tools for', 'development files for', 'documentation for', 'runtime support for',
+  'transitional package for', 'shared library for', 'plugin collection for', 'GUI front end for', 'test suite for'];
+const TAIL = ['reading and writing archives', 'high performance networking', 'colour management', 'font rasterisation',
+  'audio playback and capture', 'video decoding', 'structured document parsing', 'cryptographic primitives',
+  'inter-process messaging', 'terminal handling', 'image manipulation', 'numerical computation', 'the desktop session',
+  'package management', 'the printing system', 'device enumeration', 'text layout and shaping', 'compression'];
+
+// Deterministic 32-bit mixer, so a run is reproducible and a mismatch is not
+// blamed on the data changing under the test.
+function mix(n) {
+  let x = (n | 0) + 0x9e3779b9;
+  x = Math.imul(x ^ (x >>> 16), 0x21f0aaad);
+  x = Math.imul(x ^ (x >>> 15), 0x735a2d97);
+  return (x ^ (x >>> 15)) >>> 0;
+}
+
+const SEEDED = [
+  ['firefox', 'Mozilla Firefox web browser (transitional to the snap)', true],
+  ['chromium-browser', 'Chromium web browser (transitional to the snap)', true],
+  ['thunderbird', 'Mozilla Thunderbird mail client (transitional to the snap)', true],
+  ['build-essential', 'informational list of build-essential packages', false],
+  ['nginx-full', 'high performance web server with standard modules', false],
+  ['postgresql-16', 'object-relational SQL database, version 16 server', false],
+  ['openssh-server', 'secure shell (SSH) server, for secure access from remote machines', false],
+  ['git', 'fast, scalable, distributed revision control system', false],
+  ['vim', 'Vi IMproved - enhanced vi editor', false],
+  ['htop', 'interactive processes viewer', false],
+];
+
+function buildCatalogue(count) {
+  const names = new Array(count);
+  const rows = new Array(count);
+  const hay = new Array(count);
+  const seen = new Set();
+
+  for (let i = 0; i < count; i++) {
+    let name;
+    let summary;
+    let snap = false;
+    if (i < SEEDED.length) {
+      name = SEEDED[i][0];
+      summary = SEEDED[i][1];
+      snap = SEEDED[i][2];
+    } else {
+      const a = mix(i);
+      const b = mix(i * 7 + 1);
+      const c = mix(i * 13 + 2);
+      name = PREFIX[a % PREFIX.length] + STEM[b % STEM.length] + SUFFIX[c % SUFFIX.length];
+      if (seen.has(name)) name = name + '-' + (a % 97);
+      let n = 2;
+      while (seen.has(name)) name = name + String(n++);
+      summary = VERB[mix(i * 3) % VERB.length] + ' ' + TAIL[mix(i * 5) % TAIL.length];
+      // A handful of snap shims scattered through the set, so the badge is
+      // exercised away from the top of the list too.
+      snap = (mix(i * 11) % 2000) === 0;
+    }
+    seen.add(name);
+    names[i] = name;
+
+    const h = mix(i * 17);
+    const row = {
+      name,
+      display_name: (h % 47) === 0 ? name.replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase()) : '',
+      version: (1 + (h % 9)) + '.' + (h % 30) + '.' + (h % 7) + '-' + (1 + (h % 4)) + 'ubuntu' + (h % 5),
+      suite: (h % 3) === 0 ? 'noble-updates' : 'noble',
+      component: COMPONENT[h % COMPONENT.length],
+      arch: (h % 29) === 0 ? 'all' : 'amd64',
+      section: SECTION[mix(i * 19) % SECTION.length],
+      priority: (h % 11) === 0 ? 'important' : 'optional',
+      categories: [],
+      summary,
+      installed_size_bytes: (12 + (h % 90000)) * 1024,
+      download_size_bytes: (4 + (h % 30000)) * 1024,
+      is_app: (h % 53) === 0,
+      icon_ref: '',
+      selected: false,
+      source: 'apt',
+    };
+    if (snap) {
+      row.warnings = [{
+        kind: 'snap-transitional',
+        package: name,
+        message: 'The ' + name + ' deb in this archive is a transitional package that installs a snap.',
+        hint: 'A bundle cannot carry a snap. Fetch the vendor .deb by URL instead, or drop it from the selection.',
+      }];
+    }
+    rows[i] = row;
+    hay[i] = (name + ' ' + summary).toLowerCase();
+  }
+  return { names, rows, hay, count };
+}
+
+function makeStub(cat, cfg) {
+  // Ordering is part of the contract in the real backend: name matches before
+  // summary matches, then name ascending. The catalogue is generated in name
+  // order for the no-filter case; for a text query we reproduce the two-tier
+  // ordering so the harness's expectations match a real page.
+  const cache = new Map();
+  let staleText = '';
+
+  function matches(q) {
+    const key = q.text + '\u0000' + q.category + '\u0000' + (q.apps_only ? '1' : '0');
+    const hit = cache.get(key);
+    if (hit) return hit;
+    const text = (q.text || '').toLowerCase();
+    const primary = [];
+    const secondary = [];
+    for (let i = 0; i < cat.count; i++) {
+      if (q.apps_only && !cat.rows[i].is_app) continue;
+      if (q.category && ('section:' + cat.rows[i].section) !== q.category) continue;
+      if (!text) { primary.push(i); continue; }
+      const n = cat.names[i];
+      if (n.indexOf(text) >= 0) primary.push(i);
+      else if (cat.hay[i].indexOf(text) >= 0) secondary.push(i);
+    }
+    const out = primary.concat(secondary);
+    if (cache.size > 40) cache.clear();
+    cache.set(key, out);
+    return out;
+  }
+
+  return {
+    /** What the list is supposed to show at `index` for `query`. The
+     *  correctness checks compare the rendered DOM against this. */
+    expectedNameAt(q, index) {
+      const m = matches({ text: q.text || '', category: q.category || '', apps_only: !!q.appsOnly });
+      const id = m[index];
+      return id === undefined ? null : cat.names[id];
+    },
+    expectedTotal(q) {
+      return matches({ text: q.text || '', category: q.category || '', apps_only: !!q.appsOnly }).length;
+    },
+    SearchPackages(req) {
+      const asked = {
+        text: req.text || '',
+        category: req.category || '',
+        apps_only: !!req.apps_only,
+        offset: req.offset | 0,
+        limit: req.limit | 0,
+      };
+      // Chaos: answer some requests with a page for a query the operator has
+      // already replaced, echoing that older query. A correct client must drop
+      // it on the echo. A client that trusts arrival order will paint it.
+      let served = asked;
+      const chaotic = cfg.chaos && staleText && Math.random() < 0.15;
+      if (chaotic) served = Object.assign({}, asked, { text: staleText });
+      staleText = asked.text;
+
+      const m = matches(served);
+      const limit = served.limit > 0 ? Math.min(served.limit, 500) : 50;
+      const start = Math.max(0, served.offset);
+      const rows = [];
+      for (let i = start; i < Math.min(start + limit, m.length); i++) rows.push(cat.rows[m[i]]);
+
+      const wait = cfg.delay + Math.random() * cfg.jitter;
+      return new Promise((resolve) => {
+        setTimeout(() => resolve({
+          rows,
+          total: m.length,
+          offset: start,
+          limit,
+          query: served,     // the echo the guard reads
+          took_ms: Math.round(wait),
+          truncated: served.limit > 500,
+          error: null,
+        }), wait);
+      });
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Wiring
+// ---------------------------------------------------------------------------
+
+const cfg = {
+  rows: Number(params.get('rows') || 60000),
+  delay: Number(params.get('delay') || 40),
+  jitter: Number(params.get('jitter') || 60),
+  chaos: params.get('chaos') === '1',
+  pageSize: Number(params.get('page') || 50),
+  cachePages: Number(params.get('cache') || 24),
+};
+$('rows').value = cfg.rows;
+$('delay').value = cfg.delay;
+$('jitter').value = cfg.jitter;
+$('pagesize').value = cfg.pageSize;
+$('cachep').value = cfg.cachePages;
+$('chaos').value = cfg.chaos ? '1' : '0';
+
+const selection = new Set();      // stands in for the backend's Selection()
+let cat = null;
+let stub = null;
+let list = null;
+let activatedPackage = null;
+let query = { text: '', category: '', appsOnly: false };
+
+/** Rolling per-frame metric samples, filled by the virtualiser's onMetrics. */
+let frameSamples = [];
+let collecting = false;
+
+function realBindings() {
+  return (window.go && window.go.app && window.go.app.App) || null;
+}
+
+function searchFn(req) {
+  if ($('real').value === '1') {
+    const b = realBindings();
+    if (b && typeof b.SearchPackages === 'function') return b.SearchPackages(req);
+  }
+  return stub.SearchPackages(req);
+}
+
+function rebuild() {
+  if (list) list.destroy();
+  cfg.rows = Math.max(0, Number($('rows').value) || 0);
+  cfg.delay = Math.max(0, Number($('delay').value) || 0);
+  cfg.jitter = Math.max(0, Number($('jitter').value) || 0);
+  cfg.pageSize = Math.max(10, Number($('pagesize').value) || 50);
+  cfg.cachePages = Math.max(3, Number($('cachep').value) || 24);
+  cfg.chaos = $('chaos').value === '1';
+
+  const t0 = performance.now();
+  cat = buildCatalogue(cfg.rows);
+  const genMs = performance.now() - t0;
+  stub = makeStub(cat, cfg);
+
+  list = createVirtualList({
+    label: 'Synthetic catalogue',
+    search: searchFn,
+    pageSize: cfg.pageSize,
+    maxCachedPages: cfg.cachePages,
+    isSelected: (row) => selection.has(row.name),
+    onToggle: (i, row) => {
+      if (selection.has(row.name)) selection.delete(row.name); else selection.add(row.name);
+      list.repaint();
+      renderSelection(row);
+    },
+    onActivate: (_index, row) => { activatedPackage = row.name; },
+    onMetrics: (m) => {
+      lastMetric = m;
+      if (collecting) frameSamples.push(m);
+    },
+  });
+  $('listhost').textContent = '';
+  $('listhost').appendChild(list.el);
+  list.measure();
+  list.setQuery(query);
+  liveNote = 'catalogue of ' + cfg.rows.toLocaleString() + ' rows generated in ' + genMs.toFixed(0) + ' ms';
+}
+
+let lastMetric = null;
+let liveNote = '';
+
+function renderSelection(row) {
+  const host = $('sel');
+  host.textContent = '';
+  if (!selection.size) { host.textContent = 'nothing selected'; return; }
+  const names = Array.from(selection);
+  const p = document.createElement('div');
+  p.textContent = names.length + ' selected: ' + names.slice(0, 12).join(', ') + (names.length > 12 ? ' …' : '');
+  host.appendChild(p);
+  const snap = row && Array.isArray(row.warnings) && row.warnings.some((w) => w.kind === 'snap-transitional');
+  if (snap && selection.has(row.name)) {
+    const b = document.createElement('div');
+    b.className = 'df-banner df-banner--warning';
+    b.setAttribute('role', 'status');
+    const body = document.createElement('div');
+    body.className = 'df-banner__body';
+    const t = document.createElement('p');
+    t.className = 'df-banner__title';
+    t.textContent = row.name + ' installs a snap, not a deb';
+    const x = document.createElement('p');
+    x.className = 'df-banner__text';
+    x.textContent = row.warnings[0].message + ' ' + row.warnings[0].hint;
+    body.appendChild(t); body.appendChild(x);
+    b.appendChild(body);
+    b.appendChild(document.createElement('div')).className = 'df-banner__actions';
+    host.appendChild(b);
+  }
+}
+
+// -- live readout ------------------------------------------------------------
+
+function liveTick() {
+  const s = list ? list.stats() : null;
+  const host = $('live');
+  host.textContent = '';
+  const add = (k, v) => {
+    const span = document.createElement('span');
+    const b = document.createElement('b');
+    b.textContent = k + ' ';
+    span.appendChild(b);
+    span.appendChild(document.createTextNode(String(v)));
+    host.appendChild(span);
+  };
+  add('--row-height', readRowHeight(list ? list.el : document.documentElement) + 'px');
+  if (s) {
+    add('total', list.total().toLocaleString());
+    add('pool', s.poolSize);
+    add('live slots', s.liveSlots);
+    add('cached pages', s.cachedPages + '/' + cfg.cachePages);
+    add('in flight', s.inflight);
+    add('requests', s.pageRequests);
+    add('dropped: gen', s.pagesDropStale);
+    add('echo', s.pagesDropEcho);
+    add('misaligned', s.pagesDropMisaligned);
+    add('evicted', s.pagesEvicted);
+    add('last frame', lastMetric ? lastMetric.updateMs.toFixed(2) + ' ms / ' + lastMetric.rendered + ' rows' : '—');
+  }
+  if (performance.memory) add('js heap', (performance.memory.usedJSHeapSize / 1048576).toFixed(1) + ' MB');
+  if (liveNote) add('note', liveNote);
+  requestAnimationFrame(liveTick);
+}
+
+// -- helpers -----------------------------------------------------------------
+
+const raf = () => new Promise((r) => requestAnimationFrame(r));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function settle(maxMs) {
+  const deadline = performance.now() + (maxMs || 4000);
+  // Settled = nothing in flight, the settle timer has fired, and every slot in
+  // the window is showing real data.
+  for (;;) {
+    await sleep(30);
+    const s = list.stats();
+    const skeletons = list.inspect().filter((x) => x.kind === 'skeleton').length;
+    if (s.inflight === 0 && skeletons === 0) return true;
+    if (performance.now() > deadline) return false;
+  }
+}
+
+function fmt(x) { return (Math.round(x * 100) / 100).toFixed(2); }
+
+// -- the fling ---------------------------------------------------------------
+
+/**
+ * Drive the scroll port the way a touchpad fling does — a large initial
+ * velocity decaying geometrically — and record what every frame cost.
+ *
+ * Two numbers matter and they are different things:
+ *   frameDelta  rAF-to-rAF wall time. A delta near two vsyncs is a frame the
+ *               compositor did not get. This is "dropped frames".
+ *   updateMs    time spent inside the virtualiser's own update pass. This is
+ *               the part of the budget this package controls, and it is what a
+ *               slower machine multiplies.
+ */
+async function runFling(name, v0, decay, frames) {
+  const port = list.port;
+  port.scrollTop = 0;
+  await settle(3000);
+  list.resetStats();
+  frameSamples = [];
+  collecting = true;
+
+  const deltas = [];
+  let v = v0;
+  let last = performance.now();
+  const start = last;
+
+  for (let i = 0; i < frames; i++) {
+    await raf();
+    const now = performance.now();
+    deltas.push(now - last);
+    last = now;
+    port.scrollTop = port.scrollTop + v;
+    v *= decay;
+    if (v < 1) v = 1;
+  }
+  // Let the settle-time fetches land, and keep collecting: the frames just
+  // after a fling stops are where a naive implementation stutters as forty
+  // skeletons turn into forty rows at once.
+  for (let i = 0; i < 40; i++) {
+    await raf();
+    const now = performance.now();
+    deltas.push(now - last);
+    last = now;
+  }
+  const wall = performance.now() - start;
+  collecting = false;
+  await settle(4000);
+
+  // The vsync period this machine actually ran at, taken from the data rather
+  // than assumed: a 60 Hz panel and a 120 Hz panel have different budgets.
+  const sorted = deltas.slice().sort((a, b) => a - b);
+  const vsync = sorted[Math.floor(sorted.length / 2)];
+  const dropped = deltas.filter((d) => d > vsync * 1.5).length;
+  const over167 = deltas.filter((d) => d > 16.7).length;
+  const upd = frameSamples.map((m) => m.updateMs);
+  const rendered = frameSamples.map((m) => m.rendered);
+  const s = list.stats();
+
+  return {
+    name,
+    frames: deltas.length,
+    wallMs: wall,
+    scrolledPx: Math.round(port.scrollTop),
+    scrolledRows: Math.round(port.scrollTop / list.rowHeight()),
+    vsyncMs: vsync,
+    frameDelta: summarise(deltas),
+    droppedFrames: dropped,
+    framesOver16_7ms: over167,
+    updateMs: summarise(upd),
+    updatePasses: frameSamples.length,
+    rowsPerFrame: summarise(rendered),
+    rowsPerFrameMax: rendered.length ? Math.max.apply(null, rendered) : 0,
+    pageLatencyMs: s.latency,
+    pageRequests: s.pageRequests,
+    cachedPagesAfter: s.cachedPages,
+    pagesEvicted: s.pagesEvicted,
+    poolSize: s.poolSize,
+    heapMB: performance.memory ? performance.memory.usedJSHeapSize / 1048576 : null,
+  };
+}
+
+// -- correctness -------------------------------------------------------------
+
+/** Every rendered row must carry the name the backend would give for its own
+ *  index. One mismatch is the haunted-virtualiser bug. */
+function auditVisible(q) {
+  const bad = [];
+  for (const slot of list.inspect()) {
+    if (slot.kind !== 'row' || slot.index < 0) continue;
+    const want = stub.expectedNameAt(q, slot.index);
+    if (want !== slot.name) bad.push({ index: slot.index, want, got: slot.name });
+  }
+  return bad;
+}
+
+async function checkIndexIntegrity(samples) {
+  const port = list.port;
+  const max = list.total() * list.rowHeight();
+  let checked = 0;
+  const bad = [];
+  for (let i = 0; i < samples; i++) {
+    port.scrollTop = Math.floor(Math.random() * Math.max(1, max - port.clientHeight));
+    await settle(4000);
+    const b = auditVisible(query);
+    checked += list.inspect().filter((s) => s.kind === 'row').length;
+    for (const x of b) bad.push(x);
+  }
+  return { jumps: samples, rowsChecked: checked, mismatches: bad.length, examples: bad.slice(0, 5) };
+}
+
+async function checkRaces(n) {
+  const words = ['lib', 'python', 'dev', 'gtk', 'x', 'ssl', 'net', 'font', 'doc', 'util', 'qt', 'perl', 'zlib', 'gst'];
+  const before = list.stats();
+  let final = '';
+  for (let i = 0; i < n; i++) {
+    // Grow and shrink a term one character at a time, which is what a search
+    // box actually emits and what makes responses overlap.
+    const w = words[i % words.length];
+    final = w.slice(0, 1 + (i % w.length));
+    query = { text: final, category: '', appsOnly: false };
+    list.setQuery(query);
+    await sleep(15 + Math.random() * 45);
+  }
+  await settle(6000);
+  const bad = auditVisible(query);
+  const after = list.stats();
+  const wantTotal = stub.expectedTotal(query);
+  return {
+    queriesFired: n,
+    finalQuery: final,
+    totalRendered: list.total(),
+    totalExpected: wantTotal,
+    totalCorrect: list.total() === wantTotal,
+    mismatches: bad.length,
+    examples: bad.slice(0, 5),
+    droppedByGeneration: after.pagesDropStale - before.pagesDropStale,
+    droppedByEcho: after.pagesDropEcho - before.pagesDropEcho,
+    droppedMisaligned: after.pagesDropMisaligned - before.pagesDropMisaligned,
+  };
+}
+
+/**
+ * Keystroke to rendered results — the other budget in the brief, < 100 ms p95
+ * including the round-trip. Measured from the moment `setQuery` is called (a
+ * search box's `input` handler calls it directly) to the first frame on which
+ * the first row of the new result set is on screen carrying the right name.
+ * The artificial delay configured above stands in for Go plus the bridge, so
+ * the difference between this number and that delay is what this package costs.
+ */
+async function checkKeystroke(n, delayMs, jitterMs) {
+  const saveD = cfg.delay;
+  const saveJ = cfg.jitter;
+  if (delayMs !== undefined) { cfg.delay = delayMs; cfg.jitter = jitterMs; }
+  const words = ['libx', 'python3-', 'openssl', 'font', 'gtk', 'zstd', 'perl', 'net', 'vulkan', 'sqlite',
+    'lib', 'doc', 'dev', 'util', 'xml', 'gnu', 'gst', 'tools', 'runtime', 'data'];
+  const samples = [];
+  const failures = [];
+  try {
+    for (let i = 0; i < n; i++) {
+      const text = words[i % words.length].slice(0, 2 + (i % 6));
+      const q = { text, category: '', appsOnly: false };
+      const want = stub.expectedNameAt(q, 0);
+      const t0 = performance.now();
+      query = q;
+      list.setQuery(query);
+      let ms = -1;
+      for (let f = 0; f < 240; f++) {
+        await raf();
+        if (want === null) {
+          // A query that matches nothing is still "rendered" the moment the
+          // list knows the total is zero — that is when the empty state can
+          // be shown, and it is the same round-trip.
+          if (list.total() === 0) { ms = performance.now() - t0; break; }
+          continue;
+        }
+        const slot0 = list.inspect().find((s) => s.index === 0);
+        if (slot0 && slot0.kind === 'row' && slot0.name === want) { ms = performance.now() - t0; break; }
+      }
+      if (ms < 0) failures.push(text);
+      else samples.push(ms);
+      await sleep(140); // let the tail of the previous search drain
+    }
+  } finally {
+    cfg.delay = saveD;
+    cfg.jitter = saveJ;
+  }
+  const d = delayMs === undefined ? saveD : delayMs;
+  const j = jitterMs === undefined ? saveJ : jitterMs;
+  return {
+    keystrokes: n,
+    backendDelayMs: d + '–' + (d + j),
+    // The poll is one requestAnimationFrame, so every sample carries up to one
+    // frame (~16.7 ms) of measurement quantisation on top of the real latency.
+    quantisationMs: 16.7,
+    latencyMs: summarise(samples),
+    neverRendered: failures.length,
+  };
+}
+
+async function checkKeyboard() {
+  const port = list.port;
+  port.scrollTop = 0;
+  query = { text: '', category: '', appsOnly: false };
+  list.setQuery(query);
+  await settle(4000);
+  port.focus();
+
+  const problems = [];
+  function key(k) {
+    port.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+  }
+  function focusedIsVisible() {
+    const i = list.focusIndex();
+    if (i < 0) return true;
+    const rh = list.rowHeight();
+    return i * rh >= port.scrollTop - 0.5 && (i + 1) * rh <= port.scrollTop + port.clientHeight + 0.5;
+  }
+
+  key('ArrowDown');
+  if (list.focusIndex() < 0) problems.push('ArrowDown did not establish a focused row');
+  for (let i = 0; i < 400; i++) {
+    key('ArrowDown');
+    if (!focusedIsVisible()) { problems.push('focused row scrolled out of view at ' + list.focusIndex()); break; }
+  }
+  const afterDown = list.focusIndex();
+  for (let i = 0; i < 8; i++) key('PageDown');
+  const afterPage = list.focusIndex();
+  if (!(afterPage > afterDown)) problems.push('PageDown did not advance');
+  if (!focusedIsVisible()) problems.push('focused row not visible after PageDown');
+  key('End');
+  if (list.focusIndex() !== list.total() - 1) problems.push('End did not reach the last row');
+  if (!focusedIsVisible()) problems.push('focused row not visible after End');
+  key('Home');
+  if (list.focusIndex() !== 0) problems.push('Home did not reach the first row');
+  if (port.scrollTop !== 0) problems.push('Home did not scroll to the top');
+  for (let i = 0; i < 5; i++) key('PageUp');
+  if (list.focusIndex() !== 0) problems.push('PageUp past the top did not clamp');
+
+  await settle(4000);
+  const selBefore = selection.size;
+  key('ArrowDown'); key(' ');
+  await sleep(20);
+  const toggledOn = selection.size === selBefore + 1;
+  key(' ');
+  await sleep(20);
+  const toggledOff = selection.size === selBefore;
+  if (!toggledOn) problems.push('Space did not select');
+  if (!toggledOff) problems.push('Space did not deselect');
+
+  key('Home');
+  const selectionBeforeDetails = Array.from(selection).join('|');
+  activatedPackage = null;
+  key('Enter');
+  await sleep(20);
+  if (activatedPackage !== list.focusedRow()?.name) problems.push('Enter did not activate Details for the logical row');
+  if (Array.from(selection).join('|') !== selectionBeforeDetails) problems.push('Enter changed the selection instead of opening Details');
+  const rowButton = list.port.querySelector('[data-index="0"] [data-action="details"]');
+  activatedPackage = null;
+  rowButton?.click();
+  if (!activatedPackage || Array.from(selection).join('|') !== selectionBeforeDetails) problems.push('Details button changed selection or did not activate');
+
+  return { problems, ok: problems.length === 0, spaceToggles: toggledOn && toggledOff, enterOpensDetails: !!activatedPackage };
+}
+
+// Actual screen controller methods, with only bridge/DOM projection seams
+// replaced. These assertions exercise decisions and races, not visual classes.
+async function checkPreparationController() {
+  const problems = [];
+  const check = (condition, label) => { if (!condition) problems.push(label); };
+  function controller() {
+    const instance = Object.create(pickerScreen);
+    let release;
+    instance._generation = 7;
+    instance._readyGeneration = -1;
+    instance._prepareGeneration = 7;
+    instance._target = { selected: true, generation: 7 };
+    instance._attempted = new Set();
+    instance._cancelledPreparation = new Set();
+    instance._preparationErrors = new Map();
+    instance._pendingPreparation = new Map();
+    instance._states = { empty: (value) => value, error: (value) => value, loading: (value) => value };
+    instance._list = { reset() {} };
+    instance._showState = (state) => { instance.lastState = state; };
+    instance._renderNotices = () => {};
+    instance._pollStatus = () => {};
+    instance._loadCategories = () => {};
+    instance._renderDiscovery = () => { instance.discovered = true; };
+    instance._editReason = () => '';
+    instance._refreshStatus = async () => { instance.refreshed = (instance.refreshed || 0) + 1; };
+    instance.calls = [];
+    instance._call = async (name) => {
+      instance.calls.push(name);
+      if (name === 'StartCatalogBuild') return await new Promise((resolve) => { release = resolve; });
+      return { ok: true };
+    };
+    instance.release = (result = { ok: true }) => release?.(result);
+    return instance;
+  }
+  const ready = controller();
+  ready._applyStatus({ state: 'ready', ready: true, generation: 7 });
+  check(ready.discovered && ready.calls.length === 0, 'ready cache started another preparation');
+  const fresh = controller();
+  fresh._applyStatus({ state: 'not-built', ready: false, generation: 7 });
+  fresh._applyStatus({ state: 'not-built', ready: false, generation: 7 });
+  check(fresh.calls.filter((name) => name === 'StartCatalogBuild').length === 1, 'duplicate status started duplicate jobs');
+  await fresh._cancelPreparation();
+  fresh.release();
+  await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+  fresh._pendingPreparation.clear();
+  fresh._applyStatus({ state: 'cancelled', cancelled: true, generation: 7 });
+  fresh._applyStatus({ state: 'cancelled', cancelled: true, generation: 7 });
+  check(fresh.calls.filter((name) => name === 'StartCatalogBuild').length === 1, 'cancelled visit restarted preparation');
+  const retry = fresh._startPreparation(false, true);
+  check(fresh.calls.filter((name) => name === 'StartCatalogBuild').length === 2, 'explicit Retry did not start preparation');
+  fresh.release({ error: { message: 'offline', hint: 'Reconnect' } });
+  await retry;
+  check(fresh.lastState.title === 'offline', 'failed binding became a success');
+  fresh._applyStatus({ state: 'failed', error: { message: 'offline' }, generation: 7 });
+  check(fresh.calls.filter((name) => name === 'StartCatalogBuild').length === 2, 'failed preparation retried automatically');
+  const late = controller();
+  const pending = late._startPreparation(false, true);
+  late._generation = 8;
+  const before = late.refreshed || 0;
+  late.release({ error: { message: 'previous target failed' } });
+  await pending;
+  check((late.refreshed || 0) === before && late.lastState.title !== 'previous target failed', 'late target completion changed the current screen');
+  return { ok: problems.length === 0, problems };
+}
+
+/**
+ * The three properties docs/accessibility.md section 10 names as P0 for a
+ * recycling list, checked against the DOM rather than asserted in prose.
+ *
+ *  P0.2  aria-activedescendant must be CLEARED when the cursor leaves the
+ *        rendered window. The failure it was found by: the listbox naming
+ *        `nodejs-1254` while Space would have toggled `libssl3`.
+ *  P0.3  aria-setsize must carry the true match count on every rendered row,
+ *        not the size of the window.
+ *  ----  and: DOM focus must survive row recycling. `rotateTo` moves row
+ *        elements with appendChild, which blurs a focused node to <body>; the
+ *        rows therefore carry no tabindex, a mousedown on a row is redirected
+ *        to the port, and `update()` restores focus if it is lost anyway.
+ */
+async function checkAria() {
+  const port = list.port;
+  const problems = [];
+  const win = port.querySelector('.df-vlist__window');
+
+  port.scrollTop = 0;
+  await settle(3000);
+
+  // setsize / posinset on every rendered row
+  const rows = Array.from(win.querySelectorAll('.df-row[role="option"]'));
+  const total = list.total();
+  const badSetsize = rows.filter((r) => r.getAttribute('aria-setsize') !== String(total)).length;
+  const badPosinset = rows.filter((r) => r.getAttribute('aria-posinset') !== String(Number(r.dataset.index) + 1)).length;
+  if (badSetsize) problems.push(badSetsize + ' rows carry the wrong aria-setsize');
+  if (badPosinset) problems.push(badPosinset + ' rows carry the wrong aria-posinset');
+
+  // rows must not be focusable: tabindex="-1" is click-focusable, which is how
+  // focus got into the recycled pool in the first place
+  const focusableRows = rows.filter((r) => r.hasAttribute('tabindex')).length;
+  if (focusableRows) problems.push(focusableRows + ' rows carry a tabindex');
+
+  // activedescendant: set while the cursor is in the window...
+  port.focus();
+  port.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
+  await sleep(40);
+  const adInWindow = port.getAttribute('aria-activedescendant');
+  if (!adInWindow) problems.push('no aria-activedescendant after ArrowDown');
+  else if (!win.querySelector('#' + CSS.escape(adInWindow))) {
+    problems.push('aria-activedescendant names an element that is not in the window');
+  }
+
+  // ...and cleared once the wheel takes the cursor off screen
+  port.scrollTop = Math.min(port.scrollTop + 200000, list.total() * list.rowHeight());
+  await sleep(80);
+  await new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res)));
+  const adAway = port.getAttribute('aria-activedescendant');
+  if (adAway) problems.push('aria-activedescendant still set (' + adAway + ') after the cursor left the window');
+
+  // focus survives recycling: click a row, then scroll hard
+  port.scrollTop = 0;
+  await settle(3000);
+  const row = win.querySelector('.df-row[role="option"]');
+  row.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+  row.click();
+  await sleep(40);
+  const afterClick = document.activeElement === port;
+  if (!afterClick) problems.push('clicking a row moved focus off the listbox port');
+  for (let i = 1; i <= 80; i++) {
+    port.scrollTop = i * 900;
+    await new Promise((res) => requestAnimationFrame(res));
+  }
+  await sleep(60);
+  const afterScroll = document.activeElement === port;
+  if (!afterScroll) problems.push('focus was lost during recycling (activeElement is now '
+    + (document.activeElement === document.body ? '<body>' : document.activeElement.tagName) + ')');
+  port.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
+  await sleep(40);
+  const stillDriving = !!port.getAttribute('aria-activedescendant');
+  if (!stillDriving) problems.push('arrow keys stopped working after recycling');
+
+  return {
+    ok: problems.length === 0,
+    problems,
+    rowsChecked: rows.length,
+    setsize: String(total),
+    rowsFocusable: focusableRows,
+    activedescendantInWindow: adInWindow,
+    activedescendantAfterScrollAway: adAway,
+    focusOnPortAfterClick: afterClick,
+    focusOnPortAfterRecycling: afterScroll,
+  };
+}
+
+async function checkMemory() {
+  const port = list.port;
+  query = { text: '', category: '', appsOnly: false };
+  list.setQuery(query);
+  await settle(4000);
+  const heap0 = performance.memory ? performance.memory.usedJSHeapSize : null;
+  const pool0 = list.stats().poolSize;
+
+  // A full sweep of the result set in 200 jumps, so every page in the set is
+  // touched at least once. A cache without eviction would end holding all of
+  // them; the bound below is the whole point.
+  const max = list.total() * list.rowHeight() - port.clientHeight;
+  for (let i = 0; i < 200; i++) {
+    port.scrollTop = Math.round((i / 199) * max);
+    await sleep(12);
+  }
+  await settle(6000);
+  const s = list.stats();
+  const heap1 = performance.memory ? performance.memory.usedJSHeapSize : null;
+  return {
+    sweeps: 200,
+    pagesTouched: s.pageRequests,
+    cachedPages: s.cachedPages,
+    cacheBound: cfg.cachePages,
+    cacheWithinBound: s.cachedPages <= cfg.cachePages,
+    poolSizeBefore: pool0,
+    poolSizeAfter: s.poolSize,
+    poolGrew: s.poolSize - pool0,
+    heapBeforeMB: heap0 === null ? null : heap0 / 1048576,
+    heapAfterMB: heap1 === null ? null : heap1 / 1048576,
+  };
+}
+
+// -- report ------------------------------------------------------------------
+
+function reportTable(title, rowsIn) {
+  const wrap = document.createElement('div');
+  const h = document.createElement('h2');
+  h.className = 'h__h';
+  h.textContent = title;
+  wrap.appendChild(h);
+  const t = document.createElement('table');
+  t.className = 'h__t';
+  for (const [k, v, verdict] of rowsIn) {
+    const tr = document.createElement('tr');
+    const td1 = document.createElement('td');
+    td1.textContent = k;
+    const td2 = document.createElement('td');
+    td2.textContent = String(v);
+    if (verdict === true) td2.className = 'h__ok';
+    if (verdict === false) td2.className = 'h__bad';
+    tr.appendChild(td1); tr.appendChild(td2);
+    t.appendChild(tr);
+  }
+  wrap.appendChild(t);
+  return wrap;
+}
+
+function renderReport(r) {
+  const host = $('report');
+  host.textContent = '';
+
+  for (const f of r.flings || []) {
+    host.appendChild(reportTable('Fling — ' + f.name, [
+      ['frames', f.frames],
+      ['wall time', fmt(f.wallMs) + ' ms'],
+      ['scrolled', f.scrolledRows.toLocaleString() + ' rows (' + f.scrolledPx.toLocaleString() + ' px)'],
+      ['observed vsync', fmt(f.vsyncMs) + ' ms'],
+      ['frame delta p50 / p95 / max', fmt(f.frameDelta.p50) + ' / ' + fmt(f.frameDelta.p95) + ' / ' + fmt(f.frameDelta.max) + ' ms'],
+      ['frames over 16.7 ms', f.framesOver16_7ms],
+      ['dropped frames (>1.5x vsync)', f.droppedFrames, f.droppedFrames === 0],
+      ['update pass p50 / p95 / max', fmt(f.updateMs.p50) + ' / ' + fmt(f.updateMs.p95) + ' / ' + fmt(f.updateMs.max) + ' ms',
+        f.updateMs.max < f.vsyncMs],
+      ['rows rendered/frame mean / max', fmt(f.rowsPerFrame.mean) + ' / ' + f.rowsPerFrameMax],
+      ['page requests', f.pageRequests],
+      ['page latency p50 / p95 / max', fmt(f.pageLatencyMs.p50) + ' / ' + fmt(f.pageLatencyMs.p95) + ' / ' + fmt(f.pageLatencyMs.max) + ' ms'],
+      ['pages cached / evicted', f.cachedPagesAfter + ' / ' + f.pagesEvicted],
+      ['row pool', f.poolSize],
+      ['js heap', f.heapMB === null ? 'n/a' : fmt(f.heapMB) + ' MB'],
+    ]));
+  }
+
+  if (r.integrity) {
+    host.appendChild(reportTable('Index integrity', [
+      ['random scroll jumps', r.integrity.jumps],
+      ['rows compared against the backend', r.integrity.rowsChecked],
+      ['rows rendered at the wrong index', r.integrity.mismatches, r.integrity.mismatches === 0],
+    ]));
+  }
+  if (r.keystroke) {
+    host.appendChild(reportTable('Keystroke to rendered results', [
+      ['keystrokes', r.keystroke.keystrokes],
+      ['stub backend delay', r.keystroke.backendDelayMs + ' ms'],
+      ['p50 / p95 / max', fmt(r.keystroke.latencyMs.p50) + ' / ' + fmt(r.keystroke.latencyMs.p95) + ' / '
+        + fmt(r.keystroke.latencyMs.max) + ' ms', r.keystroke.latencyMs.p95 < 100],
+      ['never rendered', r.keystroke.neverRendered, r.keystroke.neverRendered === 0],
+    ]));
+  }
+  if (r.keystrokeFastBackend) {
+    const k = r.keystrokeFastBackend;
+    host.appendChild(reportTable('Keystroke to rendered results — fast backend', [
+      ['stub backend delay', k.backendDelayMs + ' ms'],
+      ['p50 / p95 / max', fmt(k.latencyMs.p50) + ' / ' + fmt(k.latencyMs.p95) + ' / ' + fmt(k.latencyMs.max) + ' ms',
+        k.latencyMs.p95 < 100],
+      ['never rendered', k.neverRendered, k.neverRendered === 0],
+    ]));
+  }
+  if (r.races) {
+    host.appendChild(reportTable('Out-of-order responses', [
+      ['queries fired', r.races.queriesFired],
+      ['final query', r.races.finalQuery],
+      ['total rendered / expected', r.races.totalRendered + ' / ' + r.races.totalExpected, r.races.totalCorrect],
+      ['stale rows rendered', r.races.mismatches, r.races.mismatches === 0],
+      ['responses dropped: generation', r.races.droppedByGeneration],
+      ['responses dropped: echoed query', r.races.droppedByEcho],
+      ['responses dropped: misaligned', r.races.droppedMisaligned],
+    ]));
+  }
+  if (r.guardCounters) {
+    const g = r.guardCounters;
+    host.appendChild(reportTable('Response guards (cumulative, integrity + keystroke phases)', [
+      ['page requests', g.pageRequests],
+      ['dropped: generation changed', g.droppedByGeneration],
+      ['dropped: echoed query mismatched', g.droppedByEcho],
+      ['dropped: misaligned offset', g.droppedMisaligned],
+      ['page errors', g.pageErrors],
+      ['recovery re-asks outstanding', g.recoveryAttempts],
+    ]));
+  }
+  if (r.keyboard) {
+    host.appendChild(reportTable('Keyboard', [
+      ['arrow / page / home / end / space', r.keyboard.ok ? 'all pass' : 'FAIL', r.keyboard.ok],
+      ['problems', r.keyboard.problems.length ? r.keyboard.problems.join('; ') : 'none', r.keyboard.ok],
+    ]));
+  }
+  if (r.aria) {
+    const a = r.aria;
+    host.appendChild(reportTable('Recycling-list ARIA and focus', [
+      ['rows checked', a.rowsChecked],
+      ['aria-setsize on every row', a.setsize, a.problems.every((p) => p.indexOf('setsize') < 0)],
+      ['aria-posinset on every row', a.problems.some((p) => p.indexOf('posinset') >= 0) ? 'FAIL' : 'correct',
+        !a.problems.some((p) => p.indexOf('posinset') >= 0)],
+      ['rows carrying a tabindex', a.rowsFocusable, a.rowsFocusable === 0],
+      ['activedescendant while the cursor is in the window', a.activedescendantInWindow || 'none',
+        !!a.activedescendantInWindow],
+      ['activedescendant after scrolling the cursor away',
+        a.activedescendantAfterScrollAway === null ? 'cleared' : a.activedescendantAfterScrollAway,
+        a.activedescendantAfterScrollAway === null],
+      ['focus on the port after clicking a row', a.focusOnPortAfterClick ? 'yes' : 'NO', a.focusOnPortAfterClick],
+      ['focus on the port after 80 recycling frames', a.focusOnPortAfterRecycling ? 'yes' : 'NO',
+        a.focusOnPortAfterRecycling],
+      ['problems', a.problems.length ? a.problems.join('; ') : 'none', a.ok],
+    ]));
+  }
+  if (r.memory) {
+    host.appendChild(reportTable('Memory', [
+      ['pages fetched over a full sweep', r.memory.pagesTouched],
+      ['pages retained', r.memory.cachedPages + ' (bound ' + r.memory.cacheBound + ')', r.memory.cacheWithinBound],
+      ['row pool growth over the sweep', r.memory.poolGrew, r.memory.poolGrew === 0],
+      ['js heap before / after', r.memory.heapBeforeMB === null ? 'n/a'
+        : fmt(r.memory.heapBeforeMB) + ' / ' + fmt(r.memory.heapAfterMB) + ' MB'],
+    ]));
+  }
+
+  const pre = document.createElement('details');
+  pre.className = 'df-disclosure';
+  const sm = document.createElement('summary');
+  sm.className = 'df-summary';
+  sm.textContent = 'Raw JSON';
+  const bd = document.createElement('div');
+  bd.className = 'df-disclosure__body';
+  const code = document.createElement('pre');
+  code.className = 'df-log';
+  code.textContent = JSON.stringify(r, null, 2);
+  bd.appendChild(code);
+  pre.appendChild(sm); pre.appendChild(bd);
+  host.appendChild(pre);
+}
+
+// -- suite -------------------------------------------------------------------
+
+async function runFlings() {
+  const out = [];
+  // A hard fling: ~4,000 px per frame decaying, which crosses tens of
+  // thousands of rows and guarantees the skeleton path is exercised.
+  out.push(await runFling('hard fling (4000 px/frame, decay 0.99)', 4000, 0.99, 420));
+  // A sustained drag: the speed a person actually reads at, where every page
+  // request has to land before the rows reach the viewport.
+  out.push(await runFling('sustained drag (60 px/frame)', 60, 1, 420));
+  // Ludicrous: one full end-to-end traversal of 60,000 rows in ~4 seconds.
+  const rows = list.total();
+  const perFrame = Math.max(1, Math.round((rows * list.rowHeight()) / 240));
+  out.push(await runFling('full traversal (' + perFrame + ' px/frame, 240 frames)', perFrame, 1, 240));
+  return out;
+}
+
+const bench = {
+  ready: false,
+  results: null,
+  async run(which) {
+    const want = which || 'all';
+    const r = {
+      startedAt: new Date().toISOString(),
+      agent: navigator.userAgent,
+      config: Object.assign({}, cfg),
+      rowHeightPx: list.rowHeight(),
+      viewportPx: list.port.clientHeight,
+      devicePixelRatio: window.devicePixelRatio,
+    };
+    query = { text: '', category: '', appsOnly: false };
+    list.setQuery(query);
+    await settle(5000);
+    r.totalRows = list.total();
+
+    if (want === 'all' || want === 'fling') r.flings = await runFlings();
+    if (want === 'all' || want === 'checks') {
+      r.integrity = await checkIndexIntegrity(40);
+      // Once against the harness's deliberately slow stub, and once against a
+      // backend as quick as the real one is budgeted to be, so the latency
+      // this package adds on top of the round-trip is visible on its own.
+      r.keystroke = await checkKeystroke(20);
+      r.keystrokeFastBackend = await checkKeystroke(20, 5, 10);
+      // Cumulative guard counters after the keystroke phase — this is where a
+      // chaotic backend's stale echoes get dropped, and where the counters
+      // prove the guards actually fired rather than merely existing.
+      r.guardCounters = (() => {
+        const g = list.stats();
+        return {
+          pageRequests: g.pageRequests, droppedByGeneration: g.pagesDropStale,
+          droppedByEcho: g.pagesDropEcho, droppedMisaligned: g.pagesDropMisaligned,
+          pageErrors: g.pageErrors, recoveryAttempts: g.recoveryAttempts,
+          nodeMoves: g.nodeMoves, fullReassigns: g.fullReassigns,
+        };
+      })();
+      r.races = await checkRaces(25);
+      query = { text: '', category: '', appsOnly: false };
+      list.setQuery(query);
+      await settle(5000);
+      r.keyboard = await checkKeyboard();
+      r.preparation = await checkPreparationController();
+      r.aria = await checkAria();
+      r.memory = await checkMemory();
+    }
+    r.finishedAt = new Date().toISOString();
+    r.verdict = {
+      noDroppedFrames: (r.flings || []).every((f) => f.droppedFrames === 0),
+      noStaleRows: (!r.integrity || r.integrity.mismatches === 0) && (!r.races || r.races.mismatches === 0),
+      outOfOrderDropped: !r.races || r.races.totalCorrect,
+      keyboardOK: !r.keyboard || r.keyboard.ok,
+      preparationOK: !r.preparation || r.preparation.ok,
+      ariaOK: !r.aria || r.aria.ok,
+      keystrokeUnder100msP95: !r.keystrokeFastBackend || r.keystrokeFastBackend.latencyMs.p95 < 100,
+      memoryBounded: !r.memory || (r.memory.cacheWithinBound && r.memory.poolGrew === 0),
+    };
+    bench.results = r;
+    renderReport(r);
+    return r;
+  },
+};
+window.__BENCH__ = bench;
+
+// -- events ------------------------------------------------------------------
+
+$('q').addEventListener('input', (e) => {
+  query = { text: e.target.value, category: '', appsOnly: false };
+  list.setQuery(query);
+});
+$('run').addEventListener('click', () => bench.run('all'));
+$('fling').addEventListener('click', () => bench.run('fling'));
+$('checks').addEventListener('click', () => bench.run('checks'));
+$('reset').addEventListener('click', () => { selection.clear(); renderSelection(null); rebuild(); });
+for (const id of ['rows', 'delay', 'jitter', 'pagesize', 'cachep', 'chaos']) {
+  $(id).addEventListener('change', () => rebuild());
+}
+
+rebuild();
+renderSelection(null);
+requestAnimationFrame(liveTick);
+bench.ready = true;
+
+if (params.get('autorun') === '1') {
+  // Give layout one settled frame before measuring anything.
+  setTimeout(() => { bench.run('all').then(() => { window.__BENCH_DONE__ = true; }); }, 300);
+}
+</script>
+</body>
+</html>

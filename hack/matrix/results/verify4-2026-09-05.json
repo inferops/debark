@@ -1,0 +1,87 @@
+{
+  "schema_version": "debark.e2e.matrixresult/v1",
+  "generated_at": "2026-09-06T00:44:01.9425458Z",
+  "host": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.26.0"
+  },
+  "config": {
+    "workers": 1,
+    "fixture_filter": "basic-install-matrix",
+    "release_filter": "debian-12"
+  },
+  "rows": [
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-05T17:44:10.3260052-07:00",
+      "finished_at": "2026-09-05T17:44:39.001273-07:00",
+      "total_ms": 28675,
+      "stage_ms": {
+        "build": 5660,
+        "build-binary": 1516,
+        "bundle-transfer": 62,
+        "determinism": 9185,
+        "install": 554,
+        "snapshot-create": 148,
+        "target-setup": 4233,
+        "verify": 128
+      },
+      "bundle_size_bytes": 479438,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r0d7d2735/basic-install-matrix-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-05T17:44:39.4726911-07:00",
+      "finished_at": "2026-09-05T17:45:41.7029907-07:00",
+      "total_ms": 62230,
+      "stage_ms": {
+        "build": 22732,
+        "build-binary": 795,
+        "bundle-transfer": 65,
+        "determinism": 21482,
+        "install": 2966,
+        "snapshot-create": 425,
+        "target-setup": 7086,
+        "verify": 263
+      },
+      "bundle_size_bytes": 454630,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r0d7d2735/basic-install-matrix-debian-12-arm64/transcript.log"
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "pass": 2,
+    "fail": 0,
+    "blocked": 0,
+    "skipped": 0,
+    "timeout": 0,
+    "aborted": 0
+  }
+}

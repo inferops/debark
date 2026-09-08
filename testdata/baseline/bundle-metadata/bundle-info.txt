@@ -1,0 +1,13 @@
+built:         2026-09-03T20:31:26Z
+arch:          amd64
+release:       bookworm
+deb_count:     4
+size:          448K
+from_state:    /work/debark/testdata/baseline/../real-targets/debian-12-state.tar.gz
+mode:          incremental
+with_upgrades: 0
+recommends:    yes
+apt_packages:  2
+external_debs: 0
+last_added:    4
+last_removed:  0

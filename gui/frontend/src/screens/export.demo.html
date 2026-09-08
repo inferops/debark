@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>export screen — standalone harness</title>
+
+<!-- Load order is not optional: components.css reads tokens defined in tokens.css. -->
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="../design/components.css">
+
+<!--
+  export.demo.html — drives screens/export.js against a stubbed backend.
+
+  HOW TO RUN IT
+  -------------
+  ES modules cannot be fetched over file://, so open this through a local
+  static server rather than by double-clicking it:
+
+      cd frontend && python3 -m http.server 8000
+      # then http://localhost:8000/src/screens/export.demo.html
+
+  If the module fails to load you will see that instruction on the page.
+
+  This file makes no network request of any kind, loads no font and no icon
+  library, and contains no dependency. Everything below is a fake: no real
+  volume is enumerated and nothing is ever written to a disk.
+
+  The harness chrome (the control strip and the toast tray) uses a handful of
+  inline styles built from design tokens. The SCREEN itself uses only the
+  design system's components — that is the thing under test.
+-->
+</head>
+
+<body class="df-app">
+
+<div class="df-headerbar">
+  <span class="df-headerbar__title">export.js</span>
+  <span class="df-headerbar__subtitle df-mono">standalone harness · stubbed backend</span>
+  <div class="df-spacer"></div>
+  <div class="df-tabs" role="tablist" aria-label="Theme">
+    <button type="button" class="df-tab" role="tab" aria-selected="true"  data-theme-choice="system">System</button>
+    <button type="button" class="df-tab" role="tab" aria-selected="false" data-theme-choice="light">Light</button>
+    <button type="button" class="df-tab" role="tab" aria-selected="false" data-theme-choice="dark">Dark</button>
+  </div>
+</div>
+
+<div class="df-toolbar df-toolbar--sticky" style="flex-wrap:wrap;gap:var(--space-3);padding:var(--space-3) var(--space-4)">
+  <div class="df-toolbar__group">
+    <label class="df-field__label" for="c-drives">Drives</label>
+    <select id="c-drives" class="df-input" style="width:auto">
+      <option value="normal">All eight mounted</option>
+      <option value="none">None mounted</option>
+      <option value="error">Enumeration failed</option>
+      <option value="unsupported">Platform cannot enumerate</option>
+    </select>
+  </div>
+  <div class="df-toolbar__divider"></div>
+  <div class="df-toolbar__group">
+    <label class="df-field__label" for="c-plan">Plan</label>
+    <select id="c-plan" class="df-input" style="width:auto">
+      <option value="auto">From the chosen drive</option>
+      <option value="nofit">Force: will not fit</option>
+      <option value="warn">Force: FAT + 4 GB warnings</option>
+    </select>
+  </div>
+  <div class="df-toolbar__divider"></div>
+  <div class="df-toolbar__group">
+    <label class="df-field__label" for="c-run">Copy</label>
+    <select id="c-run" class="df-input" style="width:auto">
+      <option value="ok">Succeeds and verifies</option>
+      <option value="verifyfail">Verification fails</option>
+      <option value="removed">Drive pulled mid-copy</option>
+    </select>
+  </div>
+  <div class="df-toolbar__group">
+    <label class="df-field__label" for="c-flush">Flush</label>
+    <select id="c-flush" class="df-input" style="width:auto">
+      <option value="2000">Brief (2 s)</option>
+      <option value="18000" selected>Long stall (18 s)</option>
+    </select>
+  </div>
+  <div class="df-toolbar__divider"></div>
+  <div class="df-toolbar__group">
+    <label class="df-field__label" for="c-bundle">Bundle</label>
+    <select id="c-bundle" class="df-input" style="width:auto">
+      <option value="ok">Signed and complete</option>
+      <option value="unsigned">Unsigned</option>
+      <option value="incomplete">Build was incomplete</option>
+    </select>
+  </div>
+  <div class="df-toolbar__group">
+    <label class="df-field__label" for="c-verify">debark verify</label>
+    <select id="c-verify" class="df-input" style="width:auto">
+      <option value="signed">Intact and signed</option>
+      <option value="unsigned">Intact but unsigned</option>
+      <option value="bad">Fails</option>
+    </select>
+  </div>
+  <div class="df-spacer"></div>
+  <div class="df-toolbar__group">
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="c-remount">Remount every drive</button>
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" id="c-reset">Remount the screen</button>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="c-checks">Run verification checks</button>
+  </div>
+</div>
+
+<div id="toasts" class="df-stack df-stack--tight"
+     style="max-width:1040px;margin:0 auto;padding:var(--space-4) var(--space-6) 0"></div>
+
+<div id="loaderr" hidden
+     style="max-width:1040px;margin:0 auto;padding:var(--space-6)"></div>
+
+<!-- The real frame, not an approximation of it: .df-app__main bounds the
+     height and .df-app__pane is what the shell hands a screen — no padding, no
+     measure, and `overflow: auto` so the SCREEN's own column scrolls. A
+     harness that mounts into an unbounded block cannot reproduce the class of
+     bug where a flex child with `min-height: 0` collapses below its content
+     and a boxed list clips what is inside it, which is exactly what the first
+     run on WebKit2GTK found. -->
+<main class="df-app__main">
+  <div class="df-app__pane" id="screen-root"></div>
+</main>
+
+<script type="module">
+// The shell's own byte formatter, so this harness proves the screen reaches it
+// rather than carrying a private copy that can drift into different units.
+import { formatBytes as sharedFormatBytes } from '../shell/states.js';
+
+/* =========================================================================
+   1. Theme toggle — sets data-theme on the root element.
+   ========================================================================= */
+const themeTabs = document.querySelectorAll('[data-theme-choice]');
+for (const tab of themeTabs) {
+  tab.addEventListener('click', () => {
+    const choice = tab.dataset.themeChoice;
+    if (choice === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', choice);
+    for (const t of themeTabs) t.setAttribute('aria-selected', String(t === tab));
+  });
+}
+
+/* =========================================================================
+   2. Fake data.
+
+   Ordering here is the ordering internal/export sortVolumes produces:
+   removable first, then everything else by path, with the machine's own root
+   filesystem forced last. The screen must not reorder it.
+   ========================================================================= */
+
+const GB = 1000 * 1000 * 1000;
+const MB = 1000 * 1000;
+
+function baseVolumes() {
+  return [
+    { path: '/media/operator/FIELD-01', label: 'FIELD-01', device: '/dev/sdb1', fs_type: 'exfat',
+      total_bytes: 64 * GB, free_bytes: 47.3 * GB, kind: 'removable', removable: true,
+      read_only: false, writable: true, note: '' },
+
+    { path: '/media/operator/FAT32-32G', label: 'FAT32-32G', device: '/dev/sde1', fs_type: 'vfat',
+      total_bytes: 32 * GB, free_bytes: 28.1 * GB, kind: 'removable', removable: true,
+      read_only: false, writable: true, note: '' },
+
+    { path: '/media/operator/TINY-2GB', label: 'TINY-2GB', device: '/dev/sdc1', fs_type: 'vfat',
+      total_bytes: 2 * GB, free_bytes: 512 * MB, kind: 'removable', removable: true,
+      read_only: false, writable: true, note: '' },
+
+    { path: '/media/operator/BACKUP-RO', label: 'BACKUP-RO', device: '/dev/sdd1', fs_type: 'vfat',
+      total_bytes: 16 * GB, free_bytes: 8.4 * GB, kind: 'removable', removable: true,
+      read_only: true, writable: false, note: 'mounted read-only' },
+
+    { path: '/media/operator/SDCARD', label: 'SDCARD', device: '/dev/mmcblk0p1', fs_type: 'ext4',
+      total_bytes: 32 * GB, free_bytes: 30.2 * GB, kind: 'removable', removable: true,
+      read_only: false, writable: false, note: 'no write permission for this user' },
+
+    { path: '/mnt/bundles', label: 'bundles', device: '//fileserver/bundles', fs_type: 'cifs',
+      total_bytes: 8000 * GB, free_bytes: 3200 * GB, kind: 'network', removable: false,
+      read_only: false, writable: true, note: '' },
+
+    { path: '/srv/data', label: 'data', device: '/dev/nvme0n1p3', fs_type: 'ext4',
+      total_bytes: 2000 * GB, free_bytes: 912 * GB, kind: 'fixed', removable: false,
+      read_only: false, writable: true, note: '' },
+
+    { path: '/', label: '/', device: '/dev/nvme0n1p2', fs_type: 'ext4',
+      total_bytes: 512 * GB, free_bytes: 41.6 * GB, kind: 'fixed', removable: false,
+      read_only: false, writable: true, note: '' },
+  ];
+}
+
+const BUNDLE_PATH = '/home/operator/bundles/airgap-2026-09';
+const BUNDLE_FILES = 1284;
+const BUNDLE_BYTES = 3.42 * GB;
+const MARGIN_BYTES = 68.4 * MB;
+const REQUIRED_BYTES = 3.495 * GB;
+const MARKER = '.debark-export-incomplete';
+
+/* The exporter's own account of what it checked. These live in the ENGINE and
+   cross on ExportStatus; the screen must render them rather than carry a copy,
+   which is exactly why the skipped pair below says something else entirely. */
+const VERIFY_METHOD =
+  'Every file was hashed with SHA-256 as it was written, flushed to the drive with fsync, ' +
+  'then re-read from the drive and hashed again; both the size on the drive and the two ' +
+  'digests had to match, for every file.';
+const VERIFY_CAVEAT =
+  'This proves the drive accepted and returned exactly the bytes that were read from the ' +
+  'bundle. It cannot promise those flash cells will still read back correctly months from ' +
+  'now — check the bundle on the offline machine before you rely on it.';
+const SKIPPED_METHOD =
+  'Nothing was read back. The files were written and flushed to the drive, and no digest ' +
+  'was compared against what the drive returned.';
+const SKIPPED_CAVEAT =
+  'A copy that silently went wrong is indistinguishable from a good one here. This is not ' +
+  'a checked bundle and the incomplete marker has not been removed.';
+
+/* Mirrors internal/export humanBytes, so the harness's own sentences read the
+   same way the engine's do. */
+// The engine's own sentences are built with the SAME formatter the screen
+// uses, so a fixture cannot quietly demonstrate a units mismatch that the real
+// app would not have.
+function humanBytes(n) {
+  return sharedFormatBytes(n) || 'an unknown amount';
+}
+
+/* =========================================================================
+   3. Harness state, driven by the control strip.
+   ========================================================================= */
+
+const D = {
+  drives: 'normal',
+  plan: 'auto',
+  run: 'ok',
+  flushMs: 18000,
+  bundle: 'ok',
+  verify: 'signed',
+  volumes: baseVolumes(),
+  removedPaths: new Set(),
+  // Destinations an interrupted copy has marked. The engine writes the marker
+  // before its first byte and only a passing verification removes it.
+  markedDests: new Set(),
+  chosenFolder: '',
+};
+
+const bind = (id, key, cast) => {
+  const el = document.getElementById(id);
+  el.addEventListener('change', () => { D[key] = cast ? cast(el.value) : el.value; });
+  D[key] = cast ? cast(el.value) : el.value;
+};
+bind('c-drives', 'drives');
+bind('c-plan', 'plan');
+bind('c-run', 'run');
+bind('c-flush', 'flushMs', Number);
+bind('c-bundle', 'bundle');
+bind('c-verify', 'verify');
+
+document.getElementById('c-remount').addEventListener('click', () => { D.removedPaths.clear(); });
+
+/* =========================================================================
+   4. The event bus and the ctx the shell would normally supply.
+   ========================================================================= */
+
+const listeners = new Map();
+function emit(name, payload) {
+  for (const fn of (listeners.get(name) || []).slice()) {
+    try { fn(payload); } catch (e) { console.error('[demo] handler for ' + name, e); }
+  }
+}
+
+const toastTray = document.getElementById('toasts');
+function toast(kind, message) {
+  const el = document.createElement('div');
+  el.className = 'df-banner df-banner--' + (kind === 'danger' ? 'danger' : kind === 'success' ? 'success' : kind === 'warning' ? 'warning' : 'info');
+  el.setAttribute('role', kind === 'danger' ? 'alert' : 'status');
+  const body = document.createElement('div');
+  body.className = 'df-banner__body';
+  const p = document.createElement('p');
+  p.className = 'df-banner__text';
+  p.textContent = message;
+  body.appendChild(p);
+  const icon = document.createElement('span');
+  el.appendChild(icon);
+  el.appendChild(body);
+  el.appendChild(Object.assign(document.createElement('div'), { className: 'df-banner__actions' }));
+  toastTray.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+const ctx = {
+  go() {},
+  back() {},
+  on(name, fn) {
+    if (!listeners.has(name)) listeners.set(name, []);
+    listeners.get(name).push(fn);
+    return () => ctx.off(name, fn);
+  },
+  off(name, fn) {
+    const a = listeners.get(name) || [];
+    const i = a.indexOf(fn);
+    if (i >= 0) a.splice(i, 1);
+  },
+  bindings: null,     // filled in below
+  toast,
+  // Only the formatter. The screen must reach the SHARED byte formatter rather
+  // than carry a private decimal one; it must still render its own loading /
+  // empty / error markup when the shell supplies none.
+  states: { formatBytes: sharedFormatBytes },
+  theme: { get() { return document.documentElement.getAttribute('data-theme') || 'system'; } },
+};
+
+/* =========================================================================
+   5. The stubbed backend. Same shapes as internal/app/types.go.
+   ========================================================================= */
+
+let exportStatus = { running: false, finished: false, cancelled: false, verified: false,
+                     verify_skipped: false, progress: { phase: 'idle', fraction: -1 } };
+let verifyStatus = null;
+let verifyManual = false;
+let verifyStarts = 0;
+let verifyReads = [];
+let verifyStartError = null;
+let verifyStartDelay = 0;
+let runTimers = [];
+let runCancelled = false;
+
+function clearRun() {
+  for (const t of runTimers) { clearTimeout(t); clearInterval(t); }
+  runTimers = [];
+}
+function later(fn, ms) { const t = setTimeout(fn, ms); runTimers.push(t); return t; }
+
+function visibleVolumes() {
+  return D.volumes.filter((v) => !D.removedPaths.has(v.path));
+}
+
+function fingerprintOf(vols) {
+  return vols.map((v) => v.path + ':' + v.free_bytes + ':' + v.writable + ':' + v.read_only).join('|');
+}
+
+function volumeAt(path) {
+  return visibleVolumes().find((v) => v.path === path) || null;
+}
+
+function hostVolumeOf(path) {
+  let best = null;
+  for (const v of visibleVolumes()) {
+    const p = v.path.endsWith('/') ? v.path : v.path + '/';
+    const t = path.endsWith('/') ? path : path + '/';
+    if (t === p || t.startsWith(p)) if (!best || v.path.length > best.path.length) best = v;
+  }
+  return best;
+}
+
+const App = {
+  /* ---------------- source ---------------- */
+  async BuildStatus() {
+    return {
+      running: false, finished: true, cancelled: false,
+      progress: { phase: 'done' }, item_count: 412, event_count: 900,
+      summary: {
+        bundle_path: BUNDLE_PATH,
+        bundle_id: 'b-2026-09-06-01',
+        signed: D.bundle !== 'unsigned',
+        exit_class: D.bundle === 'incomplete' ? 'incomplete' : 'success',
+        stats: {},
+      },
+    };
+  },
+
+  /* ---------------- destinations ---------------- */
+  async ListVolumes() {
+    await tick();
+    if (D.drives === 'unsupported') return { volumes: [], supported: false };
+    if (D.drives === 'error') {
+      return {
+        volumes: [], supported: true,
+        error: {
+          code: 'export.failed',
+          message: 'The list of mounted filesystems could not be read.',
+          hint: 'Check that /proc is mounted, then try again. You can also choose a folder instead.',
+          details: 'read /proc/self/mountinfo: permission denied',
+          retryable: true,
+        },
+      };
+    }
+    const vols = D.drives === 'none' ? [] : visibleVolumes();
+    return { volumes: vols, supported: true, fingerprint: fingerprintOf(vols) };
+  },
+
+  async ChooseDirectory(title, _defaultDir) {
+    await tick(120);
+    if (String(title).toLowerCase().startsWith('choose the bundle')) {
+      return { path: '/home/operator/bundles/airgap-2026-09', paths: ['/home/operator/bundles/airgap-2026-09'], cancelled: false };
+    }
+    D.chosenFolder = '/home/operator/staging/offline-drop';
+    return { path: D.chosenFolder, paths: [D.chosenFolder], cancelled: false };
+  },
+
+  /* ---------------- destination inspection ----------------
+     Two stat calls in the engine; it writes nothing and it is the only way the
+     operator learns that a folder holding a half-copied bundle is not a
+     finished one. */
+  async InspectDestination(opts) {
+    await tick(40);
+    const sub = opts.subdir || 'airgap-2026-09';
+    const path = (opts.destination === '/' ? '' : opts.destination) + '/' + sub;
+    const incomplete = D.markedDests.has(opts.destination);
+    return {
+      destination: opts.destination || '',
+      path,
+      exists: incomplete,
+      incomplete,
+      marker_name: MARKER,
+      message: incomplete
+        ? MARKER + ' is in ' + path + ': an earlier copy was interrupted before it could be verified, so whatever is in that folder is not a usable bundle.'
+        : undefined,
+    };
+  },
+
+  /* ---------------- plan ---------------- */
+  async PlanExport(opts) {
+    await tick(220);
+    if (!opts.destination) {
+      return { plan: {}, error: { code: 'invalid', message: 'No destination was chosen.', hint: 'Pick a mounted drive or a folder to copy the bundle into.' } };
+    }
+    const sub = opts.subdir || 'airgap-2026-09';
+    const destDir = (opts.destination === '/' ? '' : opts.destination) + '/' + sub;
+
+    const vol = volumeAt(opts.destination);
+    let free = vol && vol.total_bytes > 0 ? vol.free_bytes : -1;
+    if (D.plan === 'nofit') free = 512 * MB;
+
+    if (free >= 0 && free < REQUIRED_BYTES) {
+      const short = REQUIRED_BYTES - free;
+      return {
+        plan: {},
+        error: {
+          code: 'export.failed',
+          message: 'The drive does not have room for this bundle: it needs ' + humanBytes(REQUIRED_BYTES) +
+                   ' (' + humanBytes(BUNDLE_BYTES) + ' of files plus a ' + humanBytes(MARGIN_BYTES) +
+                   ' safety margin) but only ' + humanBytes(free) + ' is free.',
+          hint: 'Free up ' + humanBytes(short) + ' on the drive, or choose a larger one, then export again.',
+          details: 'check ' + destDir,
+          retryable: false,
+        },
+      };
+    }
+
+    const warnings = [];
+    /* The engine emits these from the bundle walk and does NOT know the
+       destination filesystem, so it warns whenever the bundle contains such a
+       file. The harness gates them on a FAT-family destination only so that a
+       clean plan is also demonstrable. */
+    const fat = D.plan === 'warn' || (vol && (vol.fs_type === 'vfat' || vol.fs_type === 'exfat'));
+    if (fat) {
+      warnings.push('pool/main/l/linux/linux-image-6.8.0-31-generic-dbgsym_6.8.0-31.31_amd64.deb is 4.61 GB, which a FAT32 drive cannot store — it needs exFAT or ext4.');
+      warnings.push('evidence/report:2026-09-06T11:04:12Z.json may not be storable on a FAT or exFAT drive because it contains \':\'.');
+      warnings.push('pool/main/w/wget/wget_1.21.4-1ubuntu4_amd64.deb. may not be storable on a FAT or exFAT drive because it ends with a dot.');
+    }
+    if (free < 0) {
+      warnings.push('The free space on this drive could not be measured, so the export cannot promise the bundle (' + humanBytes(BUNDLE_BYTES) + ') will fit.');
+    }
+
+    return {
+      plan: {
+        source_dir: opts.bundle_path || BUNDLE_PATH,
+        dest_dir: destDir,
+        total_files: BUNDLE_FILES,
+        total_bytes: BUNDLE_BYTES,
+        required_bytes: REQUIRED_BYTES,
+        free_bytes: free,
+        margin_bytes: MARGIN_BYTES,
+        warnings,
+        destination_incomplete: D.markedDests.has(opts.destination),
+      },
+    };
+  },
+
+  /* ---------------- the copy ---------------- */
+  async StartExport(opts) {
+    if (exportStatus.running) return { ok: false, error: { code: 'busy', message: 'A copy is already running.' } };
+    clearRun();
+    runCancelled = false;
+
+    const sub = opts.subdir || 'airgap-2026-09';
+    const destDir = (opts.destination === '/' ? '' : opts.destination) + '/' + sub;
+    const skip = !!opts.skip_verify;
+    const started = Date.now();
+
+    exportStatus = {
+      running: true, finished: false, cancelled: false, verified: false, verify_skipped: skip,
+      bundle_path: opts.bundle_path || BUNDLE_PATH,
+      destination: opts.destination,
+      destination_path: destDir,
+      started_at: new Date().toISOString(),
+      progress: { phase: 'checking', message: 'Checking the destination', fraction: -1,
+                  files_done: 0, files_total: 0, bytes_done: 0, bytes_total: 0, bytes_per_sec: 0 },
+    };
+    // The exporter writes its incomplete marker BEFORE the first byte.
+    D.markedDests.add(opts.destination);
+    emit('export:started', exportStatus);
+
+    const finish = (patch) => {
+      clearRun();
+      exportStatus = Object.assign({}, exportStatus, { running: false, finished: true,
+        finished_at: new Date().toISOString() }, patch.status || {});
+      // Only a passing verification removes the mark.
+      if (exportStatus.verified) D.markedDests.delete(opts.destination);
+      emit('export:finished', {
+        ok: !!patch.ok, cancelled: !!patch.cancelled, status: exportStatus,
+        duration_ms: Date.now() - started, error: patch.error || null,
+      });
+    };
+    App.__finish = finish;
+    App.__destDir = destDir;
+
+    /* --- checking ------------------------------------------------------ */
+    later(() => {
+      /* --- copy: ~10 Hz for five seconds, exactly like the engine ------- */
+      const TICKS = 50;
+      const t0 = Date.now();
+      let i = 0;
+      const iv = setInterval(() => {
+        if (runCancelled) return;
+        i++;
+        const frac = Math.min(1, i / TICKS);
+        const bytes = Math.round(BUNDLE_BYTES * frac);
+        const files = Math.round(BUNDLE_FILES * frac);
+        exportStatus.progress = {
+          phase: 'copying',
+          file: 'pool/main/' + 'abcdefgh'[i % 8] + '/pkg-' + (files || 1) + '/pkg-' + (files || 1) + '_1.0-1_amd64.deb',
+          files_done: files, files_total: BUNDLE_FILES,
+          bytes_done: bytes, bytes_total: BUNDLE_BYTES,
+          bytes_per_sec: Math.round(bytes / Math.max(0.1, (Date.now() - t0) / 1000)),
+          fraction: frac,
+        };
+        emit('export:progress', exportStatus.progress);
+
+        if (D.run === 'removed' && i === 22) {
+          clearInterval(iv);
+          const file = destDir + '/pool/main/l/libc6/libc6_2.39-0ubuntu8.3_amd64.deb';
+          D.removedPaths.add(opts.destination);
+          finish({
+            ok: false,
+            status: { verified: false,
+              summary: 'The export stopped after ' + files + ' of ' + BUNDLE_FILES + ' files (' + humanBytes(bytes) + '). ' +
+                       'The drive stopped responding while writing ' + file + ' — it looks like it was unplugged.' },
+            error: {
+              code: 'export.failed',
+              message: 'The drive stopped responding while writing ' + file + ' — it looks like it was unplugged.',
+              hint: 'Plug the drive back in, wait for the system to mount it, and export again from the start. Do not use what is on the drive now.',
+              details: 'write ' + file + ': input/output error',
+              retryable: true,
+            },
+          });
+          return;
+        }
+
+        if (i >= TICKS) {
+          clearInterval(iv);
+          /* --- flush: ONE event, then silence, exactly like the engine --- */
+          exportStatus.progress = {
+            phase: 'flushing', file: '',
+            files_done: BUNDLE_FILES, files_total: BUNDLE_FILES,
+            bytes_done: BUNDLE_BYTES, bytes_total: BUNDLE_BYTES,
+            bytes_per_sec: 0, fraction: 1,
+          };
+          emit('export:progress', exportStatus.progress);
+
+          later(() => {
+            if (skip) {
+              finish({ ok: true, status: { verified: false, verify_skipped: true,
+                summary: 'Copied ' + BUNDLE_FILES + ' files (' + humanBytes(BUNDLE_BYTES) + ') to ' + destDir +
+                         ' in 24s. Verification was skipped, so the copy has not been checked.',
+                verify_method: SKIPPED_METHOD, verify_caveat: SKIPPED_CAVEAT,
+                files_checked: 0, bytes_checked: 0,
+                mismatch_count: 0, mismatches_truncated: false,
+                progress: { phase: 'finished', fraction: 1, files_done: BUNDLE_FILES, files_total: BUNDLE_FILES,
+                            bytes_done: BUNDLE_BYTES, bytes_total: BUNDLE_BYTES, bytes_per_sec: 0 } } });
+              return;
+            }
+            /* --- verify: determinate again ----------------------------- */
+            let j = 0;
+            const VT = 20;
+            const vi = setInterval(() => {
+              if (runCancelled) return;
+              j++;
+              const f = Math.min(1, j / VT);
+              exportStatus.progress = {
+                phase: 'verifying',
+                file: 'pool/main/n/nginx/nginx-core_1.24.0-2ubuntu7.1_amd64.deb',
+                files_done: Math.round(BUNDLE_FILES * f), files_total: BUNDLE_FILES,
+                bytes_done: Math.round(BUNDLE_BYTES * f), bytes_total: BUNDLE_BYTES,
+                bytes_per_sec: 0, fraction: f,
+              };
+              emit('export:progress', exportStatus.progress);
+              if (j < VT) return;
+              clearInterval(vi);
+
+              if (D.run === 'verifyfail') {
+                const first = 'pool/main/n/nginx/nginx-core_1.24.0-2ubuntu7.1_amd64.deb';
+                const msg = 'The copy on the drive does not match the bundle: 3 files did not survive the copy, ' +
+                            'starting with ' + first + ' (content differs).';
+                const hint = 'Do not take this drive to the offline machine. Export again, ideally to a different ' +
+                             'drive — a drive that corrupts a copy usually does it twice. The folder is still marked ' +
+                             'incomplete by ' + MARKER + '.';
+                finish({
+                  ok: false,
+                  status: { verified: false,
+                    summary: 'The export stopped after ' + BUNDLE_FILES + ' of ' + BUNDLE_FILES + ' files (' +
+                             humanBytes(BUNDLE_BYTES) + '). ' + msg + ' ' + hint,
+                    verify_method: VERIFY_METHOD, verify_caveat: VERIFY_CAVEAT,
+                    files_checked: BUNDLE_FILES, bytes_checked: BUNDLE_BYTES,
+                    mismatch_count: 3, mismatches_truncated: false,
+                    mismatches: [
+                      { path: first, reason: 'content',
+                        detail: 'the drive returned a file of exactly the right length holding different bytes, which a size check alone cannot see',
+                        want_bytes: 612340, got_bytes: 612340,
+                        want_sha256: 'sha256:8c21be4f0a17d3c95e6b20af41d8730c9b5e2f6a8d41c07b3e9a5d20f81c6b44',
+                        got_sha256: 'sha256:3f9a1c77e0b24d8a15c6f3029ab7d451e8c02f6b9d5a3e17408cbd92f6a1e053' },
+                      { path: 'pool/main/o/openssl/libssl3t64_3.0.13-0ubuntu3_amd64.deb', reason: 'size',
+                        want_bytes: 2461176, got_bytes: 2316480 },
+                      { path: 'dists/noble/main/binary-amd64/Packages.gz', reason: 'missing',
+                        detail: 'not on the drive at all', want_bytes: 1284096, got_bytes: 0 },
+                    ] },
+                  error: {
+                    code: 'export.failed', message: msg, hint,
+                    details: 'verify ' + destDir + '\n' +
+                             first + ': content differs (sha256 3f9a1c… on the drive, 8c21be… expected)\n' +
+                             'pool/main/o/openssl/libssl3t64_3.0.13-0ubuntu3_amd64.deb: size differs (2 316 480 on the drive, 2 461 176 expected)\n' +
+                             'dists/noble/main/binary-amd64/Packages.gz: missing from the drive',
+                    retryable: true,
+                  },
+                });
+                return;
+              }
+
+              finish({ ok: true, status: { verified: true, verify_skipped: false,
+                summary: 'Copied ' + BUNDLE_FILES + ' files (' + humanBytes(BUNDLE_BYTES) + ') to ' + destDir +
+                         ' in 27s and verified every byte with SHA-256.',
+                verify_method: VERIFY_METHOD, verify_caveat: VERIFY_CAVEAT,
+                files_checked: BUNDLE_FILES, bytes_checked: BUNDLE_BYTES,
+                mismatch_count: 0, mismatches_truncated: false,
+                progress: { phase: 'finished', fraction: 1, files_done: BUNDLE_FILES, files_total: BUNDLE_FILES,
+                            bytes_done: BUNDLE_BYTES, bytes_total: BUNDLE_BYTES, bytes_per_sec: 0 } } });
+            }, 100);
+            runTimers.push(vi);
+          }, D.flushMs);
+        }
+      }, 100);
+      runTimers.push(iv);
+    }, 600);
+
+    return { ok: true };
+  },
+
+  async CancelExport() {
+    if (!exportStatus.running) return { ok: true };
+    runCancelled = true;
+    const p = exportStatus.progress || {};
+    const files = p.files_done || 0;
+    const bytes = p.bytes_done || 0;
+    const destDir = App.__destDir;
+    /* The engine stops within one buffer's worth of copying plus whatever the
+       in-flight write takes to return — never instantly. */
+    setTimeout(() => {
+      App.__finish({
+        ok: false, cancelled: true,
+        status: {
+          cancelled: true, verified: false,
+          summary: 'The export stopped after ' + files + ' of ' + BUNDLE_FILES + ' files (' + humanBytes(bytes) + '). ' +
+                   'The export was cancelled before it finished. The drive now holds a partly copied bundle; the file ' +
+                   MARKER + ' in the destination folder marks it as unusable. Export again to replace it, or delete the ' +
+                   'folder, before taking the drive to the offline machine.',
+          progress: { phase: 'cancelled', fraction: p.fraction || -1, files_done: files, files_total: BUNDLE_FILES,
+                      bytes_done: bytes, bytes_total: BUNDLE_BYTES, bytes_per_sec: 0 },
+        },
+      });
+    }, 700);
+    return { ok: true };
+  },
+
+  async ExportStatus() { return exportStatus; },
+  async LifecycleStatus() { return { build_running: false, export_running: !!exportStatus.running, stopping: false, unsaved_selection: false, target_generation: 1, selection_revision: 1 }; },
+
+  /* ---------------- debark verify ---------------- */
+  async StartVerify(bundlePath) {
+    verifyStarts++;
+    if (verifyStartDelay) await tick(verifyStartDelay);
+    if (verifyStartError) return { ok: false, error: verifyStartError };
+    if (verifyStatus?.running) return { ok: false, error: { message: 'A verification is already running.' } };
+    const startedAt = new Date().toISOString();
+    verifyStatus = { running: true, finished: false, cancelled: false, bundle_path: bundlePath, ok: false, signed: false, started_at: startedAt };
+    emit('verify:started', verifyStatus);
+    if (verifyManual) return { ok: true };
+    setTimeout(() => {
+      if (verifyStatus?.started_at !== startedAt) return;
+      if (D.verify === 'bad') {
+        verifyStatus = {
+          running: false, finished: true, cancelled: false, bundle_path: bundlePath,
+          ok: false, signed: true, exit_class: 'integrity',
+          findings: [
+            { severity: 'error', code: 'digest_mismatch', message: 'The digest recorded in the manifest does not match the file on disk.',
+              path: 'pool/main/n/nginx/nginx-core_1.24.0-2ubuntu7.1_amd64.deb',
+              hint: 'Expected sha256:8c21be…, found sha256:3f9a1c….' },
+            { severity: 'error', code: 'missing_file', message: 'A file the manifest lists is not in the bundle.',
+              path: 'dists/noble/main/binary-amd64/Packages.gz' },
+            { severity: 'warning', message: 'The bundle was produced by a newer debark than the one verifying it.' },
+          ],
+        };
+      } else {
+        verifyStatus = {
+          running: false, finished: true, cancelled: false, bundle_path: bundlePath,
+          ok: true, signed: D.verify === 'signed', exit_class: 'success',
+          findings: D.verify === 'unsigned'
+            ? [{ severity: 'warning', message: 'No signature block was found. The offline machine cannot check who produced this bundle.' }]
+            : [],
+        };
+      }
+      verifyStatus.started_at = startedAt;
+      verifyStatus.finished_at = new Date().toISOString();
+      emit('verify:finished', { ok: verifyStatus.ok, cancelled: false, status: verifyStatus, duration_ms: 1500 });
+    }, 1500);
+    return { ok: true };
+  },
+
+  async CancelVerify() { return { ok: true }; },
+  async VerifyStatus() {
+    const snapshot = structuredClone(verifyStatus || { running: false, finished: false, cancelled: false, ok: false, signed: false });
+    const read = verifyReads.shift() || {};
+    if (read.delay) await tick(read.delay);
+    if (read.error) throw new Error(read.error);
+    return snapshot;
+  },
+
+  /* ---------------- small services ---------------- */
+  async CopyToClipboard(text) {
+    try { await navigator.clipboard.writeText(text); } catch (_) { /* file:// often refuses */ }
+    return { ok: true };
+  },
+  async RevealPath(path) {
+    toast('info', '[demo] a file manager would open ' + path);
+    return { ok: true };
+  },
+};
+
+function tick(ms) { return new Promise((r) => setTimeout(r, ms === undefined ? 60 : ms)); }
+
+/* Wails puts the bindings here; the screen falls back to it when ctx.bindings
+   is absent, so the harness exercises both routes. */
+window.go = { app: { App } };
+ctx.bindings = App;
+
+/* =========================================================================
+   6. Mount the screen.
+   ========================================================================= */
+
+const root = document.getElementById('screen-root');
+let screen = null;
+
+function boot(mod) {
+  screen = mod;
+  document.title = mod.title + ' — harness';
+  screen.mount(root, ctx);
+  screen.show(ctx, { bundlePath: BUNDLE_PATH, sourceMode: 'result', returnTo: 'build' });
+}
+
+document.getElementById('c-reset').addEventListener('click', () => {
+  if (!screen) return;
+  screen.hide();
+  screen.destroy();
+  listeners.clear();
+  root.replaceChildren();
+  clearRun();
+  exportStatus = { running: false, finished: false, cancelled: false, verified: false,
+                   verify_skipped: false, progress: { phase: 'idle', fraction: -1 } };
+  verifyStatus = null;
+  screen.mount(root, ctx);
+  screen.show(ctx, { bundlePath: BUNDLE_PATH, sourceMode: 'result', returnTo: 'build' });
+});
+
+/* The shell hands screens the real loading/empty/error helpers as ctx.states
+   . Wire them up so the harness exercises the same code path the
+   app does; if that module is missing or mid-edit, the screen falls back to
+   its own rendering and the harness keeps working. */
+try {
+  ctx.states = (await import('../shell/states.js')).default || null;
+} catch (err) {
+  ctx.states = null;
+  console.warn('[demo] shell/states.js unavailable; the screen will use its own fallback', err);
+}
+toast('info', ctx.states ? '[demo] using ctx.states from shell/states.js' : '[demo] ctx.states unavailable — using the screen fallback');
+
+async function runVerificationChecks() {
+  if (!screen || window.__EXPORT_CHECKS__?.finished === false) return;
+  const report = { passed: [], errors: [], finished: false };
+  window.__EXPORT_CHECKS__ = report;
+  const check = (condition, message) => { if (!condition) throw new Error(message); report.passed.push(message); };
+  const contains = text => root.innerText.includes(text);
+  const visible = node => !node.closest('[hidden]') && node.getClientRects().length && !node.closest('details:not([open]) > :not(summary)');
+  async function click(name) {
+    if (name === 'Check bundle signature') {
+      const summary = [...root.querySelectorAll('summary')].find(node => node.textContent === 'Installation and signature details');
+      if (summary && !summary.parentElement.open) { summary.scrollIntoView({ block: 'nearest' }); summary.click(); await tick(80); }
+    }
+    const matches = [...root.querySelectorAll('button')].filter(node => visible(node) && node.textContent.trim() === name);
+    check(matches.length === 1, 'one visible ' + name + ' action');
+    const node = matches[0]; node.focus({ preventScroll: true }); node.scrollIntoView({ block: 'nearest' });
+    await tick(80);
+    const rect = node.getBoundingClientRect();
+    check(rect.top >= 0 && rect.bottom <= innerHeight, name + ' is in the viewport');
+    node.click(); await tick(100);
+  }
+  function finish(patch = {}, notify = true) {
+    verifyStatus = { ...verifyStatus, running: false, finished: true, cancelled: false, ok: true, signed: true,
+      finished_at: new Date().toISOString(), ...patch };
+    if (notify) emit('verify:finished', { ok: verifyStatus.ok, status: structuredClone(verifyStatus) });
+  }
+  async function remount() {
+    screen.hide(); screen.destroy(); listeners.clear(); root.replaceChildren();
+    screen.mount(root, ctx); await screen.show(ctx, {}); await tick(100);
+  }
+  try {
+    clearRun(); verifyManual = true; verifyStatus = null; verifyReads = []; verifyStartError = null; verifyStarts = 0;
+    const destination = '/media/operator/FIELD-01/airgap-2026-09';
+    exportStatus = { running: false, finished: true, cancelled: false, verified: true, verify_skipped: false,
+      bundle_path: BUNDLE_PATH, destination: '/media/operator/FIELD-01', destination_path: destination,
+      started_at: '2026-01-01T00:00:00Z', finished_at: '2026-01-01T00:00:02Z',
+      progress: { phase: 'finished', fraction: 1, files_done: BUNDLE_FILES, files_total: BUNDLE_FILES, bytes_done: BUNDLE_BYTES, bytes_total: BUNDLE_BYTES } };
+    await remount();
+    check(contains('Copy integrity checked'), 'checked copy recovers from authoritative status');
+    const details = [...root.querySelectorAll('summary')].find(node => node.textContent === 'Installation and signature details');
+    check(!!details, 'signature check disclosure is available'); details.click(); await tick(80);
+    await click('Check bundle signature');
+    check(verifyStarts === 1 && contains('Running debark verify'), 'one explicit check starts verification');
+    await click('Check bundle signature');
+    check(verifyStarts === 1, 'repeated click does not start another verification');
+    finish(); await tick(100);
+    const first = structuredClone(verifyStatus);
+    check(contains('the bundle is intact and signed'), 'authoritative completed check is shown');
+    emit('verify:started', { ...first, running: true, finished: false }); await tick(100);
+    check(!contains('Running debark verify') && contains('the bundle is intact and signed'), 'late started payload cannot resurrect a completed check');
+    verifyStartDelay = 450;
+    await click('Check bundle signature');
+    emit('verify:finished', { ok: true, status: first }); await tick(100);
+    check(contains('Running debark verify') && !contains('the bundle is intact and signed'), 'previous status cannot dismiss a queued StartVerify action');
+    await click('Check bundle signature');
+    check(verifyStarts === 2, 'queued verification also rejects a duplicate click');
+    await tick(350); verifyStartDelay = 0;
+    emit('verify:finished', { ok: true, status: first }); await tick(100);
+    check(verifyStarts === 2 && contains('Running debark verify') && !contains('the bundle is intact and signed'), 'old same-path success cannot replace a newer running check');
+    verifyReads.push({ delay: 300 });
+    emit('verify:started', first);
+    finish({ ok: false, error: { message: 'Current check found a mismatch.' } });
+    await tick(420);
+    check(contains('Current check found a mismatch.') && !contains('Running debark verify'), 'newer terminal status wins over an older delayed running reply');
+    verifyReads.push({ delay: 300 }); emit('verify:finished', { ok: true, status: first });
+    await click('Check bundle signature'); await tick(350);
+    check(contains('Running debark verify') && !contains('Current check found a mismatch.'), 'a delayed previous terminal reply cannot overwrite a new check');
+    screen.hide();
+    finish({ ok: false, cancelled: true, error: undefined }, false);
+    await screen.show(ctx, {}); await tick(100);
+    check(contains('Verification was cancelled'), 'returning recovers cancellation without a terminal event');
+    verifyReads.push({ error: 'offline bridge' }); emit('verify:finished', { ok: true, status: first }); await tick(100);
+    check(contains('Verification status is unavailable.') && !contains('the bundle is intact and signed'), 'unavailable status never reuses payload success');
+    await click('Retry verification status');
+    check(contains('Verification was cancelled'), 'status retry restores the authoritative cancellation');
+    verifyStartError = { message: 'The verifier could not be launched.' };
+    await click('Check bundle signature');
+    check(contains('The verifier could not be launched.') && !contains('Running debark verify'), 'start failure remains actionable');
+    verifyStartError = null;
+    verifyStatus = { ...first, bundle_path: '/another/copied/bundle' }; emit('verify:finished', { status: first }); await tick(100);
+    check(!contains('the bundle is intact and signed') && !contains('Running debark verify'), 'another destination is never attributed to this copy');
+    verifyStatus = first;
+    exportStatus = { ...exportStatus, started_at: '2099-01-01T00:00:00Z', finished_at: '2099-01-01T00:00:02Z' };
+    await remount();
+    check(!contains('the bundle is intact and signed'), 'a check before a later copy of the same path is not reused');
+    verifyStatus = { ...first, started_at: exportStatus.finished_at, finished_at: exportStatus.finished_at };
+    emit('verify:finished', { status: first }); await tick(100);
+    check(!contains('the bundle is intact and signed'), 'same-second old evidence remains unconfirmed without an in-session check');
+    verifyReads.push({ delay: 300 }); emit('verify:finished', { status: first });
+    await click('Copy to another drive'); await tick(350);
+    check(!contains('the bundle is intact and signed') && !contains('Running debark verify'), 'another-copy reset invalidates an in-flight verification reply');
+  } catch (error) { report.errors.push(String(error.stack || error)); }
+  finally { verifyManual = false; verifyStartError = null; verifyStartDelay = 0; report.finished = true; }
+  toast(report.errors.length ? 'danger' : 'success', report.errors[0] || report.passed.length + ' verification checks passed.');
+}
+document.getElementById('c-checks').addEventListener('click', runVerificationChecks);
+
+import('./export.js')
+  .then((m) => { boot(m.default); if (new URLSearchParams(location.search).has('autorun')) setTimeout(runVerificationChecks, 400); })
+  .catch((err) => {
+    const box = document.getElementById('loaderr');
+    box.hidden = false;
+    const b = document.createElement('div');
+    b.className = 'df-banner df-banner--danger';
+    b.setAttribute('role', 'alert');
+    const body = document.createElement('div');
+    body.className = 'df-banner__body';
+    const t = document.createElement('p');
+    t.className = 'df-banner__title';
+    t.textContent = 'export.js could not be loaded';
+    const p1 = document.createElement('p');
+    p1.className = 'df-banner__text';
+    p1.textContent = 'ES modules cannot be fetched over file://. Serve the frontend directory over HTTP and reload:';
+    const pre = document.createElement('pre');
+    pre.className = 'df-log';
+    pre.textContent = 'cd frontend && python3 -m http.server 8000\n' +
+                      'open http://localhost:8000/src/screens/export.demo.html\n\n' + String(err);
+    body.appendChild(t); body.appendChild(p1); body.appendChild(pre);
+    b.appendChild(document.createElement('span'));
+    b.appendChild(body);
+    b.appendChild(Object.assign(document.createElement('div'), { className: 'df-banner__actions' }));
+    box.appendChild(b);
+  });
+</script>
+</body>
+</html>

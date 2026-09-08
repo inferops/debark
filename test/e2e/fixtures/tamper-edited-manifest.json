@@ -1,0 +1,46 @@
+/*
+ * tamper-edited-manifest — corrupted bundle: the manifest itself was edited.
+ *
+ * Protects: the tamper matrix ("edited manifest") and D6's
+ * literal claim that the manifest is signed and trustworthy. The harness
+ * changes debark.manifest.json's bundle_id field after signing
+ * (test/e2e/harness/tamper.go's ApplyTamper) — deliberately a field no file
+ * digest check would ever notice, so this exercises the *first* hard
+ * failure in verify/iface.go's ordering, step 2: "the signature file's
+ * manifest_sha256 matches the manifest's canonical bytes"
+ * (verify.ProblemManifestDigest) — before any per-file digest work even
+ * starts, and before the signature's cryptographic validity is even
+ * questioned (the signature itself is untouched and would verify fine
+ * against a *different* — the original — set of bytes; this is exactly why
+ * canonical JSON (core/canonical, ADR-004) and a manifest_sha256 binding are
+ * both needed, not signature verification alone).
+ *
+ * What would break if this regressed: any post-signing edit to the
+ * manifest — a build tool "helpfully" reformatting the JSON, a field
+ * patched by a compromised intermediary — would go undetected as long as
+ * every file on disk still matched *some* claim in the edited manifest,
+ * defeating the entire point of binding a signature to the bundle's exact
+ * contents.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "tamper-edited-manifest",
+  "protects": "tamper matrix: edited manifest; D6; verify.ProblemManifestDigest",
+  "tags": ["edge", "tamper"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "verify": { "exit_class": "verification" },
+    "install": { "exit_class": "skip" }
+  },
+  "tamper": { "kind": "edited-manifest" }
+}

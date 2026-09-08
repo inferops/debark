@@ -1,0 +1,1 @@
+debark: snapshot: decompress ./bad.snapshot.json: snapshot: zstd decode: invalid input: magic number mismatch

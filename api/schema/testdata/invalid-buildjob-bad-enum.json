@@ -1,0 +1,13 @@
+{
+  "schema_version": "debark.buildjob/v1",
+  "signed": true,
+  "stats": {
+    "added": 1,
+    "removed": 0,
+    "unchanged": 0,
+    "bytes": 100,
+    "downloaded_bytes": 100,
+    "package_count": 1
+  },
+  "exit_class": "explosion"
+}

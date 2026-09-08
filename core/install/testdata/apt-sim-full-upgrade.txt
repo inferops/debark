@@ -1,0 +1,18 @@
+# Recorded output, not synthesised.
+# Image: debian:bookworm-slim (Docker Hub), pulled and run 2026-09-03.
+# Command:
+#   apt-get -s full-upgrade
+# This is the golden for the "[oldversion] (newversion ...)" upgrade-line
+# shape (base-files, liblzma5) that jq's own dependency closure never
+# exercises.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
+The following packages will be upgraded:
+  base-files liblzma5
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst base-files [12.4+deb12u14] (12.4+deb12u15 Debian:12.15/oldstable [amd64])
+Conf base-files (12.4+deb12u15 Debian:12.15/oldstable [amd64])
+Inst liblzma5 [5.4.1-1] (5.4.1-1+deb12u1 Debian:12.15/oldstable [amd64])
+Conf liblzma5 (5.4.1-1+deb12u1 Debian:12.15/oldstable [amd64])

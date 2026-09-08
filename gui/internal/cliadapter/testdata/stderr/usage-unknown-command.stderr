@@ -1,0 +1,27 @@
+debark: unknown command "frobnicate" for "debark"
+
+Usage:
+  debark [command]
+
+Available Commands:
+  build        Resolve, fetch, index and sign a bundle.
+  completion   Generate the autocompletion script for the specified shell
+  config       Manage the debark config file.
+  doctor       Heuristics: network postinst, snap shims, DKMS, redistribution.
+  help         Help about any command
+  inspect      Show a bundle's lock, manifest, warnings and sizes.
+  install      Verify and install a bundle.
+  keygen       Generate an ed25519 operator signing key.
+  snapshot     Capture, synthesize and inspect target snapshots.
+  store        Manage the content-addressed object store.
+  verify       Check a bundle before apt ever sees it.
+  version      Print the build identity.
+
+Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply
+
+Use "debark [command] --help" for more information about a command.

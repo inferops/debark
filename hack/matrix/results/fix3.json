@@ -1,0 +1,78 @@
+{
+  "schema_version": "debark.e2e.matrixresult/v1",
+  "generated_at": "2026-09-06T19:42:38.3759605Z",
+  "host": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.26.0"
+  },
+  "config": {
+    "workers": 2,
+    "fixture_filter": "held-package,phased-updates"
+  },
+  "rows": [
+    {
+      "fixture": "held-package",
+      "protects": "edge fixtures: held packages; §3.5.7",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:42:43.490077-07:00",
+      "finished_at": "2026-09-06T12:43:30.1005788-07:00",
+      "total_ms": 46610,
+      "stage_ms": {
+        "build": 12269,
+        "build-binary": 2570,
+        "bundle-transfer": 114,
+        "install": 2003,
+        "snapshot-create": 263,
+        "target-commit": 6130,
+        "target-setup": 7919,
+        "verify": 217
+      },
+      "bundle_size_bytes": 306423,
+      "package_count": 3,
+      "log_path": "matrix-work/r875a8fb4/held-package-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "phased-updates",
+      "protects": "edge fixtures: phased updates; E1's narrowing to the upgrade pass",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 5 (resolution), want 0 (success): debark: apt: apt-get -s full-upgrade printed 1 package-action line(s) this parser could not read: Inst libpam-modules-bin [1.5.3-5ubuntu5.6] (1.5.3-5ubuntu5.7 Ubuntu:24.04/noble-updates, Ubuntu:24.04/noble-security [amd64]) [libpam-modules:amd64 on libpam-modules-bin:amd64] [libpam-modules:amd64 ]\nthis is apt's own output for a package action, so it cannot be skipped without silently dropping that package from the closure; report the line above with the apt version from the lock's resolver block\n",
+      "exit_classes": {
+        "build": "resolution"
+      },
+      "started_at": "2026-09-06T12:42:43.5100294-07:00",
+      "finished_at": "2026-09-06T12:43:28.3314416-07:00",
+      "total_ms": 44821,
+      "stage_ms": {
+        "build": 10358,
+        "build-binary": 2551,
+        "snapshot-create": 243,
+        "target-commit": 7365,
+        "target-setup": 13181
+      },
+      "log_path": "matrix-work/r875a8fb4/phased-updates-ubuntu-24.04-amd64/transcript.log"
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "pass": 1,
+    "fail": 1,
+    "blocked": 0,
+    "skipped": 0,
+    "timeout": 0,
+    "aborted": 0
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/events/v1",
+  "title": "debark events v1",
+  "description": "debark.events/v1 - structured build/install events, written as if an auditor will read them in five years: objects, not log strings. This schema's top level validates evidence.json (the Document: a header plus every recorded event), written at the bundle root. Each element of its events array, and each line of an NDJSON --json-events stream, independently validates against $defs/Event, which is self-describing (it carries its own \"schema\" field) so a single streamed line can be validated without the Document wrapper.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "created_at", "events"],
+  "properties": {
+    "schema": { "const": "debark.events/v1", "description": "Fixed schema identifier; always debark.events/v1." },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When this evidence file was finalised, RFC 3339 UTC, second precision."
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Run identity: tool version, edition, backend, build host kind, and an operator identity only when the operator chose to record one. Never a machine fingerprint; never collected without the operator asking. Deliberately open-ended: keys vary by run."
+    },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Event" },
+      "description": "Every event recorded during the run, in emission order."
+    }
+  },
+  "$defs": {
+    "Event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "ts", "type"],
+      "properties": {
+        "schema": { "const": "debark.events/v1", "description": "Fixed schema identifier, repeated on every event so a single NDJSON line is self-describing." },
+        "ts": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "description": "When this event occurred, RFC 3339 UTC, second precision."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "snapshot.created", "snapshot.loaded", "backend.selected", "apt.update", "apt.resolve",
+            "fetch.file", "input.external", "store.hit", "policy.finding", "doctor.finding",
+            "repo.indexed", "closed_world.checked", "manifest.signed", "bundle.assembled", "bundle.pruned",
+            "verify.result", "install.plan", "install.result", "warning", "build.started",
+            "build.finished", "progress"
+          ],
+          "description": "The event kind. This list is additive-only: a future version may add a type but will never repurpose one of these."
+        },
+        "level": {
+          "type": "string",
+          "enum": ["info", "warn", "error"],
+          "description": "Event severity. Absent means info."
+        },
+        "msg": { "type": "string", "description": "Short human sentence; machine consumers should read attrs, not this." },
+        "attrs": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Type-specific fields. Every value is JSON-encodable and must never contain a secret. Deliberately open-ended: shape depends on type."
+        }
+      }
+    }
+  }
+}

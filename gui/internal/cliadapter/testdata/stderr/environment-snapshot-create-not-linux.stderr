@@ -1,0 +1,2 @@
+debark: snapshot: capturing the real system requires Linux (dpkg/apt); this host is windows
+point CaptureOptions.Root at a fixture tree, or run debark on the target itself

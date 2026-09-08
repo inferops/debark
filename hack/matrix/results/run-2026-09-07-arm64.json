@@ -1,0 +1,345 @@
+{
+  "schema_version": "debark.e2e.matrixresult/v1",
+  "generated_at": "2026-09-07T15:20:47.6147655Z",
+  "host": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.26.0"
+  },
+  "config": {
+    "workers": 2,
+    "fixture_filter": "basic-install-matrix"
+  },
+  "rows": [
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:20:50.8986953-07:00",
+      "finished_at": "2026-09-07T08:21:14.6285697-07:00",
+      "total_ms": 23729,
+      "stage_ms": {
+        "build": 5347,
+        "build-binary": 733,
+        "bundle-transfer": 89,
+        "determinism": 4848,
+        "install": 594,
+        "snapshot-create": 186,
+        "target-commit": 1076,
+        "target-setup": 2724,
+        "verify": 118
+      },
+      "bundle_size_bytes": 479458,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:20:51.5090683-07:00",
+      "finished_at": "2026-09-07T08:22:01.7463913-07:00",
+      "total_ms": 70237,
+      "stage_ms": {
+        "build": 24313,
+        "build-binary": 848,
+        "bundle-transfer": 75,
+        "determinism": 24342,
+        "install": 2936,
+        "snapshot-create": 486,
+        "target-commit": 1382,
+        "target-setup": 7356,
+        "verify": 264
+      },
+      "bundle_size_bytes": 454650,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-debian-12-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "13",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:21:14.8388634-07:00",
+      "finished_at": "2026-09-07T08:21:38.5108914-07:00",
+      "total_ms": 23672,
+      "stage_ms": {
+        "build": 5525,
+        "build-binary": 0,
+        "bundle-transfer": 86,
+        "determinism": 5721,
+        "install": 1018,
+        "snapshot-create": 146,
+        "target-commit": 892,
+        "target-setup": 2504,
+        "verify": 95
+      },
+      "bundle_size_bytes": 535123,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-debian-13-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "13",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:21:39.2268786-07:00",
+      "finished_at": "2026-09-07T08:23:03.7304998-07:00",
+      "total_ms": 84503,
+      "stage_ms": {
+        "build": 28915,
+        "build-binary": 0,
+        "bundle-transfer": 85,
+        "determinism": 31392,
+        "install": 6831,
+        "snapshot-create": 528,
+        "target-commit": 1116,
+        "target-setup": 6939,
+        "verify": 305
+      },
+      "bundle_size_bytes": 507940,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-debian-13-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "22.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:22:01.9003186-07:00",
+      "finished_at": "2026-09-07T08:23:00.3123281-07:00",
+      "total_ms": 58412,
+      "stage_ms": {
+        "build": 18688,
+        "build-binary": 0,
+        "bundle-transfer": 338,
+        "determinism": 19258,
+        "install": 516,
+        "snapshot-create": 201,
+        "target-commit": 2317,
+        "target-setup": 9053,
+        "verify": 121
+      },
+      "bundle_size_bytes": 438457,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-ubuntu-22.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "22.04",
+      "arch": "arm64",
+      "status": "fail",
+      "stage": "install",
+      "blocker": "exit 5 (resolution), want 0 (success): debark: install: apply failed: apt-get install: apt-get exited 100: dpkg: error processing package libc-bin (--configure):; installed libc-bin package post-installation script subprocess returned error exit status 139; E: Sub-process /usr/bin/dpkg returned an error code (1)\n",
+      "exit_classes": {
+        "build": "success",
+        "install": "resolution",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:23:01.0549535-07:00",
+      "finished_at": "2026-09-07T08:25:51.5189668-07:00",
+      "total_ms": 170464,
+      "stage_ms": {
+        "build": 70583,
+        "build-binary": 0,
+        "bundle-transfer": 83,
+        "determinism": 68237,
+        "install": 2947,
+        "snapshot-create": 454,
+        "target-commit": 2350,
+        "target-setup": 18181,
+        "verify": 312
+      },
+      "bundle_size_bytes": 426122,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-ubuntu-22.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:23:03.8875067-07:00",
+      "finished_at": "2026-09-07T08:23:55.6962916-07:00",
+      "total_ms": 51808,
+      "stage_ms": {
+        "build": 13265,
+        "build-binary": 0,
+        "bundle-transfer": 79,
+        "determinism": 13131,
+        "install": 548,
+        "snapshot-create": 94,
+        "target-commit": 1591,
+        "target-setup": 15459,
+        "verify": 109
+      },
+      "bundle_size_bytes": 460804,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:23:56.5056163-07:00",
+      "finished_at": "2026-09-07T08:26:11.4498125-07:00",
+      "total_ms": 134944,
+      "stage_ms": {
+        "build": 52760,
+        "build-binary": 0,
+        "bundle-transfer": 82,
+        "determinism": 52763,
+        "install": 2996,
+        "snapshot-create": 498,
+        "target-commit": 2651,
+        "target-setup": 14498,
+        "verify": 324
+      },
+      "bundle_size_bytes": 451041,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-ubuntu-24.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "26.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:25:51.6972659-07:00",
+      "finished_at": "2026-09-07T08:26:37.6755714-07:00",
+      "total_ms": 45978,
+      "stage_ms": {
+        "build": 11093,
+        "build-binary": 0,
+        "bundle-transfer": 82,
+        "determinism": 12991,
+        "install": 1072,
+        "snapshot-create": 116,
+        "target-commit": 1834,
+        "target-setup": 10881,
+        "verify": 129
+      },
+      "bundle_size_bytes": 479783,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-ubuntu-26.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "26.04",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-07T08:26:12.2420808-07:00",
+      "finished_at": "2026-09-07T08:28:50.7901905-07:00",
+      "total_ms": 158548,
+      "stage_ms": {
+        "build": 37902,
+        "build-binary": 0,
+        "bundle-transfer": 134,
+        "determinism": 57342,
+        "install": 20184,
+        "snapshot-create": 467,
+        "target-commit": 2902,
+        "target-setup": 9819,
+        "verify": 1157
+      },
+      "bundle_size_bytes": 469354,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/reedfde07/basic-install-matrix-ubuntu-26.04-arm64/transcript.log"
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "pass": 9,
+    "fail": 1,
+    "blocked": 0,
+    "skipped": 0,
+    "timeout": 0,
+    "aborted": 0
+  }
+}

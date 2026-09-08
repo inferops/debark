@@ -1,0 +1,72 @@
+/*
+ * origin-release-pin — origin and release pins.
+ *
+ * Protects: the edge-fixture list, "origin and release pins",
+ * and specifically the own stated risk: "The target's apt_preferences
+ * may pin by origin/label/release. The bundle is one synthetic flat repo
+ * whose Release does not carry the original origins, so a *second*
+ * resolution on the target could pick differently."
+ *
+ * Two synthetic repositories offer the *same* package at two versions under
+ * two different Origins: AcmeStable ships 1.0, AcmeLatest ships 2.0. Without
+ * a pin, apt prefers the higher version (2.0) regardless of which repo it
+ * came from. The target's apt_preferences pins acme-pin-demo to
+ * "release o=AcmeStable" at high priority, so the *correct* resolved,
+ * locked and installed version is 1.0 despite 2.0 being available — a
+ * synthetic setup rather than a real archive pair specifically so the
+ * outcome is deterministic and does not depend on whatever version deltas
+ * happen to exist in the real archive on the day this runs.
+ *
+ * The installed binary prints its own version, so the assertion
+ * (stdout_contains "1.0") directly proves *which* version's pin won —
+ * the three defences (exact-version install from the lock,
+ * the closed-world check, and Release's Origin/Label/Suite fields) all have
+ * to be doing their job for this to come out right after a full build ->
+ * verify -> install round trip, not just at the online resolve step.
+ *
+ * What would break if this regressed: any target with an internal repo
+ * pinned below a public mirror (a extremely common enterprise pattern —
+ * "prefer our internal mirror's vetted build over upstream's newer one")
+ * would silently get the wrong, unvetted version bundled and installed.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "origin-release-pin",
+  "protects": "edge fixtures: origin and release pins",
+  "tags": ["edge", "pin"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {
+      "repos": [
+        {
+          "name": "acme-stable",
+          "packages": [{ "spec": { "name": "acme-pin-demo", "version": "1.0", "bin": true } }],
+          "release": { "origin": "AcmeStable", "label": "Acme Stable", "suite": "bundle", "codename": "bookworm" }
+        },
+        {
+          "name": "acme-latest",
+          "packages": [{ "spec": { "name": "acme-pin-demo", "version": "2.0", "bin": true } }],
+          "release": { "origin": "AcmeLatest", "label": "Acme Latest", "suite": "bundle", "codename": "bookworm" }
+        }
+      ]
+    },
+    "preferences": [
+      {
+        "filename": "acme-pin.pref",
+        "content": "Package: acme-pin-demo\nPin: release o=AcmeStable\nPin-Priority: 900\n"
+      }
+    ]
+  },
+  "request": {
+    "packages": ["acme-pin-demo"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-pin-demo"],
+    "binaries": [
+      { "path": "/usr/bin/acme-pin-demo", "exit_code": 0, "stdout_contains": "acme-pin-demo 1.0" }
+    ]
+  }
+}

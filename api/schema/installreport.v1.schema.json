@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/installreport/v1",
+  "title": "debark install report v1",
+  "description": "debark.installreport/v1 - the machine-readable result of `debark install --json` (also used for --status and --dry-run, where applied is false). Never written into a bundle; a wire/API response object. install never proceeds without a verify report; this schema mirrors verifyreport.v1.schema.json's Report shape locally under $defs/VerifyReport so this document can be validated standalone.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "started_at", "bundle_path", "applied", "ok", "already_current", "target_expected", "target_actual"],
+  "properties": {
+    "schema_version": { "const": "debark.installreport/v1", "description": "Fixed schema identifier; always debark.installreport/v1." },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When this run started, RFC 3339 UTC, second precision."
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When this run finished. Absent for a report still in progress."
+    },
+    "bundle_path": { "type": "string", "description": "Path to the bundle being installed." },
+    "bundle_id": { "type": "string", "description": "The manifest's bundle_id, when known." },
+    "verify": { "$ref": "#/$defs/VerifyReport", "description": "The verification report; install never proceeds without one." },
+    "applied": { "type": "boolean", "description": "False for Plan, --status and --dry-run; true once changes were actually made." },
+    "ok": { "type": "boolean", "description": "True when the requested state was reached." },
+    "to_install": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*=.+$" },
+      "description": "Packages apt would install or did install, name=version form, parsed from apt's simulation."
+    },
+    "to_upgrade": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*=.+$" },
+      "description": "Packages apt would upgrade or did upgrade, name=version form."
+    },
+    "to_remove": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*=.+$" },
+      "description": "Packages apt would remove or did remove, name=version form."
+    },
+    "already_current": { "type": "integer", "minimum": 0, "description": "Count of bundle packages the target already has at the locked version." },
+    "target_expected": { "$ref": "#/$defs/Target", "description": "The target identity the lock was built for." },
+    "target_actual": { "$ref": "#/$defs/Target", "description": "The target identity actually found on this machine." },
+    "base_divergence": { "$ref": "#/$defs/BaseDivergence", "description": "How far this machine differs from the base a synthesized bundle assumed. Absent for the ordinary case of a bundle built from a captured snapshot, which is a measurement of this machine and so has no assumption to diverge from." },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Non-fatal notes: codename mismatch, dpkg fallback used, holds bypassed."
+    },
+    "problems": { "type": "array", "items": { "type": "string" }, "description": "Reasons ok is false." },
+    "apt_output_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 of the captured apt output, kept in the local evidence log."
+    }
+  },
+  "$defs": {
+    "BaseDivergence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assumed"],
+      "description": "Present only when the bundle's snapshot.json says origin.kind is \"synthesized\" (ADR-014). A synthesized snapshot asserts what a stock install of a release contains; install is the one place that assertion can be checked against a real dpkg status. A package the base assumed and the machine lacks means the bundle may be SHORT, which is the failure debark exists to prevent - but it is a finding, reported as a warning, and never a refusal.",
+      "properties": {
+        "base_id": { "type": "string", "description": "The base definition the bundle was built against, e.g. \"ubuntu:26.04/desktop\"; restated from the snapshot's origin.base_id." },
+        "assumed": { "type": "integer", "minimum": 0, "description": "How many distinct packages the base claimed a stock install already has - the size of the assumption, and the denominator for missing." },
+        "missing": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*:[A-Za-z0-9][A-Za-z0-9-]*$" },
+          "description": "Every assumed package, name:arch, that dpkg does not report as installed on this machine, sorted. The complete list; the human warning names only a bounded sample. The opposite direction (packages present but not assumed) is deliberately not recorded: it makes the bundle larger than it needed to be, which is harmless."
+        }
+      }
+    },
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["distro_id", "version_id", "codename", "arch"],
+      "properties": {
+        "distro_id": { "type": "string", "description": "ID from /etc/os-release, e.g. \"debian\" or \"ubuntu\"." },
+        "version_id": { "type": "string", "description": "VERSION_ID from /etc/os-release." },
+        "codename": { "type": "string", "description": "VERSION_CODENAME from /etc/os-release." },
+        "arch": { "type": "string", "description": "dpkg --print-architecture." },
+        "foreign_archs": { "type": "array", "items": { "type": "string" }, "description": "dpkg --print-foreign-architectures, sorted." },
+        "apt_version": { "type": "string", "description": "apt-get -v version string." },
+        "dpkg_version": { "type": "string", "description": "dpkg --version version string." }
+      }
+    },
+    "VerifyReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "checked_at", "bundle_path", "ok", "signed", "files_checked", "bytes_checked", "target"],
+      "properties": {
+        "schema_version": { "const": "debark.verifyreport/v1", "description": "Fixed schema identifier; always debark.verifyreport/v1." },
+        "checked_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "description": "When this check ran, RFC 3339 UTC, second precision."
+        },
+        "bundle_path": { "type": "string", "description": "Path to the bundle that was checked." },
+        "bundle_id": { "type": "string", "description": "The manifest's bundle_id, when it could be parsed." },
+        "ok": { "type": "boolean", "description": "True only when every check passed." },
+        "signed": { "type": "boolean", "description": "Whether the bundle carried at least one signature block." },
+        "signatures": { "type": "array", "items": { "$ref": "#/$defs/VerifySignatureResult" }, "description": "Outcome of checking each signature block present." },
+        "files_checked": { "type": "integer", "minimum": 0, "description": "Number of files whose digest was verified." },
+        "bytes_checked": { "type": "integer", "minimum": 0, "description": "Total bytes read while verifying file digests." },
+        "problems": { "type": "array", "items": { "$ref": "#/$defs/VerifyProblem" }, "description": "Every failure found." },
+        "warnings": { "type": "array", "items": { "type": "string" }, "description": "Non-fatal observations." },
+        "target": { "$ref": "#/$defs/VerifyReportTarget", "description": "Target identity restated from the manifest." },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "description": "The manifest's own created_at, restated."
+        },
+        "tool_version": { "type": "string", "description": "The manifest's tool.version, restated." },
+        "edition": { "type": "string", "enum": ["community", "official", "enterprise"], "description": "The manifest's tool.edition, restated." }
+      }
+    },
+    "VerifySignatureResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signer_kind", "key_id", "valid", "trusted"],
+      "properties": {
+        "signer_kind": { "type": "string", "pattern": "^(ed25519-file|gpg|sigstore|plugin:.+)$", "description": "Which Signer implementation produced this block." },
+        "key_id": { "type": "string", "description": "Identifies the key this block claims to be signed by." },
+        "algorithm": { "type": "string", "description": "Signature algorithm, e.g. ed25519." },
+        "valid": { "type": "boolean", "description": "True when the signature verified cryptographically against a trusted key." },
+        "trusted": { "type": "boolean", "description": "False when cryptographically valid but signed by an untrusted key." },
+        "detail": { "type": "string", "description": "Extra explanation, when there is one." }
+      }
+    },
+    "VerifyProblem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "message"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "manifest-missing", "manifest-malformed", "schema-unknown", "signature-missing", "signature-invalid",
+            "signature-untrusted", "manifest-digest-mismatch", "file-missing", "file-digest-mismatch",
+            "file-size-mismatch", "file-unexpected", "file-not-regular", "repo-digest-mismatch",
+            "lock-digest-mismatch", "snapshot-digest-mismatch", "same-media-key-refused"
+          ],
+          "description": "Stable, script-matchable failure identifier."
+        },
+        "path": { "type": "string", "description": "The file this problem is about, when it is about one file." },
+        "message": { "type": "string", "description": "Human-readable, actionable explanation." },
+        "expected": { "type": "string", "description": "Expected digest or size, rendered as a string." },
+        "got": { "type": "string", "description": "Actual digest or size found, rendered as a string." }
+      }
+    },
+    "VerifyReportTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "distro_id": { "type": "string", "description": "ID from /etc/os-release." },
+        "version_id": { "type": "string", "description": "VERSION_ID from /etc/os-release." },
+        "codename": { "type": "string", "description": "VERSION_CODENAME from /etc/os-release." },
+        "arch": { "type": "string", "description": "dpkg --print-architecture." },
+        "foreign_archs": { "type": "array", "items": { "type": "string" }, "description": "dpkg --print-foreign-architectures, sorted." }
+      }
+    }
+  }
+}

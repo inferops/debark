@@ -1,0 +1,14 @@
+debark: snapshot: open ./no-such.snapshot.json: GetFileAttributesEx ./no-such.snapshot.json: The system cannot find the file specified.
+
+Usage:
+  debark snapshot inspect FILE [flags]
+
+Flags:
+  -h, --help   help for inspect
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

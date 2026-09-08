@@ -1,0 +1,20 @@
+# Reconstructed, not a verbatim capture of the whole run.
+# The three lines that matter - the header, the indented culprit line and the
+# E: summary - are verbatim from a real container run on 2026-09-06
+# (debian:12-slim, an i386 bundle whose closure was incomplete); the banner
+# and the "Some packages could not be installed" paragraph around them are
+# apt's standard, unchanging preamble for this failure and match
+# core/apt/testdata/golden/11_sim_unmet_deps.txt line for line.
+# Exit code observed: 100.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ zlib1g:i386 : Depends: libc6:i386 (>= 2.4) but it is not installable
+E: Unable to correct problems, you have held broken packages.

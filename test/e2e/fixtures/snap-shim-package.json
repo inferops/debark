@@ -1,0 +1,57 @@
+/*
+ * snap-shim-package — a snap-shim package.
+ *
+ * Protects: the scope table ("doctor: warns about ... snap-shim
+ * packages") and the edge-fixture list. core/doctor/checks.go's
+ * checkSnapShim looks for a maintainer script matching `snap install` in a
+ * package no larger than 200KB (real transitional shims — Ubuntu's historic
+ * chromium-browser/firefox pattern — are tiny), or a "transitional package"
+ * description mentioning snap. The vendor package's postinst here contains
+ * the literal text "snap install" inside a comment, deliberately never
+ * executed for real: doctor's scan is static text matching (design: "no
+ * obvious network action found", never "proven safe" — it reads script
+ * *text*, it does not run it), so a commented-out example is a faithful,
+ * honest trigger for the heuristic while keeping the fixture's actual
+ * install step harmless — a *real* snap-shim postinst calling out to `snap`
+ * would simply fail on a target with no snapd, which is a true statement
+ * about snap shims but would make this fixture assert something other than
+ * what it is for.
+ *
+ * doctor is checked, not policy: design's doctor command "never fails a
+ * build by itself; policy does" (cmd_doctor.go's own doc comment), so
+ * build/install are still expected to succeed — only debark doctor's
+ * report is expected to flag the package.
+ *
+ * What would break if this regressed: an operator preparing a bundle for a
+ * server or OT target (design's core positioning) with a
+ * desktop-oriented package that turns out to be a snap wrapper would get no
+ * warning and discover the software silently does nothing once installed
+ * offline — the exact complaint the "snap-shim complaints" kill
+ * signal tracks.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "snap-shim-package",
+  "protects": "edge fixtures: snap-shim package; core/doctor checkSnapShim",
+  "tags": ["edge", "doctor"],
+  "target": {
+    "distro": "ubuntu",
+    "version": "24.04",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "vendor_debs": [
+      {
+        "name": "acme-snap-shim-demo",
+        "version": "1.0",
+        "postinst": "# a real shim would run: snap install acme-snap-shim-demo --classic\necho '(fixture) not actually invoking snap here'\ntrue"
+      }
+    ]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-snap-shim-demo"],
+    "doctor_contains": ["snap"]
+  }
+}

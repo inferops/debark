@@ -52,7 +52,7 @@ the package sources, vendor URLs, and container registries needed for the reques
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-it-works-dark.svg">
-  <img src="docs/assets/how-it-works-light.svg" alt="Choose a target snapshot or baseline OS, build a bundle online, then copy it to the offline machine to verify and install." width="560">
+  <img src="docs/assets/how-it-works-light.svg" alt="Choose a target snapshot or baseline OS, build a bundle online, then copy it to the offline machine to verify and install." width="440">
 </picture>
 
 1. **Choose the target:** capture it with `debark snapshot create` and copy the
@@ -119,86 +119,140 @@ Its platform requirements differ from the CLI's.
 
 ## Quick start
 
-This example installs `jq` on an existing Debian or Ubuntu machine. Commands
-use a POSIX shell; run each step on the machine named. Package counts and
-versions depend on the target and the available repositories.
+Install `jq` on a Debian or Ubuntu machine without internet access. First
+choose **snapshot or baseline**, then **unsigned or signed**. Signing is
+optional with either target source.
 
-### 1. Create a signing key on the online builder
+| Machine | What happens there |
+| --- | --- |
+| **Online builder** | Prepare the bundle: resolve dependencies, download packages, and optionally sign. |
+| **Offline target** | Capture a snapshot if using one; later verify and install the bundle. |
 
-```sh
-debark keygen --out operator.key
-```
+Install debark on both machines and check the [prerequisites](#install).
+Commands below use a POSIX shell with debark on `PATH`. Replace `jq` with
+your package names. Run only the options you choose.
 
-This writes `operator.key` and `operator.pub`. Keep the private key on the
-builder. Provision the public key on the target through a trusted channel, or
-check it against a fingerprint obtained independently of the bundle media.
+### 1. Choose a snapshot or a baseline
 
-### 2. Capture the offline target
-
-Run on the target, then transfer the snapshot to the online builder:
+**Option A — snapshot of the actual target (recommended when accessible).**
+Run on the **offline target**:
 
 ```sh
 debark snapshot create --out target.snapshot.tar.zst
 ```
 
-Snapshots can contain sensitive machine and repository configuration.
-`--redact` removes machine ID, proxy settings, and labels, but is not a
-complete anonymizer; see [snapshot privacy](docs/faq.md#what-information-is-in-a-snapshot).
+Copy `target.snapshot.tar.zst` **from the offline target to the online builder**
+using USB or another transfer method. The snapshot records the target's package
+state and apt configuration. It can contain sensitive information; see
+[snapshot privacy](docs/faq.md#what-information-is-in-a-snapshot) and `--redact`.
 
-### 3. Build on the online builder
+**Option B — baseline OS, with no snapshot capture.** On the **online builder**,
+list the available baselines:
 
-From the directory containing the snapshot and signing key:
+```sh
+debark snapshot list-bases
+```
+
+Choose the offline target's release, variant, and architecture. The example
+below uses `ubuntu:24.04/minimal` and `amd64`; change these to match your target.
+Variants such as `minimal`, `server`, and `desktop` describe packages
+**assumed to be installed already**. They do not install an OS. Review
+[baseline validation limits](docs/status.md#baseline-os-builds).
+
+### 2. Choose whether to sign (online builder)
+
+**Unsigned:** no key setup is needed. Keep `--no-sign` in the build command
+below. Verification still checks file integrity against the manifest, but
+does not authenticate who created the bundle.
+
+**Signed (optional):** create a key on the **online builder** before building:
+
+```sh
+debark keygen --out operator.key
+```
+
+This creates `operator.key` (private) and `operator.pub` (public). Keep the
+private key on the builder. Provision the public key on the offline target
+through a trusted channel, or authenticate it using a fingerprint obtained
+independently of the bundle media.
+
+In your chosen build command below, **replace `--no-sign` with
+`--sign operator.key`**. Use an existing key if you already have one.
+
+### 3. Build the bundle (online builder)
+
+Run **one** of these commands on the **online builder**, from the directory
+containing any snapshot and signing key you are using.
+
+**With the snapshot from option A:**
 
 ```sh
 debark build --snapshot target.snapshot.tar.zst \
-  --out ./bundle --sign operator.key jq
+  --out ./bundle --no-sign jq
 ```
 
-Copy the entire `bundle` directory to the offline target. Include a trusted
-Linux CLI binary separately, or use
-[`--embed-binary`](docs/quickstart.md#carry-the-cli-in-the-bundle).
+**With the baseline from option B:**
 
-### 4. Verify and install on the offline target
+```sh
+debark build --base ubuntu:24.04/minimal --arch amd64 \
+  --out ./bundle --no-sign jq
+```
 
-From the directory containing the bundle and provisioned public key:
+Use either `--snapshot` or `--base`, and either `--no-sign` or `--sign`.
+Both workflows produce the same kind of portable bundle.
+
+### 4. Transfer the bundle (online → offline)
+
+After a successful build, copy the **entire `bundle` directory** from the
+online builder to the offline target, including all its files and subdirectories.
+Use USB or another transfer method. If debark is not already on the target,
+include a trusted Linux CLI binary matching its architecture, or use
+[`--embed-binary`](docs/quickstart.md#carry-the-cli-in-the-bundle) when building.
+
+### 5. Verify and install (offline target)
+
+Run from the directory containing the transferred `bundle` on the **offline
+target**. Use the commands matching your signing choice; these work for both
+snapshot and baseline bundles.
+
+**For an unsigned bundle:**
+
+```sh
+debark verify ./bundle --allow-unsigned
+debark install ./bundle --allow-unsigned --status
+# Review the status output before installing:
+sudo debark install ./bundle --allow-unsigned --yes
+```
+
+**For a signed bundle**, with the trusted `operator.pub` in the current directory:
 
 ```sh
 debark verify ./bundle --key operator.pub
 debark install ./bundle --key operator.pub --status
+# Review the status output before installing:
 sudo debark install ./bundle --key operator.pub --yes
 ```
 
-Review the status output before the last command. `install` verifies the
-bundle again before invoking apt and installs the locked versions.
+`--status` previews changes without installing. For a baseline build, check
+for missing assumed packages; capture the real target and rebuild if the
+baseline does not fit. `install` verifies the bundle again before invoking apt
+and installs the locked versions. Only the installation command needs root.
 
-See the [full walkthrough](docs/quickstart.md) for vendor packages, updates,
-and transfer options.
-
-### Build with a baseline OS
-
-If you cannot capture the target first, choose its release and architecture:
-
-```sh
-debark snapshot list-bases
-debark build --base ubuntu:24.04/minimal --arch amd64 \
-  --out ./bundle --sign operator.key jq
-```
-
-Use the signing key created above. `minimal`, `server`, and `desktop`
-describe what the target is assumed to have; they do not install an OS.
-Use either `--base` or `--snapshot`. Baseline builds have
-[additional validation limits](docs/status.md#baseline-os-builds).
+See the [full signed-bundle walkthrough](docs/quickstart.md) for more detail,
+vendor packages, updates, and transfer options.
 
 ### Use the interactive CLI
+
+Run on the **online builder**:
 
 ```sh
 debark build --interactive
 ```
 
-The prompts cover the target, package list, output, signing key, upgrades, and
-SBOM. Create a key first with `debark keygen --out operator.key`.
+The prompts cover the target, package list, output, optional signing, upgrades,
+and SBOM.
 The CLI saves entered packages to a list file and prints a command to reuse.
-Interactive mode requires a terminal.
+Interactive mode requires a terminal. Then follow steps 4 and 5 above.
 
 ## Platform support
 

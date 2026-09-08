@@ -13,6 +13,11 @@ Proof: [`hack/reproducible-check.sh`](../hack/reproducible-check.sh).
 
 ## 1. What a release is
 
+Pushing commits to `main` runs CI but does not create or update a release.
+Published downloads belong to a version tag and stay at that version until a
+new tag is pushed. Move the changes from `Unreleased` into a dated version
+section in the root `CHANGELOG.md` before tagging the release commit.
+
 Push a `vX.Y.Z` tag. **One tag produces one GitHub release carrying both
 products.** `release.yml` runs two goreleaser jobs in sequence on pinned
 `ubuntu-24.04` runners: the `cli` job runs `../.goreleaser.yaml` and *creates*

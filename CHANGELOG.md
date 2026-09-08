@@ -9,6 +9,8 @@ have separate [compatibility rules](CONTRIBUTING.md#public-contracts-and-schemas
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-08
+
 ### Fixed
 
 - Desktop export resolves directory aliases before checking for overlap,
@@ -71,5 +73,6 @@ remaining gaps are described in [status and known limitations](docs/status.md).
 - Apache-2.0 license, DCO, governance, security, conduct, trademark, and
   community/commercial boundary policies.
 
-[Unreleased]: https://github.com/inferops/debark/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/inferops/debark/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/inferops/debark/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/inferops/debark/releases/tag/v0.1.0

@@ -271,6 +271,8 @@ the three listed defences catches this: #1 doesn't apply (`--upgrade` isn't
 an exact-version install), #2's literal check passes anyway, and #3 is the
 very thing that made the pin go inert in the first place.
 
+<a id="finding-2-the-bare-pin-origin-keyword-keys-on-hostname-not-on-the-release-origin-field"></a>
+
 ## Finding 2: the bare `Pin: origin <name>` keyword keys on hostname, not on the Release Origin: field
 
 This qualifies how the design frames "pin by origin" in the first place. Two

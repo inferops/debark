@@ -1,133 +1,90 @@
 # Security policy
 
-debark moves software across an air gap and verifies it before installing.
-Its own security posture matters as much as the guarantees it makes about the
-bundles it produces. This document is the disclosure process, plus a
-high-level in/out of scope summary. The full adversarial analysis lives in
-[`docs/threat-model.md`](docs/threat-model.md) — assets, trust boundaries,
-each adversary considered, the attacks that must fail and exactly where they
-fail, what debark explicitly does not protect against, residual risks, and
-a cryptographic inventory. Read that document for the real analysis; this
-file is deliberately shorter. [`docs/security-model.md`](docs/security-model.md)
-is the plain-language version of the trust chain, and
-[`docs/security/verification-guide.md`](docs/security/verification-guide.md)
-walks through verifying a bundle by hand. **All three, like the rest of this
-pre-1.0 codebase, are marked with their own implementation status and should
-be re-read against current code before you rely on a specific claim** — see
-each document's own status note.
+debark prepares software for offline installation and verifies bundles before
+passing their repositories to apt. This policy explains how to report a
+vulnerability and which parts of the project are in scope.
+
+For technical details, see the [security model](docs/security-model.md),
+[threat model](docs/threat-model.md), and
+[independent verification guide](docs/security/verification-guide.md).
+[Known limitations](docs/status.md) records validation coverage.
 
 ## Supported versions
 
-`v0.1.0` is the only tagged release (see [CHANGELOG.md](CHANGELOG.md)).
-Until a 1.0 release ships, security fixes land on the default branch and go
-out in the next tag — there is no older line to backport to, and no patch
-release is issued against a superseded pre-1.0 version. As more lines exist,
-this table will say which of them receive security fixes, matching the
-platform support the README records
-([README.md](README.md#platform-support)).
+During pre-1.0 development, security fixes land on the default branch and ship
+in the next release. Superseded pre-1.0 releases do not receive separate
+backports. See [CHANGELOG.md](CHANGELOG.md) for release history.
 
-| Version | Supported |
-|---|---|
-| `main` (pre-1.0) | Yes — this is the only line that exists |
+| Line | Security maintenance |
+| --- | --- |
+| `main` (pre-1.0) | Fixes land here and ship in the next tag |
+| Superseded pre-1.0 releases | No separate backport line |
 
-## Reporting a vulnerability
+## Report a vulnerability privately
 
-**Please do not open a public GitHub issue for a security vulnerability.**
+Use [GitHub private vulnerability reporting](https://github.com/inferops/debark/security/advisories/new)
+or **Security → Report a vulnerability** in this repository.
+Please do not disclose vulnerability details in a public issue.
 
-Report privately using GitHub's built-in mechanism for this repository:
-**Security tab -> Report a vulnerability** (GitHub Security Advisories). This
-creates a private discussion visible only to you and the maintainers, and
-lets us coordinate a fix and a disclosure date before anything is public.
+If private reporting is unavailable, open a public issue asking for a private
+contact channel **without including the vulnerability details**. The project
+does not currently publish a dedicated security email address.
 
-If you cannot use GitHub's private reporting for some reason, open a regular
-issue asking a maintainer to contact you through another channel, without
-describing the vulnerability itself.
+Include:
 
-We do not yet have a dedicated security contact address; if the project
-adopts a domain and PGP key, they will be published here (and in a
-`security.txt`) rather than assumed in advance.
+- Output of `debark version --json`, or the tested source revision.
+- The affected component: CLI, engine, desktop app, or release workflow.
+- A minimal reproduction, expected behavior, and actual result.
+- Your assessment of impact, if available.
+- Whether you would like public credit when the fix is disclosed.
 
-### What to include
+Use a synthetic fixture where possible. Even in a private report, omit unrelated
+secrets, private signing keys, and sensitive machine inventory.
 
-- The version or commit you tested (`debark version --json` once that
-  command is implemented; otherwise the commit hash).
-- What you expected versus what happened, and the smallest reproduction you
-  have — a snapshot/bundle/lock/manifest fixture is ideal, since debark's
-  correctness claims are about exactly those artefacts.
-- Your assessment of impact, if you have one. We would rather triage a
-  false alarm than miss a real one.
+## Response and disclosure
 
-### What to expect
+Maintainers acknowledge and investigate reports on a best-effort basis.
+There is no round-the-clock response commitment. For confirmed reports, the
+project coordinates a fix and disclosure date with the reporter and includes
+credit in release notes when requested.
 
-- Acknowledgement as soon as a maintainer sees the report; this is currently
-  a small, pre-1.0 project, so please allow for that rather than assuming a
-  round-the-clock SLA.
-- A best-effort fix and coordinated disclosure once the report is confirmed.
-  Credit in the release notes and `CHANGELOG.md`, if you want it.
+## In scope
 
-## What is in scope
+- **Build correctness:** unintended package omission or substitution, or a
+  repository, lock, manifest, or signature that misrepresents its contents.
+- **Verification and installation:** accepting a tampered bundle, bypassing
+  required trust checks, or exposing an unverified repository to apt/dpkg.
+- **Trust handling:** signatures, key selection, digests, canonicalization,
+  and archive provenance.
+- **Desktop security:** unsafe handling of package metadata, file paths,
+  frontend bindings, or CLI invocation.
+- **Release integrity:** build, packaging, signing, and reproducibility
+  failures in the project's release pipeline.
+- **Misleading provenance or redistribution findings:** reporting a stronger
+  claim than the evidence supports.
 
-At a high level — see [`docs/threat-model.md`](docs/threat-model.md) §§1-4
-for the real, cited version:
+## Outside the project's scope
 
-- The **build path**: anything that could make a bundle (repository, lock
-  plan, manifest, signature) misrepresent what it actually contains, or make
-  a build silently drop or substitute a package.
-- The **verify/install path**: anything that lets `verify` accept a tampered
-  bundle, or lets `install` reach apt/dpkg before verification has succeeded.
-  The rule is "verify before apt ever sees the repository".
-  This is the property the tool exists to guarantee; a break here is
-  critical by definition.
-- The **trust model**: signature handling (`core/sign`, `core/verify`),
-  digest computation (`core/digest`), canonicalisation (`core/canonical`),
-  and anything that could cause a key or fingerprint to be trusted that
-  should not be.
-- **Supply-chain integrity of the project's own releases**: the
-  `goreleaser`/cosign/SBOM pipeline in `.github/workflows/release.yml` and
-  reproducibility of the build (`hack/reproducible-check.sh`).
-- **Redistribution and provenance correctness** — `doctor` heuristics and
-  redistribution warnings being silently wrong in the unsafe direction
-  (saying something is fine when it is not).
+Vulnerabilities in apt, dpkg, GPG, container runtimes, or upstream repositories
+should also be reported to their maintainers. Report a debark integration flaw
+here if its use of those components creates a vulnerability.
 
-## What is explicitly out of scope for this project
+A vulnerable `.deb` faithfully transferred without modification is not by
+itself a debark vulnerability. A bundle signature authenticates the covered
+content; it does not certify that the packaged software is safe. Incorrect
+claims made by debark about that content remain in scope.
 
-(See also [`docs/threat-model.md`](docs/threat-model.md) §5, "What debark
-explicitly does NOT protect against," and §6, "Residual risks and operator
-responsibilities," for the fuller, cited list.)
+The existing threat model excludes denial of service against an operator's own
+machine from explicitly trusted attacker-controlled input unless it demonstrates
+a verification bypass. See the [threat model](docs/threat-model.md) for the
+full trust boundaries, exclusions, and residual risks.
 
-- Vulnerabilities in `apt`, `dpkg`, `gpg`, the Debian/Ubuntu archive, or a
-  container runtime debark shells out to. Report those to the relevant
-  upstream. debark treats apt as the oracle for dependency resolution by
-  design (ADR-001) and does not vendor or patch it.
-  Note: apt is a separate process debark executes, never a linked library
-  — apt's GPL licensing does not attach to the debark binary; see
-  `.github/workflows/licence-scan.yml`.
-- Vulnerabilities in a specific `.deb` package that debark faithfully
-  bundled or installed unmodified. debark never modifies packages
-  (ADR-001, ADR-013); a vulnerable package correctly transferred is not a
-  debark bug, though `doctor` heuristics that fail to warn about it may be.
-- Denial of service against your own machine from running a tool you invoked
-  yourself with attacker-controlled input you chose to trust (the standard
-  caveat for a CLI tool that reads local files and network URLs you give
-  it) — unless it demonstrates a verification bypass.
+## Community security and privacy
 
-## The promise this project makes
+Security fixes and capabilities needed to authenticate a bundle remain part of
+the Apache-2.0 community project. See the [free/paid policy](docs/free-paid-policy.md).
 
-**No security capability is ever paywalled.** Signature verification, digest
-checking, provenance and SBOM generation for a single bundle, and every other
-capability needed to know whether an artifact is authentic are permanently
-part of the free, Apache-2.0 community edition — see
-[`docs/free-paid-policy.md`](docs/free-paid-policy.md)
-Commercial editions may add central *enforcement*, *aggregation* and
-*retention* of security data across a fleet; they will never add security
-functionality withheld from a single-bundle user. A vulnerability report is
-never an opportunity to justify a paid capability — a security fix is always
-free.
-
-## No telemetry
-
-debark has no telemetry, crash reporting, or update check, in any edition,
-ever. Nothing about your usage, snapshots or
-bundles leaves your machine except the network calls you explicitly make
-(archive mirrors, vendor URLs, a container registry) — see
-[CONTRIBUTING.md](CONTRIBUTING.md) for how this is enforced in review.
+debark has no telemetry, analytics, crash-reporting uploads, or update checks.
+Online operations contact the archives, vendor URLs, and container registries
+needed for the requested work. Snapshots and metadata can still contain sensitive
+information; review them before sharing.

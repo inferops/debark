@@ -1,0 +1,28 @@
+name: Usage question
+description: Ask for help with setup or a debark workflow.
+title: "[question] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Start with the [documentation](https://github.com/inferops/debark/blob/main/docs/README.md)
+        and search existing issues. Do not include private keys, credentials, or
+        unreviewed machine snapshots.
+  - type: textarea
+    id: question
+    attributes:
+      label: What are you trying to do?
+      description: Describe your goal, where you are stuck, and what you have tried.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Version and environment
+      description: CLI/desktop version, builder OS, target release and architecture, and backend if relevant.
+  - type: textarea
+    id: output
+    attributes:
+      label: Commands or relevant output
+      description: Remove sensitive configuration and URLs before posting.
+      render: shell

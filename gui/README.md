@@ -1,168 +1,144 @@
-# Debark
+# Debark desktop
 
-A desktop app for preparing air-gapped Debian/Ubuntu software transfers.
+**Browse Debian and Ubuntu packages and prepare bundles for offline machines.**
 
-Pick a target OS, pick some packages, get a signed bundle. It exists to remove
-the blank-`packages.txt` problem — the moment where you know what you want the
-offline machine to have, and have to work out what to type.
+Debark is the desktop companion to the [debark CLI](../README.md). It runs on
+the **online builder**, where you choose a target, select packages, and build
+a bundle to transfer. The offline target uses the CLI to verify and install.
 
-It runs on the **online builder machine**. Nothing about the offline target
-changes: over there it is still the `debark` CLI, or still plain apt.
+[User guide](docs/user-guide.md) ·
+[Downloads](https://github.com/inferops/debark/releases) ·
+[Get help](../SUPPORT.md) · [Contributing](../CONTRIBUTING.md)
 
-The product is **Debark**; the module, the executable and the `.deb` are all
-`debark-gui`, and the engine it drives is `debark`. Both live in this one
-repository — the engine at the root, this app under `gui/`. You will see both names
-— the window says Debark, the command line it runs says `debark` — because
-the engine is a real command-line tool people use directly, on the far side and
-in CI, and it keeps its own name.
+## Workflow
 
-**Using it: [`docs/user-guide.md`](docs/user-guide.md)** — what it is for, the
-four steps, and what to do when a check fails.
+1. **Target:** choose a captured snapshot or a baseline OS. A captured snapshot
+   describes the real machine; a baseline assumes an installed package set.
+2. **Packages:** search the target's package catalogue and select packages.
+   Add vendor URLs or local `.deb` files when needed.
+3. **Bundle:** review the request, choose signing and output options, build,
+   and copy the result to a folder or mounted drive.
 
-## What it does
+The app delegates builds and verification to the CLI. apt resolves dependencies;
+the catalogue is for browsing. The CLI remains available for scripts and for
+options beyond the graphical workflow.
 
-1. **Pick a target.** A stock base OS (`ubuntu:26.04/desktop`) for a machine
-   that does not exist yet, or a snapshot file someone handed you from a
-   machine that does. Nothing is uploaded anywhere.
-2. **Pick packages.** A searchable catalogue built from that target's own apt
-   indexes, grouped by application category where the archive publishes
-   AppStream data and by apt `Section:` everywhere else. Add vendor `.deb`
-   URLs or local files alongside; they appear as ordinary rows.
-3. **Build.** `debark` resolves the exact missing closure with the target
-   release's own apt, fetches it, builds a real flat apt repository, and signs
-   a manifest — or records, deliberately and visibly, that you chose not to
-   sign it. You watch it happen by phase rather than by a fabricated
-   percentage, and can read the raw event log if you want to.
-4. **Export.** Save the bundle folder, or copy it to a mounted drive — with a
-   free-space check first, progress during, and a verification pass after.
-
-## What it is not
-
-This app is a front end. **It contains no dependency resolution, no version
-comparison, and no dependency reasoning of its own**, and it never will. Every
-decision about what goes into a bundle is made by `debark`, which makes it by
-asking the target release's own apt. Two implementations that can disagree is
-two products.
-
-The catalogue is the one place that reads apt data directly, and it reads it
-only to *show you a list*. If it is ever wrong, the cost is a missing row in a
-picker — you can still add that package by name or by URL, and the build still
-resolves against real apt with real sources. A catalogue bug cannot produce a
-wrong bundle. See [`docs/dev/catalogue-sourcing.md`](docs/dev/catalogue-sourcing.md)
-for why that asymmetry is what makes the design safe.
-
-Also permanently out of scope, each for a reason:
-
-| Not built | Why |
-|---|---|
-| A GUI that runs on the offline target | The target side must work with nothing but the open binary — or nothing but apt. Targets are frequently headless, serial-console, or approval-gated. |
-| One binary that is GUI-by-default, CLI-when-flagged | Ambiguous over SSH and in CI, and it drags a UI toolkit into a binary that must stay small, static and distro-packageable. Two binaries, two packages. |
-| Writing bootable USBs, raw block devices, `.img`/`.iso` export | The most dangerous component in the product. It forces root, and drags in ISO verification, autoinstall, Secure Boot and a boot-test matrix. Bundle export plus a plain file copy delivers the value. |
-| Any hosted API, catalogue service, or phone-home | The catalogue comes from the distro archive. There is no debark-operated endpoint, and there never will be. |
-| Telemetry, crash reporting, analytics | Architecturally absent, not merely disabled. No such library appears in the tree. |
-| Caps, metering, trials, entitlement checks | [`free-paid-policy.md`](../docs/free-paid-policy.md) is a published promise. This app is community functionality. |
-
-The CLI stays the complete interface: anything this app can do is expressible
-as a command, and it shows you that command where it reasonably can.
-
-## Dependencies
-
-**Zero npm dependencies. No JavaScript build step, no bundler, no framework.**
-The frontend is vanilla HTML, CSS and ES modules plus Wails' generated
-bindings; the "build" is a recursive file copy. This is deliberate: the project
-hand-reviews every dependency with a written note on what its compromise would
-mean, and that culture cannot absorb a transitive npm tree.
-
-The Go side is Wails v2 plus `debark` itself — imported as a module so that
-`--json` output is parsed with **debark's own types**, never hand-written
-mirrors that would drift.
-
-Every dependency is reviewed in [`docs/dependency-review.md`](docs/dependency-review.md).
+See the [user guide](docs/user-guide.md) for system checks, keyboard workflows,
+signing, and export.
 
 ## Platforms
 
-**Linux is the shipping target.** It is the only platform where
-`debark build` runs with zero prerequisites — native apt, no container, no
-WSL2 — and it is where these users are. Ships as a `debark-gui` `.deb` with
-`libwebkit2gtk-4.1-0` and its GTK stack as normal `Depends`, derived from the
-binary by `dpkg-shlibdeps` rather than written down, and with no maintainer
-scripts at all. It installs on **Ubuntu 24.04 and newer and Debian 13 and
-newer**; Ubuntu 22.04 and Debian 12 are excluded by the `t64` transition, not
-by WebKit, and fail cleanly at `apt install`. [`docs/packaging.md`](docs/packaging.md)
-is the measured record.
+| Platform | Desktop status |
+| --- | --- |
+| Ubuntu 24.04/26.04 amd64 | Supported Linux package |
+| Debian 13 amd64 | Supported Linux package |
+| Ubuntu 22.04 / Debian 12 | Published desktop package cannot satisfy GTK/GLib dependencies; use the CLI |
+| Windows amd64 | Experimental build; needs a Linux container and Linux CLI helper for builds |
+| Linux arm64 / macOS | No desktop release |
 
-**Windows builds, but is not supported.** The UI is nearly free because Wails
-uses the system WebView2. The obstacle is not the UI: `build` needs a
-container, and on the locked-down laptops this audience carries a container
-runtime is frequently blocked by policy. The readiness screen reports what it
-can probe rather than promising a build will work; it no longer counts WSL 2
-as a build route, because nothing in either repository ever invokes one, so a
-Windows machine's only route is a container plus a Linux `debark` for that
-container to mount. [`docs/windows.md`](docs/windows.md) is the measured record
-of an end-to-end run there — its §5 and §6 predate that correction and still
-describe the old derivation. No support commitment until someone asks.
+These are desktop host requirements. A supported builder can prepare a bundle
+for a different CLI target release using the appropriate backend.
+See [packaging validation](docs/packaging.md), the [Windows record](docs/windows.md),
+and [CLI platform requirements](../docs/platforms.md).
 
-macOS is out of scope.
+## Install
 
-## Building
+Download the matching `debark-gui` package and the `debark` CLI from the
+same [release](https://github.com/inferops/debark/releases). The CLI is required
+separately and must be discoverable on `PATH`.
 
-Requires Go 1.26+, the [Wails v2 CLI](https://wails.io), and on Linux
-`libgtk-3-dev` and `libwebkit2gtk-4.1-dev`.
+Desktop assets use `debark-gui_checksums.txt` and its signature.
+CLI assets use `debark_checksums.txt`. Follow the release verification
+instructions for each product.
+
+On a supported Linux host, install the downloaded desktop `.deb` with apt.
+For example, after replacing the filename with the asset you downloaded:
 
 ```sh
-make build     # build the app
-make dev       # run with live reload
-make check     # fmt-check + vet + lint + test — what CI runs
+sudo apt install ./debark-gui_VERSION_amd64.deb
 ```
 
-Every Go command carries `-tags webkit2_41`, because Debian 13, Ubuntu 24.04
-and everything newer ship only the 4.1 ABI. There is no release this project
-targets where clearing it is required — Ubuntu 22.04 and Debian 12 ship 4.1
-as well as 4.0, measured — so `make build WEBKIT_TAG=` is kept only for a host
-that genuinely has nothing but the 4.0 headers installed. See the comment on
-`WEBKIT_TAG` in the `Makefile`.
+apt installs GTK and WebKitGTK runtime dependencies. Launch **Debark** from
+the desktop menu or run `debark-gui`. If a prerequisite is missing, open
+**System check** and follow the reported remedy.
 
-`debark` is currently resolved from the engine module via a `replace`
-directive in `go.mod`, because it is not yet published to a module proxy. Clone
-both modules side by side:
+## Building from source
 
+Both modules live in **one repository**:
+
+```text
+debark/
+├── go.mod          CLI and engine
+└── gui/
+    └── go.mod      desktop app; engine resolved with replace => ../
 ```
-parent/
-  debark/
-  debark-gui/
+
+For Linux development, install Go 1.26+, GNU Make, Bash, a C compiler,
+`pkg-config`, GTK 3 headers, and WebKitGTK 4.1 headers:
+
+```sh
+sudo apt install build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+git clone https://github.com/inferops/debark.git
+cd debark
+go build -o debark ./cmd/debark
 ```
+
+Put the newly built CLI on `PATH` before running the desktop app. Then build
+the GUI with the pinned Wails CLI:
+
+```sh
+cd gui
+go install github.com/wailsapp/wails/v2/cmd/wails@$(make -s print-wails-version)
+make build
+```
+
+Make sure Go's executable directory is also on `PATH`. The build output is
+under `gui/build/bin/`. `make build` runs the frontend copy step through
+`wails.json` and uses the `webkit2_41` build tag on Linux.
+
+For live reload and checks:
+
+```sh
+make dev
+make frontend
+make check
+```
+
+`make check` runs formatting checks, vet, lint, and Go tests. Install the
+linter version pinned in [Makefile](Makefile) before running it. Root-module
+Go commands do not automatically test this module.
+
+The frontend uses HTML, CSS, vanilla JavaScript ES modules, and generated
+Wails bindings. There are no npm dependencies or bundler. Dependencies and
+their trust impact are recorded in [the dependency review](docs/dependency-review.md).
 
 ## Development
 
-Start with [`docs/dev/contract-brief.md`](docs/dev/contract-brief.md) — the
-frozen interfaces, the ownership map, the performance budgets, and the rules
-that are not negotiable. Then:
+Read [CONTRIBUTING.md](../CONTRIBUTING.md) and use these references:
 
-- [`docs/dev/cli-surface.md`](docs/dev/cli-surface.md) — the verified `debark`
-  command surface, its `--json` types and its exit codes. This document and the
-  real binary outrank everything else where they disagree.
-- [`docs/dev/binding-surface.md`](docs/dev/binding-surface.md) — the exact Go
-  methods the frontend may call and the events the backend may emit.
-- [`docs/dev/catalogue-sourcing.md`](docs/dev/catalogue-sourcing.md) — where the
-  package list comes from, and why.
-- [`docs/dev/index-formats.md`](docs/dev/index-formats.md) — what apt indexes
-  and DEP-11 actually contain, measured against the real archive rather than
-  read off a spec. Several of its findings are load-bearing.
-- [`docs/dev/cache-format.md`](docs/dev/cache-format.md) — the on-disk catalogue
-  cache and its invalidation rule.
-- [`docs/dev/screen-contract.md`](docs/dev/screen-contract.md) — the shape every
-  screen module has, and what the shell gives it.
-- [`docs/dev/error-catalogue.md`](docs/dev/error-catalogue.md) — 21 real
-  failures, caused on purpose, with the error each produces and what a person
-  must see. A specification, not a report.
-- [`frontend/src/design/README.md`](frontend/src/design/README.md) — the design
-  system: tokens, components, and the theming contract.
+| Guide | Purpose |
+| --- | --- |
+| [Engineering contract](docs/dev/contract-brief.md) | Interfaces, boundaries, and performance budgets |
+| [CLI surface](docs/dev/cli-surface.md) | Commands, JSON types, and exit codes consumed by the app |
+| [Binding surface](docs/dev/binding-surface.md) | Frontend/backend methods and events |
+| [Catalogue sourcing](docs/dev/catalogue-sourcing.md) | Package metadata sources and browsing behavior |
+| [Index formats](docs/dev/index-formats.md) | apt and AppStream inputs |
+| [Cache format](docs/dev/cache-format.md) | Catalogue cache and invalidation |
+| [Screen contract](docs/dev/screen-contract.md) | Screen module interfaces |
+| [UX contract](docs/dev/ux-contract.md) | Current navigation and interaction rules |
+| [UI review](docs/dev/ui-review.md) | Visual and native review procedures |
+| [Design system](frontend/src/design/README.md) | Tokens, components, and themes |
 
-`docs/performance.md`, `docs/accessibility.md`, `docs/security-review.md`,
-`docs/dependency-review.md`, `docs/packaging.md` and `docs/windows.md` are the
-measurement records: what was tested, with what, what it found, and what was
-**not** done.
+Validation records cover [accessibility](docs/accessibility.md),
+[performance](docs/performance.md), [security](docs/security-review.md),
+[packaging](docs/packaging.md), and [releases](docs/release.md).
+Their dated measurements are scoped to the runs they describe.
 
-## Licence
+## Scope and license
 
-Apache-2.0, matching `debark` itself.
+The desktop app prepares bundles; it does not write bootable media, raw block
+devices, or OS images. It has no hosted catalogue service, telemetry, crash
+uploads, or update checks. Package metadata comes from the selected repositories.
+
+Apache-2.0, matching the CLI. See [LICENSE](LICENSE), [NOTICE](NOTICE), and the
+project's [free/paid policy](../docs/free-paid-policy.md).

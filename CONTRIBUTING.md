@@ -1,232 +1,226 @@
 # Contributing to debark
 
-Thank you for considering a contribution. This document covers sign-off,
-running the tests, how the codebase is currently organized, coding
-conventions, and the rule about frozen schemas. See also
-[GOVERNANCE.md](GOVERNANCE.md) for how decisions get made and
-[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the standard we hold ourselves
-to.
+Contributions to code, documentation, tests, accessibility, and packaging are
+welcome. You do not need to start with a code change: a clear bug report, a
+tested target fixture, or a corrected setup guide also helps.
 
-## Sign off your commits (DCO) — there is no CLA
+Participation follows the [Code of Conduct](CODE_OF_CONDUCT.md).
+[GOVERNANCE.md](GOVERNANCE.md) describes how maintainers review changes and make
+project decisions.
 
-Every commit must include a `Signed-off-by` trailer certifying the
-[Developer Certificate of Origin](DCO) (the verbatim DCO 1.1 text is in that
-file). Use `-s`:
+## Choose a contribution
 
-```sh
-git commit -s -m "core/snapshot: handle empty status file"
-```
+Search [existing issues](https://github.com/inferops/debark/issues) and pull
+requests before starting. For a substantial feature, new dependency, or public
+contract change, discuss the approach in an issue first. Small fixes and
+documentation improvements can go straight to a pull request.
 
-That appends a trailer like:
+Useful starting points include:
 
-```
-Signed-off-by: Jane Doe <jane@example.com>
-```
+- Improving a confusing command example or error message.
+- Adding a minimal regression fixture for a reported bug.
+- Testing a target or container combination listed in [known limitations](docs/status.md).
+- Checking desktop keyboard navigation and accessibility.
+- Reproducing an issue and documenting the environment and result.
 
-using the name and email from your `git config`. A bot checks every pull
-request for this trailer (`.github/workflows/dco.yml`) and will tell you
-exactly which commits are missing it and how to fix them (`git commit
---amend -s`, or `git rebase --exec 'git commit --amend --no-edit -s'` for a
-whole branch).
+Use [SUPPORT.md](SUPPORT.md) for questions and bug reports. Report security
+vulnerabilities privately through [SECURITY.md](SECURITY.md).
 
-**We deliberately do not use a Contributor License Agreement.** debark's
-business model does not depend on being able to relicense the community
-code (see `docs/free-paid-policy.md`) — the code stays
-Apache-2.0, permanently, and a commercial edition is a separate codebase
-consuming the same public interfaces, not a relicensed fork of this one.
-Since there is nothing a CLA would enable that the project intends to do, we
-do not ask contributors to sign one. A CLA measurably suppresses
-contributions without a corresponding benefit here, and this project needs
-contributors more than it needs relicensing optionality. The DCO gives
-everyone — the project and downstream users — a clear, low-friction
-provenance record instead.
+## Set up a checkout
 
-## Before you write code: the rules that do not bend
+Fork the repository on GitHub, clone your fork, and create a branch. The
+commands below use a POSIX shell and run from the repository root.
 
-These come from [`docs/dev/contract-brief.md`](docs/dev/contract-brief.md), the
-rules of engagement for this codebase. They apply to every
-contribution, not just the initial build-out:
+Requirements:
 
-1. **apt is the oracle.** Never write a dependency solver, never re-derive
-   what apt decided, never "fix up" apt's choice. Go orchestrates, fetches,
-   indexes, signs, verifies and reports. This is ADR-001 and it is the
-   single most important rule in the codebase — see the permanent
-   do-not-build list in [GOVERNANCE.md](GOVERNANCE.md).
-2. **Determinism.** Two builds of the same request must produce
-   byte-identical manifests and repository metadata. Sort everything. Never
-   write a host path, a wall-clock timestamp, or map iteration order into an
-   artefact.
-3. **No telemetry, no phone-home, no update check, ever.** Not even behind a
-   flag. No analytics dependency may appear in the tree, in any form, in any
-   edition.
-4. **No new dependencies without discussion.** If the module needs something
-   not already in `go.mod`, open an issue or discuss in the PR before adding
-   it; do not add a dependency as a drive-by in an unrelated change.
-5. **Errors carry a class.** Return `dferr` errors (`core/dferr`) so the CLI
-   can map them to the exit-code table (0-7, frozen — see below). Do not
-   return a bare `errors.New` from a code path a command can fail on.
-6. **Canonical JSON for anything hashed or signed.** Use `core/canonical`.
-   Never hash the output of `json.MarshalIndent` or `json.Marshal` directly.
-7. **`core/` never imports `internal/cli`, and never prints.** Nothing under
-   `core/` may write to stdout/stderr or read a terminal. Progress and human
-   output belong to the CLI; core packages emit `evidence` events instead.
-8. **Nothing security-relevant is ever paywalled**, and no capability is
-   ever gated on a licence check compiled into this binary — see
-   `docs/free-paid-policy.md` and [GOVERNANCE.md](GOVERNANCE.md).
+- **Go 1.26+** for both modules.
+- Git.
+- GNU Make and Bash for convenience targets, or run the underlying Go
+  commands directly.
+- Docker for the Linux test helper; native apt tests need the appropriate
+  Debian/Ubuntu environment.
 
-## Building and running the tests
+The repository contains two Go modules:
 
-Standard Go workflow for anything that does not need a real `apt`:
+| Path | Purpose |
+| --- | --- |
+| `.` | CLI and engine; pure Go, no desktop libraries |
+| `gui/` | Desktop app; Wails and native webview dependencies |
+
+The GUI resolves the engine through
+`replace github.com/inferops/debark => ../`. **One checkout is sufficient.**
+Go commands at the repository root do not test the nested GUI module.
+
+## Build and check the CLI
 
 ```sh
 go build ./...
 go vet ./...
 go test ./...
-gofmt -l .        # should print nothing; see fmt/lint below
+gofmt -l .
 ```
 
-### Tests that need Linux and a real apt
+`gofmt -l .` should produce no output. Build a runnable CLI with
+`go build -o debark ./cmd/debark` (`-o debark.exe` on Windows), or use
+`make build`.
 
-Anything that shells out to `apt`, `dpkg`, or `gpg`, or needs a container,
-is guarded so it skips cleanly on platforms that cannot run it:
-
-```go
-func requireLinuxAPT(t *testing.T) {
-    t.Helper()
-    if runtime.GOOS != "linux" || os.Getenv("DEBARK_E2E") == "" {
-        t.Skip("needs Linux with apt; set DEBARK_E2E=1")
-    }
-}
-```
-
-Unit tests must pass without `DEBARK_E2E` set. CI proves that on **Windows
-and Linux**, which is the whole of the matrix in
-`.github/workflows/ci.yml`; macOS is not tested there and no macOS binary is
-released, so keeping the code portable to it is still the goal but is
-unenforced — if you develop on a Mac, you are the only check that it holds.
-To actually exercise the apt-backed paths, run inside the project's Linux
-test container (Debian 12 with Go and apt) via `hack/linux-test.sh`, which
-this repository already has and which this document does not change:
+Run the configured linters with `make lint`. The pinned version lives in
+[Makefile](Makefile); with Make and Bash you can install that exact version:
 
 ```sh
-bash hack/linux-test.sh                                # every package, unit tests only
-bash hack/linux-test.sh ./core/apt/...                 # one package
-DEBARK_E2E=1 bash hack/linux-test.sh ./core/apt/...  # include apt-backed tests
-DEBARK_IMAGE=golang:1.26-trixie bash hack/linux-test.sh ./core/apt/...  # different release
+go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(make -s print-golangci-lint-version)
+make lint
 ```
 
-`make test-linux` runs the same script with no arguments; see the
-[Makefile](Makefile). Module and build caches persist in named Docker
-volumes, so only the first run pays for downloads.
+Make does not install tools automatically. Windows contributors can run direct
+Go commands in PowerShell, and use Git Bash, MSYS2, or WSL for Bash/Make helpers.
 
-**`DEBARK_E2E=1`** is the guard for anything that needs a real apt/dpkg/gpg
-or a container: set it only when you have Docker (or the target
-environment) available, and expect those tests to be skipped — not
-failed — everywhere else, including in most of CI's own unit-test jobs. The
-CI workflow (`.github/workflows/ci.yml`) runs a dedicated job with
-`DEBARK_E2E=1` inside Debian 12 and Ubuntu 24.04 containers so this path is
-still covered on every pull request, even though your local `go test ./...`
-on Windows or macOS will not touch it.
+## Tests that need apt or containers
 
-### Golden files
+Ordinary unit tests must pass without `DEBARK_E2E` set. Tests requiring a
+real apt/dpkg/GPG environment or containers use platform and environment guards.
 
-Golden fixtures live under each package's own `testdata/`. Regenerate them
-with the test's `-update` flag where one exists, review the diff like code,
-and check the result in.
+The Docker helper runs tests in a Linux environment:
 
-## How the codebase is currently organized
+```sh
+bash hack/linux-test.sh
+bash hack/linux-test.sh ./core/apt/...
+DEBARK_E2E=1 bash hack/linux-test.sh ./core/apt/...
+```
 
-The codebase is split into areas with exclusive write ownership of a set of
-directories, to let people work concurrently without colliding. This table
-(from `docs/dev/contract-brief.md`) reflects the initial split; as areas
-mature, ownership naturally becomes "whoever maintains this package now" —
-check recent history and open PRs if this table looks stale, and feel free to
-open an issue asking who owns an area if it is not obvious.
+`make test-linux` wraps the same script. Module and build caches persist in
+named Docker volumes. See [hack/linux-test.sh](hack/linux-test.sh) for image
+selection and environment requirements.
 
-| Area | Directories (writes here only) |
-|---|---|
-| Snapshot capture | `core/snapshot/` |
-| Resolution — local apt backend | `core/apt/` (local backend), non-`types.go` files in `core/resolve/` |
-| Bundle storage and repository | `core/store/`, `core/repository/`, `core/bundle/` |
-| Signing and verification | `core/sign/`, `core/verify/`, `core/manifest/`, `core/lock/`, `examples/` |
-| Install | `core/install/` |
-| CLI | `internal/cli/`, `cmd/debark/`, sink implementations in `core/evidence/` |
-| Build engine | `core/engine/` |
-| Fetching | `core/fetch/` |
-| Resolution — container backend | container backend files in `core/apt/` |
-| Doctor and policy | `core/doctor/`, `core/policy/` |
-| Repository foundations | root files, `.github/`, `Makefile`, `.golangci.yml`, `.goreleaser.yaml`, `hack/` (excluding `hack/experiments/` and `hack/linux-test.sh`) |
-| Schemas and formats | `api/schema/`, `docs/formats.md`, `docs/adr/` |
-| Experiments | `docs/experiments/`, `hack/experiments/` |
-| Desktop app | `gui/` (its own Go module; see `gui/docs/dev/contract-brief.md`) |
+For a complete offline workflow, see [hack/demo-airgap.sh](hack/demo-airgap.sh).
+For release/architecture coverage, use the [integration matrix guide](hack/matrix/README.md)
+and [end-to-end fixture guide](test/e2e/README.md).
 
-If you are picking up a `good first issue`, it most likely lives in a
-package that has already landed its first implementation — check the issue
-for which directory it touches.
+Report the environment and any skips with your results. A portable unit run
+does not validate apt-backed behavior. CI checks Linux and Windows, with
+dedicated Linux integration jobs; macOS is not in the CI matrix.
 
-## Frozen files and the schema-freeze rule
+## Build and check the desktop app
 
-A short list of files was written first and everything else compiles
-against them: `core/canonical/`, `core/digest/`, `core/dferr/`,
-`core/version/`, `core/distro/`, the `types.go` files in `core/snapshot/`,
-`core/lock/`, `core/manifest/`, `core/evidence/`, `core/resolve/`, every
-`iface.go` under `core/`, `api/buildjob/v1/types.go`,
-`api/plugin/v1/types.go`, and `go.mod`/`go.sum`. **If one of these looks
-wrong, open an issue or start a discussion — do not just change it.**
+Follow [gui/README.md](gui/README.md#building-from-source) for native libraries
+and the pinned Wails CLI. From `gui/`:
 
-More generally: **the JSON Schemas published under `api/schema/`, and the Go
-types that mirror them, are a frozen public contract.** Bundles, manifests
-and locks produced by one version of debark must remain readable
-according to the schema version they declare. A pull request that changes a
-published schema's meaning — not just its Go representation — needs:
+```sh
+make frontend
+make check
+make build
+```
 
-1. An ADR under `docs/adr/` explaining what is changing and why the freeze
-   is being broken (see [`docs/adr/README.md`](docs/adr/README.md) for the
-   numbering and style already in use).
-2. A new schema version (`v2`, and so on) rather than a silent change to an
-   existing one, unless the change is additive and backward-compatible
-   (a new optional field, for instance) — in which case say so explicitly in
-   the PR description and update the format documentation
-   (`docs/formats.md`) alongside the schema.
-3. Updated golden fixtures (valid and invalid) under the schema's own
-   `testdata/`.
+`make frontend` copies the vanilla JavaScript assets into the embedded
+frontend directory. There are no npm dependencies or bundler. The Go checks use
+the `webkit2_41` build tag on Linux through the GUI Makefile.
 
-Each `api.go` file in a `core/` package holds that package's frozen **public
-API** — the signatures other packages and packages compile against. You own
-implementing the file (replacing stub bodies with real logic) but must not
-change an existing exported signature or remove a declaration; adding new
-exported functions is fine and encouraged where it helps.
+For visible UI changes, describe the behavior you exercised and include
+screenshots when helpful. Check keyboard navigation and consult the
+[UI review guide](gui/docs/dev/ui-review.md) and
+[accessibility record](gui/docs/accessibility.md).
 
-## Coding conventions
+## Code map
 
-- Run `gofmt` (or `make fmt`) before committing; CI fails on any unformatted
-  file (`gofmt -l` must print nothing).
-- `go vet ./...` and the configured linters (`.golangci.yml`, run via
-  `golangci-lint run` or `make lint`) must be clean for the packages you
-  touched. See that file for the exact linter set and what is relaxed for
-  `_test.go` files.
-- Every package should have a package doc comment explaining what it is for
-  — see `core/version/version.go` or `core/dferr/dferr.go` for the tone.
-- Table-driven tests where the input space is wide (parsers, version
-  comparisons, error classification).
-- Do not leave a `TODO` without a sentence saying who resolves it and when.
-- Put test fixtures in your own package's `testdata/` directory, not a
-  shared location.
-- Do not run `go mod tidy` or `go get` as a side effect of an unrelated
-  change; dependency changes are their own, discussed, PR.
+These areas describe responsibilities, not restrictions on who may contribute.
 
-## Opening a pull request
+| Area | Directories |
+| --- | --- |
+| Target capture and baselines | `core/snapshot/`, `core/base/` |
+| apt resolution and containers | `core/apt/`, `core/resolve/` |
+| Fetching, storage, and repository assembly | `core/fetch/`, `core/store/`, `core/repository/`, `core/bundle/` |
+| Signing and verification | `core/sign/`, `core/verify/`, `core/manifest/`, `core/lock/` |
+| Installation | `core/install/` |
+| Build orchestration | `core/engine/` |
+| Diagnostics and policy | `core/doctor/`, `core/policy/` |
+| CLI and rendering | `cmd/debark/`, `internal/cli/`, `core/evidence/` |
+| Public formats and protocols | `api/`, `docs/formats.md`, `examples/` |
+| Desktop app | `gui/` |
+| CI, tooling, and integration fixtures | `.github/`, `hack/`, `test/` |
 
-- Small, focused PRs review faster than large ones, especially while
-  multiple areas are landing concurrently.
-- Describe what you tested and how (including whether you ran the
-  `DEBARK_E2E=1` path, and on what).
-- Link the issue you are addressing, if any.
-- Expect CI (`.github/workflows/ci.yml`) to run lint, build, vet, the
-  cross-platform unit test matrix, the container-based `DEBARK_E2E` job,
-  a determinism check (build twice, compare), and a `gofmt -l` check.
+## Engineering principles
 
-## Reporting a security issue
+The [engineering contract](docs/dev/contract-brief.md) and
+[architecture decisions](docs/adr/README.md) provide the detailed rationale.
 
-Do not open a public issue for a vulnerability — see
-[SECURITY.md](SECURITY.md) for the private disclosure process.
+1. **apt decides dependencies.** Go orchestrates resolution; it does not
+   implement a second dependency solver or reinterpret apt's decisions.
+2. **Deterministic artifacts.** Keep hashed and signed output independent of
+   map iteration, incidental host paths, and uncontrolled timestamps. Use
+   fixed inputs and clocks in determinism tests.
+3. **No telemetry or automatic update checks.** Do not add analytics,
+   crash-reporting uploads, or entitlement checks.
+4. **Discuss dependency changes.** Keep them explicit and review their impact;
+   avoid incidental `go get` or `go mod tidy` changes in unrelated work.
+5. **Classify command failures.** Use `core/dferr` so the CLI preserves its
+   [exit-code contract](docs/cli.md#exit-codes).
+6. **Canonicalize hashed or signed JSON.** Use `core/canonical`, rather than
+   hashing raw `json.Marshal` or `json.MarshalIndent` output.
+7. **Keep the engine independent of the CLI.** `core/` must not import
+   `internal/cli`, print to a terminal, or read terminal input. Use evidence
+   events for progress.
+8. **Keep security capabilities in the community project.** Follow the
+   [free/paid policy](docs/free-paid-policy.md).
+
+Use `gofmt`, package documentation, and focused tests for behavior changes.
+Table-driven tests help with parser and error-classification cases. Keep fixtures
+in the relevant package's `testdata/` and review regenerated golden files as
+carefully as code.
+
+## Public contracts and schemas
+
+The published schemas under `api/schema/`, mirrored Go types, and shared
+interfaces are compatibility boundaries. The engineering contract lists the
+frozen files, including shared primitives, `types.go`, `iface.go`, and public
+`api.go` declarations.
+
+Discuss changes to those contracts before implementation. A change that affects
+their meaning or an existing exported signature needs an
+[ADR](docs/adr/README.md) and maintainer agreement under
+[GOVERNANCE.md](GOVERNANCE.md). Do not silently change a v1 format.
+
+For a schema change:
+
+- Explain compatibility and migration in the ADR.
+- Use a new schema version for a breaking change.
+- For an additive, backward-compatible change, explain why existing readers
+  remain compatible.
+- Update `docs/formats.md`, mirrored types, and valid/invalid fixtures together.
+
+## Sign off every commit
+
+Every commit must include a `Signed-off-by` trailer certifying the
+[Developer Certificate of Origin 1.1](DCO). There is **no CLA**.
+
+```sh
+git commit -s -m "docs: clarify container builder setup"
+```
+
+Git uses the name and email in your configuration. A sign-off certifies your
+right to contribute under the project's license; it is separate from a
+cryptographic commit signature.
+
+To add a missing sign-off to your latest unpublished commit:
+
+```sh
+git commit --amend --no-edit -s
+```
+
+For several commits, follow the DCO check's instructions and rewrite only your
+own contribution branch. Do not sign off work you cannot certify.
+
+## Open a pull request
+
+Describe the problem and resulting behavior, link an issue if there is one,
+and explain how you validated the change. Keep unrelated fixes in separate
+pull requests.
+
+For code changes, run the build, vet, tests, formatting, and lint checks for
+each affected module. Run the relevant apt/container tests when those paths
+change. For documentation-only changes, check links, examples, and consistency;
+mark code-only checks as not applicable.
+
+Review the diff before submitting. Do not include private keys, real machine
+inventories, generated binaries, or unrelated dependency changes. The
+[pull request template](.github/PULL_REQUEST_TEMPLATE.md) records the checks
+and compatibility considerations reviewers need.

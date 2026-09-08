@@ -1,26 +1,17 @@
-# Verifying a debark bundle without trusting debark
+# Independent bundle verification
 
-This is for someone who wants to check a bundle's manifest and signature by
-hand, using ordinary tools, without running the `debark` binary and without
-taking its "verified" claim on faith. If you cannot reproduce a bundle's
-verdict with `sha256sum`, `jq` and a signature tool, this guide has failed at
-its one job — please treat that as a bug in the guide, not in your
-understanding.
+This guide checks a bundle's manifest, signature, and contents with external
+tools, without running the debark verifier. For the normal workflow, see the
+[quick start](../quickstart.md). For trust assumptions, see the
+[security model](../security-model.md) and [threat model](../threat-model.md).
 
-**Testing status.** As of this writing `core/verify` and `core/bundle` have no
-CLI commands wired up yet in this repository, so no real, `debark`-produced
-bundle existed to test this guide against end to end. Every step below is
-derived directly from the schema and the current implementation
-(`core/manifest`, `core/canonical`, `core/sign`, cited by file and line
-throughout), and the two steps with the most room for a documentation writer
-to get subtly wrong — reproducing the RFC 8785 canonical form with ordinary
-tools, and verifying a debark ed25519 signature with `openssl` rather than
-debark itself — were built and checked end-to-end against a synthetic
-manifest and a real generated Ed25519 keypair before this guide was written,
-including two negative controls (a flipped byte, a wrong signature) that both
-correctly failed. That test is not the same as testing against a real
-`debark build` output; re-run this guide against the first real bundle that
-exists and correct anything that doesn't match.
+**Validation scope:** the canonicalization and OpenSSL Ed25519 steps were
+checked against a synthetic manifest and generated key pair, including
+negative controls. The original guide did not validate the complete procedure
+against a generated bundle. The CLI now builds and verifies real bundles, but
+that does not by itself validate every manual step below. Check the procedure
+against your bundle version and report discrepancies through
+[SUPPORT.md](../../SUPPORT.md).
 
 ## 0. What this does and does not prove
 

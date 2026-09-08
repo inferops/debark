@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
     url: https://github.com/inferops/debark/security/advisories/new
-    about: Please report security vulnerabilities privately — see SECURITY.md. Do not open a public issue.
-  - name: Question or discussion
-    url: https://github.com/inferops/debark/discussions
-    about: Usage questions and general discussion (once Discussions is enabled on this repository).
+    about: Report vulnerabilities privately; do not include details in a public issue.
+  - name: Documentation and support
+    url: https://github.com/inferops/debark/blob/main/SUPPORT.md
+    about: Find setup guides, troubleshooting, and guidance for reporting a problem.

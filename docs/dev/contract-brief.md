@@ -1,8 +1,9 @@
-# Contract brief — read this before writing any code
+# Engineering contract
 
-The rules below are the engineering contract for this repository. The schemas,
-the interfaces and the public API of every package are frozen and compile; the
-command bodies behind them are being filled in.
+This document records the engine's architectural boundaries and shared public
+contracts. Start with [CONTRIBUTING.md](../../CONTRIBUTING.md) for checkout,
+testing, and pull request instructions. Changes to frozen contracts follow the
+review process in [GOVERNANCE.md](../../GOVERNANCE.md).
 
 ## The one-paragraph product
 
@@ -51,16 +52,19 @@ go.mod  go.sum
 ```
 
 The `api.go` file in each package holds that package's **frozen public API**:
-the signatures other packages compile against. You own the file — replace the
-stub bodies with real implementations — but **do not change an existing
-signature**, and do not remove a declaration. Adding new exported functions is
-fine.
+the signatures other packages compile against. Existing declarations require
+compatibility review before they change. Additions must preserve the existing
+contract and follow the project's review process.
 
-## Package ownership
+## Package responsibilities
 
-| Area | Directories (writes here only) |
+This map describes package boundaries. Contributors may work across areas;
+coordinate overlapping changes through issues and pull requests.
+
+| Area | Directories |
 |---|---|
 | Snapshot capture | `core/snapshot/` |
+| Baseline definitions and synthesis | `core/base/` |
 | Resolution — local apt backend | `core/apt/` (local backend), non-`types.go` files in `core/resolve/` |
 | Bundle storage and repository | `core/store/`, `core/repository/`, `core/bundle/` |
 | Signing and verification | `core/sign/`, `core/verify/`, `core/manifest/`, `core/lock/`, `examples/` |
@@ -109,7 +113,7 @@ outside your directories will collide with someone else's work.
   ```
 
   The image is Debian 12 with Go and apt. `DEBARK_IMAGE=golang:1.26-trixie`
-  switches releases. Docker is available and working on this machine.
+  switches releases. The helper requires a working Docker installation.
 
 - Golden files: write them under `testdata/`, regenerate with a `-update` flag
   on the test, and check them in.
@@ -140,7 +144,7 @@ snapshot.Open ──► apt.SelectBackend ──► Backend.Resolve ──► re
 
 ## Definition of done
 
-- Every stub in your `api.go` implemented, or explicitly reported as deferred.
+- Requested behavior implemented, with limitations described in the pull request.
 - Unit tests for parsers, pure functions and error paths; table-driven where
   the input space is wide.
 - Errors classified with `dferr`.

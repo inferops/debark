@@ -2,14 +2,12 @@
 
 ## Where the project is today
 
-debark is pre-1.0 and has a single founding maintainer group at the moment.
-There is no `MAINTAINERS` file yet: while the group is one, the accurate
-answer to "who are the maintainers" is whoever holds merge rights on
-<https://github.com/inferops/debark>, which GitHub shows directly and this
-repository would only duplicate and let drift. The moment a second
-maintainer is added, a `MAINTAINERS` file lands with them and this paragraph
-points at it instead. Until then, to reach a maintainer, open an issue or use
-the private reporting route in [SECURITY.md](SECURITY.md).
+debark is pre-1.0 and maintained through the
+[inferops/debark repository](https://github.com/inferops/debark).
+The founding maintainer group handles reviews, releases, and project decisions.
+There is no separate public maintainer roster yet. To reach the maintainers,
+follow [SUPPORT.md](SUPPORT.md); use [SECURITY.md](SECURITY.md) for private
+vulnerability reports.
 
 This document describes the model the project runs under now and the
 path by which it grows, so that expectations are set honestly rather than
@@ -75,6 +73,10 @@ scope ladder shows what happens above debark's line (organisational fleet
 features, live outside this repository, in a separate commercial codebase)
 and beside it (mirror management, multi-ecosystem transfer, removable-media
 security kiosks — other tools' jobs, permanently).
+
+The optional [desktop app](gui/README.md) is an online-builder companion. It
+does not replace the CLI as the complete interface or add GUI dependencies
+to the engine module.
 
 ## The free/paid boundary is protected as project policy, not a business lever
 

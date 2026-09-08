@@ -9,9 +9,9 @@ it links GTK and WebKitGTK through CGO, and that dependency surface must never
 reach the engine's own module, which stays pure Go. The two share this
 repository so they version and release together.
 
-The interfaces below are frozen; the bodies behind them are filled in
-concurrently. That only works if every package stays inside the files it
-owns.
+The interfaces below define compatibility boundaries within the desktop module.
+Use the current [UX contract](ux-contract.md) for interaction behavior and
+[CONTRIBUTING.md](../../../CONTRIBUTING.md) for the contribution workflow.
 
 ## The one-paragraph product
 
@@ -24,7 +24,7 @@ stays as it is today: the `debark` CLI, or plain apt.**
 
 ## Non-negotiable rules
 
-1. **No engine logic in this repository. Ever.** No dependency resolution, no
+1. **No engine logic in the GUI module.** No dependency resolution, no
    version comparison, no dependency reasoning, no "which package supersedes
    which". The GUI shells out to `debark` and reads `--json`. Two
    implementations that can disagree is two products. If you find yourself

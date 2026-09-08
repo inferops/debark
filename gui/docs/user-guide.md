@@ -1,9 +1,8 @@
-# Debark — a guide for the operator
+# Desktop user guide
 
-This is the operator's companion to the app. It covers what Debark is for, the
-three stages it takes you through, and what to do when something fails. The
-product definition and the permanent do-not-build list are in
-[`../README.md`](../README.md) and are not repeated here.
+Prepare an offline package transfer through three stages: **Target → Packages
+→ Bundle**. This guide covers the desktop controls and recovery steps. For
+installation and source builds, start with the [desktop README](../README.md).
 
 The workflow was updated on 2026-09-07 against the desktop simplification
 implementation. It describes the controls and state rules in the current
@@ -18,58 +17,41 @@ of every redesigned view.
 
 ## What it is for
 
-You need software on a machine that has no internet connection. The usual
-approach is to run `apt-get install --download-only` on a machine that *does*,
-and carry the `.deb` files over.
+Debark prepares software for a Debian or Ubuntu machine that has no internet
+connection. Choose the target first so the catalogue and package resolution
+use its release and package state.
 
-That does not work, and it fails in a way that looks like it worked. `apt-get`
-on the online machine only downloads what is missing **on that machine**. Every
-dependency the builder already has installed is silently skipped. The folder
-fills up, the copy succeeds, and the failure happens on the offline machine,
-hours later, as a wall of unmet dependencies — with no network to fix it from.
-
-The other half of the problem is the blank file. Somebody hands you a
-`packages.txt` to fill in and you know what you want the offline machine to
-*do*, not which twelve binary package names produce it.
-
-Debark solves both by asking a different question. You name the **target** —
-the machine the bundle is for, not the one you are sitting at. Everything after
-that is derived from the target: the package list you browse is the target's
-own apt catalogue, and the closure that gets built is resolved by the target
-release's own apt, so it contains exactly what that machine is missing and
-nothing it already has. The output is a bundle folder: a real flat apt
-repository plus a manifest — signed with your operator key, if you have one —
-which the offline machine installs from as if it were an archive.
+A captured snapshot records the real target. A baseline describes an assumed
+installed package set; it may omit dependencies if the real target does not
+match. Review the target's install plan before applying a baseline bundle.
+See [baseline limitations](../../docs/status.md#baseline-os-builds).
 
 ### Two names, one product
 
-The window says **Debark**. The command line it drives is **`debark`**, and
-you will see that name in the app — in System check's first row, in the
-Command disclosure in Bundle, and in error messages.
-They are not two tools you have to install separately in the sense that
-matters: Debark is a front end, `debark` is the engine, and Debark cannot do
-anything without it. The engine keeps its own name because it is a real
-command-line tool that people use directly, on the far side and in CI.
+**Debark** is the desktop application, installed as `debark-gui`.
+The **`debark` CLI** is the engine it invokes and is installed separately.
+The window displays the CLI version and commands so you can inspect or repeat
+the workflow in a terminal.
 
 ### Where it runs
 
-Debark runs on the **online builder machine** — the one with a network, where
-you prepare the transfer. It never runs on the offline target and it does not
-need to: on the far side the bundle is installed with the `debark` CLI, or
-with plain apt against the bundle's repository. Nothing about the offline
-machine changes because you started using this app.
+The desktop app runs on the **online builder**. The offline machine uses the
+CLI to verify and install the bundle. It does not need the desktop app.
+See the [target-side walkthrough](../../docs/quickstart.md).
 
 ---
 
 ## Getting it
 
 Debark ships as a Debian package for Linux, which is the supported platform.
-The package is **`debark-gui`** — one file of about 8 MB, with no maintainer
-scripts at all, so nothing in it runs as root at install time. Install the
-`.deb` published with the release:
+The package is **`debark-gui`**. Install its `.deb` from
+[GitHub Releases](https://github.com/inferops/debark/releases), after checking
+it against the desktop release's signed checksum file. The package itself
+contains no maintainer scripts; apt and dependency installation still require
+administrator privileges. Replace the example filename with your download:
 
 ```sh
-sudo apt install ./debark-gui_<version>_<arch>.deb
+sudo apt install ./debark-gui_VERSION_amd64.deb
 ```
 
 apt pulls in GTK, the WebKitGTK runtime and the rest as ordinary dependencies.
@@ -119,7 +101,7 @@ it in another is exactly what it is for.
 
 ### The one thing that is not a dependency
 
-You also need `debark` itself installed and on your `PATH`. It is
+You also need the [debark CLI](../../README.md#install) installed and on your `PATH`. It is
 deliberately **not** in this package's `Depends`: it is not published in any
 distribution archive, so depending on it would make the package uninstallable
 everywhere. A missing `debark` is the first thing System check

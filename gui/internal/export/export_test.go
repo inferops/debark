@@ -120,6 +120,26 @@ func mustPlan(t *testing.T, e *Exporter, req Request) *Plan {
 	return p
 }
 
+func assertMarkerInDirectory(t *testing.T, marker, dir string) {
+	t.Helper()
+	if filepath.Base(marker) != MarkerName {
+		t.Fatalf("marker filename = %q, want %q", filepath.Base(marker), MarkerName)
+	}
+	want, err := os.Stat(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := os.Stat(filepath.Dir(marker))
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Plan resolves aliases. Windows can change case or expand an 8.3 name,
+	// so compare directory identity rather than the caller's path spelling.
+	if !os.SameFile(got, want) {
+		t.Fatalf("marker %q is not in destination %q", marker, dir)
+	}
+}
+
 // ---------------------------------------------------------------------------
 // the happy path, byte for byte
 // ---------------------------------------------------------------------------
@@ -261,9 +281,7 @@ func TestPlanAcceptsWhatFitsAndAccountsForTheMargin(t *testing.T) {
 	if !p.VerifyPlanned {
 		t.Error("verification is not planned by default")
 	}
-	if p.MarkerPath != filepath.Join(dst, MarkerName) {
-		t.Errorf("MarkerPath = %q", p.MarkerPath)
-	}
+	assertMarkerInDirectory(t, p.MarkerPath, dst)
 	if len(p.Warnings) != 0 {
 		t.Errorf("unexpected warnings: %v", p.Warnings)
 	}

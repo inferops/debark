@@ -59,6 +59,13 @@ runtime application networking behavior was added.
 
 ## Validation
 
+Follow-up: the first pushed CI run exposed a Windows-only test assumption in
+the marker-path assertion. The local run used matching path spelling; the
+runner's resolved path differed from its temporary-directory spelling. The
+failure was reproduced with a differently cased Windows temp path. The test
+now checks directory identity with `os.SameFile`, and Windows coverage exports
+through case aliases into both existing and new destinations.
+
 - Full portable unit suites passed for both modules on Windows and Linux;
   the Linux desktop run used `desktop,production,webkit2_41`.
 - Build, vet, and formatting checks passed in a source-only review copy,

@@ -442,5 +442,5 @@ verify, and install a bundle are community functionality. The
 
 <div align="center">
 <br>
-<a href="https://debark.dev">debark.dev</a> · built by <a href="https://inferops.com">InferOps</a>
+<a href="https://debark.dev">debark.dev</a> · built by <a href="mailto:imankamyabi@pm.me">Iman Kamyabi</a> at <a href="https://inferops.com">InferOps</a>
 </div>

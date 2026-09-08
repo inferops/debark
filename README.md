@@ -1,4 +1,11 @@
-# debark
+<a href="https://debark.dev">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-mark-dark.svg">
+    <img src="docs/assets/logo-mark-light.svg" alt="Debark camel carrying a package" width="80" height="80">
+  </picture>
+</a>
+
+# Debark
 
 **Prepare Debian and Ubuntu packages online. Install them offline.**
 
@@ -43,18 +50,26 @@ the package sources, vendor URLs, and container registries needed for the reques
 
 ## How it works
 
-```text
-Offline target              Online builder              Offline target
---------------              --------------              --------------
-snapshot create  ---------> build             --------> verify
-                 snapshot   resolve with apt    bundle  install
-                            download + sign
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-it-works-dark.svg">
+  <img src="docs/assets/how-it-works-light.svg" alt="Choose a target snapshot or baseline OS, build a bundle online, then copy it to the offline machine to verify and install." width="560">
+</picture>
+
+1. **Choose the target:** capture it with `debark snapshot create` and copy the
+   snapshot to the online builder, or select a baseline OS with `build --base`.
+2. **Build online:** `debark build` resolves dependencies and downloads the
+   required packages. Add `--sign` to sign the bundle, then copy the entire
+   bundle directory to the offline machine.
+3. **Install offline:** run `debark verify`, then `debark install` to install
+   from the bundle's local apt repository.
 
 A captured snapshot includes the target's installed packages, repositories,
 pins, and apt settings. If you cannot capture the machine first,
 `build --base` uses a baseline OS instead. A baseline **assumes** an installed
 package set; review differences on the target before installing.
+
+See the [illustrated walkthrough](https://debark.dev/how-it-works) or follow the
+[quick start](#quick-start) below for complete commands.
 
 ## Install
 

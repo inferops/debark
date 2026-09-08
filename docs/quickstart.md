@@ -3,6 +3,9 @@
 Build a signed bundle on an online computer, then install it on a Debian or
 Ubuntu machine without network access.
 
+For a shorter guide with snapshot and baseline choices and optional signing,
+see the [README quick start](../README.md#quick-start).
+
 [Overview](../README.md) · [Prerequisites](platforms.md) ·
 [CLI reference](cli.md) · [Troubleshooting](troubleshooting.md)
 

@@ -230,8 +230,11 @@ that require the network. See the [security model](docs/security-model.md).
 ## Contributing and support
 
 Contributions to code, documentation, tests, accessibility, and packaging are
-welcome. [CONTRIBUTING.md](CONTRIBUTING.md) covers setup, checks, and pull
-requests. Commits require a [DCO sign-off](DCO); there is no CLA.
+welcome. Create a branch, make signed-off commits, and open a pull request
+targeting `main`. Required checks must pass before a maintainer merges it;
+maintainers use the same PR workflow. [CONTRIBUTING.md](CONTRIBUTING.md) walks
+through fork setup, local checks, opening a PR, and updating it during review.
+Commits require a [DCO sign-off](DCO); there is no CLA.
 
 Use [GitHub Issues](https://github.com/inferops/debark/issues) for bugs,
 questions, and feature requests. [SUPPORT.md](SUPPORT.md) explains what to

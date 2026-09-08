@@ -13,13 +13,18 @@
 set -euo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-case "$repo" in /[a-z]/*) drive="${repo:1:1}"; mount="${drive}:${repo:2}" ;; *) mount="$repo" ;; esac
 export MSYS_NO_PATHCONV=1
 
-# The work directory lives inside the repo (gitignored) so that one path
-# works for the Go toolchain, for bash and for docker -v on every platform.
-work="${DEBARK_DEMO_OUT:-$repo/.demo}"
-rm -rf "$work"; mkdir -p "$work"
+# Each run gets a fresh directory. Never delete a caller-selected path: an
+# accidental DEBARK_DEMO_OUT must not erase an existing bundle or other data.
+mkdir -p "$repo/.demo"
+work="${DEBARK_DEMO_OUT:-$(mktemp -d "$repo/.demo/run-XXXXXX")}"
+mkdir -p "$work"
+if [ -n "$(find "$work" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
+    echo "Demo output is not empty: $work. Choose a new directory." >&2
+    exit 1
+fi
+work="$(cd "$work" && pwd -P)"
 case "$work" in /[a-z]/*) d="${work:1:1}"; wmount="${d}:${work:2}" ;; *) wmount="$work" ;; esac
 
 img=debian:bookworm-slim
@@ -31,7 +36,10 @@ say "building a static linux binary"
 # rewrites a d:/... path back into /d/... on the way to the binary, so the
 # build silently lands somewhere neither side expects. A relative path is
 # converted by nobody.
-( cd "$repo" && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ".demo/debark" ./cmd/debark )
+build_dir="$(mktemp -d "$repo/.demo/build-XXXXXX")"
+( cd "$repo" && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ".demo/${build_dir##*/}/debark" ./cmd/debark )
+mv "$build_dir/debark" "$work/debark"
+rmdir "$build_dir"
 # $work is the same directory as $wmount, in the dialect this shell speaks;
 # the Go toolchain and docker need $wmount's drive-letter form instead.
 ls -la "$work/debark"

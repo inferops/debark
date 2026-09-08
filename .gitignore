@@ -36,3 +36,25 @@
 # These are capture evidence for a review, not source, and they are large:
 # each one copies the whole frontend plus a content manifest.
 /.ux-work/
+
+# Operator secrets and local bundle inputs/outputs.
+*.key
+*.pem
+*.p12
+*.pfx
+.env
+.env.*
+!.env.example
+/bundle/
+/operator.pub
+/*.snapshot.tar.zst
+/*.debark.tar.zst
+
+# Editor and OS files (also applies outside gui/).
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+__pycache__/

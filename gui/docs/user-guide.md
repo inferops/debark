@@ -260,6 +260,11 @@ into the copy view even if the current draft later changes.
 
 ### Copy to a mounted destination
 
+Use an empty destination folder. A partial copy of the same bundle can be
+retried in place, but Debark refuses destination links and files or folders
+left over from a different bundle. It also refuses source and destination
+folders that overlap through a symbolic link or Windows junction.
+
 Copy is optional. To copy a bundle that already exists, choose **Copy existing
 bundle…** from the main menu. The native source chooser opens without needing
 a target or new build. Cancel returns to the menu's originating view. A copy

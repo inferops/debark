@@ -164,6 +164,9 @@ func publicKeyPathFor(privPath string) string {
 // generateEd25519KeyFiles creates a new key pair and writes both files. It
 // refuses to overwrite an existing file at either path.
 func generateEd25519KeyFiles(privPath, comment string) (keyID string, err error) {
+	if strings.ContainsAny(comment, "\r\n") {
+		return "", dferr.New(dferr.Usage, "sign: key comment must fit on one line")
+	}
 	pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		return "", wrapErr(dferr.Environment, err, "sign: generate ed25519 key")
@@ -180,6 +183,11 @@ func generateEd25519KeyFiles(privPath, comment string) (keyID string, err error)
 		return "", err
 	}
 	if err := writeNewFile(pubPath, encodePublicKeyFile(pub, comment), 0o644); err != nil {
+		// Keep an existing public key intact and remove our unmatched private
+		// key so the operator can retry after fixing the public path.
+		if removeErr := os.Remove(privPath); removeErr != nil {
+			return "", wrapErr(dferr.Environment, err, "sign: could not remove incomplete private key %s: %v", privPath, removeErr)
+		}
 		return "", err
 	}
 	return keyIDHex(id), nil
@@ -191,10 +199,23 @@ func writeNewFile(path string, data []byte, perm os.FileMode) error {
 		return wrapErr(dferr.Usage, err, "sign: create %s", path).
 			WithHint("remove the existing file first if you intend to replace it")
 	}
-	defer f.Close()
+	complete := false
+	defer func() {
+		_ = f.Close()
+		if !complete {
+			_ = os.Remove(path)
+		}
+	}()
 	if _, err := f.Write(data); err != nil {
 		return wrapErr(dferr.Usage, err, "sign: write %s", path)
 	}
+	if err := f.Sync(); err != nil {
+		return wrapErr(dferr.Environment, err, "sign: flush %s", path)
+	}
+	if err := f.Close(); err != nil {
+		return wrapErr(dferr.Environment, err, "sign: close %s", path)
+	}
+	complete = true
 	return nil
 }
 

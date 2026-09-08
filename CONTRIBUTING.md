@@ -33,7 +33,7 @@ commands below use a POSIX shell and run from the repository root.
 
 Requirements:
 
-- **Go 1.26+** for both modules.
+- **Go 1.26.8+** for both modules (includes required security fixes).
 - Git.
 - GNU Make and Bash for convenience targets, or run the underlying Go
   commands directly.
@@ -74,6 +74,12 @@ make lint
 
 Make does not install tools automatically. Windows contributors can run direct
 Go commands in PowerShell, and use Git Bash, MSYS2, or WSL for Bash/Make helpers.
+
+Run `make vulncheck` for the CLI and engine. The pinned `govulncheck` version
+is in the root Makefile. Run the same tool from `gui/` with
+`-tags desktop,production,webkit2_41 ./...` to cover the desktop application.
+These checks query the public Go vulnerability database; CI runs them for both
+modules on Linux and Windows, including a weekly scan for newly reported issues.
 
 ## Tests that need apt or containers
 

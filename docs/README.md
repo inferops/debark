@@ -51,6 +51,7 @@ repository.
 - [End-to-end test fixtures](../test/e2e/README.md).
 - [Security review](security/review-2026-09.md), [findings](security/review-findings.md),
   and [dependency review](security/dependency-review.md).
+- [Pre-publication review and fixes](security/pre-publication-2026-09-08.md).
 - Desktop [packaging](../gui/docs/packaging.md), [Windows](../gui/docs/windows.md),
   [accessibility](../gui/docs/accessibility.md), [performance](../gui/docs/performance.md),
   and [security review](../gui/docs/security-review.md).

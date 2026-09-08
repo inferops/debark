@@ -35,6 +35,7 @@ PKGS      ?=
 # analysers, so expect the finding set to move. Bump it here, run `make lint`,
 # and land the resulting fixes in the same change.
 GOLANGCI_LINT_VERSION := v2.13.2
+GOVULNCHECK_VERSION := v1.1.4
 
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT  := $(shell git rev-parse --short=12 HEAD 2>/dev/null || echo unknown)
@@ -90,6 +91,13 @@ lint: ## Run golangci-lint (.golangci.yml); installs nothing, tells you if it is
 # target anyone runs by hand.
 print-golangci-lint-version:
 	@echo $(GOLANGCI_LINT_VERSION)
+
+.PHONY: print-govulncheck-version vulncheck
+print-govulncheck-version:
+	@echo $(GOVULNCHECK_VERSION)
+
+vulncheck: ## Check CLI/engine dependencies against the Go vulnerability database
+	go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./...
 
 fmt: ## Reformat all Go source with gofmt
 	gofmt -l -w .

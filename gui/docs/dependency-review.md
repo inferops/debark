@@ -1,5 +1,9 @@
 # Dependency review
 
+**2026-09-08 update:** See the [pre-publication review](../../docs/security/pre-publication-2026-09-08.md)
+for dependency updates and current vulnerability scan results. The tables below
+describe the earlier review and are retained as historical evidence.
+
 Every dependency this application actually carries, as of
 **2026-09-07T01:09Z** (tree at `46ec3ca`): what it is, why it is there, its
 licence — identified by reading that module's own `LICENSE`/`COPYING` file in

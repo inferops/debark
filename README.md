@@ -71,7 +71,7 @@ CLI downloads use `debark_checksums.txt`; desktop downloads use
 `debark-gui_checksums.txt`. Use the matching checksum file and its signature,
 as described in the release notes.
 
-With **Go 1.26 or newer**, you can install the CLI directly:
+With **Go 1.26.8 or newer**, you can install the CLI directly:
 
 ```sh
 go install github.com/inferops/debark/cmd/debark@latest

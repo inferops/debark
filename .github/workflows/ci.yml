@@ -428,6 +428,9 @@ jobs:
       - name: hack/reproducible-check.sh
         run: bash hack/reproducible-check.sh
 
+      - name: DCO checker regression tests
+        run: bash hack/check-dco-test.sh
+
   # ---------------------------------------------------------------------
   # The GUI's end-to-end proof: a bundle the desktop app itself builds and
   # signs, verified and installed on an offline target with --network none.

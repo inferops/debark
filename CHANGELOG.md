@@ -9,6 +9,28 @@ have separate [compatibility rules](CONTRIBUTING.md#public-contracts-and-schemas
 
 ## [Unreleased]
 
+### Fixed
+
+- Desktop export resolves directory aliases before checking for overlap,
+  refuses destination links and stale files, and replaces existing hardlinks
+  without modifying their other copies. Interrupted exports can still resume.
+- Failed key generation removes the newly created unmatched private key;
+  multiline key comments are rejected and key-file write errors are reported.
+- DCO checks fail when commit history cannot be read and require a real Git
+  trailer rather than a sign-off quoted in a commit message.
+- The air-gap demo uses a fresh output folder and refuses nonempty custom
+  destinations instead of recursively deleting them; custom output paths now
+  receive the binary built for that run.
+
+### Security
+
+- Require Go 1.26.8 and update CIRCL, compression, and Go crypto/text/network
+  dependencies to address published vulnerabilities.
+- Add Linux and Windows vulnerability scans for both modules on pull requests,
+  pushes, and a weekly schedule.
+- Ignore common private-key files, local environment files, and bundle outputs
+  to reduce accidental publication of operator data.
+
 ### Changed
 
 - Reorganized the README and user documentation around installation, signed

@@ -425,6 +425,14 @@ func (e *Exporter) Plan(ctx context.Context, req Request) (*Plan, error) {
 	if err := checkDestination(dst); err != nil {
 		return nil, err
 	}
+	src, err = filepath.EvalSymlinks(src)
+	if err != nil {
+		return nil, classify(sideSource, "resolve", req.SourceDir, err)
+	}
+	dst, err = resolveDestination(dst)
+	if err != nil {
+		return nil, classify(sideDest, "resolve", req.DestDir, err)
+	}
 	if err := checkOverlap(src, dst); err != nil {
 		return nil, err
 	}
@@ -437,6 +445,9 @@ func (e *Exporter) Plan(ctx context.Context, req Request) (*Plan, error) {
 		VerifyPlanned: !e.opts.SkipVerify,
 	}
 	if err := e.walk(ctx, p); err != nil {
+		return nil, err
+	}
+	if err := checkDestinationEntries(ctx, p); err != nil {
 		return nil, err
 	}
 
@@ -699,6 +710,12 @@ func (e *Exporter) Run(ctx context.Context, p *Plan) (*RunReport, error) {
 		return rep, err
 	}
 
+	if err := ctx.Err(); err != nil {
+		return finish(classify(sideDest, "copy", p.DestDir, err))
+	}
+	if err := checkDestinationEntries(ctx, p); err != nil {
+		return finish(err)
+	}
 	if err := os.MkdirAll(p.DestDir, 0o777); err != nil {
 		return finish(classify(sideDest, "create", p.DestDir, err))
 	}
@@ -1041,16 +1058,16 @@ func writeMarker(p *Plan) error {
 	}
 	body = append(body, '\n')
 
-	f, err := os.OpenFile(p.MarkerPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	f, err := openDestFile(p.MarkerPath)
 	if err != nil {
 		return classify(sideDest, "create", p.MarkerPath, err)
 	}
 	if _, err := f.Write(body); err != nil {
-		f.Close()
+		_ = f.Close()
 		return classify(sideDest, "write", p.MarkerPath, err)
 	}
 	if err := f.Sync(); err != nil {
-		f.Close()
+		_ = f.Close()
 		return classify(sideDest, "flush", p.MarkerPath, err)
 	}
 	if err := f.Close(); err != nil {

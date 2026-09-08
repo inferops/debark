@@ -324,9 +324,23 @@ type destFile interface {
 }
 
 func openDestFile(path string) (destFile, error) {
+	// Replace the entry rather than truncating its inode: a previous export
+	// may share a hardlink with another bundle or an unrelated file.
+	info, err := os.Lstat(path)
+	if err == nil {
+		if !info.Mode().IsRegular() {
+			return nil, unsafeDestination(path)
+		}
+		if err := os.Remove(path); err != nil {
+			return nil, err
+		}
+	} else if !errors.Is(err, fs.ErrNotExist) {
+		return nil, err
+	}
 	// 0o666 before umask: the bundle is data, not an installed tree, and the
 	// FAT/exFAT sticks this app targets have no Unix permission bits at all.
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	// O_EXCL refuses a link or file created since the check above.
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o666)
 	if err != nil {
 		return nil, err
 	}

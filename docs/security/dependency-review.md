@@ -1,5 +1,10 @@
 # Dependency review
 
+**2026-09-08 update:** The pre-publication review updates the Go toolchain and
+affected dependency versions. See [the review record](pre-publication-2026-09-08.md)
+for the current scan results and version changes. The tables below describe the
+earlier review and are retained as historical evidence.
+
 Every third-party dependency in `go.mod`, as of **2026-09-03T21:11Z**: what
 it is, why it is there, its licence (identified by reading that module's own
 `LICENSE`/`COPYING` file in the local module cache — not inferred from its

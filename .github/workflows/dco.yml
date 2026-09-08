@@ -42,27 +42,5 @@ jobs:
 
           # Belt and suspenders: make sure both endpoints are reachable
           # locally even if fetch-depth: 0 did not pull the base branch tip.
-          git fetch --no-tags --prune origin "${BASE_SHA}" "${HEAD_SHA}" || true
-
-          missing=0
-          while IFS= read -r sha; do
-            [ -z "$sha" ] && continue
-            subject="$(git log -1 --format='%s' "$sha")"
-            body="$(git log -1 --format='%B' "$sha")"
-            if ! printf '%s\n' "$body" \
-                | grep -qE '^Signed-off-by: .+ <[^<>[:space:]]+@[^<>[:space:]]+>$'; then
-              echo "::error::Commit $sha (\"$subject\") has no DCO Signed-off-by trailer."
-              missing=$((missing + 1))
-            fi
-          done < <(git rev-list --no-merges "${BASE_SHA}..${HEAD_SHA}")
-
-          if [ "$missing" -gt 0 ]; then
-            echo ""
-            echo "$missing commit(s) are missing a DCO sign-off (see ./DCO)."
-            echo "Fix a single commit:   git commit --amend -s"
-            echo "Fix a whole branch:    git rebase \${BASE_SHA} --exec 'git commit --amend --no-edit -s'"
-            echo "Then force-push the branch. See CONTRIBUTING.md."
-            exit 1
-          fi
-
-          echo "All commits in this pull request are signed off."
+          git fetch --no-tags origin "${BASE_SHA}" "${HEAD_SHA}"
+          bash hack/check-dco.sh "${BASE_SHA}" "${HEAD_SHA}"

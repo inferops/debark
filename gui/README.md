@@ -73,7 +73,7 @@ debark/
     └── go.mod      desktop app; engine resolved with replace => ../
 ```
 
-For Linux development, install Go 1.26+, GNU Make, Bash, a C compiler,
+For Linux development, install Go 1.26.8+, GNU Make, Bash, a C compiler,
 `pkg-config`, GTK 3 headers, and WebKitGTK 4.1 headers:
 
 ```sh

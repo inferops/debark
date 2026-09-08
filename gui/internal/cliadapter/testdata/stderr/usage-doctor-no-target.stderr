@@ -1,0 +1,16 @@
+debark: doctor: give exactly one of BUNDLE or --snapshot FILE
+
+Usage:
+  debark doctor [BUNDLE] [flags]
+
+Flags:
+  -h, --help              help for doctor
+      --no-scan-scripts   skip extracting and scanning maintainer scripts (the slow part)
+      --snapshot string   examine a snapshot instead of a bundle
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

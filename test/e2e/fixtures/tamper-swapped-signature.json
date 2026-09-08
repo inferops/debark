@@ -1,0 +1,55 @@
+/*
+ * tamper-swapped-signature — corrupted bundle: a valid signature for
+ * different content.
+ *
+ * Protects: the tamper matrix ("swapped signature") — the
+ * subtlest tamper case, and the reason a bundle_id/manifest_sha256 binding
+ * exists at all rather than "any signature from a trusted key is good
+ * enough". The harness builds a second, small "decoy" bundle from the same
+ * snapshot signed with the *same* trusted operator key (a different request
+ * — a fixed, universally-available package — so its content, and therefore
+ * its manifest, genuinely differs; test/e2e/harness/scenario.go's
+ * buildDecoySignature), then copies the *decoy's* debark.manifest.sig
+ * onto this fixture's own bundle, leaving debark.manifest.json alone.
+ *
+ * The signature is completely genuine — made by the real, trusted key, over
+ * real canonical bytes it really signed — it is simply a signature *for
+ * something else*. This is deliberately distinct from tamper-wrong-key.json
+ * (an untrusted key) and from tamper-edited-manifest.json (a broken
+ * manifest_sha256 binding on an otherwise-intact signature): here both the
+ * key and the manifest_sha256-to-signature-file linkage are internally
+ * consistent, and only comparing the signed manifest_sha256 against *this*
+ * manifest's own canonical digest (verify step 2, same as
+ * tamper-edited-manifest.json's check, but reached from the opposite
+ * direction — the manifest is intact, the signature is not paired to it)
+ * exposes the mismatch.
+ *
+ * What would break if this regressed: an attacker who has captured one
+ * validly-signed bundle from an organisation could relabel that bundle's
+ * signature block onto a different, malicious bundle and have it accepted
+ * — signature replay across bundles is exactly what SignPurpose domain
+ * separation (core/sign/iface.go) and this per-manifest digest binding
+ * exist to prevent together.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "tamper-swapped-signature",
+  "protects": "tamper matrix: swapped signature; core/sign SignPurpose; verify.ProblemManifestDigest",
+  "tags": ["edge", "tamper"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "verify": { "exit_class": "verification" },
+    "install": { "exit_class": "skip" }
+  },
+  "tamper": { "kind": "swapped-signature" }
+}

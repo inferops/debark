@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>states.js — loading, empty and error states</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="../design/components.css">
+<style>
+/* Demo page chrome only. Prefixed d- so it can never collide with the design
+   system, and built entirely from its tokens. No component CSS is defined
+   here: every state below is the library's own markup. */
+body { background: var(--color-surface-1); color: var(--color-text-primary); font-family: var(--font-family-ui); font-size: var(--font-size-base); }
+.d-top {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  display: flex; align-items: center; gap: var(--space-3);
+  height: var(--headerbar-height); padding: 0 var(--space-5);
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-1);
+}
+.d-top__title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); }
+.d-top__sub { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.d-nav {
+  position: sticky; top: var(--headerbar-height); z-index: var(--z-sticky);
+  display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4);
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-surface-1);
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: var(--font-size-sm);
+}
+.d-main { padding: var(--space-6) var(--space-5) var(--space-20); max-width: 1180px; margin: 0 auto; }
+.d-sec { margin-bottom: var(--space-12); scroll-margin-top: 96px; }
+.d-h2 {
+  font-size: var(--font-size-xl); margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-2); border-bottom: 2px solid var(--color-border-strong);
+}
+.d-h3 { font-size: var(--font-size-lg); margin: var(--space-6) 0 var(--space-2); }
+.d-note { color: var(--color-text-secondary); font-size: var(--font-size-md); max-width: var(--measure-prose); }
+.d-note code { font-family: var(--font-family-mono); color: var(--color-text-primary); }
+.d-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: var(--space-4); margin: var(--space-3) 0; }
+.d-stack { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-3) 0; }
+.d-box { display: flex; min-height: 280px; }
+.d-box--short { min-height: 200px; }
+.d-cap {
+  display: block; margin: 0 0 var(--space-2);
+  font-family: var(--font-family-mono); font-size: var(--font-size-xs);
+  text-transform: uppercase; letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-secondary);
+}
+.d-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin: var(--space-3) 0; }
+.d-measure { font-family: var(--font-family-mono); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.d-list { max-width: 720px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); overflow: hidden; }
+</style>
+</head>
+<body>
+
+<div class="d-top">
+  <span class="d-top__title">states.js</span>
+  <span class="d-top__sub">loading, empty and error states &mdash; every variant, both themes</span>
+  <div class="df-spacer"></div>
+  <div class="df-cluster">
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" data-set-theme="system" aria-pressed="true">System</button>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" data-set-theme="light" aria-pressed="false">Light</button>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" data-set-theme="dark" aria-pressed="false">Dark</button>
+  </div>
+</div>
+
+<nav class="d-nav">
+  <a class="df-link" href="#loading">Loading</a>
+  <a class="df-link" href="#live">Live build</a>
+  <a class="df-link" href="#skeleton">Skeletons</a>
+  <a class="df-link" href="#empty">Empty</a>
+  <a class="df-link" href="#error">Error</a>
+  <a class="df-link" href="#banner">Banners</a>
+  <a class="df-link" href="#guards">Guard rails</a>
+  <a class="df-link" href="#notes">Notes</a>
+</nav>
+
+<main class="d-main">
+
+<div id="boot-warning" hidden>
+  <div class="df-banner df-banner--warning" role="status">
+    <svg class="df-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.2L2.6 20.2h18.8z"/><path d="M12 10v4.4"/><circle cx="12" cy="17.6" r="1" fill="currentColor" stroke="none"/></svg>
+    <div class="df-banner__body">
+      <p class="df-banner__title">The module did not load</p>
+      <p class="df-banner__text">Chrome and Firefox refuse to load an ES module over <span class="df-mono">file://</span>
+        (its origin is <span class="df-mono">null</span>, so the module fetch fails CORS). The page itself is fine; only
+        the import was blocked. Serve this directory over loopback and reload &mdash; for example
+        <span class="df-mono">python3 -m http.server</span> in <span class="df-mono">frontend/src/</span>, then open
+        <span class="df-mono">http://localhost:8000/shell/states.demo.html</span>. WebKit, which is what this app
+        actually ships against, loads it straight from disk.</p>
+    </div>
+    <div class="df-banner__actions"></div>
+  </div>
+</div>
+
+<section class="d-sec" id="loading">
+  <h2 class="d-h2">Loading</h2>
+  <p class="d-note">A spinner with no label is a bug, so <code>loadingState</code> throws without one. The bar is
+    determinate when a fraction is known and indeterminate when it is not &mdash; and it is not known often, because
+    <code>total_bytes</code> is <code>-1</code> whenever a mirror sends no <code>Content-Length</code>.</p>
+
+  <div class="d-grid2">
+    <div><span class="d-cap">determinate &mdash; a known fraction</span><div class="df-panel d-box" id="load-determinate"></div></div>
+    <div><span class="d-cap">indeterminate &mdash; progress: null</span><div class="df-panel d-box" id="load-indeterminate"></div></div>
+    <div><span class="d-cap">multi-phase, with the item being waited on</span><div class="df-panel d-box" id="load-item"></div></div>
+    <div><span class="d-cap">no Content-Length &mdash; bytes known, total not</span><div class="df-panel d-box" id="load-nolength"></div></div>
+    <div><span class="d-cap">cancellable</span><div class="df-panel d-box" id="load-cancel"></div></div>
+    <div><span class="d-cap">cancel pressed &mdash; the request is visibly registered</span><div class="df-panel d-box" id="load-cancelling"></div></div>
+    <div><span class="d-cap">no numbers at all &mdash; omit progress entirely</span><div class="df-panel d-box" id="load-plain"></div></div>
+    <div><span class="d-cap">counted items, self-timing clock</span><div class="df-panel d-box" id="load-counted"></div></div>
+  </div>
+</section>
+
+<section class="d-sec" id="live">
+  <h2 class="d-h2">A whole catalogue build, driven by events</h2>
+  <p class="d-note">One <code>loadingState</code>, updated with <code>progressFrom(event)</code> at the same 250 ms the
+    backend actually throttles to. It walks the seven catalogue phases, switches between determinate and indeterminate
+    mid-run (the download phase hits a mirror with no <code>Content-Length</code>), and is cancellable. Watch the
+    announcement line below the panel: it changes on phase boundaries and 10&nbsp;% steps, never on every tick.</p>
+  <div class="d-row">
+    <button type="button" class="df-btn df-btn--primary df-btn--sm" id="live-start">Run the build</button>
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" id="live-reset">Reset</button>
+  </div>
+  <div class="df-panel d-box" id="live-host"></div>
+  <p class="d-measure" id="live-announce">announcement: &mdash;</p>
+</section>
+
+<section class="d-sec" id="skeleton">
+  <h2 class="d-h2">Skeleton rows</h2>
+  <p class="d-note">Placeholders for a list that is loading. They use the library's own <code>.df-skeleton-row</code>,
+    whose height is <code>--skeleton-row-height</code> &mdash; required to equal <code>--row-height</code>, which is the
+    virtualiser's contract. Matching by construction beats matching by copying the number. The measurement below is
+    taken live from the two rendered boxes.</p>
+  <div class="d-row">
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="skel-more">More rows</button>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="skel-fewer">Fewer rows</button>
+    <span class="d-measure" id="skel-measure"></span>
+  </div>
+  <div class="d-grid2">
+    <div><span class="d-cap">skeletonRows(8)</span><div class="d-list" id="skel-host"></div></div>
+    <div><span class="d-cap">the real rows they are standing in for</span><div class="d-list" id="skel-real"></div></div>
+  </div>
+</section>
+
+<section class="d-sec" id="empty">
+  <h2 class="d-h2">Empty &mdash; three kinds, because they need different words</h2>
+  <p class="d-note">&ldquo;No results&rdquo; for all three throws away the chance to say what to do. A title and a
+    message are both required, and a <code>no-matches</code> state must offer a way out.</p>
+  <div class="d-grid2">
+    <div><span class="d-cap">nothing-yet</span><div class="df-panel d-box" id="empty-nothing"></div></div>
+    <div><span class="d-cap">no-matches &mdash; offers to clear the filter</span><div class="df-panel d-box" id="empty-nomatches"></div></div>
+    <div><span class="d-cap">collection-empty</span><div class="df-panel d-box" id="empty-collection"></div></div>
+    <div><span class="d-cap">collection-empty, no drives mounted</span><div class="df-panel d-box" id="empty-drives"></div></div>
+  </div>
+</section>
+
+<section class="d-sec" id="error">
+  <h2 class="d-h2">Error &mdash; two sentences, details collapsed</h2>
+  <p class="d-note">The summary says what is wrong; the hint says what to do next. They are separate fields because the
+    backend already produces them separately, and merging them into one blob wastes that. Raw stderr goes in a drawer
+    that starts closed &mdash; this audience wants to read it, and does not want it in their face.</p>
+  <div class="d-grid2">
+    <div><span class="d-cap">summary + hint + detail + argv</span><div class="df-panel d-box" id="err-full"></div></div>
+    <div><span class="d-cap">no hint &mdash; nothing useful to suggest</span><div class="df-panel d-box" id="err-nohint"></div></div>
+    <div><span class="d-cap">long stderr &mdash; the drawer scrolls, the page does not</span><div class="df-panel d-box" id="err-long"></div></div>
+    <div><span class="d-cap">a bare exit code, demoted into the details</span><div class="df-panel d-box" id="err-bare"></div></div>
+    <div><span class="d-cap">from a whole UIError off the bridge</span><div class="df-panel d-box" id="err-uierror"></div></div>
+    <div><span class="d-cap">not retryable &mdash; no Retry offered</span><div class="df-panel d-box" id="err-noretry"></div></div>
+  </div>
+</section>
+
+<section class="d-sec" id="banner">
+  <h2 class="d-h2">Inline banners</h2>
+  <p class="d-note">Beside the content rather than in front of it. <code>danger</code> is
+    <code>role="alert"</code>; the rest are <code>role="status"</code>. Each kind carries a distinct icon shape as well
+    as its colour.</p>
+  <div class="d-stack" id="banner-host"></div>
+  <div class="d-row">
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="banner-cycle">Cycle the last banner's kind</button>
+  </div>
+</section>
+
+<section class="d-sec" id="guards">
+  <h2 class="d-h2">Guard rails</h2>
+  <p class="d-note">The API is meant to make the wrong thing awkward. Each call below was made for real when this page
+    loaded; the message is the one the caller actually got.</p>
+  <div class="d-stack" id="guard-host"></div>
+
+  <h3 class="d-h3">Escaping</h3>
+  <p class="d-note">Package descriptions, file paths and stderr all reach these helpers, and stderr can contain
+    anything at all. There is no HTML-string path in the module: every node is built with
+    <code>createElement</code>/<code>createElementNS</code> and every string lands in <code>textContent</code>. The
+    error below was handed markup, a template-literal-looking string and a null byte; it renders them as characters.</p>
+  <div class="df-panel d-box" id="escape-host"></div>
+  <p class="d-measure" id="escape-proof"></p>
+</section>
+
+<section class="d-sec" id="notes">
+  <h2 class="d-h2">What to check on this page</h2>
+  <ul class="d-note">
+    <li>Both themes. Use the toggle top right; it sets <code>data-theme</code> on <code>&lt;html&gt;</code>, and
+      removing it follows the system.</li>
+    <li>Reduced motion. With <code>prefers-reduced-motion: reduce</code> the spinner stops, the shimmer stops and the
+      indeterminate bar goes still at full width &mdash; which is exactly why every one of these states carries words.</li>
+    <li>Keyboard. Tab through: every Cancel, Retry, Clear and Dismiss has a visible focus ring.</li>
+    <li>The console. This page makes no network request and loads no font, no icon library and no CDN. The only fetches
+      are the two design-system stylesheets and <code>states.js</code>, all relative and all local.</li>
+    <li>The live region. It is visually hidden inside each loading state; the mirror under the live build panel above
+      shows what a screen reader is being told, and when.</li>
+  </ul>
+</section>
+
+</main>
+
+<script type="module">
+import {
+  loadingState, emptyState, errorState, skeletonRows, inlineBanner,
+  progressFrom, formatBytes,
+} from './states.js';
+
+document.documentElement.dataset.demoBooted = '1';
+
+const handles = [];
+function mount(id, handle) {
+  const host = document.getElementById(id);
+  if (host) host.appendChild(handle.el);
+  handles.push(handle);
+  return handle;
+}
+
+/* ---------------------------------------------------------------- loading */
+
+mount('load-determinate', loadingState({
+  label: 'Reading package lists',
+  detail: 'Turning 58 MB of index into a browsable catalogue. This happens once per target.',
+  progress: 0.42,
+  current: 29400,
+  total: 70000,
+}));
+
+mount('load-indeterminate', loadingState({
+  label: 'Working out which package lists to fetch',
+  detail: 'The archive has not said how much there is yet.',
+  progress: null,
+}));
+
+mount('load-item', loadingState({
+  label: 'Downloading package lists',
+  item: 'noble/universe/binary-amd64/Packages.gz',
+  detail: 'Phase 3 of 7.',
+  progress: 0.31,
+  bytes: 18_874_368,
+  bytesTotal: 60_817_408,
+  elapsed: 8300,
+}));
+
+mount('load-nolength', loadingState({
+  label: 'Downloading package lists',
+  item: 'noble/main/dep11/Components-amd64.yml.gz',
+  detail: 'This mirror sent no Content-Length, so the size is not knowable until it ends.',
+  progress: null,
+  bytes: 4_404_019,
+  bytesTotal: 0,
+  elapsed: 21400,
+}));
+
+mount('load-cancel', loadingState({
+  label: 'Assembling the bundle',
+  item: 'nginx-core_1.24.0-2ubuntu7.3_amd64.deb',
+  progress: 0.68,
+  current: 284,
+  total: 412,
+  onCancel() { /* the button below shows the state this produces */ },
+}));
+
+mount('load-cancelling', loadingState({
+  label: 'Assembling the bundle',
+  item: 'nginx-core_1.24.0-2ubuntu7.3_amd64.deb',
+  progress: 0.68,
+  cancelling: true,
+  onCancel() {},
+}));
+
+mount('load-plain', loadingState({
+  label: 'Loading the catalogue from cache',
+  detail: 'Under half a second for a target that has been built before.',
+}));
+
+mount('load-counted', loadingState({
+  label: 'Copying to KINGSTON (/media/op/KINGSTON)',
+  item: 'pool/main/n/nginx/nginx-core_1.24.0-2ubuntu7.3_amd64.deb',
+  progress: 0.55,
+  bytes: 1_020_264_448,
+  bytesTotal: 1_932_735_283,
+  elapsed: true,
+}));
+
+/* ------------------------------------------------------------- live build */
+
+const PLAN = [
+  { phase: 'resolve',  label: 'Working out which package lists to fetch', ticks: 5,  determinate: false },
+  { phase: 'release',  label: 'Checking the archive',                    ticks: 6,  determinate: true, item: 'noble/InRelease' },
+  { phase: 'download', label: 'Downloading package lists',               ticks: 18, determinate: true, bytesTotal: 60_817_408,
+    items: ['noble/main/binary-amd64/Packages.gz', 'noble/universe/binary-amd64/Packages.gz', 'noble/main/dep11/Components-amd64.yml.gz'] },
+  { phase: 'download', label: 'Downloading package lists',               ticks: 8,  determinate: false, bytesTotal: 0,
+    items: ['noble/universe/dep11/Components-amd64.yml.gz'] },
+  { phase: 'parse',    label: 'Reading package lists',                   ticks: 14, determinate: true, total: 70412 },
+  { phase: 'index',    label: 'Building the search index',               ticks: 5,  determinate: false },
+  { phase: 'save',     label: 'Saving the catalogue',                    ticks: 4,  determinate: true, total: 1 },
+];
+
+const liveHost = document.getElementById('live-host');
+const liveAnnounce = document.getElementById('live-announce');
+let live = null;
+let liveTimer = null;
+let liveWatch = null;
+let bytesSoFar = 0;
+
+function stopLive() {
+  if (liveTimer !== null) { clearInterval(liveTimer); liveTimer = null; }
+  if (liveWatch !== null) { clearInterval(liveWatch); liveWatch = null; }
+  if (live) { live.destroy(); live = null; }
+}
+
+function watchAnnouncement() {
+  // Mirrors the state's own visually-hidden live region, so a reviewer without
+  // a screen reader can still see what is announced and when.
+  liveWatch = setInterval(() => {
+    if (!live) return;
+    const region = live.el.querySelector('[role="status"]');
+    const said = region && region.textContent ? region.textContent : '—';
+    const stamp = new Date().toLocaleTimeString();
+    const next = 'announcement: ' + said + '   (' + stamp + ')';
+    if (liveAnnounce.textContent !== next) liveAnnounce.textContent = next;
+  }, 250);
+}
+
+function runLive() {
+  stopLive();
+  bytesSoFar = 0;
+  let step = 0;
+  let tick = 0;
+  const startedAt = Date.now();
+
+  live = loadingState({
+    label: PLAN[0].label,
+    progress: null,
+    onCancel() {
+      if (!live) return;
+      live.update({ cancelling: true });
+      setTimeout(() => {
+        stopLive();
+        const cancelled = emptyState({
+          kind: 'nothing-yet',
+          title: 'Catalogue build cancelled',
+          message: 'Nothing was written. Start it again whenever you are ready; the phases that finished are not kept.',
+          action: { label: 'Run the build', onClick: runLive },
+        });
+        liveHost.appendChild(cancelled.el);
+        handles.push(cancelled);
+      }, 700);
+    },
+  });
+  liveHost.textContent = '';
+  liveHost.appendChild(live.el);
+  watchAnnouncement();
+
+  liveTimer = setInterval(() => {
+    if (!live) return;
+    const s = PLAN[step];
+    tick += 1;
+    const within = Math.min(1, tick / s.ticks);
+    const payload = {
+      phase: s.phase,
+      label: s.label,
+      elapsed_ms: Date.now() - startedAt,
+      overall_fraction: (step + within) / PLAN.length,
+    };
+    if (!s.determinate) payload.overall_fraction = -1;
+    if (s.items) payload.item = s.items[Math.min(s.items.length - 1, Math.floor(within * s.items.length))];
+    else if (s.item) payload.item = s.item;
+    if (typeof s.bytesTotal === 'number') {
+      bytesSoFar += 2_600_000;
+      payload.bytes_done = bytesSoFar;
+      payload.bytes_total = s.bytesTotal > 0 ? s.bytesTotal : -1;
+    }
+    if (s.total) { payload.current = Math.round(within * s.total); payload.total = s.total; }
+
+    live.update(progressFrom(payload));
+
+    if (tick >= s.ticks) {
+      tick = 0;
+      step += 1;
+      if (step >= PLAN.length) {
+        stopLive();
+        const done = inlineBanner({
+          kind: 'success',
+          title: 'Catalogue ready',
+          message: '70,412 packages from noble/main and noble/universe. Later runs load this from cache in under half a second.',
+          action: { label: 'Run it again', onClick: runLive },
+        });
+        liveHost.textContent = '';
+        liveHost.style.alignItems = 'center';
+        liveHost.appendChild(done.el);
+        handles.push(done);
+        liveAnnounce.textContent = 'announcement: — (build finished)';
+      }
+    }
+  }, 250);
+}
+
+let liveIdle = null;
+function resetLive() {
+  stopLive();
+  if (liveIdle) { liveIdle.destroy(); liveIdle = null; }
+  liveHost.textContent = '';
+  liveHost.style.alignItems = '';
+  liveAnnounce.textContent = 'announcement: —';
+  liveIdle = loadingState({
+    label: 'Waiting to start',
+    detail: 'Press “Run the build” to drive this state from a simulated event stream.',
+  });
+  liveHost.appendChild(liveIdle.el);
+}
+
+document.getElementById('live-start').addEventListener('click', () => {
+  if (liveIdle) { liveIdle.destroy(); liveIdle = null; }
+  runLive();
+});
+document.getElementById('live-reset').addEventListener('click', resetLive);
+resetLive();
+
+/* --------------------------------------------------------------- skeleton */
+
+const skel = skeletonRows(8, { label: 'Loading packages' });
+document.getElementById('skel-host').appendChild(skel.el);
+handles.push(skel);
+let skelCount = 8;
+
+const REAL_ROWS = [
+  ['nginx-core', '1.24.0-2ubuntu7.3', 'nginx web/proxy server (standard version)', 'main'],
+  ['postgresql-16', '16.4-0ubuntu0.24.04.2', 'object-relational SQL database, version 16 server', 'main'],
+  ['python3-pip', '24.0+dfsg-1ubuntu1.1', 'Python package installer', 'universe'],
+  ['redis-server', '5:7.0.15-1build2', 'Persistent key-value database with network interface', 'universe'],
+  ['ca-certificates', '20240203', 'Common CA certificates', 'main'],
+  ['openssh-server', '1:9.6p1-3ubuntu13.5', 'secure shell (SSH) server, for secure access', 'main'],
+  ['curl', '8.5.0-2ubuntu10.6', 'command line tool for transferring data with URL syntax', 'main'],
+  ['build-essential', '12.10ubuntu1', 'Informational list of build-essential packages', 'main'],
+];
+
+const realHost = document.getElementById('skel-real');
+REAL_ROWS.forEach(([name, version, summary, component]) => {
+  const row = document.createElement('div');
+  row.className = 'df-row';
+  row.setAttribute('role', 'option');
+  row.setAttribute('aria-selected', 'false');
+  const check = document.createElement('input');
+  check.type = 'checkbox';
+  check.className = 'df-check__input df-row__check';
+  check.setAttribute('aria-label', 'Select ' + name);
+  row.appendChild(check);
+  const nameEl = document.createElement('span');
+  nameEl.className = 'df-row__name df-mono df-truncate';
+  nameEl.textContent = name;
+  row.appendChild(nameEl);
+  const versionEl = document.createElement('span');
+  versionEl.className = 'df-row__version df-mono df-truncate';
+  versionEl.textContent = version;
+  row.appendChild(versionEl);
+  const summaryEl = document.createElement('span');
+  summaryEl.className = 'df-row__summary df-truncate';
+  summaryEl.textContent = summary;
+  row.appendChild(summaryEl);
+  const badgeSlot = document.createElement('span');
+  badgeSlot.className = 'df-row__badge';
+  const badge = document.createElement('span');
+  badge.className = 'df-badge';
+  badge.textContent = component;
+  badgeSlot.appendChild(badge);
+  row.appendChild(badgeSlot);
+  realHost.appendChild(row);
+});
+
+function measureRows() {
+  const styles = getComputedStyle(document.documentElement);
+  const rowToken = styles.getPropertyValue('--row-height').trim();
+  const skelToken = styles.getPropertyValue('--skeleton-row-height').trim();
+  const skelBox = document.querySelector('#skel-host .df-skeleton-row');
+  const realBox = document.querySelector('#skel-real .df-row');
+  const a = skelBox ? skelBox.getBoundingClientRect().height : 0;
+  const b = realBox ? realBox.getBoundingClientRect().height : 0;
+  const match = Math.abs(a - b) < 0.01;
+  const out = document.getElementById('skel-measure');
+  out.textContent =
+    '--row-height ' + rowToken + ' · --skeleton-row-height ' + skelToken +
+    ' · measured skeleton ' + a.toFixed(2) + 'px · measured row ' + b.toFixed(2) + 'px · ' +
+    (match ? 'match' : 'MISMATCH — the list will jump');
+  out.style.color = match ? 'var(--color-success-text)' : 'var(--color-danger-text)';
+}
+measureRows();
+
+document.getElementById('skel-more').addEventListener('click', () => { skelCount += 4; skel.setCount(skelCount); measureRows(); });
+document.getElementById('skel-fewer').addEventListener('click', () => { skelCount = Math.max(1, skelCount - 4); skel.setCount(skelCount); measureRows(); });
+
+/* ------------------------------------------------------------------ empty */
+
+mount('empty-nothing', emptyState({
+  kind: 'nothing-yet',
+  title: 'No catalogue for this target yet',
+  message: 'debark builds one from the target’s own apt indexes. It takes a minute or two the first time, then loads from cache.',
+  action: { label: 'Build the catalogue', onClick() {} },
+  actions: [{ label: 'Choose a different target', onClick() {} }],
+}));
+
+mount('empty-nomatches', emptyState({
+  kind: 'no-matches',
+  title: 'No packages match “postgersql”',
+  message: 'Nothing in noble/main or noble/universe matches that name. Check the spelling, or search summaries instead of names.',
+  actions: [{ label: 'Search summaries too', onClick() {} }],
+  onClear() {},
+  clearLabel: 'Clear the search',
+}));
+
+mount('empty-collection', emptyState({
+  kind: 'collection-empty',
+  title: 'Nothing selected yet',
+  message: 'Tick packages in the catalogue, or paste a list you already have. The bundle is built from what is in here.',
+  action: { label: 'Browse the catalogue', onClick() {} },
+  actions: [{ label: 'Paste a list', onClick() {} }],
+}));
+
+mount('empty-drives', emptyState({
+  kind: 'collection-empty',
+  title: 'No removable drives mounted',
+  message: 'Plug in the drive you are carrying to the offline machine, then rescan. The bundle folder is already written either way.',
+  action: { label: 'Rescan drives', onClick() {} },
+  actions: [{ label: 'Open the bundle folder', onClick() {} }],
+}));
+
+/* ------------------------------------------------------------------ error */
+
+mount('err-full', errorState({
+  summary: 'Could not reach archive.ubuntu.com',
+  hint: 'Check the builder machine’s network and proxy settings, or load a snapshot file instead of a stock base.',
+  detail: 'Get "http://archive.ubuntu.com/ubuntu/dists/noble/InRelease": dial tcp 91.189.91.83:80: connect: network is unreachable',
+  command: ['debark', 'build', '--base', 'ubuntu/noble/server/amd64', '--json-events', '-'],
+  exitClass: 'environment',
+  exitCode: 2,
+  onRetry() {},
+  actions: [{ label: 'Use a snapshot file', onClick() {} }],
+}));
+
+mount('err-nohint', errorState({
+  summary: 'The signing key file is not a valid ed25519 key',
+  detail: 'openssl: unable to load key: /home/op/.config/debark/keys/builder.key\nerror:0480006C:PEM routines::no start line',
+  exitClass: 'verification',
+  exitCode: 4,
+  onRetry() {},
+  retryLabel: 'Choose another key',
+}));
+
+const LONG_STDERR = (() => {
+  const lines = [
+    'debark: apt could not satisfy the request',
+    'The following packages have unmet dependencies:',
+  ];
+  for (let i = 0; i < 60; i += 1) {
+    lines.push(
+      ' libexample' + i + '-dev : Depends: libexample' + i + ' (= 2.4.' + i + '-1ubuntu3) but 2.4.' +
+      (i + 1) + '-1ubuntu3 is to be installed'
+    );
+  }
+  lines.push('E: Unable to correct problems, you have held broken packages.');
+  return lines.join('\n');
+})();
+
+mount('err-long', errorState({
+  summary: 'apt could not satisfy the selection',
+  hint: 'Remove the packages listed in the details, or pick a base whose release actually carries them.',
+  detail: LONG_STDERR,
+  command: ['debark', 'build', '--packages', 'packages.txt', '--json-events', '-'],
+  exitClass: 'resolution',
+  exitCode: 5,
+  onRetry() {},
+}));
+
+mount('err-bare', errorState({
+  // A backend that lost its message and handed us the number instead. This is
+  // the case the project's definition of done forbids reaching the operator.
+  summary: 'exit status 2',
+  exitClass: 'environment',
+  exitCode: 2,
+  detail: 'debark: (no message on stderr)',
+  command: ['debark', 'verify', '--json', '/media/op/KINGSTON/bundle'],
+  onRetry() {},
+}));
+
+mount('err-uierror', errorState({
+  error: {
+    code: 'cli.missing',
+    message: 'The debark binary could not be found',
+    hint: 'Install the debark package, or point the app at the binary in Settings.',
+    details: 'looked in: /usr/bin/debark, /usr/local/bin/debark, $PATH\nexec: "debark": executable file not found in $PATH',
+    command: ['debark', '--version'],
+    exit_class: 'environment',
+    exit_code: 127,
+    retryable: true,
+  },
+  onRetry() {},
+  actions: [{ label: 'Choose the binary…', onClick() {} }],
+}));
+
+mount('err-noretry', errorState({
+  error: {
+    code: 'selection.empty',
+    message: 'The selection is empty, so there is nothing to build',
+    hint: 'Add at least one package, a vendor .deb URL, or a local .deb file first.',
+    retryable: false,
+  },
+  // Offered, but suppressed: retrying the same empty selection cannot succeed.
+  onRetry() {},
+  actions: [{ label: 'Back to the catalogue', onClick() {} }],
+}));
+
+/* ---------------------------------------------------------------- banners */
+
+const bannerHost = document.getElementById('banner-host');
+const banners = [
+  inlineBanner({
+    kind: 'info',
+    title: 'Nothing leaves this machine',
+    message: 'The catalogue is built from the target’s own apt indexes. debark operates no service and calls no endpoint of its own.',
+  }),
+  inlineBanner({
+    kind: 'success',
+    title: 'Bundle verified',
+    message: '412 packages, ' + formatBytes(1_932_735_283) + ', signed with builder@example. Ready to copy.',
+    action: { label: 'Open the folder', onClick() {} },
+  }),
+  inlineBanner({
+    kind: 'warning',
+    title: 'This catalogue is 9 days old',
+    message: 'The archive has published new indexes since it was cached. Browsing a stale catalogue is safe — the build re-resolves against the live archive regardless.',
+    action: { label: 'Refresh it', onClick() {} },
+  }),
+  inlineBanner({
+    kind: 'danger',
+    title: 'The bundle is unsigned',
+    message: 'No signing key was available, so the manifest carries no signature. The offline target will accept it only with --insecure.',
+    action: { label: 'Create a key', onClick() {} },
+  }),
+  inlineBanner({
+    kind: 'info',
+    message: 'A base is an assumption, not a measurement. If the target has drifted from this baseline, hand the app a snapshot file instead.',
+  }),
+  inlineBanner({
+    kind: 'warning',
+    title: 'Dismissible',
+    message: 'Press the × to remove this one. dismiss() detaches the element and calls back exactly once.',
+    dismissible: true,
+    onDismiss() {},
+  }),
+];
+banners.forEach((b) => { bannerHost.appendChild(b.el); handles.push(b); });
+
+const KIND_CYCLE = ['info', 'success', 'warning', 'danger'];
+let kindAt = 0;
+document.getElementById('banner-cycle').addEventListener('click', () => {
+  kindAt = (kindAt + 1) % KIND_CYCLE.length;
+  banners[banners.length - 1].update({
+    kind: KIND_CYCLE[kindAt],
+    title: 'Kind is now “' + KIND_CYCLE[kindAt] + '”',
+    message: 'The icon shape changed as well as the colour, and the role switched between status and alert.',
+  });
+});
+
+/* ------------------------------------------------------------ guard rails */
+
+const guardHost = document.getElementById('guard-host');
+
+// expect: 'refused' — the call must throw, and the thrown message must say
+// what to do instead. 'allowed' — the call must NOT throw, because failing
+// while rendering an error is the worst possible moment to fail.
+function guard(expect, what, fn) {
+  let threw = false;
+  let message = '';
+  try {
+    const handle = fn();
+    message = 'allowed — it rendered.';
+    if (handle && typeof handle.destroy === 'function') handle.destroy();
+  } catch (err) {
+    threw = true;
+    message = err.message;
+  }
+  const asExpected = expect === 'refused' ? threw : !threw;
+  const banner = inlineBanner({
+    kind: asExpected ? 'success' : 'danger',
+    title: what,
+    message: message,
+  });
+  guardHost.appendChild(banner.el);
+  handles.push(banner);
+}
+
+guard('refused', 'loadingState({}) — a spinner with no label', () => loadingState({}));
+guard('refused', 'loadingState({ label: "   " }) — whitespace is not a label', () => loadingState({ label: '   ' }));
+guard('refused', 'emptyState({ title }) — a headline with no next step', () => emptyState({ title: 'No results' }));
+guard('refused', 'emptyState({ kind: "no-matches" }) with no way to clear the filter', () => emptyState({
+  kind: 'no-matches', title: 'No matches', message: 'Nothing matched that query.',
+}));
+guard('refused', 'inlineBanner({ kind: "danger" }) with no words', () => inlineBanner({ kind: 'danger' }));
+guard('allowed', 'errorState({}) — an error path must never fail while rendering', () => errorState({}));
+
+// And what errorState({}) actually puts on screen when it is given nothing:
+{
+  const nothing = errorState({});
+  const wrap = document.createElement('div');
+  wrap.className = 'df-panel d-box d-box--short';
+  wrap.appendChild(nothing.el);
+  guardHost.appendChild(wrap);
+  handles.push(nothing);
+}
+
+/* ---------------------------------------------------------------- escaping */
+
+const HOSTILE = '<img src=x onerror="document.title=\'pwned\'">  <script>alert(1)</' + 'script>  ${constructor}  &amp;  \u0000  </pre></div>';
+mount('escape-host', errorState({
+  summary: 'Failed to read ' + HOSTILE,
+  hint: 'Hostile text also reaches the hint. ' + HOSTILE,
+  detail: 'stderr, verbatim:\n' + HOSTILE + '\n\nA package description can contain a < just as easily.\ndpkg-deb: error: <control> member is corrupt',
+  command: ['debark', 'build', '--deb', HOSTILE],
+  exitClass: 'usage',
+  exitCode: 1,
+}));
+document.getElementById('escape-proof').textContent =
+  'proof: the panel above contains ' + document.querySelectorAll('#escape-host img, #escape-host script').length +
+  ' injected <img>/<script> elements, and document.title is still “' + document.title + '”.';
+
+/* ------------------------------------------------------------------ teardown */
+
+// Not needed on a demo page, but it proves every handle can be torn down and
+// leaves nothing running if the page is navigated away from.
+window.addEventListener('pagehide', () => {
+  stopLive();
+  handles.forEach((h) => { if (h && typeof h.destroy === 'function') h.destroy(); });
+}, { once: true });
+</script>
+
+<script>
+// Classic script, so it runs even when the module above was blocked. It only
+// reveals the explanation banner at the top of the page.
+window.addEventListener('load', function () {
+  if (document.documentElement.dataset.demoBooted !== '1') {
+    var warn = document.getElementById('boot-warning');
+    if (warn) warn.hidden = false;
+  }
+}, { once: true });
+
+// The theme toggle, identical to the design system gallery's.
+(function () {
+  var buttons = document.querySelectorAll('[data-set-theme]');
+  function apply(choice) {
+    if (choice === 'system') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', choice);
+    }
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute('aria-pressed',
+        String(buttons[i].getAttribute('data-set-theme') === choice));
+    }
+  }
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function (e) {
+      apply(e.currentTarget.getAttribute('data-set-theme'));
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

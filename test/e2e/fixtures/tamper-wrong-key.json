@@ -1,0 +1,49 @@
+/*
+ * tamper-wrong-key — corrupted bundle: verified against an untrusted key.
+ *
+ * Protects: the tamper matrix ("wrong key") and the trust
+ * model: "the operator public key must reach the target independently of
+ * the media ... the tool refuses to treat a key found on the same media as
+ * trust". Here the bundle itself is never touched — it is genuinely,
+ * correctly signed — but the harness generates a second, entirely unrelated
+ * keypair and points `debark verify --key` at *its* public key instead of
+ * the one that actually signed the bundle
+ * (test/e2e/harness/scenario.go's verifyKey selection). This models an
+ * operator who has been given (or has fetched) the wrong public key — a
+ * plausible real mistake distinct from every other tamper case here, none
+ * of which touch key selection at all.
+ *
+ * This exercises verify/iface.go's check 3, "at least one signature
+ * verifies against a trusted key" (sign.ErrUntrustedKey /
+ * verify.ProblemSignatureUntrusted): the signature is cryptographically
+ * perfect, it is simply not made by any key this particular verify
+ * invocation was told to trust.
+ *
+ * What would break if this regressed: if verify fell back to trusting *any*
+ * signature it finds well-formed — or worse, a key shipped on the bundle's
+ * own media — the entire operator-signature model collapses into
+ * "the media asserts its own authenticity", which is no security property
+ * at all.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "tamper-wrong-key",
+  "protects": "tamper matrix: wrong key; trust model; verify.ProblemSignatureUntrusted",
+  "tags": ["edge", "tamper"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "verify": { "exit_class": "verification" },
+    "install": { "exit_class": "skip" }
+  },
+  "tamper": { "kind": "wrong-key" }
+}

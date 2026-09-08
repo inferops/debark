@@ -1,0 +1,53 @@
+/*
+ * external-deb-missing-deps — an external .deb with missing dependencies.
+ *
+ * Protects: the edge-fixture list, "external .deb with missing
+ * deps", and exit code 3's definition (the table: "bundle built but
+ * incomplete: a URL failed or an external .deb has unsatisfiable
+ * dependencies"). The vendor .deb depends on a name that cannot exist in
+ * any real archive; engine.Build must still produce *something*
+ * (core/engine/iface.go: "It returns a BuildResult even for the incomplete
+ * case ... because an incomplete bundle still exists and the operator needs
+ * to know exactly what is missing from it") and report the exact unresolved
+ * name, not merely fail silently or abort with no artefact at all.
+ *
+ * expect.verify/install are "skip": this fixture's claim is entirely about
+ * the build stage's exit class and its Unresolved report — an incomplete
+ * bundle around one unresolvable input has nothing meaningful to verify or
+ * install here.
+ *
+ * What would break if this regressed: an operator preparing a bundle from a
+ * batch of vendor .debs (a realistic bulk workflow) with one bad entry among
+ * several good ones would either get no bundle at all (losing the good
+ * entries too) or a bundle that silently omits the failed one without
+ * saying so — the "fall back to one at a time and report each
+ * unresolved name" contract exists precisely so that never happens quietly.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "external-deb-missing-deps",
+  "protects": "edge fixtures: external .deb with missing dependencies; exit 3",
+  "tags": ["edge", "external-deb"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "vendor_debs": [
+      {
+        "name": "acme-broken-tool",
+        "version": "1.0",
+        "depends": "nonexistent-package-xyz-does-not-exist-9999",
+        "bin": true
+      }
+    ]
+  },
+  "expect": {
+    "build": { "exit_class": "incomplete" },
+    "verify": { "exit_class": "skip" },
+    "install": { "exit_class": "skip" },
+    "unresolved_contains": ["acme-broken-tool"]
+  }
+}

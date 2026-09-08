@@ -1,0 +1,251 @@
+.\" debark-gui.1 -- the Debark desktop application.
+.\"
+.\" Hand-written man(7), not generated. debark's own pages come out of
+.\" `debark gen-manpages`, which walks the cobra command tree it already
+.\" has (internal/cli/cmd_genmanpages.go). This program has no command tree
+.\" and no flags at all, so there is nothing to walk and nothing a generator
+.\" could produce that is not already written here. See docs/packaging.md.
+.\"
+.\" Every claim below was checked against the code or against the running
+.\" binary; nothing was copied from docs/user-guide.md. Where something could
+.\" not be established it is left out.
+.TH DEBARK\-GUI 1 "2026-09-07" "debark\-gui" "Debark Manual"
+.
+.SH NAME
+debark\-gui \- Debark, a desktop front end for debark
+.
+.SH SYNOPSIS
+.B debark\-gui
+.
+.SH DESCRIPTION
+.B Debark
+prepares software transfers for machines with no network connection. It runs
+on the online builder machine: name the offline machine as a target, pick
+packages from a catalogue built out of that target's own apt indexes, add
+vendor
+.I .deb
+URLs or local files, and build a bundle \- a flat apt repository plus a signed
+manifest \- to carry across.
+.PP
+The window is titled Debark; the executable and the package are named
+.BR debark\-gui .
+.PP
+It is a front end and decides nothing itself. Every resolve, fetch, build,
+signature and verification is performed by running
+.BR debark (1),
+which is located by searching
+.B PATH
+and then the directory holding this executable. Without it the application
+still starts, and its first screen explains what is missing. The catalogue is
+the one thing this program reads apt data for directly, and it reads it only
+to show a list: what actually goes into a bundle is resolved by
+.BR debark ,
+by asking the target release's own apt.
+.PP
+Debark runs on the builder machine only. Nothing about the offline target
+changes: over there it is still
+.BR debark ,
+or plain apt.
+.
+.SH OPTIONS
+None. This program takes no options and ignores any arguments it is given \-
+there is no
+.B \-\-help
+and no
+.BR \-\-version .
+The command line belongs to
+.BR debark (1):
+anything Debark can do is expressible as a
+.B debark
+command, and the build screen shows the exact command it is about to run
+before it runs it.
+.
+.SH EXIT STATUS
+This program is a window, not a job. Its exit status says how the process
+ended, never how a build turned out; a failed build is reported in the window,
+and the process still exits 0 when the window is closed.
+.TP
+.B 0
+Normal termination. The window was closed, or the process was sent
+.B SIGINT
+or
+.BR SIGTERM ,
+both of which are handled and shut the application down.
+.TP
+.B 1
+The application could not be started. The reason is printed to standard error
+as \fBdebark\-gui:\fR followed by the message.
+.TP
+.B 2
+The process was terminated by an unrecovered panic, whose message and
+goroutine trace are printed to standard error. On a correctly installed
+package the reachable cause is a failure to initialise GTK \-
+\fBpanic: failed to init GTK\fR \- which is what happens when there is no
+display to open.
+.PP
+.BR debark (1)
+has a frozen table of exit classes 0 to 7. It describes
+.BR debark ,
+not this program, and none of it reaches this program's status: the class of a
+failed
+.B debark
+run is carried into the message the screen shows instead.
+.
+.SH ENVIRONMENT
+The child
+.B debark
+processes inherit this application's environment unchanged, so
+.BR debark (1)'s
+own variables apply to every build started here. Listed below are the ones
+this program reads itself, plus the two that most visibly change what a build
+started from this window does.
+.TP
+.B PATH
+Searched for the
+.B debark
+executable. If it is not there, the directory holding
+.B debark\-gui
+is searched next, and the readiness screen names both places.
+.TP
+.B XDG_CACHE_HOME
+Where the catalogue cache is written, and where the webview writes its own
+cache. Defaults to
+.IR ~/.cache .
+See FILES.
+.TP
+.B XDG_DATA_HOME
+Where the webview stores website data, and where
+.BR debark 's
+package store lives by default \- the location this application's disk\-space
+check measures. Defaults to
+.IR ~/.local/share .
+.TP
+.B XDG_CONFIG_HOME
+Where this application looks for the operator signing key, under
+.IR debark/ .
+Defaults to
+.IR ~/.config .
+.TP
+.B DEBARK_CONFIG
+.BR debark 's
+configuration file. When it is set, the signing key is looked for beside it \-
+in the directory holding that file \- rather than under
+.BR XDG_CONFIG_HOME .
+.TP
+.B DEBARK_SIGN
+The signing key
+.B debark
+is configured to use. Read here so that the readiness screen reports the key
+.B debark
+would actually sign with, rather than a key only this application knows about.
+.TP
+.B DEBARK_SELF_BINARY
+Path to a Linux build of
+.B debark
+for the container backend to mount into the container and re\-execute. Read
+here for the readiness row that reports it, and by
+.B debark
+itself. It matters on Windows, where the
+.B debark
+on
+.B PATH
+is a
+.I .exe
+that cannot run inside a Linux container; the same need is met without any
+setting by a
+.I bin/debark\-linux\-<arch>
+binary sitting beside the
+.B debark
+this application runs.
+.TP
+.B DEBARK_STORE
+Overrides where
+.BR debark 's
+package store lives, and therefore what the disk\-space check measures.
+.TP
+.B SOURCE_DATE_EPOCH
+Not read by this program, and passed straight through to
+.BR debark ,
+where it fixes the timestamps written into a bundle so that two builds of the
+same inputs can be compared. A value that is not a non\-negative base\-10
+count of seconds is refused by
+.BR debark ,
+so a stray one in this application's environment fails every build it starts.
+.TP
+.B TMPDIR
+Where the one temporary file a running build needs is created: an NDJSON
+stream
+.B debark
+writes its events into, named
+.IR debark\-events\-*.ndjson ,
+removed when the build ends.
+.TP
+.BR USER ", " USERNAME ", " LOGNAME
+Read only to fill in the account name in a command the readiness screen
+displays for the operator to copy. Nothing is decided from them.
+.PP
+GTK and WebKitGTK read a large number of variables of their own. They are not
+this program's and are not documented here.
+.
+.SH FILES
+.TP
+.I $XDG_CACHE_HOME/debark-gui/catalog/
+The catalogue cache: one directory per target, holding the packed package
+index and a small header. This is the disk an operator reclaims and the
+directory to remove to force a rebuild. Deleting it is safe at any time, with
+the application running or not \- the next visit to that target rebuilds it,
+and nothing installed anywhere is decided from it. The layout is specified in
+.I docs/dev/cache-format.md
+in the source repository.
+.TP
+.IR $XDG_CACHE_HOME/debark-gui/WebKitCache/ ", " $XDG_CACHE_HOME/debark-gui/CacheStorage/
+The webview's own cache, created by WebKitGTK when the application starts.
+Also safe to delete.
+.TP
+.I $XDG_DATA_HOME/debark-gui/
+The webview's website data \- an HSTS database and the local storage the
+chosen colour theme is remembered in.
+.TP
+.IR $XDG_CONFIG_HOME/debark/operator.key ", " $XDG_CONFIG_HOME/debark/operator.pub
+Where this application looks for an operator signing key, and where the
+readiness screen's "create a signing key" action proposes writing one. The
+files are written by
+.BR "debark keygen" ,
+never by this program. The
+.I .pub
+half has to reach the offline machine by some route other than the media the
+bundle travels on; a public key carried alongside the bundle proves nothing.
+.TP
+.I $XDG_DATA_HOME/debark/store/
+.BR debark 's
+package store. Not written by this program, but it is what the disk\-space
+readiness row measures and where the finished downloads of a stopped build
+remain.
+.PP
+Everything else this program writes goes where the operator named it: the
+bundle output folder chosen on the build screen, and the destination chosen on
+the export screen.
+.
+.SH NOTES
+Debark needs no root and no other elevated privilege at any point, installs no
+service and no system configuration, and never opens a block device.
+.PP
+There is no telemetry, no crash reporting, no analytics and no update check.
+The only hosts contacted are the distribution archives named in the target's
+own sources and vendor
+.I .deb
+URLs the operator entered; there is no endpoint operated by this project for
+it to contact.
+.PP
+A command shown for the operator to copy has any credentials in a vendor URL
+removed from it, so it describes the build faithfully but may need the
+credential supplied again before it will run.
+.
+.SH SEE ALSO
+.BR debark (1)
+.PP
+The operator's guide \- what the application is for, the four steps it takes
+you through, and what to do when a check fails \- is
+.I \%docs/user\-guide.md
+in the source repository,
+.BR \%https://github.com/inferops/debark\-gui .

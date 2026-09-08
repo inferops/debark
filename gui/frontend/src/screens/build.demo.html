@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>build screen — replay harness</title>
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="../design/components.css">
+<style>
+/* Harness-only page chrome. Not part of the design system; uses its tokens.
+   Nothing in here styles the screen itself — the screen may only use design
+   system classes, and if this file had to add one that would be a defect. */
+body { background: var(--color-surface-1); margin: 0; }
+.hz-top { flex: none; }
+/* Bounded and scrollable: the harness's own prose must not squeeze the pane
+   it exists to demonstrate. */
+.hz-notes { flex: none; max-height: 26vh; overflow: auto; padding: var(--space-5) var(--space-5) 0; }
+.hz-top {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3);
+  min-height: var(--headerbar-height); padding: var(--space-2) var(--space-5);
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-1);
+}
+.hz-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); }
+
+.hz-note { color: var(--color-text-secondary); font-size: var(--font-size-md);
+  max-width: var(--measure-prose); margin: 0 0 var(--space-5); }
+.hz-toasts { position: fixed; right: var(--space-4); bottom: var(--space-4);
+  z-index: var(--z-toast); display: flex; flex-direction: column; gap: var(--space-2);
+  max-width: 360px; }
+.hz-controls { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.hz-controls label { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.hz-select { height: var(--control-height); }
+</style>
+</head>
+<body class="df-app">
+
+<div class="hz-top">
+  <span class="hz-title">build screen — replay harness</span>
+  <div class="hz-controls">
+    <label for="hz-ending">Ending</label>
+    <select id="hz-ending" class="df-input hz-select">
+      <option value="success">success (exit 0)</option>
+      <option value="incomplete">incomplete bundle (exit 3)</option>
+      <option value="resolution">resolution failed (exit 5)</option>
+      <option value="cancel">cancelled part-way</option>
+    </select>
+    <label for="hz-speed">Speed</label>
+    <select id="hz-speed" class="df-input hz-select">
+      <option value="1">1× (real timing)</option>
+      <option value="3" selected>3×</option>
+      <option value="10">10×</option>
+    </select>
+    <label for="hz-events">Progress events</label>
+    <select id="hz-events" class="df-input hz-select">
+      <option value="yes" selected>debark has --json-events</option>
+      <option value="no">older debark, no events at all</option>
+    </select>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="hz-reset">Reset the screen</button>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="hz-checks">Run behavior checks</button>
+    <label><input type="checkbox" id="hz-close-timeout"> Close timed out, cleanup finished</label>
+    <button type="button" class="df-btn df-btn--secondary df-btn--sm" id="hz-stale-build">Replay old build notices</button>
+  </div>
+  <div class="df-spacer"></div>
+  <div class="df-cluster">
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" data-set-theme="light" aria-pressed="false">Light</button>
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" data-set-theme="dark" aria-pressed="false">Dark</button>
+    <button type="button" class="df-btn df-btn--ghost df-btn--sm" data-set-theme="system" aria-pressed="true">System</button>
+  </div>
+</div>
+
+<div class="hz-notes">
+  <p class="hz-note">
+    A fake backend replays a recorded <code class="df-mono">debark.events/v1</code> stream with the real
+    emitter's timing: <code class="df-mono">progress</code> throttled to one event per 250&nbsp;ms per file,
+    concurrent downloads interleaved, one archive that sends no <code class="df-mono">Content-Length</code>
+    (<code class="df-mono">total_bytes: -1</code>), one download that retries and rewinds its byte count,
+    twelve store hits that download nothing, a redistribution warning in the first second and a
+    <code class="df-mono">doctor.finding</code> before any bytes move. Pick an ending, fill in an output
+    folder and signing key, accept the notice, and press <em>Build bundle</em>. There is no network access and no
+    <code class="df-mono">debark</code> binary involved.
+  </p>
+  <p class="hz-note">
+    <strong>Progress events</strong> sets <code class="df-mono">AppInfo.progress_events</code>. Switch it to
+    <em>older debark</em> and press <em>Reset the screen</em> to see the honest rendering when the located
+    binary has no <code class="df-mono">--json-events</code>: no bar at all, a labelled spinner, an empty
+    log, and a sentence saying so. It is read once on mount, so the reset is needed.
+  </p>
+</div>
+
+<!-- The real frame, not an approximation of it: .df-app__main bounds the
+     height and .df-app__pane is what the shell hands a screen — no padding, no
+     measure, and `overflow: auto` so the SCREEN's own column scrolls. A
+     harness that mounts into an unbounded block cannot reproduce the class of
+     bug where a flex child with `min-height: 0` collapses below its content
+     and a boxed list clips what is inside it, which is exactly what the first
+     run on WebKit2GTK found. -->
+<main class="df-app__main">
+  <div class="df-app__pane" id="hz-mount"></div>
+</main>
+
+<div class="hz-toasts" id="hz-toasts" aria-live="polite"></div>
+
+<script type="module">
+// The shell's own byte formatter, so the harness proves the screen is using it
+// rather than a private copy that can drift into different units.
+import { formatBytes as sharedFormatBytes } from '../shell/states.js';
+
+/* ------------------------------------------------------------------ theme */
+(function () {
+  const buttons = document.querySelectorAll('[data-set-theme]');
+  function apply(choice) {
+    if (choice === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', choice);
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.getAttribute('data-set-theme') === choice)));
+  }
+  buttons.forEach((b) => b.addEventListener('click', () => apply(b.getAttribute('data-set-theme'))));
+})();
+
+/* ------------------------------------------------------------ the fixture */
+
+const BASE_TS = Date.parse('2026-09-06T10:15:03Z');
+const ARCHIVE = 'http://archive.ubuntu.com/ubuntu/pool/main';
+const VENDOR = 'https://downloads.vendor.example/agent';
+
+// name, bytes, total_bytes as the archive reports it (-1 = no Content-Length),
+// when the download starts (ms), how long it takes (ms), optional retry point.
+const DOWNLOADS = [
+  { url: ARCHIVE + '/n/nginx/nginx-core_1.24.0-2ubuntu7.3_amd64.deb', size: 1484212, total: 1484212, start: 3200, dur: 2200 },
+  { url: ARCHIVE + '/p/postgresql-16/postgresql-16_16.4-1_amd64.deb', size: 15882240, total: 15882240, start: 3600, dur: 7400 },
+  { url: ARCHIVE + '/l/linux-firmware/linux-firmware_20240318.git-0ubuntu1_all.deb', size: 64_800_000, total: -1, start: 4200, dur: 12800 },
+  { url: ARCHIVE + '/libp/libpq/libpq5_16.4-1_amd64.deb', size: 143008, total: 143008, start: 6100, dur: 900 },
+  { url: VENDOR + '/vendor-agent_2.1.0_amd64.deb', size: 3204100, total: 3204100, start: 7000, dur: 5200, retryAt: 0.42 },
+  { url: ARCHIVE + '/r/redis/redis-server_7.0.15-1ubuntu0.1_amd64.deb', size: 1122304, total: 1122304, start: 11000, dur: 1800 },
+];
+
+const STORE_HITS = [
+  ['libc6', '2.39-0ubuntu8.3', 1834000], ['libssl3t64', '3.0.13-0ubuntu3.4', 2010000],
+  ['zlib1g', '1:1.3.dfsg-3.1ubuntu2', 66000], ['libgcc-s1', '14-20240412-0ubuntu1', 65000],
+  ['libstdc++6', '14-20240412-0ubuntu1', 780000], ['perl-base', '5.38.2-3.2', 1740000],
+  ['libpcre2-8-0', '10.42-4ubuntu2', 250000], ['libgssapi-krb5-2', '1.20.1-6ubuntu2.1', 145000],
+  ['libcurl4t64', '8.5.0-2ubuntu10.1', 340000], ['ca-certificates', '20240203', 165000],
+  ['libxml2', '2.9.14+dfsg-1.3ubuntu3', 760000], ['tzdata', '2024a-3ubuntu1', 275000],
+];
+
+function iso(ms) {
+  // RFC 3339 UTC truncated to the second — exactly what the real emitter writes.
+  return new Date(Math.floor((BASE_TS + ms) / 1000) * 1000).toISOString().replace('.000', '');
+}
+
+function makeTimeline(ending) {
+  const T = [];
+  const at = (t, type, attrs, opts) => {
+    const o = opts || {};
+    const ev = { ts: iso(t), type: type };
+    if (o.level) ev.level = o.level;
+    if (o.msg) ev.msg = o.msg;
+    if (attrs) ev.attrs = attrs;
+    // The backend's BuildEvent.raw is documented but the current projection in
+    // internal/app leaves it empty, so most of these carry no raw line and the
+    // screen has to re-encode. A couple carry one, to exercise both paths.
+    if (o.raw) ev.raw = JSON.stringify(Object.assign({ schema: 'debark.events/v1' }, ev));
+    T.push({ t: t, ev: ev });
+  };
+
+  at(120, 'snapshot.loaded', {
+    snapshot_digest: 'sha256:9f2c1a0d5e8b47c3a61d0f2b8e4c7a15d3b90e6f2c8a4b17e5d0c9f3a8b26d41',
+    distro_id: 'ubuntu', version_id: '24.04', codename: 'noble', arch: 'amd64',
+  }, { msg: 'loaded snapshot of the target', raw: true });
+
+  at(340, 'backend.selected', {
+    backend: 'container', runtime: 'podman', image: 'docker.io/library/ubuntu:24.04',
+    image_digest: 'sha256:1c8b0f5d…', platform: 'linux/amd64',
+  }, { msg: 'building in a container' });
+
+  // Warnings arrive early on purpose. An operator who sees this at minute one
+  // can stop and think; one who sees it at minute twenty has wasted twenty
+  // minutes.
+  at(520, 'warning', { code: 'redistribution', packages: 4 }, {
+    level: 'warn',
+    msg: 'four selected packages carry terms that restrict redistribution; you accepted responsibility for this bundle',
+  });
+
+  at(900, 'apt.update', { failed: false, entries: 12 }, { msg: 'refreshed 12 index entries' });
+
+  at(2100, 'doctor.finding', {
+    check: 'snap-transitional', severity: 'warning', package: 'firefox', flag: 'deb-installs-snap',
+  }, { level: 'warn', msg: 'the firefox deb is a transitional package that installs a snap; it will not work offline' });
+
+  if (ending === 'resolution') {
+    at(2600, 'apt.resolve', { selections: 0, unresolved: 3 }, {
+      level: 'error', msg: 'apt could not satisfy the request',
+    });
+    return { events: T, endAt: 3000 };
+  }
+
+  at(2500, 'apt.resolve', { selections: 214, unresolved: 0 }, { msg: 'resolved 214 selections' });
+  at(2650, 'input.external', { names: ['vendor-agent'] }, { msg: '1 external package' });
+  at(2800, 'policy.finding', { rule: 'approved-keys', severity: 'info', packages: ['nginx-core'] },
+    { msg: 'signed by an archive key on the approved list' });
+
+  STORE_HITS.forEach((hit, i) => {
+    at(2900 + i * 45, 'store.hit', {
+      name: hit[0], version: hit[1], arch: 'amd64', size: hit[2],
+      sha256: 'sha256:' + (i + 17).toString(16).repeat(8),
+    });
+  });
+
+  // Downloads. Byte progress is throttled to one event per 250 ms per file plus
+  // a final emit, exactly as core/fetch does it, and several files are in
+  // flight at once so their events interleave.
+  let lastFetch = 0;
+  for (const d of DOWNLOADS) {
+    const failing = ending === 'incomplete' && d.url === VENDOR + '/vendor-agent_2.1.0_amd64.deb';
+    const retryPoint = d.retryAt ? d.start + d.dur * d.retryAt : -1;
+    let restarted = false;
+    for (let t = d.start; t <= d.start + d.dur; t += 250) {
+      if (retryPoint > 0 && !restarted && t >= retryPoint) {
+        at(t, 'progress', { url: d.url, attempt: 2, attempts: 3 },
+          { level: 'warn', msg: 'retrying ' + d.url + ' (attempt 2/3)' });
+        restarted = true;
+      }
+      // A retry restarts this file's byte count. The screen must not clamp it.
+      const from = restarted ? retryPoint : d.start;
+      const span = restarted ? (d.start + d.dur - retryPoint) : d.dur;
+      const frac = Math.min(1, Math.max(0, (t - from) / span));
+      const bytes = Math.round(d.size * frac * (failing ? 0.31 : 1));
+      at(t, 'progress', { url: d.url, bytes: bytes, total_bytes: d.total });
+      if (failing && frac > 0.45) break;
+    }
+    if (failing) {
+      at(d.start + d.dur * 0.5, 'warning',
+        { code: 'fetch.failed', url: d.url, status: 404 },
+        { level: 'error', msg: 'GET ' + d.url + ' failed after 3 attempts: 404 Not Found' });
+      continue;
+    }
+    const done = d.start + d.dur + 60;
+    at(done, 'fetch.file', {
+      url: d.url,
+      filename: d.url.split('/').pop(),
+      digest: 'sha256:' + d.size.toString(16).padStart(8, '0').repeat(8).slice(0, 64),
+      size: d.size,
+      verification: 'digest+release',
+    }, { msg: 'fetched ' + d.url.split('/').pop() });
+    if (done > lastFetch) lastFetch = done;
+  }
+
+  if (ending === 'cancel') {
+    return { events: T, endAt: null, cancelAt: 8200 };
+  }
+
+  const tail = lastFetch + 400;
+  at(tail, 'repo.indexed', { package_count: 214, pool_bytes: 1_882_240_000 }, { msg: 'indexed the pool' });
+  at(tail + 700, 'bundle.assembled', {
+    package_count: ending === 'incomplete' ? 213 : 214,
+    added: ending === 'incomplete' ? 213 : 214, removed: 0, unreferenced: 0,
+  }, { msg: 'assembled the bundle' });
+  at(tail + 1100, 'manifest.signed', { signer_kind: 'file', key_id: 'ed25519:4f9a2c71b0e83d55' },
+    { msg: 'signed the manifest', raw: true });
+  at(tail + 1400, 'closed_world.checked', {
+    backend: 'container', image: 'docker.io/library/ubuntu:24.04',
+    image_digest: 'sha256:1c8b0f5d…', network: 'none',
+  }, { msg: 'checked the plan against a closed world' });
+
+  return { events: T, endAt: tail + 1800 };
+}
+
+const ARGV_BASE = ['debark', 'build', '--json', '--snapshot', '/home/operator/targets/prod-web-01.snapshot.json'];
+const ITEMS = ['apt:nginx-full', 'apt:postgresql-16', 'apt:redis-server', 'apt:openssh-server',
+  'apt:build-essential', 'apt:python3-pip', 'url:' + VENDOR + '/vendor-agent_2.1.0_amd64.deb',
+  'file:/home/operator/vendor/telemetry-shim_0.9.4_amd64.deb'];
+
+function shellQuote(s) {
+  s = String(s);
+  if (s !== '' && /^[A-Za-z0-9_@%+=:,./-]+$/.test(s)) return s;
+  return "'" + s.replace(/'/g, "'\\''") + "'";
+}
+
+function argvFor(opts) {
+  const a = ARGV_BASE.slice();
+  const dir = opts.output_dir || '';
+  const name = opts.output_name || 'prod-web-01-20260906';
+  const path = dir.replace(/\/+$/, '') + '/' + name;
+  if (opts.format === 'tar') a.push('--tar', path);
+  else a.push('--out', path);
+  if (opts.no_sign) a.push('--no-sign');
+  else if (opts.signer_ref) a.push('--sign', opts.signer_ref);
+  if (opts.sbom) a.push('--sbom');
+  // Three states. `null` means "follow the target's own apt.conf" and emits no
+  // flag at all, which is a different build from --no-recommends.
+  if (opts.recommends === true) a.push('--recommends');
+  else if (opts.recommends === false) a.push('--no-recommends');
+  if (opts.upgrades) a.push('--upgrades');
+  if (opts.update) a.push('--update');
+  if (opts.no_prune && opts.update) a.push('--no-prune');
+  if (opts.backend && opts.backend !== 'auto') a.push('--backend', opts.backend);
+  if (opts.acknowledge_redistribution) a.push('--acknowledge-redistribution');
+  return a.concat(['--']).concat(ITEMS);
+}
+
+/* -------------------------------------------------------- the fake backend */
+
+const RING_LIMIT = 5000;
+
+function phaseFor(type, current) {
+  switch (type) {
+    case 'snapshot.loaded': case 'backend.selected': return 'starting';
+    case 'apt.update': case 'apt.resolve': return 'resolving';
+    case 'fetch.file': case 'store.hit': case 'progress': return 'downloading';
+    case 'repo.indexed': case 'bundle.assembled': case 'bundle.pruned': return 'assembling';
+    case 'manifest.signed': return 'signing';
+    case 'closed_world.checked': return 'verifying';
+    default: return current;
+  }
+}
+
+function makeBackend(harness) {
+  const st = {
+    running: false, finished: false, cancelled: false,
+    phase: 'idle', message: '', pkg: '', fraction: -1, bytesDone: 0, bytesTotal: 0,
+    command: [], startedAt: '', finishedAt: '',
+    ring: [], total: 0, dropped: 0,
+    summary: null, error: null,
+    timers: [],
+  };
+
+  function clearTimers() { st.timers.forEach(clearTimeout); st.timers = []; }
+
+  function record(ev) {
+    st.total += 1;
+    const view = {
+      seq: st.total, ts: ev.ts, type: ev.type, level: ev.level, msg: ev.msg,
+      attrs: ev.attrs, raw: ev.raw,
+    };
+    st.ring.push(view);
+    if (st.ring.length > RING_LIMIT) { st.dropped += st.ring.length - RING_LIMIT; st.ring = st.ring.slice(-RING_LIMIT); }
+    return view;
+  }
+
+  function deliver(ev) {
+    const view = record(ev);
+    harness.emit('build:event', view);
+    const before = st.phase + '|' + st.message + '|' + st.fraction + '|' + st.bytesDone;
+    st.phase = phaseFor(ev.type, st.phase);
+    if (ev.msg) st.message = ev.msg;
+    if (ev.type === 'progress' && ev.attrs && typeof ev.attrs.bytes === 'number') {
+      st.bytesDone = ev.attrs.bytes;
+      st.bytesTotal = ev.attrs.total_bytes;
+      st.fraction = ev.attrs.total_bytes > 0 ? ev.attrs.bytes / ev.attrs.total_bytes : -1;
+      st.pkg = ev.attrs.url;
+    }
+    const after = st.phase + '|' + st.message + '|' + st.fraction + '|' + st.bytesDone;
+    if (before !== after) harness.emit('build:progress', progressView());
+  }
+
+  function progressView() {
+    return {
+      phase: st.phase, message: st.message, package: st.pkg,
+      current: 0, total: 0, bytes_done: st.bytesDone, bytes_total: st.bytesTotal,
+      fraction: st.fraction,
+    };
+  }
+
+  function finish(payload) {
+    clearTimers();
+    st.running = false;
+    st.finished = true;
+    st.cancelled = !!payload.cancelled;
+    st.summary = payload.summary || null;
+    st.error = payload.error || null;
+    st.phase = payload.cancelled ? 'cancelled' : payload.ok ? 'finished' : 'failed';
+    st.finishedAt = new Date().toISOString();
+    harness.emit('build:finished', {
+      ok: !!payload.ok, cancelled: !!payload.cancelled,
+      summary: st.summary, duration_ms: payload.duration_ms || 0, error: st.error,
+    });
+  }
+
+  const STATS_FULL = {
+    added: 214, removed: 0, unchanged: 0, package_count: 214,
+    bytes: 1_882_240_000, downloaded_bytes: 86_635_864, duration_seconds: 74,
+  };
+
+  function endingPayload(ending, elapsed) {
+    const path = harness.lastOptions.output_dir.replace(/\/+$/, '') + '/' +
+      (harness.lastOptions.output_name || 'prod-web-01-20260906') +
+      (harness.lastOptions.format === 'tar' ? '.debark.tar.zst' : '');
+    const signed = !harness.lastOptions.no_sign && !!harness.lastOptions.signer_ref;
+    const warnings = [
+      'firefox: the deb is a transitional package that installs a snap',
+      'four selected packages carry terms that restrict redistribution',
+    ];
+    if (ending === 'success') {
+      return {
+        ok: true, duration_ms: elapsed,
+        summary: {
+          bundle_path: path, bundle_id: 'bdl_9f2c1a0d5e8b47c3',
+          lock_ref: 'sha256:5a1d…', manifest_ref: 'sha256:c40b…',
+          signed: signed, stats: STATS_FULL, warnings: warnings,
+          truncated: false, exit_class: 'success',
+        },
+      };
+    }
+    if (ending === 'incomplete') {
+      return {
+        ok: false, duration_ms: elapsed,
+        summary: {
+          bundle_path: path, bundle_id: 'bdl_9f2c1a0d5e8b47c3',
+          lock_ref: 'sha256:5a1d…', manifest_ref: 'sha256:c40b…',
+          signed: signed,
+          stats: Object.assign({}, STATS_FULL, { package_count: 213, added: 213, downloaded_bytes: 83_431_764 }),
+          warnings: warnings,
+          unresolved: [
+            'telemetry-shim (external .deb) depends on libmonitor2 (>= 2.4), which is not available for noble/amd64',
+          ],
+          fetch_failed: [
+            VENDOR + '/vendor-agent_2.1.0_amd64.deb — 404 Not Found after 3 attempts',
+          ],
+          truncated: false, exit_class: 'incomplete',
+        },
+        // A failing build prints its BuildResult and then returns a SILENT
+        // error, so stderr is usually empty for exit 3, 5 and 6. The detail is
+        // only in the result document.
+        error: {
+          code: 'cli.incomplete',
+          message: 'The bundle was built, but one URL failed and one external .deb cannot be satisfied.',
+          hint: 'Fix the vendor URL, or drop telemetry-shim and build again. The bundle on disk is usable for everything else.',
+          details: '', command: st.command,
+          exit_class: 'incomplete', exit_code: 3, retryable: true,
+        },
+      };
+    }
+    return {
+      ok: false, duration_ms: elapsed,
+      summary: {
+        bundle_path: '', signed: false,
+        stats: { added: 0, removed: 0, unchanged: 0, package_count: 0, bytes: 0, downloaded_bytes: 0, duration_seconds: 3 },
+        unresolved: [
+          'postgresql-16 : Depends: libpq5 (= 16.4-1) but 16.3-0ubuntu0.24.04.1 is to be installed',
+          'vendor-agent : Depends: libmonitor2 (>= 2.4) but it is not installable',
+          'python3-pip : Conflicts: python3-distutils but 3.12.3-0ubuntu2 is to be installed',
+        ],
+        truncated: false, exit_class: 'resolution',
+      },
+      error: {
+        code: 'cli.resolution',
+        message: 'apt could not satisfy the request.',
+        hint: 'Remove one of the conflicting packages, or build against a snapshot taken from the machine you are targeting.',
+        details: '', command: st.command,
+        exit_class: 'resolution', exit_code: 5, retryable: false,
+      },
+    };
+  }
+
+  return {
+    state: st,
+
+    // AppInfo.progress_events is false on a debark with no --json-events.
+    // The screen has to render a running build having received nothing at all.
+    AppInfo() {
+      return {
+        name: 'debark-gui', version: '0.0.0-harness', platform: 'linux', arch: 'amd64',
+        debark_path: '/usr/bin/debark',
+        debark_version: harness.progressEvents ? '0.9.0' : '0.4.2',
+        headless: false,
+        progress_events: harness.progressEvents,
+      };
+    },
+
+    LifecycleStatus() {
+      return { build_running: st.running, export_running: false, stopping: false,
+        unsaved_selection: !st.finished || !st.summary || st.summary.exit_class !== 'success',
+        target_generation: 1, selection_revision: 1, error: harness.closeError };
+    },
+
+    Readiness() {
+      return { checks: [{ id: 'signing-key', title: 'Signing key', status: 'problem', severity: 'info',
+        summary: 'Choose a key.', remedy: 'Choose a key or create one.',
+        action: { label: 'Create key', display: 'debark keygen', command: ['debark', 'keygen'], runnable: true, elevated: false } }],
+        can_build: true, blocking_count: 0, degraded_count: 0, checking: false, checked_at: '2026-09-07T12:00:00Z' };
+    },
+
+    ChooseSigningKey() {
+      return { path: '/home/operator/keys/operator.key', cancelled: false };
+    },
+
+    RunReadinessAction(id) {
+      if (id !== 'signing-key') return { ok: false, error: { message: 'Unknown readiness action.', hint: 'Choose the signing-key action.' } };
+      setTimeout(() => harness.emit('readiness:finished', { ok: true, action: true, check_id: id, report: this.Readiness() }), 100);
+      return { ok: true };
+    },
+
+    PreviewCommand(opts) {
+      harness.lastPreview = { ...opts };
+      if (!opts.output_dir) {
+        return {
+          argv: [], display: '',
+          error: {
+            code: 'input.invalid', message: 'No output folder has been chosen yet.',
+            hint: 'Pick the folder the bundle should be written into.', retryable: false,
+          },
+        };
+      }
+      const argv = argvFor(opts);
+      return { argv: argv, display: argv.map(shellQuote).join(' ') };
+    },
+
+    StartBuild(opts) {
+      if (st.running) return { ok: false, error: { code: 'app.busy', message: 'A build is already running.', hint: 'Wait for it to finish, or stop it first.' } };
+      harness.lastOptions = opts;
+      const plan = makeTimeline(harness.ending);
+      const speed = harness.speed;
+      st.running = true; st.finished = false; st.cancelled = false;
+      st.phase = 'starting'; st.message = 'Starting debark'; st.fraction = -1;
+      st.bytesDone = 0; st.bytesTotal = 0; st.pkg = '';
+      st.ring = []; st.total = 0; st.dropped = 0;
+      st.summary = null; st.error = null;
+      st.command = argvFor(opts);
+      st.startedAt = new Date().toISOString();
+      st.finishedAt = '';
+      clearTimers();
+
+      harness.emit('build:started', {
+        command: st.command, target_id: 'prod-web-01', item_count: ITEMS.length,
+        started_at: st.startedAt, output_dir: opts.output_dir, target_generation: 1, selection_revision: 1,
+      });
+
+      const t0 = Date.now();
+      // An older debark emits nothing whatsoever: no build:progress, no
+      // build:event, an empty log and a phase that never leaves "starting".
+      // The run still finishes.
+      if (harness.progressEvents) {
+        for (const item of plan.events) {
+          st.timers.push(setTimeout(() => deliver(item.ev), item.t / speed));
+        }
+      }
+      if (plan.cancelAt) {
+        st.timers.push(setTimeout(() => this.CancelBuild(), plan.cancelAt / speed));
+      } else if (plan.endAt) {
+        st.timers.push(setTimeout(() => {
+          finish(endingPayload(harness.ending, Date.now() - t0));
+        }, (plan.endAt + 200) / speed));
+      }
+      return { ok: true };
+    },
+
+    CancelBuild() {
+      if (!st.running) return { ok: true };
+      clearTimers();
+      const t0 = Date.now();
+      // A few events already in flight still arrive after the stop. The screen
+      // must tolerate them without treating them as an error.
+      st.timers.push(setTimeout(() => deliver({
+        ts: iso(9000), type: 'progress',
+        attrs: { url: DOWNLOADS[2].url, bytes: 41_200_000, total_bytes: -1 },
+      }), 90));
+      st.timers.push(setTimeout(() => deliver({
+        ts: iso(9100), type: 'warning', level: 'warn',
+        attrs: { code: 'fetch.interrupted', url: DOWNLOADS[2].url },
+        msg: 'download interrupted; the partial file was discarded',
+      }), 180));
+      st.timers.push(setTimeout(() => finish({ ok: false, cancelled: true, duration_ms: Date.now() - t0 }), 340));
+      return { ok: true };
+    },
+
+    BuildStatus() {
+      const snapshot = {
+        running: st.running, finished: st.finished, cancelled: st.cancelled,
+        progress: progressView(), command: st.command,
+        target_id: 'prod-web-01', item_count: ITEMS.length,
+        target_generation: 1, selection_revision: 1,
+        started_at: st.startedAt, finished_at: st.finishedAt,
+        event_count: st.total, summary: st.summary, error: st.error,
+      };
+      const delay = harness.buildStatusDelays.shift() || 0;
+      return delay ? new Promise(resolve => setTimeout(() => resolve(snapshot), delay)) : snapshot;
+    },
+
+    BuildLog(sinceSeq, limit) {
+      const lim = (!limit || limit > 500) ? 500 : limit;
+      const page = { events: [], next_seq: sinceSeq, total: st.total, dropped: st.dropped };
+      for (const e of st.ring) {
+        if (e.seq <= sinceSeq) continue;
+        page.events.push(e);
+        page.next_seq = e.seq;
+        if (page.events.length >= lim) break;
+      }
+      if (page.next_seq < sinceSeq) page.next_seq = sinceSeq;
+      return page;
+    },
+
+    CurrentTarget() {
+      return {
+        target: {
+          selected: true, kind: 'snapshot', id: 'prod-web-01',
+          label: 'Ubuntu 24.04 (noble, amd64) — snapshot of prod-web-01',
+          distro_id: 'ubuntu', version_id: '24.04', codename: 'noble', arch: 'amd64',
+          snapshot_path: '/home/operator/targets/prod-web-01.snapshot.json',
+          assumed: false, catalog_ready: true,
+        },
+      };
+    },
+
+    Selection() {
+      return {
+        total: ITEMS.length, package_count: 6, url_count: 1, file_count: 1, unknown_count: 0,
+        installed_size_bytes: 412_000_000, download_size_bytes: 86_000_000,
+        added: 0, removed: 0,
+      };
+    },
+
+    ChooseDirectory(title, def) {
+      harness.toast('info', 'Folder picker (fake): chose /home/operator/bundles');
+      return { path: '/home/operator/bundles', cancelled: false };
+    },
+
+    CopyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      }
+      return { ok: true };
+    },
+
+    RevealPath(path) {
+      harness.toast('info', 'Would open the file manager at ' + path);
+      return { ok: true };
+    },
+  };
+}
+
+/* ------------------------------------------------------------- the harness */
+
+const harness = {
+  handlers: new Map(),
+  routes: [],
+  ending: 'success',
+  speed: 3,
+  progressEvents: true,
+  closeError: null,
+  buildStatusDelays: [],
+  lastOptions: { output_dir: '/home/operator/bundles' },
+  emit(name, payload) {
+    const list = this.handlers.get(name);
+    if (!list) return;
+    for (const fn of list.slice()) {
+      try { fn(payload); } catch (err) { console.error(name, err); }
+    }
+  },
+  toast(kind, message) {
+    const strip = document.getElementById('hz-toasts');
+    const role = kind === 'danger' ? 'danger' : kind === 'success' ? 'success' : kind === 'warning' ? 'warning' : 'info';
+    const node = document.createElement('div');
+    node.className = 'df-banner df-banner--' + role;
+    node.setAttribute('role', 'status');
+    const body = document.createElement('div');
+    body.className = 'df-banner__body';
+    const p = document.createElement('p');
+    p.className = 'df-banner__text';
+    p.textContent = message;
+    body.appendChild(p);
+    node.appendChild(body);
+    node.appendChild(Object.assign(document.createElement('div'), { className: 'df-banner__actions' }));
+    strip.appendChild(node);
+    setTimeout(() => { if (node.parentNode) node.parentNode.removeChild(node); }, 4000);
+  },
+};
+
+const backend = makeBackend(harness);
+
+const ctx = {
+  bindings: backend,
+  go(id, params) { harness.routes.push({ id, params }); harness.toast('info', 'The shell would navigate to the "' + id + '" screen.'); },
+  back() { harness.toast('info', 'The shell would go back.'); },
+  on(name, fn) {
+    if (!harness.handlers.has(name)) harness.handlers.set(name, []);
+    harness.handlers.get(name).push(fn);
+  },
+  off(name, fn) {
+    const list = harness.handlers.get(name);
+    if (!list) return;
+    const i = list.indexOf(fn);
+    if (i >= 0) list.splice(i, 1);
+  },
+  toast(kind, message) { harness.toast(kind, message); },
+  // Only the formatter, deliberately. The screen must reach the SHARED byte
+  // formatter rather than carry its own, and it must still render its own
+  // loading / empty / error markup when the shell supplies none — so this
+  // harness gives it one and withholds the other three.
+  states: { formatBytes: sharedFormatBytes },
+  theme: null,
+};
+
+document.getElementById('hz-ending').addEventListener('change', (e) => { harness.ending = e.target.value; });
+document.getElementById('hz-speed').addEventListener('change', (e) => { harness.speed = Number(e.target.value) || 1; });
+document.getElementById('hz-events').addEventListener('change', (e) => { harness.progressEvents = e.target.value === 'yes'; });
+document.getElementById('hz-close-timeout').addEventListener('change', e => {
+  harness.closeError = e.target.checked ? { code: 'close.timeout', message: 'The app could not close.',
+    hint: 'Cleanup timed out. The window stayed open; you can try closing it again.' } : null;
+  harness.emit('app:lifecycle', backend.LifecycleStatus());
+});
+document.getElementById('hz-stale-build').addEventListener('click', () => {
+  harness.buildStatusDelays.push(350, 0);
+  harness.emit('build:finished', { ok: true, summary: { bundle_path: '/old-run-must-never-appear', signed: true, exit_class: 'success' } });
+  harness.emit('build:started', { started_at: '2000-01-01T00:00:00Z', target_id: 'old-run-must-never-appear' });
+  harness.emit('build:event', { seq: 999999, ts: '2000-01-01T00:00:00Z', type: 'warning', level: 'warn', msg: 'old-run-must-never-appear' });
+  harness.emit('build:progress', { phase: 'failed', message: 'old-run-must-never-appear' });
+});
+
+import('./build.js').then((mod) => {
+  const screen = mod.default;
+  const mountPoint = document.getElementById('hz-mount');
+
+  // The pane IS the screen's root, exactly as the shell hands it over.
+  function boot() {
+    harness.handlers.clear();
+    while (mountPoint.firstChild) mountPoint.removeChild(mountPoint.firstChild);
+    screen.mount(mountPoint, ctx);
+    screen.show(ctx, {});
+  }
+
+  document.getElementById('hz-reset').addEventListener('click', () => {
+    backend.CancelBuild();
+    backend.state.finished = false;
+    backend.state.running = false;
+    backend.state.summary = null;
+    backend.state.error = null;
+    backend.state.total = 0;
+    backend.state.ring = [];
+    backend.state.startedAt = '';
+    backend.state.finishedAt = '';
+    backend.state.phase = 'idle';
+    screen.destroy();
+    boot();
+  });
+
+  boot();
+
+  // First-party regression journey: configure fixtures through their toolbar,
+  // then operate real visible screen controls. A failed assertion is recorded,
+  // never converted to a screenshot pass.
+  async function runChecks() {
+    const report = { passed: [], errors: [], finished: false };
+    window.__BUILD_CHECKS__ = report;
+    const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const check = (condition, message) => { if (!condition) throw new Error(message); report.passed.push(message); };
+    const visible = el => !el.closest('[hidden]') && el.getClientRects().length && !el.closest('dialog:not([open])');
+    const click = async name => {
+      const matches = Array.from(document.querySelectorAll('#hz-mount button')).filter(visible).filter(el => el.textContent.trim() === name);
+      check(matches.length === 1, 'one visible ' + name + ' control'); matches[0].click(); await pause(280);
+    };
+    const select = async (label, value) => {
+      const node = Array.from(document.querySelectorAll('#hz-mount label')).find(el => el.textContent.trim() === label);
+      const input = node && document.getElementById(node.htmlFor);
+      check(!!input && visible(input), label + ' is reachable');
+      input.value = value; input.dispatchEvent(new Event('change', { bubbles: true })); await pause(280);
+    };
+    try {
+      document.getElementById('hz-reset').click(); await pause(350);
+      const closed = Array.from(document.querySelectorAll('#hz-mount details')).filter(visible);
+      check(closed.every(el => !el.open), 'technical disclosures start closed');
+      const closeTimeout = document.getElementById('hz-close-timeout');
+      if (!closeTimeout.checked) closeTimeout.click();
+      await pause(80);
+      check(document.getElementById('hz-mount').innerText.includes('The app could not close.'), 'close failure remains visible after cleanup');
+      check(Array.from(document.querySelectorAll('#hz-mount input[type="text"]')).every(el => !el.disabled), 'idle lifecycle with close error permits bundle edits');
+      await click('Choose folder…'); await click('Choose key…');
+      const advanced = Array.from(document.querySelectorAll('#hz-mount summary')).find(el => el.textContent.trim() === 'Advanced options');
+      advanced.click(); await pause(40);
+      for (const [value, expected] of [['include', true], ['exclude', false], ['target', null]]) {
+        await select('Recommended packages', value);
+        check(harness.lastPreview.recommends === expected, 'recommends preserves ' + value);
+        check(!('no_recommends' in harness.lastPreview), 'deprecated recommends spelling absent');
+      }
+      const update = Array.from(document.querySelectorAll('#hz-mount label')).find(el => el.textContent.includes('Refresh indexes and re-resolve')).querySelector('input');
+      update.click(); await pause(280);
+      const noPrune = Array.from(document.querySelectorAll('#hz-mount label')).find(el => el.textContent.includes('Keep superseded files')).querySelector('input');
+      noPrune.click(); await pause(280); advanced.click();
+      check(harness.lastPreview.update && harness.lastPreview.no_prune, 'collapsed advanced preserves update/no-prune');
+      check(advanced.textContent.includes('refresh + upgrades'), 'changed advanced summary remains visible');
+      await select('Signing', 'unsigned');
+      check(harness.lastPreview.no_sign === true && harness.lastPreview.signer_ref === '', 'unsigned is explicit');
+      await select('Signing', 'default');
+      check(harness.lastPreview.no_sign === false && harness.lastPreview.signer_ref === '', 'configured default does not force unsigned');
+      check(document.getElementById('hz-mount').innerText.includes('Default key is not confirmed'), 'default-key uncertainty stays visible');
+      await select('Signing', 'key');
+      const ack = Array.from(document.querySelectorAll('#hz-mount label')).find(el => el.textContent.includes('I am responsible for redistribution')).querySelector('input');
+      ack.click(); await pause(280);
+      await click('Build bundle');
+      check(backend.state.running, 'visible Build starts one backend job');
+      document.getElementById('hz-stale-build').click();
+      check(screen.running && !screen.finished && !screen.resultSummary, 'old finished notice cannot replace the active build before status resolves');
+      check(!document.getElementById('hz-mount').innerText.includes('old-run-must-never-appear'), 'old notice metadata is never painted');
+      await pause(450);
+      check(screen.running && !screen.finished && !document.getElementById('hz-mount').innerText.includes('old-run-must-never-appear'), 'out-of-order status replies and raw events preserve current run');
+      await click('Cancel');
+      check(document.activeElement.textContent.trim() === 'Keep building', 'cancel dialog defaults to keeping the job');
+      await click('Keep building');
+      check(backend.state.running, 'dismissed cancellation preserves job');
+      await click('Cancel'); await click('Stop the build'); await pause(450);
+      check(backend.state.cancelled && document.getElementById('hz-mount').innerText.includes('Build cancelled'), 'late events do not replace cancellation outcome');
+      await click('Edit bundle');
+      const speed = document.getElementById('hz-speed'); speed.value = '10'; speed.dispatchEvent(new Event('change'));
+      const ending = document.getElementById('hz-ending'); ending.value = 'success'; ending.dispatchEvent(new Event('change'));
+      await click('Build bundle');
+      for (let i = 0; i < 60 && !backend.state.finished; i++) await pause(100);
+      await pause(250);
+      check(backend.state.finished && !backend.state.error, 'second visible build completes');
+      const completedPath = screen.resultSummary.bundle_path;
+      document.getElementById('hz-stale-build').click();
+      check(screen.finished && !screen.running && screen.resultSummary.bundle_path === completedPath, 'old started notice cannot resurrect a completed build');
+      await pause(450);
+      check(screen.finished && screen.resultSummary.bundle_path === completedPath, 'finished identity survives reordered status refreshes');
+      await click('Copy to drive…');
+      const route = harness.routes[harness.routes.length - 1];
+      check(route.id === 'export' && route.params.bundlePath === backend.state.summary.bundle_path, 'copy uses exact finished bundle path');
+      check(route.params.bundleSummary.bundle_id === backend.state.summary.bundle_id && route.params.sourceTarget === 'prod-web-01', 'copy preserves authoritative result identity');
+      check(route.params.sourceMode === 'result' && route.params.returnTo === 'build', 'copy route preserves result return destination');
+    } catch (err) { report.errors.push(String(err.stack || err)); }
+    report.finished = true;
+    harness.toast(report.errors.length ? 'danger' : 'success', report.errors.length ? report.errors[0] : report.passed.length + ' build behavior checks passed.');
+  }
+  document.getElementById('hz-checks').addEventListener('click', runChecks);
+  if (new URLSearchParams(location.search).has('autorun')) setTimeout(runChecks, 400);
+}).catch((err) => {
+  const mountPoint = document.getElementById('hz-mount');
+  const box = document.createElement('div');
+  box.className = 'df-banner df-banner--warning';
+  box.setAttribute('role', 'status');
+  const body = document.createElement('div');
+  body.className = 'df-banner__body';
+  const title = document.createElement('p');
+  title.className = 'df-banner__title';
+  title.textContent = 'This page needs to be served over http, not opened from a file:// path';
+  const text = document.createElement('p');
+  text.className = 'df-banner__text';
+  text.textContent = 'Browsers refuse ES module imports from file:// URLs. From the repository root run ' +
+    '"python3 -m http.server 8000" and open http://localhost:8000/frontend/src/screens/build.demo.html. ' +
+    'The underlying error was: ' + (err && err.message ? err.message : String(err));
+  body.appendChild(title);
+  body.appendChild(text);
+  box.appendChild(body);
+  box.appendChild(Object.assign(document.createElement('div'), { className: 'df-banner__actions' }));
+  mountPoint.appendChild(box);
+});
+</script>
+</body>
+</html>

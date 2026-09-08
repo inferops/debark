@@ -1,0 +1,56 @@
+/*
+ * third-party-repo — a third-party repository.
+ *
+ * Protects: the edge-fixture list, "third-party repo", and
+ * the "apt.sources[] — sources.list, sources.list.d/* (.list and
+ * .sources) — verbatim" capture requirement. Distinct from
+ * external-deb-closure.json: here the vendor package is requested *by
+ * name*, resolved through a repository already configured on the target
+ * (exactly like any apt package, except the archive is not Debian's or
+ * Ubuntu's own) — the code path that must reconstruct the target's
+ * third-party source into the private apt root, not the external-.deb
+ * staging path.
+ *
+ * The synthetic repo is Trusted: yes (unsigned) and carries a distinct
+ * Origin, mirroring the common real pattern of an internal or vendor apt
+ * repository added without a GPG-signed Release — precisely the case the
+ * lock schema exists to be honest about
+ * (publisher_verification, origin.key_fingerprint absent).
+ *
+ * What would break if this regressed: any organisation running its own
+ * internal apt repository (extremely common — most enterprise Debian/Ubuntu
+ * fleets have one) would find packages from it silently excluded, or the
+ * private root pointed at the wrong archive entirely.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "third-party-repo",
+  "protects": "edge fixtures: third-party repository",
+  "tags": ["edge"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {
+      "repos": [
+        {
+          "name": "acme-vendor",
+          "packages": [
+            { "spec": { "name": "acme-vendor-tool", "version": "1.0", "depends": "jq", "bin": true } }
+          ],
+          "release": { "origin": "AcmeVendor", "label": "Acme Vendor Repository", "suite": "bundle", "codename": "bookworm" }
+        }
+      ]
+    }
+  },
+  "request": {
+    "packages": ["acme-vendor-tool"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-vendor-tool", "jq"],
+    "binaries": [
+      { "path": "/usr/bin/acme-vendor-tool", "exit_code": 0, "stdout_contains": "acme-vendor-tool 1.0" }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+Capture the state of an offline target (everything its own apt would
+need to resolve a request as the target would, and nothing more by
+default), and inspect a snapshot of either kind.
+
+When there is no target to capture yet -- hardware not installed, or no
+access to the air-gapped side -- `from-base` synthesizes a snapshot from a
+stock release instead. That is an assumption about the machine rather than
+a measurement of it, and every snapshot records which of the two it is.
+
+Usage:
+  debark snapshot [command]
+
+Available Commands:
+  create      Capture this machine's package state.
+  from-base   Synthesize a snapshot from a stock release, for a target that does not exist yet.
+  inspect     Show a snapshot, and say whether it was measured or assumed.
+  list-bases  List the base definitions compiled into this binary.
+
+Flags:
+  -h, --help   help for snapshot
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply
+
+Use "debark snapshot [command] --help" for more information about a command.

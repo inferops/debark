@@ -1,0 +1,20 @@
+{
+  "schema_version": "debark.buildjob/v1",
+  "snapshot_ref": "/var/lib/debark/snapshots/plant4.snapshot.tar.zst",
+  "inputs": {
+    "packages": ["vlc", "acme-agent=2.1.0"],
+    "urls": [ { "url": "https://vendor.example.com/acme-agent_2.1.0_amd64.deb", "sha256": "0b160a1edbc6429c7cedf0faa0c4360c3f09eba20ac9ef1f9c0522119d3e4d0b" } ],
+    "files": ["./local-debs/zoom.deb"],
+    "local_dirs": ["./local-debs"],
+    "list_files": ["packages.txt"]
+  },
+  "options": {
+    "recommends": true, "upgrades": true, "update_mode": "refresh", "prune": true,
+    "mirror_overrides": { "http://deb.debian.org/debian": "http://mirror.internal/debian" },
+    "backend": "auto", "policy_ref": "policy.yaml", "sbom": true, "closed_world_check": true
+  },
+  "output": {
+    "path": "/mnt/media/plant4-bundle", "format": "dir",
+    "sign": { "signer_ref": "/etc/debark/keys/org.key", "required": true }
+  }
+}

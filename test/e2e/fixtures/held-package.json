@@ -1,0 +1,63 @@
+/*
+ * held-package — held packages.
+ *
+ * Protects: the edge-fixture list, "holds", and the exact rule
+ * stated: "Holds in dpkg_status are respected
+ * (--allow-change-held-packages only with --upgrade and explicit flag)".
+ *
+ * Two packages start installed at 1.0 from the same synthetic repo, which
+ * also offers 2.0 of each; acme-held-demo is `apt-mark hold`-ed,
+ * acme-other-demo is not. The build runs with --upgrades (a full-upgrade
+ * pass — build_flags), but *without* any allow-change-held-packages
+ * override. The design's rule is decisive either way: acme-other-demo must
+ * move to 2.0 (upgrades work at all) while acme-held-demo must stay at 1.0
+ * (a hold is not silently overridden just because *some* upgrade was
+ * requested) — using one package that should move and one that should not
+ * makes this a real discriminating test rather than one that would pass
+ * even if --upgrades were simply ignored entirely.
+ *
+ * What would break if this regressed: an operator who deliberately pinned a
+ * package (a known-good driver version, a compliance-mandated release) via
+ * dpkg hold would find it silently upgraded out from under them the next
+ * time someone ran a routine bundle refresh — exactly the kind of
+ * surprising, hard-to-audit change the checklist exists to
+ * prevent.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "held-package",
+  "protects": "edge fixtures: held packages",
+  "tags": ["edge"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {
+      "repos": [
+        {
+          "name": "acme-versions",
+          "packages": [
+            { "spec": { "name": "acme-held-demo", "version": "1.0", "bin": true } },
+            { "spec": { "name": "acme-held-demo", "version": "2.0", "bin": true } },
+            { "spec": { "name": "acme-other-demo", "version": "1.0", "bin": true } },
+            { "spec": { "name": "acme-other-demo", "version": "2.0", "bin": true } }
+          ]
+        }
+      ],
+      "from_repos": ["acme-held-demo=1.0", "acme-other-demo=1.0"],
+      "holds": ["acme-held-demo"]
+    }
+  },
+  "request": {
+    "packages": ["acme-held-demo", "acme-other-demo"],
+    "build_flags": ["--upgrades"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-held-demo", "acme-other-demo"],
+    "binaries": [
+      { "path": "/usr/bin/acme-held-demo", "exit_code": 0, "stdout_contains": "acme-held-demo 1.0" },
+      { "path": "/usr/bin/acme-other-demo", "exit_code": 0, "stdout_contains": "acme-other-demo 2.0" }
+    ]
+  }
+}

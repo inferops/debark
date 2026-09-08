@@ -1,0 +1,35 @@
+Package: base-files
+Status: install ok installed
+Priority: required
+Section: admin
+Installed-Size: 400
+Maintainer: Santiago Vila <sanvila@debian.org>
+Architecture: amd64
+Multi-Arch: foreign
+Version: 12.4
+Description: Debian base system miscellaneous files
+ This package contains the basic filesystem hierarchy of a Debian system.
+
+Package: libc6
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 12000
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: amd64
+Multi-Arch: same
+Source: glibc
+Version: 2.36-9+deb12u4
+Description: GNU C Library: Shared libraries
+ Contains the standard libraries used by nearly all programs.
+
+Package: old-removed-pkg
+Status: deinstall ok config-files
+Priority: optional
+Section: oldlibs
+Installed-Size: 10
+Maintainer: Nobody <nobody@debian.org>
+Architecture: amd64
+Version: 1.0-1
+Description: a package removed but with configuration files remaining
+ Must not be counted by InstalledCount: it is not "install ok installed".

@@ -1,0 +1,25 @@
+# Recorded output, not synthesised.
+# Image: debian:bookworm-slim (Docker Hub), pulled and run 2026-09-03.
+# Command:
+#   apt-get update -qq && apt-get -s install jq
+# Reproduce:
+#   MSYS_NO_PATHCONV=1 docker run --rm debian:bookworm-slim \
+#     bash -c "apt-get update -qq && apt-get -s install jq"
+# Environment: LC_ALL not explicitly set for this capture, but apt's
+# machine-readable Inst/Conf/Remv lines are locale-invariant; the free-text
+# summary lines above them are not, and install.go always runs the real
+# thing under LC_ALL=C.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libjq1 libonig5
+The following NEW packages will be installed:
+  jq libjq1 libonig5
+0 upgraded, 3 newly installed, 0 to remove and 2 not upgraded.
+Inst libonig5 (6.9.8-1 Debian:12.15/oldstable [amd64])
+Inst libjq1 (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])
+Inst jq (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])
+Conf libonig5 (6.9.8-1 Debian:12.15/oldstable [amd64])
+Conf libjq1 (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])
+Conf jq (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])

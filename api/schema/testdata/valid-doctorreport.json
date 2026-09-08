@@ -1,0 +1,10 @@
+{
+  "schema_version": "debark.doctorreport/v1",
+  "checked_at": "2026-09-03T12:20:00Z",
+  "findings": [
+    { "check": "network-postinst", "severity": "warn", "package": "acme-agent", "version": "2.1.0", "message": "postinst script references curl", "evidence": "curl -fsSL https://acme.example.com/register | sh", "flag": "network-postinst" },
+    { "check": "snap-shim", "severity": "note", "package": "chromium", "version": "128.0-1", "message": "chromium is a transitional snap shim on this release", "flag": "snap-shim" }
+  ],
+  "scanned": 2,
+  "summary": { "note": 1, "warn": 1 }
+}

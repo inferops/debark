@@ -1,0 +1,50 @@
+# Every way one deb822 stanza can be unusable. None of them may produce a
+# Source, and every one of them must produce a problem: a wrong answer here is
+# far worse than a missing one, and a silent skip is worse than either.
+
+# 0: a line that is neither a field nor the continuation of one.
+Types: deb
+URIs: https://example.invalid/repo
+this line has no colon at all
+Suites: stable
+Components: main
+
+# 1: the same field twice, so which value applies is anyone's guess.
+Types: deb
+URIs: https://a.example/one
+URIs: https://b.example/two
+Suites: stable
+Components: main
+
+# 2: a Packages stanza that wandered into a sources file.
+Package: hello
+Version: 2.10-3
+Description: not an apt source at all
+
+# 3: a template that was never expanded.
+Types: deb
+URIs: https://example.invalid/${codename}
+Suites: ${codename}
+Components: main
+
+# 4: a suite, but no component, and apt has no default for one.
+Types: deb
+URIs: https://example.invalid/repo
+Suites: stable
+
+# 5: source packages only.
+Types: deb-src
+URIs: https://example.invalid/repo
+Suites: stable
+Components: main
+
+# 6: a type that does not exist.
+Types: deb-foo
+URIs: https://example.invalid/repo
+Suites: stable
+Components: main
+
+# 7: a flat repository, which has no dists/ hierarchy to read.
+Types: deb
+URIs: https://vendor.example/flat
+Suites: ./

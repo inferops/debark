@@ -1,0 +1,28 @@
+Origin: Ubuntu
+Label: Ubuntu
+Suite: noble
+Version: 24.04
+Codename: noble
+Date: Thu, 25 Apr 2024 15:10:33 UTC
+Architectures: amd64 arm64 armhf i386 ppc64el riscv64 s390x
+Components: main restricted universe multiverse
+Description: Ubuntu Noble 24.04
+SHA256:
+ 8f6f71ae839c8cba390a7643fcbbdacddb0bc7d12c1583a2dd80a1f8443a30e5          7165069 main/binary-amd64/Packages
+ e0d7e4cbb09d2aa7f9e104a1488817417bc9d85f3e5d9a21156a52ec641ae531          1808488 main/binary-amd64/Packages.gz
+ 2a6a199e1031a5c279cb346646d594993f35b1c03dd4a82aaa0323980dd92451          1401160 main/binary-amd64/Packages.xz
+ ca96739892d2e5861f01f4d397639eb01e59ceb1a3ba872bf3ce749903c6f661          1923546 main/dep11/Components-amd64.yml
+ 2b0bae7a028eae95be48da94c11bae3c77faf062b82a2aedaaab64d76a1bc50b           664565 main/dep11/Components-amd64.yml.gz
+ 16d6a29ff856841eb7549e49226e6ea1e214288c436de22e0c72a789f32ba826           464496 main/dep11/Components-amd64.yml.xz
+ 198c6729ca7c0a287ba391f310d6f8c323e6945b7364e7f69182f88069947e12          3095169 main/i18n/Translation-en
+ 6b4c6b6175b81aa3f4b3f301bfcbd50a86b9271a95628e8e61f51f32eebd38b9           721109 main/i18n/Translation-en.gz
+ 0e0ce1b1ad812a837714c7e9034788fa4525b0240906e96c4bbf2ba0fb431041           512936 main/i18n/Translation-en.xz
+ 687ffc969e7700137677b9cfe2f614ee2d638052a91a7c9bf31f3f6a3040a99a         73379142 universe/binary-amd64/Packages
+ ce57756edcce0a5f7993ceb89057e1510148e04e3b85a066d780e4bc00485c8a         19315644 universe/binary-amd64/Packages.gz
+ ba9057fa1b91438cc8a1d26808d00c85389fe101d0c1496254df97236405599a         15037908 universe/binary-amd64/Packages.xz
+ bfea6e19b6ca87e10ebbc0b0a8b03a7219f37e38437ef7dd21406c40c70c9f96         18564799 universe/dep11/Components-amd64.yml
+ e49d4232fe79502caab4e9cfb7990c8a48a7b6f76ad1a2370be9e90068527a1c          5942598 universe/dep11/Components-amd64.yml.gz
+ 1265abaf44323e959287180e0fe0333bf47298660a1fc1d8f3e93b17edf56d17          3871348 universe/dep11/Components-amd64.yml.xz
+ 691de9bf84a813c0033ec44957f242a5e605a2e06ac36e4d0a590e884be5b5d7         32194499 universe/i18n/Translation-en
+ 593155de7765292932bd0617c43396dde33f54b606a6d20956e3b4ad6da980e9          8424803 universe/i18n/Translation-en.gz
+ 84c64a22677fcf04b574f260b24da363aebb6ff27908a4eb620af3218bc670e9          5981548 universe/i18n/Translation-en.xz

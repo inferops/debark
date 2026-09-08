@@ -1,0 +1,253 @@
+{
+  "schema_version": "debark.baselist/v1",
+  "arch": "arm64",
+  "bases": [
+    {
+      "id": "debian:12/minimal",
+      "description": "Debian 12 (bookworm) — a minimal install: the base system and apt, nothing chosen by an installer profile",
+      "distro_id": "debian",
+      "version_id": "12",
+      "codename": "bookworm",
+      "variant": "minimal",
+      "arch": "arm64",
+      "seeds": [
+        "apt",
+        "init"
+      ],
+      "recommends": false,
+      "digest": "4ef104ec9d221f5cae9092fbc0af730605c1cccbbbc4b8e1e360bafa0969a880"
+    },
+    {
+      "id": "debian:12/server",
+      "description": "Debian 12 (bookworm) — a server install: the minimal system plus the standard server set",
+      "distro_id": "debian",
+      "version_id": "12",
+      "codename": "bookworm",
+      "variant": "server",
+      "arch": "arm64",
+      "seeds": [
+        "apt",
+        "init",
+        "openssh-server"
+      ],
+      "recommends": false,
+      "digest": "6b99ca96afd31ed5ad3f97a26a02eae5387e91651db104193d5b44d21c732117"
+    },
+    {
+      "id": "debian:12/desktop",
+      "description": "Debian 12 (bookworm) — a desktop install: the minimal system plus the default desktop environment",
+      "distro_id": "debian",
+      "version_id": "12",
+      "codename": "bookworm",
+      "variant": "desktop",
+      "arch": "arm64",
+      "seeds": [
+        "apt",
+        "init",
+        "task-gnome-desktop"
+      ],
+      "recommends": false,
+      "digest": "ddde62e80745e05d71df2453a34ceeee19919adff273ae2e75681a5693039863"
+    },
+    {
+      "id": "debian:13/minimal",
+      "description": "Debian 13 (trixie) — a minimal install: the base system and apt, nothing chosen by an installer profile",
+      "distro_id": "debian",
+      "version_id": "13",
+      "codename": "trixie",
+      "variant": "minimal",
+      "arch": "arm64",
+      "seeds": [
+        "apt",
+        "init"
+      ],
+      "recommends": false,
+      "digest": "7fd8fc1eacbb77636fdcd612c08bcb64531fa449cad465812b433c8a03e228e7"
+    },
+    {
+      "id": "debian:13/server",
+      "description": "Debian 13 (trixie) — a server install: the minimal system plus the standard server set",
+      "distro_id": "debian",
+      "version_id": "13",
+      "codename": "trixie",
+      "variant": "server",
+      "arch": "arm64",
+      "seeds": [
+        "apt",
+        "init",
+        "openssh-server"
+      ],
+      "recommends": false,
+      "digest": "237807f55ee84f8cab8f96d237f246816fa65fd775716148c4cf520628b1b97c"
+    },
+    {
+      "id": "debian:13/desktop",
+      "description": "Debian 13 (trixie) — a desktop install: the minimal system plus the default desktop environment",
+      "distro_id": "debian",
+      "version_id": "13",
+      "codename": "trixie",
+      "variant": "desktop",
+      "arch": "arm64",
+      "seeds": [
+        "apt",
+        "init",
+        "task-gnome-desktop"
+      ],
+      "recommends": false,
+      "digest": "08ab2b77c06466ab01c720233eadaa7cf63fd5d485886cce7f881187f44c0950"
+    },
+    {
+      "id": "ubuntu:22.04/minimal",
+      "description": "Ubuntu 22.04 (jammy) — a minimal install: the base system and apt, nothing chosen by an installer profile",
+      "distro_id": "ubuntu",
+      "version_id": "22.04",
+      "codename": "jammy",
+      "variant": "minimal",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "4295e9af2b4b484f02052c828463c270811d15c73f6d5e87623681e48fcd6d19"
+    },
+    {
+      "id": "ubuntu:22.04/server",
+      "description": "Ubuntu 22.04 (jammy) — a server install: the minimal system plus the standard server set",
+      "distro_id": "ubuntu",
+      "version_id": "22.04",
+      "codename": "jammy",
+      "variant": "server",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-server-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "79b932919e90ca07395fef1f562f26328e4b079c4206d10b6063ed3781c80ef7"
+    },
+    {
+      "id": "ubuntu:22.04/desktop",
+      "description": "Ubuntu 22.04 (jammy) — a desktop install: the minimal system plus the default desktop environment",
+      "distro_id": "ubuntu",
+      "version_id": "22.04",
+      "codename": "jammy",
+      "variant": "desktop",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-desktop-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "a022d2d7823c91420c31bd8032c25a24b173df87dddb6a433a62b32b376b7f3b"
+    },
+    {
+      "id": "ubuntu:24.04/minimal",
+      "description": "Ubuntu 24.04 (noble) — a minimal install: the base system and apt, nothing chosen by an installer profile",
+      "distro_id": "ubuntu",
+      "version_id": "24.04",
+      "codename": "noble",
+      "variant": "minimal",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "03651e6459a7da6e9b76e5a4de47ff2c0dccf256f9b310c14f00a5b9b357fb5c"
+    },
+    {
+      "id": "ubuntu:24.04/server",
+      "description": "Ubuntu 24.04 (noble) — a server install: the minimal system plus the standard server set",
+      "distro_id": "ubuntu",
+      "version_id": "24.04",
+      "codename": "noble",
+      "variant": "server",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-server-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "b52168767804ee55ba95ff058b4dbcb332382e9516236f20c96502a274b99714"
+    },
+    {
+      "id": "ubuntu:24.04/desktop",
+      "description": "Ubuntu 24.04 (noble) — a desktop install: the minimal system plus the default desktop environment",
+      "distro_id": "ubuntu",
+      "version_id": "24.04",
+      "codename": "noble",
+      "variant": "desktop",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-desktop-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "250a8a1897c870b8fe22ad78a22c33c865ca39851280a10d09984efbcba93906"
+    },
+    {
+      "id": "ubuntu:26.04/minimal",
+      "description": "Ubuntu 26.04 (resolute) — a minimal install: the base system and apt, nothing chosen by an installer profile",
+      "distro_id": "ubuntu",
+      "version_id": "26.04",
+      "codename": "resolute",
+      "variant": "minimal",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "7fbb9607e83cd759b0248871bc6ff09c93e3bb86c4c5cc765c72ae1f94e806a6"
+    },
+    {
+      "id": "ubuntu:26.04/server",
+      "description": "Ubuntu 26.04 (resolute) — a server install: the minimal system plus the standard server set",
+      "distro_id": "ubuntu",
+      "version_id": "26.04",
+      "codename": "resolute",
+      "variant": "server",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-server-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "74d467c5b89eadde6dd8b92656c4144cf75227e73c07af2c3145c8358c0903f4"
+    },
+    {
+      "id": "ubuntu:26.04/desktop",
+      "description": "Ubuntu 26.04 (resolute) — a desktop install: the minimal system plus the default desktop environment",
+      "distro_id": "ubuntu",
+      "version_id": "26.04",
+      "codename": "resolute",
+      "variant": "desktop",
+      "arch": "arm64",
+      "seeds": [
+        "ubuntu-desktop-minimal"
+      ],
+      "excludes": [
+        "lsb-base"
+      ],
+      "recommends": false,
+      "digest": "109543d2d4f179e9612b1a69d02dbd97431e460bf01e304d1f06ba4e896fe561"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+/*
+ * multiarch-coexist — multi-arch.
+ *
+ * Protects: the edge-fixture list and "multi-arch"
+ * ("APT::Architecture = target arch; APT::Architectures:: includes every
+ * foreign arch from the snapshot"). This fixture is about a *mixed-arch
+ * single request*: the target already has a foreign i386 library installed
+ * from before (libc6:i386, representing a machine that has had multiarch on
+ * for a while), and the request itself spans both architectures in one
+ * `debark build` — one amd64 package (jq) and one i386 package
+ * (zlib1g:i386). The bundle's repo/pool and Packages file must carry both
+ * architectures' entries without collision, and the closed-world check
+ * must accept both together.
+ *
+ * See foreign-arch-i386.json for the complementary case: a target that does
+ * *not* have i386 enabled yet, exercising the "add it now" path instead of
+ * "already coexisting".
+ *
+ * What would break if this regressed: a target with any foreign
+ * architecture already in use (extremely common — i386 for Steam/Wine,
+ * armhf on a Raspberry Pi OS with legacy binaries) could see its foreign-arch
+ * packages silently dropped from the bundle, or the Packages index could
+ * collide two same-named, different-arch entries into one.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "multiarch-coexist",
+  "protects": "edge fixtures: multi-arch",
+  "tags": ["edge", "multiarch"],
+  "target": {
+    "distro": "ubuntu",
+    "version": "24.04",
+    "arch": "amd64",
+    "foreign_archs": ["i386"],
+    "installed": {
+      "packages": ["libc6:i386"]
+    }
+  },
+  "request": {
+    "packages": ["jq", "zlib1g:i386"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["jq", "zlib1g:i386", "libc6:i386"],
+    "binaries": [
+      { "path": "/usr/bin/jq", "args": ["--version"], "exit_code": 0 }
+    ],
+    "elf_checks": [
+      { "package": "zlib1g:i386", "class": "ELF32" }
+    ]
+  }
+}

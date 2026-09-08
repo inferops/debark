@@ -1,0 +1,93 @@
+/*
+ * phased-updates — a phased version must not be pulled into an upgrade.
+ *
+ * Protects: the edge-fixture list, "phased updates", and the
+ * concern that Ubuntu's Phased-Update-Percentage must not be silently
+ * ignored. A synthetic repository (rather than a real, currently-phasing
+ * Ubuntu -updates package, which is a moving target this fixture cannot pin
+ * across time) offers acme-phased-demo 1.0 with no phasing field and 2.0
+ * with Phased-Update-Percentage: 0 — a deterministic "never phase in, for
+ * any machine-id" case, since apt's phase-in test is
+ * `hash(machine-id, pkg, version) % 100 < percentage`, false for every
+ * possible hash at 0. So the expected outcome does not depend on which
+ * machine-id policy (target-machine-id vs Never-Include-Phased-
+ * Updates) ends up applying: both must agree 2.0 is excluded.
+ *
+ * WHY THE REQUEST LOOKS LIKE THIS, and it is the whole point of the fixture:
+ * acme-phased-demo is deliberately NOT in request.packages. It is installed
+ * on the target at 1.0 and reached only through the --upgrades pass.
+ *
+ * The fixture used to name it directly, and that made it assert something
+ * the design does not promise. docs/experiments/E1-phased-updates.md
+ * measured `apt-get install -s <pkg>` selecting the phased 2.91 under
+ * machine-id A, machine-id B and Never-Include alike: an explicitly named
+ * install BYPASSES phasing entirely, because phasing governs apt's automatic
+ * upgrade pass and nothing else. core/apt/local.go says so at the point
+ * where it sets the option, and is careful not to claim the flag protects
+ * the requested-packages pass too. So the old fixture asked for a package by
+ * name and then required the phasing-aware answer; the 2026-09-05 matrix run
+ * recorded exactly what E1 predicts — "got: acme-phased-demo 2.0".
+ *
+ * That was a fixture encoding an expectation its own E1 experiment had
+ * already disproved, not a resolver bug. Making it green by weakening the
+ * assertion would have thrown away the only regression guard for the pass
+ * phasing DOES govern, so the request was retargeted at that pass instead.
+ * acme-plain-demo exists solely to give the build a request of its own, so
+ * that the only route to acme-phased-demo is the upgrade.
+ *
+ * The narrower claim this still does NOT make: choosing between the
+ * target-machine-id and never-include policies for a FRACTIONAL percentage
+ * is what hack/experiments/e1-phased-updates.sh exists to settle against
+ * real apt. This is the regression guard for the pipeline consuming E1's
+ * conclusion, not a replacement for it.
+ *
+ * If debark ever grows E1's recommended post-resolution check — read
+ * Phased-Update-Percentage from the Packages index for each resolved
+ * selection and refuse or pin back any below 100 — then a SECOND fixture
+ * should be added that names the package directly and requires 1.0. Until
+ * that check exists, such a fixture would only re-record E1's finding as a
+ * failure.
+ *
+ * What would break if this regressed: an upgrade bundle would carry a
+ * version the target's own apt would not yet have offered itself — the
+ * silent-wrong-bundle scenario the phased-update policy names explicitly.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "phased-updates",
+  "protects": "edge fixtures: phased updates; E1's narrowing to the upgrade pass",
+  "tags": ["edge", "ubuntu-specific"],
+  "target": {
+    "distro": "ubuntu",
+    "version": "24.04",
+    "arch": "amd64",
+    "installed": {
+      "repos": [
+        {
+          "name": "acme-phased",
+          "packages": [
+            { "spec": { "name": "acme-phased-demo", "version": "1.0", "bin": true } },
+            {
+              "spec": { "name": "acme-phased-demo", "version": "2.0", "bin": true },
+              "extra_fields": { "Phased-Update-Percentage": "0" }
+            },
+            { "spec": { "name": "acme-plain-demo", "version": "1.0", "bin": true } }
+          ]
+        }
+      ],
+      "from_repos": ["acme-phased-demo=1.0"]
+    }
+  },
+  "request": {
+    "packages": ["acme-plain-demo"],
+    "build_flags": ["--upgrades"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-phased-demo", "acme-plain-demo"],
+    "binaries": [
+      { "path": "/usr/bin/acme-phased-demo", "exit_code": 0, "stdout_contains": "acme-phased-demo 1.0" },
+      { "path": "/usr/bin/acme-plain-demo", "exit_code": 0, "stdout_contains": "acme-plain-demo 1.0" }
+    ]
+  }
+}

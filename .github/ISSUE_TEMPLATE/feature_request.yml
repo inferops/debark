@@ -1,0 +1,57 @@
+name: Feature request
+description: Propose something debark should do that it does not do today.
+title: "[feature] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing, please check two short documents — most "why doesn't
+        debark do X" questions are already answered there:
+
+        - [GOVERNANCE.md](../../GOVERNANCE.md) has the **permanent
+          do-not-build list** (no Go dependency solver, no Snap/Flatpak/pip/
+          npm/cargo/OCI/Helm orchestration, no mirror manager, no daemon or
+          server in the community binary, no GUI/full-TUI, no self-updater,
+          no telemetry, no licence checks in the community binary, no
+          general CVE scanner). These are treated as settled product
+          definition, not backlog — a request for one of them will be
+          closed with a link back here, however well-written.
+        - [docs/free-paid-policy.md](../../docs/free-paid-policy.md) draws
+          the free/paid line. A request for something whose value is
+          fleet-wide coordination (RBAC, approvals, central policy, fleet
+          history) is likely describing the commercial edition, not a
+          community-binary feature — still worth filing, so we can gauge
+          demand, but the outcome is different.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve
+      description: Describe the situation you are in, not just the feature you imagine. What are you actually trying to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      description: What would debark do differently? Include a command-line sketch if it helps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you have tried instead
+      description: Existing debark flags, other tools, or workarounds.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked this is not on the permanent do-not-build list in GOVERNANCE.md
+          required: true
+        - label: I checked whether this is a community-edition or commercial-edition request per docs/free-paid-policy.md
+          required: true

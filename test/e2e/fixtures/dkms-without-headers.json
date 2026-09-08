@@ -1,0 +1,52 @@
+/*
+ * dkms-without-headers — a DKMS package without headers.
+ *
+ * Protects: the scope table ("doctor: warns about ... DKMS
+ * packages without matching headers") and the edge-fixture list.
+ * core/doctor/checks.go's isDKMSPackage recognises a package by its name
+ * containing "dkms" (or a dkms.conf in its data — the name is the simpler,
+ * equally-real trigger used here) and checkDKMSHeaders then looks for a
+ * matching linux-headers-<kernel> package in the snapshot's installed set.
+ *
+ * A container never has a real linux-image / linux-headers pair installed
+ * (it shares the host kernel, and no kernel package makes sense inside
+ * one), so this fixture's target is, honestly, exactly the case doctor
+ * needs to flag: a machine with no matching headers available for a DKMS
+ * module to build against. No linux-headers package is installed on
+ * purpose — deliberately not simulated away, because it is the realistic
+ * state doctor exists to catch, not an artefact of the test environment to
+ * work around.
+ *
+ * doctor is checked, not policy (see snap-shim-package.json's note): the
+ * package still builds and installs cleanly (it has no real kernel module
+ * to build, only a name that matches the heuristic) — only
+ * `debark doctor`'s report is expected to flag it.
+ *
+ * What would break if this regressed: an operator bundling a vendor driver
+ * package for an air-gapped machine would get no warning that the module
+ * cannot actually build there, discovering it only after the media has
+ * already crossed the gap — exactly the failure mode the design lists
+ * doctor's DKMS check to prevent.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "dkms-without-headers",
+  "protects": "edge fixtures: DKMS package without headers; core/doctor checkDKMSHeaders",
+  "tags": ["edge", "doctor"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "vendor_debs": [
+      { "name": "acme-driver-dkms", "version": "1.0" }
+    ]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-driver-dkms"],
+    "doctor_contains": ["dkms"]
+  }
+}

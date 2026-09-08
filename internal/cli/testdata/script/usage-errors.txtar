@@ -1,0 +1,72 @@
+# Usage errors this package itself is responsible for, verified end to end
+# against the installed debark binary with the exact documented exit
+# code (the exit-code table: usage errors are always 1). The
+# debarkcode command (installed by TestScripts in main_test.go) is
+# `debarkcode WANT_CODE debark-args...`.
+
+# A missing required flag is exit 1.
+#
+# `build` names the target with either --snapshot or --base and needs exactly
+# one of them, so cobra's "one required" wording is what it produces rather
+# than "required flag(s) ... not set". Both are exit 1, which is the thing
+# this file exists to pin.
+debarkcode 1 build
+stderr 'at least one of the flags'
+stderr 'snapshot'
+stderr 'base'
+
+# ...and giving both is equally a usage error, because they are two ways of
+# naming the same thing and a build given both would have to ignore one.
+debarkcode 1 build --snapshot s --base ubuntu:26.04/desktop
+stderr 'were all set'
+
+debarkcode 1 keygen
+stderr 'required flag'
+
+debarkcode 1 resolve
+stderr 'required flag'
+
+# A missing required positional argument is exit 1.
+debarkcode 1 verify
+stderr 'received 0'
+
+debarkcode 1 install
+stderr 'received 0'
+
+debarkcode 1 snapshot inspect
+stderr 'received 0'
+
+# Too many positional arguments is exit 1.
+debarkcode 1 verify a b
+stderr 'received 2'
+
+# An unknown top-level command is exit 1.
+debarkcode 1 frobnicate
+stderr 'unknown command'
+
+# An unknown flag is exit 1.
+debarkcode 1 version --bogus-flag
+stderr 'unknown flag'
+
+# A bad enum value is exit 1.
+debarkcode 1 build --snapshot x --backend bogus
+stderr 'backend must be'
+
+# Mutually exclusive flags are exit 1.
+debarkcode 1 build --snapshot x --out a --tar b
+stderr 'were all set'
+
+debarkcode 1 install b --status --dry-run
+stderr 'were all set'
+
+# doctor's positional-vs-flag exclusivity is this package's own check, not
+# cobra's flag-group mechanism, and is exercised the same way.
+debarkcode 1 doctor
+stderr 'give exactly one'
+
+debarkcode 1 doctor bundle-dir --snapshot snapshot-file
+stderr 'give exactly one'
+
+# --help always overrides a usage error and exits 0.
+debarkcode 0 build --help
+stdout 'Usage:'

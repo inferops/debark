@@ -1,0 +1,219 @@
+name: Nightly integration matrix
+
+# ---------------------------------------------------------------------------
+# The integration matrix: for each fixture — a target container with a known
+# installed set, sources, pins and a build request — build the bundle with a
+# real target-release apt backend, then start a `--network none` target
+# container and prove `verify` + `install` succeed and the resulting binaries
+# run.
+#
+# Those fixtures EXIST now. `test/e2e/fixtures/*.json` is the set (24 files at
+# the time of writing), `test/e2e/*_test.go` runs them through `go test`, and
+# `hack/matrix` is the runner this workflow drives. The earlier version of
+# this file said the fixtures had not been written yet and printed a notice
+# instead of running anything; that is no longer true, and the "no fixtures
+# yet" branch is gone. If the fixture set ever disappears, the assertion below
+# fails the job loudly rather than passing green on an empty suite.
+#
+# ---------------------------------------------------------------------------
+# WHAT THIS WORKFLOW RUNS, AND WHAT WAS CUT
+# ---------------------------------------------------------------------------
+# It builds `./hack/matrix` and runs it, once. That binary — not this YAML — is the
+# matrix: it loads every fixture, expands the ones marked `target.matrix: true`
+# across `core/distro.Supported()` x `target.matrix_arches`, pulls each
+# release image it needs, probes emulation for any non-native architecture,
+# runs the rows through a bounded worker pool, and writes a JSON result plus a
+# summary table. See hack/matrix/README.md.
+#
+# CUT: the previous version of this file was a 10-leg job matrix — Debian
+# 12/13 and Ubuntu 22.04/24.04/26.04, each x amd64/arm64 — where every leg set
+# up QEMU, pulled its image, and then ran `go test ./test/e2e/...`. Two things
+# were wrong with that. First, nothing in test/e2e reads the leg's image or
+# arch (`DEBARK_MATRIX_IMAGE`/`DEBARK_MATRIX_ARCH` are set by no one and read
+# by no one): every leg ran the identical amd64 fixture suite, so the ten legs
+# were ten copies of one run, and none of them tested the release or the
+# architecture its name claimed. Second, ten QEMU-emulated runner legs a night
+# is real money on a private repository's Actions minutes for that duplicate
+# work. The expansion this workflow was imitating already lives in
+# `hack/matrix`, which does it per row inside one job and can skip a
+# release/arch pair without failing the run.
+#
+# CUT: arm64 rows do not run on the nightly schedule. `hack/matrix` probes
+# container emulation once per non-native (release, arch) pair and, when it is
+# unavailable, marks every row that needed it `skipped` with the reason and
+# carries on — so with no QEMU registered the nightly is the amd64 half of the
+# matrix and still exits 0. Emulated arm64 apt installs are the slowest and
+# flakiest rows in the suite (see hack/matrix/results/README.md, where QEMU
+# binfmt registration vanished mid-run), and they are the ones worth paying
+# for deliberately rather than every night.
+#
+# TO RESTORE ARM64: run this workflow from the Actions tab with the `arm64`
+# input checked — that registers binfmt with docker/setup-qemu-action and the
+# same run covers every arm64 row. To make it the nightly default again,
+# change the `if:` on the "Set up QEMU" step to `true`. To restore the old
+# ten-leg shape instead, put back a `strategy.matrix` over release/arch and
+# pass each leg's release to the runner as `--release debian-12` (and so on) —
+# but note that only `--release` and `--fixture` exist as filters; there is no
+# per-arch flag, because the arch expansion is a property of the fixture.
+# ---------------------------------------------------------------------------
+
+on:
+  schedule:
+    # 03:17 UTC nightly — off the hour, low-traffic time for the runner pool.
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      arm64:
+        description: "Register QEMU binfmt so the arm64 rows run too (slow)"
+        type: boolean
+        default: false
+      workers:
+        description: "Bounded parallel worker count (hack/matrix --workers)"
+        type: string
+        default: "2"
+      row_timeout:
+        description: "Per-row timeout (hack/matrix --row-timeout)"
+        type: string
+        default: "25m"
+      fixture:
+        description: "Only fixtures whose name contains this (comma-separated; empty = all)"
+        type: string
+        default: ""
+      release:
+        description: "Only releases matching this, e.g. debian-12 or noble (comma-separated; empty = all)"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-matrix-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GOTOOLCHAIN: local
+
+jobs:
+  matrix:
+    name: hack/matrix (fixtures across the support matrix)
+    runs-on: ubuntu-latest
+    # A bound, not an estimate: the reference run in
+    # hack/matrix/results/README.md is 32 rows in 14m26s wall clock with 2
+    # workers on a warm developer host. A runner that is still going three
+    # hours later is a sick host, and the artefact below says which rows.
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+
+      # Only third-party action here that is NOT pinned to a commit SHA: no
+      # workflow in this repository has ever pinned docker/setup-qemu-action,
+      # so there is no SHA to lift, and inventing one is worse than a tag.
+      # Resolve v3 to its commit and pin it the next time this file is
+      # touched by someone who can verify the hash.
+      #
+      # NOTE: GitHub-hosted native arm64 Linux runners exist on some plans and
+      # would be faster than QEMU emulation for these rows. Swapping to a
+      # native `runs-on` arm64 label is a follow-up optimisation, not a
+      # structural change: hack/matrix only ever emulates a platform that is
+      # not the host's own.
+      - name: Set up QEMU (arm64 emulation on an amd64 runner)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.arm64 }}
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      # The skeleton this file replaced tolerated an empty fixture set. It is
+      # not empty any more, and a nightly that goes green because it found
+      # nothing to run is worse than a red one.
+      - name: Assert the fixture suite exists
+        run: |
+          set -euo pipefail
+          fixtures="$(find test/e2e/fixtures -name '*.json' | wc -l)"
+          tests="$(find test/e2e -name '*_test.go' | wc -l)"
+          echo "test/e2e: ${fixtures} fixture(s), ${tests} test file(s)"
+          if [ "${fixtures}" -eq 0 ] || [ "${tests}" -eq 0 ]; then
+            echo "::error::test/e2e has no fixtures or no tests; refusing to report green." >&2
+            exit 1
+          fi
+
+      # BUILT, not `go run`. `go run` collapses every non-zero exit status of
+      # the program to 1 (it prints "exit status 3" and returns 1), and this
+      # runner's exit code is the whole signal: 1 means a row failed and 3
+      # means no row reached a verdict, which are opposite conclusions about
+      # whether to wake anyone up. Measured, not assumed — `go run` on a
+      # program that exits 3 returns 1 on this toolchain.
+      #
+      # No -trimpath: harness.RepoRoot() resolves the fixture directory from
+      # runtime.Caller(0), i.e. the compile-time source path, and trimming it
+      # would leave the binary unable to find test/e2e/fixtures.
+      - name: Build the matrix runner
+        run: |
+          set -euo pipefail
+          go build -o "${RUNNER_TEMP}/debark-matrix" ./hack/matrix
+
+      # `--out` is passed explicitly because hack/matrix's default result path
+      # is inside the repository (hack/matrix/results/result.json), and a CI
+      # run has no business writing into the tree it checked out.
+      #
+      # No DEBARK_E2E guard: running this binary at all is already an explicit
+      # choice to start containers. The guard exists to keep a bystander
+      # `go test ./...` container-free, which this is not.
+      #
+      # Exit codes are the signal, so `set -e` is deliberately not used around
+      # the run:
+      #   0  every attempted row passed or was cleanly skipped
+      #   1  at least one row is fail/blocked — a product signal
+      #   2  bad flags, no fixtures, or the result file could not be written
+      #   3  no verdict: the environment preflight refused, or rows ended
+      #      timeout/aborted/errored — check the host, not the code
+      - name: Run the matrix
+        env:
+          WORKERS: ${{ inputs.workers || '2' }}
+          ROW_TIMEOUT: ${{ inputs.row_timeout || '25m' }}
+          FIXTURE_FILTER: ${{ inputs.fixture }}
+          RELEASE_FILTER: ${{ inputs.release }}
+        run: |
+          set -uo pipefail
+
+          args=(--workers "${WORKERS}" --row-timeout "${ROW_TIMEOUT}"
+                --out "${RUNNER_TEMP}/matrix-result.json")
+          [ -n "${FIXTURE_FILTER}" ] && args+=(--fixture "${FIXTURE_FILTER}")
+          [ -n "${RELEASE_FILTER}" ] && args+=(--release "${RELEASE_FILTER}")
+
+          echo "debark-matrix ${args[*]}"
+          "${RUNNER_TEMP}/debark-matrix" "${args[@]}" 2>&1 | tee "${RUNNER_TEMP}/matrix-console.log"
+          status="${PIPESTATUS[0]}"
+
+          {
+            echo '### Nightly integration matrix'
+            echo
+            echo '```'
+            tail -n 80 "${RUNNER_TEMP}/matrix-console.log"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          case "${status}" in
+            0) echo "Every attempted row passed or was cleanly skipped." ;;
+            1) echo "::error::A row failed or was blocked. This is a product signal — read the rows in the artefact." ;;
+            2) echo "::error::hack/matrix refused to start (bad flags, no fixtures, or an unwritable result file)." ;;
+            3) echo "::error::No verdict: the environment preflight refused, or rows ended timeout/aborted/errored. Check the runner, not the code." ;;
+            *) echo "::error::hack/matrix exited ${status}, which it is not documented to produce." ;;
+          esac
+          exit "${status}"
+
+      - name: Upload the matrix result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: matrix-result
+          path: |
+            ${{ runner.temp }}/matrix-result.json
+            ${{ runner.temp }}/matrix-console.log
+          if-no-files-found: warn

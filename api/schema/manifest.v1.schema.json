@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/manifest/v1",
+  "title": "debark manifest v1",
+  "description": "debark.manifest/v1 - the one object that is signed, and the only thing the target has to trust. Binds the snapshot, the lock, the generated repository metadata and every byte in the bundle together (ADR-003, ADR-008). Written as debark.manifest.json at the bundle root; its canonical-JSON encoding (see docs/formats.md) is what is actually signed, and verify re-canonicalises before checking any signature. Never mutated once published; a rebuild produces a new manifest with a new bundle_id.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "bundle_id", "created_at", "format_version", "tool",
+    "snapshot_digest", "lock_digest", "repository", "files", "target"
+  ],
+  "properties": {
+    "schema_version": { "const": "debark.manifest/v1", "description": "Fixed schema identifier; always debark.manifest/v1." },
+    "bundle_id": { "type": "string", "description": "Stable identifier for this bundle, derived from the lock digest and created_at." },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When the bundle was built, RFC 3339 UTC, second precision."
+    },
+    "format_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Bundle layout version (see docs/formats.md §Bundle layout). Bumped only when that tree shape changes; the current value written by this design is 1."
+    },
+    "tool": { "$ref": "#/$defs/Tool", "description": "The binary that built this bundle." },
+    "snapshot_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Canonical digest of the input snapshot." },
+    "lock_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Canonical digest of lock.json." },
+    "repository": { "$ref": "#/$defs/Repository", "description": "Digests of the generated apt index files, so a tampered Packages file fails before apt ever reads it." },
+    "files": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/File" },
+      "description": "Every file in the bundle except the signature file itself, sorted by path, forward slashes, relative to the bundle root."
+    },
+    "target": { "$ref": "#/$defs/Target", "description": "Target identity restated here for install's precondition checks." },
+    "sbom_ref": { "type": "string", "description": "Path to an optional CycloneDX SBOM file, relative to the bundle root." },
+    "evidence_ref": { "type": "string", "description": "Path to an optional structured evidence file, relative to the bundle root." }
+  },
+  "$defs": {
+    "Tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "edition"],
+      "properties": {
+        "name": { "type": "string", "description": "Tool name; always \"debark\"." },
+        "version": { "type": "string", "description": "The debark release version that built the bundle." },
+        "build_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of the debark binary itself, when it could be determined, so an auditor can tie a bundle to a release."
+        },
+        "edition": {
+          "type": "string",
+          "enum": ["community", "official", "enterprise"],
+          "description": "Build edition. Community unless produced by the project's own release process; never a feature gate."
+        }
+      }
+    },
+    "Repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packages_sha256", "release_sha256", "package_count", "pool_bytes"],
+      "properties": {
+        "packages_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of repo/Packages." },
+        "packages_gz_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of repo/Packages.gz, recorded when it is written." },
+        "release_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of repo/Release." },
+        "inrelease_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of repo/InRelease, recorded when the repository is GPG-signed." },
+        "release_gpg_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of repo/Release.gpg, recorded when the repository is GPG-signed with a detached signature." },
+        "package_count": { "type": "integer", "minimum": 0, "description": "Number of packages in the repository, for human output." },
+        "pool_bytes": { "type": "integer", "minimum": 0, "description": "Total size in bytes of repo/pool, for human output." }
+      }
+    },
+    "File": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size", "sha256"],
+      "properties": {
+        "path": { "type": "string", "description": "Path relative to the bundle root, forward slashes, no leading \"./\"." },
+        "size": { "type": "integer", "minimum": 0, "description": "File size in bytes." },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Lowercase hex SHA-256 of the file's bytes." }
+      }
+    },
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["distro_id", "version_id", "codename", "arch"],
+      "properties": {
+        "distro_id": { "type": "string", "description": "ID from /etc/os-release, e.g. \"debian\" or \"ubuntu\"." },
+        "version_id": { "type": "string", "description": "VERSION_ID from /etc/os-release, e.g. \"12\" or \"24.04\"." },
+        "codename": { "type": "string", "description": "VERSION_CODENAME from /etc/os-release, e.g. \"bookworm\"." },
+        "arch": { "type": "string", "description": "dpkg --print-architecture, e.g. \"amd64\"." },
+        "foreign_archs": { "type": "array", "items": { "type": "string" }, "description": "dpkg --print-foreign-architectures, sorted." }
+      }
+    }
+  }
+}

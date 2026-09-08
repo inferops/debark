@@ -1,0 +1,1187 @@
+Package: 0ad-data
+Architecture: all
+Version: 0.0.26-1
+Priority: optional
+Section: universe/games
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3218736
+Pre-Depends: dpkg (>= 1.15.6~)
+Suggests: 0ad
+Filename: pool/universe/0/0ad-data/0ad-data_0.0.26-1_all.deb
+Size: 1377404936
+MD5sum: f1ad532b3e84f7809ddfc798c9bce00e
+SHA1: 637ca2099356b05e724fa6f738c96f40fe0733d3
+SHA256: 1ddb228533593b8cb9d457e5fe3dec774aaf2af3c58b7b303a1fa8fd082bc59a
+SHA512: 17efa9d80c1b6969d9e0fde4394a5c01c44038e46ffe6f94c0346496ab2b1e263206c99eeb136de530cb92cc789d654c7f82a6f51fd21331e6170fde2570b337
+Homepage: https://play0ad.com/
+Description: Real-time strategy game of ancient warfare (data files)
+Description-md5: 26581e685027d5ae84824362a4ba59ee
+
+Package: 0ad-data-common
+Architecture: all
+Version: 0.0.26-1
+Priority: optional
+Section: universe/games
+Source: 0ad-data
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 2428
+Pre-Depends: dpkg (>= 1.15.6~)
+Depends: fonts-dejavu-core | ttf-dejavu-core, fonts-freefont-ttf | ttf-freefont, fonts-texgyre | tex-gyre
+Suggests: 0ad
+Breaks: 0ad-data (<< 0.0.12-1~)
+Replaces: 0ad-data (<< 0.0.12-1~)
+Filename: pool/universe/0/0ad-data/0ad-data-common_0.0.26-1_all.deb
+Size: 778516
+MD5sum: d62b3d328b81cbb0d7d847ced46b1f0f
+SHA1: 7034358c12792c0b0ec9595b994fcbb305cf72d1
+SHA256: 46f99fdf8ddc67ef8663054d0773b6b0ad019d2ed108744f99e2a8081e70fd58
+SHA512: ec3713ee8ad497918bda14e73e4f1019989ead8b4fa93c832df7ff9d48b0ef786d0929ef1faf6cc3926fd7af891ac2afcc3c4e742de544446ce58320db01a4a7
+Homepage: https://play0ad.com/
+Description: Real-time strategy game of ancient warfare (common data files)
+Description-md5: 8d014b839c4c4e9b6f82c7512d7e3496
+
+Package: 0install
+Architecture: amd64
+Version: 2.18-2ubuntu2
+Priority: extra
+Section: universe/admin
+Source: zeroinstall-injector
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Thomas Leonard <talex5@gmail.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3926
+Depends: 0install-core (= 2.18-2ubuntu2), libc6 (>= 2.14), libcairo2 (>= 1.2.4), libgdk-pixbuf-2.0-0 (>= 2.22.0), libglib2.0-0t64 (>= 2.36.0), libgtk-3-0t64 (>= 3.11.5), libpango-1.0-0 (>= 1.14.0)
+Breaks: 0install-core (<< 2.10-1)
+Replaces: 0install-core (<< 2.10-1)
+Filename: pool/universe/z/zeroinstall-injector/0install_2.18-2ubuntu2_amd64.deb
+Size: 816584
+MD5sum: c300fe49702f506fb9b73278ba099a22
+SHA1: 47b5f2d0191d3aab83c103b8d8d34ea016388320
+SHA256: b4e9c73e59624676597a35d70cb14ec641ed9216afd438ee38a7c9c64d4cf14d
+SHA512: 55a59e7599874031345a8cd983116ffeaafacbe4358d3ce1d1f0eb7046b5a0b592e3c8ab1ebac92f4485a11c858a0823fd15a719d1f80e8c98fc0818f9d47b80
+Homepage: http://0install.net/
+Description: cross-distribution packaging system
+Description-md5: 516b2c2eefb9eca77712b715f5c0ef14
+
+Package: 0install-core
+Architecture: amd64
+Version: 2.18-2ubuntu2
+Priority: extra
+Section: universe/admin
+Source: zeroinstall-injector
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Thomas Leonard <talex5@gmail.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 8240
+Provides: zeroinstall-injector
+Depends: adduser, bzip2, ca-certificates, gnupg, xdg-utils, libc6 (>= 2.38), libcurl3t64-gnutls (>= 7.66.0), libev4t64 (>= 1:4.04)
+Recommends: lzma, packagekit, unzip
+Suggests: 0install, cabextract, rpm2cpio
+Breaks: zeroinstall-injector (<< 2.3.3-2)
+Replaces: zeroinstall-injector (<< 2.3.3-2)
+Filename: pool/universe/z/zeroinstall-injector/0install-core_2.18-2ubuntu2_amd64.deb
+Size: 2227386
+MD5sum: 76a5bc0715a2727025382b9b6348ee6b
+SHA1: b1e2283b9f4adddb93d269979a69359822b8c769
+SHA256: a8f808ff3e80d58dd45aa9d0551458de4d286426f0ad296c9ad19def2a65082e
+SHA512: 313344a38bec0018c0cbaab05b8da779aee33b971bc8f52af25f43a5f7b6a3609d53115c26f304ee704fa884433e1d69c591c08f1eaf032dd0a566a8c169c00e
+Homepage: http://0install.net/
+Description: cross-distribution packaging system (non-GUI parts)
+Description-md5: 42858e1bbd2e448dcccd6c029ba3b0af
+
+Package: 0xffff
+Architecture: amd64
+Version: 0.9-1
+Multi-Arch: foreign
+Priority: extra
+Section: universe/misc
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Sebastian Reichel <sre@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 167
+Depends: libc6 (>= 2.14), libusb-0.1-4 (>= 2:0.1.12)
+Filename: pool/universe/0/0xffff/0xffff_0.9-1_amd64.deb
+Size: 59292
+MD5sum: e2ebcebaaa1094724271432da82c8e7b
+SHA1: d2b63d1f2a2d68dfcd5bc7541ab4b447467e53dd
+SHA256: bcedcbd92cbcbb8ac2b8c13f780c7d77a6ccb4c3de33a6c65e4003c7de161745
+SHA512: ee86edeea6f43b186508c51c97f97da5dc6cb59b219c07b8ce496982357dc2261f3ae4dd5a34c11a06347e31e31ba91c40579b76db24627d7b99fe2be8ff2dc2
+Homepage: https://github.com/pali/0xFFFF
+Description: Open Free Fiasco Firmware Flasher
+Description-md5: 183c49f6505eb3432d1b069800f1f5b6
+
+Package: 2048
+Architecture: amd64
+Version: 0.20221023.1237-1
+Priority: optional
+Section: universe/games
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 45
+Depends: libc6 (>= 2.34)
+Filename: pool/universe/2/2048/2048_0.20221023.1237-1_amd64.deb
+Size: 14936
+MD5sum: 741f7a57678af22196ee328d3359e2eb
+SHA1: 8d2333d0353a5edce5bd7f81b58e6df8d8629717
+SHA256: dbe39f124d4f4ee5c440d42805681ba5f64fe23939f460b349735956152361a1
+SHA512: 611e40842a35ad342d5c2d27b28a63cd2502f606bd8d1ae1e2837469c95941cff7e45fa2e3840f623b35519c3d384c6ac26c9d0679798b8aa7e684920d4100a7
+Homepage: https://github.com/mevdschee/2048.c
+Description: Slide and add puzzle game for text mode
+Description-md5: 2d3a24661b5ec0391d6bd1aedf7c20b7
+
+Package: 2048-qt
+Architecture: amd64
+Version: 0.1.6-2build4
+Priority: optional
+Section: universe/games
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Alejandro Garrido Mota <alejandro@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3815
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.3.1), libqt5core5t64 (>= 5.15.1), libqt5qml5 (>= 5.1.0), libqt5widgets5t64 (>= 5.0.2), libstdc++6 (>= 5), qml-module-qtquick-controls, qml-module-qtquick-dialogs
+Filename: pool/universe/2/2048-qt/2048-qt_0.1.6-2build4_amd64.deb
+Size: 1523278
+MD5sum: a3785c2d7a113a2af3121187db95775b
+SHA1: f50f0ac7993a2257cb66ea0936f10e9dd771880f
+SHA256: a8738d1e7f4b97d407e1e0f7c1e289a63a29fe826b8bb7e6824825c1a297ead8
+SHA512: 648b0b40a8eb773c9fad5a65f7cce63bb8d42fe166d8ba3a4550457711a06fc090ab587a51c6d194df165dd55b15029c8ec8ba368c59fbbb7f9a5fccc0e298a7
+Homepage: https://github.com/xiaoyong/2048-Qt
+Description: mathematics based puzzle game
+Task: lubuntu-desktop
+Description-md5: 0f25c2ca95ceff4500fde9f651d74f2e
+
+Package: 2ping
+Architecture: all
+Version: 4.5-1.2
+Priority: optional
+Section: universe/net
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Ryan Finnie <ryan@finnie.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 150
+Depends: python3:any, python3-pkg-resources, lsb-base (>= 3.0-6)
+Recommends: python3-distro, python3-dnspython, python3-netifaces
+Suggests: python3-pycryptodome, python3-systemd
+Filename: pool/universe/2/2ping/2ping_4.5-1.2_all.deb
+Size: 29310
+MD5sum: 2394eee9f4e31c56f146bb3cf0151d40
+SHA1: edca469efb4d7dbea5f3ea7bd4b416ed40d87e84
+SHA256: e02a687dc488164b63fc3ddb32d7b0f8ab5c9ed4388d616cde31b1dcc383b25a
+SHA512: 8738a36dcace6b3678cb8ff6692a9929baaca144aa89145f1da773425e965eeb24a906d1fafd845bfe2fdd130b141b76734066c1b36712cff4cb8fe2af3fe00b
+Homepage: https://www.finnie.org/software/2ping/
+Description: Ping utility to determine directional packet loss
+Description-md5: 2543c220a763445976d1348c5b593743
+
+Package: 2to3
+Architecture: all
+Version: 3.12.3-0ubuntu1
+Multi-Arch: foreign
+Priority: optional
+Section: universe/python
+Source: python3-defaults
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Matthias Klose <doko@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 32
+Depends: python3-lib2to3 (>= 3.12.3-0~), python3 (>= 3.12.3-0ubuntu1)
+Breaks: python (<< 2.7.14-4)
+Replaces: python (<< 2.7.14-4)
+Filename: pool/universe/p/python3-defaults/2to3_3.12.3-0ubuntu1_all.deb
+Size: 10874
+MD5sum: 0e876ef9a242f644c29ce7e31a78569e
+SHA1: 1bdb9bdc4b7faa026b027b73adf90c540d017b09
+SHA256: 0e73eac30b493c1b8a04cf9c5ee24c076d3deeca56a87eb0a9e18761aa020e2e
+SHA512: c0253d7e54595289cc0653987caf095da09202ea47131a62acf5b006210df7fa78a6533bdc53e222858ab3a6fb5bbf1078c05520cacec45e7b47c8ea97eac6b1
+Homepage: https://www.python.org/
+Description: 2to3 binary using python3
+Description-md5: f572313f6474fd18ce500cec46aba367
+
+Package: 2vcard
+Architecture: all
+Version: 0.6-4
+Multi-Arch: foreign
+Priority: optional
+Section: universe/utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian QA Group <packages@qa.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 51
+Depends: perl:any
+Filename: pool/universe/2/2vcard/2vcard_0.6-4_all.deb
+Size: 13920
+MD5sum: 934f463c97028d5d0622ab7f7e73a8f4
+SHA1: ffd9e92d36a8fd1b0572b73a1ebc2cc2fbb1851a
+SHA256: 5eae3a353745299315dd662153d80c437de2d240763df02672bc1f24a49f3964
+SHA512: 5f2fdf84246e134a677ec6b81a9cf29aa9b692e38db4ae10e299716960fc1900cbdd8dc56783e21342dd4cf2f8239c88bce204f3cb3d6f8a1ab02b0d05178fef
+Homepage: https://www.netmeister.org/apps/2vcard/
+Description: convert an addressbook to VCARD file format
+Description-md5: 772b42c5a35b82967966265253189059
+
+Package: 3270-common
+Architecture: amd64
+Version: 4.1ga10-1.1build2
+Priority: optional
+Section: universe/net
+Source: ibm-3270
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Philipp Kern <pkern@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 56
+Depends: libc6 (>= 2.38), libtinfo6 (>= 6)
+Filename: pool/universe/i/ibm-3270/3270-common_4.1ga10-1.1build2_amd64.deb
+Size: 16848
+MD5sum: 36711f532fb7047d4fee729a483f4fb8
+SHA1: e8f3d0f99f4cc630a16d305f6785a779fbda55b8
+SHA256: 976d9716cef36dadea036cdcc75608adb98071b828b06a26b18a9d86c26c207a
+SHA512: ea1ca53af760cb59b1ccae318cf950ce6b3d1cc9dc854005ee7bdfbb6b1d04baf76bff813e8956c2a4ad2217ad12810b4a8b52cc72d07887ab15c53f4d2c6de5
+Homepage: http://x3270.bgp.nu/
+Description: Common files for IBM 3270 emulators and pr3287
+Description-md5: a1fad8fe7f911b2c01164ff75d013e53
+
+Package: 3d-ascii-viewer
+Architecture: amd64
+Version: 1.4.0+ds-1
+Priority: optional
+Section: universe/graphics
+Source: 3d-ascii-viewer-c
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Gürkan Myczko <tar@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 71
+Depends: libc6 (>= 2.34), libncurses6 (>= 6), libtinfo6 (>= 6)
+Suggests: meshlab
+Filename: pool/universe/3/3d-ascii-viewer-c/3d-ascii-viewer_1.4.0+ds-1_amd64.deb
+Size: 23984
+MD5sum: 6dd5d332fa3b6dbe20c3af3d108c993e
+SHA1: ba9e1a925ae1b51145fdcfc6d583db3fb22620ed
+SHA256: d48b7fe8cc9b815c28a53e99d0d7db32a65089fcecbfcc51249e2d9136a15007
+SHA512: ecae95bdd4cbead3a4986c0449dc66d0342a2fc60ef3a5d371e1d747ade4673c179312521b11aba533a07ae7c35974a62735ea26c7d3604059b7db065acc9272
+Homepage: https://github.com/autopawn/3d-ascii-viewer-c
+Description: Viewer of 3D models in ASCII
+Description-md5: 19b32e67880102a2d807ae5d7c416cd2
+
+Package: 3dchess
+Architecture: amd64
+Version: 0.8.1-21ubuntu1
+Priority: optional
+Section: universe/games
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 111
+Depends: libc6 (>= 2.34), libx11-6, libxpm4, libxt6t64, xaw3dg (>= 1.5+E-1)
+Filename: pool/universe/3/3dchess/3dchess_0.8.1-21ubuntu1_amd64.deb
+Size: 34188
+MD5sum: bf119fbf48c659c9c0a7b7c4fd2f43ed
+SHA1: f0a8bac3352086dbdd76dcc081734a8125c9ff39
+SHA256: e987027fa1d2126181d291cf9c3b5aa700492b7833fef5885cff47f41561f519
+SHA512: d568162afa1af83590c0cccbc5e57ca2f77409fa250162371af2a55cb2cf114d23f6446418f1d6b4c88ad5d763c2914fc3a7d357c8192596f12ae4ccd2d4c91b
+Homepage: https://www.ibiblio.org/pub/Linux/games/strategy/
+Description: Play chess across 3 boards!
+Description-md5: 12d01b96d7645ee302ebc29cde999e92
+
+Package: 3depict
+Architecture: amd64
+Version: 0.0.23-2build3
+Priority: optional
+Section: universe/science
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 8070
+Depends: libc6 (>= 2.38), libftgl2 (>= 2.4.0), libgcc-s1 (>= 3.3.1), libgl1, libglu1-mesa | libglu1, libgomp1 (>= 6), libgsl27 (>= 2.7.1), libmgl8t64 (>= 8.0.1), libpng16-16t64 (>= 1.6.2), libqhull8.0 (>= 2020.1), libstdc++6 (>= 13.1), libwxbase3.2-1t64 (>= 3.2.4+dfsg), libwxgtk-gl3.2-1t64 (>= 3.2.4+dfsg), libwxgtk3.2-1t64 (>= 3.2.4+dfsg), libxml2 (>= 2.7.4)
+Filename: pool/universe/3/3depict/3depict_0.0.23-2build3_amd64.deb
+Size: 5625052
+MD5sum: 4e90e21eb1b8a83e0cff7654d3509d5c
+SHA1: 0d0670c8ecabfb7d03327e200ba364ba6b92a0a6
+SHA256: 5b2ef7e67b5204114cf5e2fbb0596852be2c3767b2784e59e83dd04258810cc0
+SHA512: e79a22b3b0ec1447489f487ec98747d55f4a2d47f2987de42cb4c010dcf3770ba24ef45b7503693102c02e4a0b1dba83f05b5eb197505aa7efb3e989f3442589
+Homepage: http://threedepict.sourceforge.net/index.html
+Description: visualisation and analysis for single valued point data
+Description-md5: 246db3da16c5305f24976464271087a5
+
+Package: 4g8
+Architecture: amd64
+Version: 1.0-5build3
+Priority: optional
+Section: universe/net
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian QA Group <packages@qa.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 43
+Depends: libc6 (>= 2.34), libnet1 (>= 1.1.2.1), libpcap0.8t64 (>= 0.9.8)
+Filename: pool/universe/4/4g8/4g8_1.0-5build3_amd64.deb
+Size: 12302
+MD5sum: 17fc8f64a82c150ffad8f466e73b7462
+SHA1: 4a7902b52f471c6560183ddf03a230ca413cf597
+SHA256: c31e6c7ff566fb631252d8fcb5993de9a087fc99b846eb446072c34031351569
+SHA512: 5a4ecb22d2d44a49220a2f50c4e527700df12169639609e80c03c73057b3f2c096242369e3c53738ea60bd6f9d5ace5fdca738ce5ac5d8e3a30168c56e8900c4
+Description: Packet Capture and Interception for Switched Networks
+Description-md5: 08a3e421414ebaacb3294625688dc573
+
+Package: 4pane
+Architecture: amd64
+Version: 8.0-1build4
+Priority: optional
+Section: universe/x11
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: David Hart <david@4Pane.co.uk>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 7056
+Depends: libbz2-1.0, libc6 (>= 2.34), libcairo2 (>= 1.2.4), libgcc-s1 (>= 3.3.1), libglib2.0-0t64 (>= 2.16.0), libgtk-3-0t64 (>= 3.0.0), libstdc++6 (>= 13.1), libwxbase3.2-1t64 (>= 3.2.4+dfsg), libwxgtk3.2-1t64 (>= 3.2.4+dfsg)
+Filename: pool/universe/4/4pane/4pane_8.0-1build4_amd64.deb
+Size: 1650528
+MD5sum: 765c7f36c8301172fccc8f44320bddd5
+SHA1: e4e3793d0011775237ef910922317b0807703588
+SHA256: f2ffbfbd03e2a4c521a6bb97c1e080d102dc95facc559ea618080ee20655dff1
+SHA512: 1f915605827c2ed7d0289e91a4faa50928d723d200c626b2bec5c16cdeb327319ba485d5c59a34bbd4cc7190a6bc5c18c5c04442c112fcd51aa45af9de3485db
+Homepage: https://www.4Pane.co.uk
+Description: four-pane detailed-list file manager
+Description-md5: 0cbfd20b52fcad0147c132cddb630702
+
+Package: 64tass
+Architecture: amd64
+Version: 1.59.3120-1
+Priority: optional
+Section: universe/otherosfs
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Laszlo Boszormenyi (GCS) <gcs@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 1066
+Depends: libc6 (>= 2.38)
+Filename: pool/universe/6/64tass/64tass_1.59.3120-1_amd64.deb
+Size: 426876
+MD5sum: 2810410e2fe9a7da7ad376c6252586b9
+SHA1: ef7bbc0f7c51d2018e0c865143be9f833c646ec5
+SHA256: d392aac68150ba8e396e310ffaae5ad3630c364a0d6c3ababe16b86547e4b0c6
+SHA512: 8c170346084664e36ad4147a2a14b6e583c4b1ca047a41d2ed2d4c88a84ff72444a9356a9454ac1d0fc7b9c68985431ba464f3175dc217431106a47db946bd04
+Homepage: http://tass64.sourceforge.net/
+Description: cross (turbo) assembler targeting the MOS 65xx series of micro processors
+Description-md5: 1ce7e76682d5e0d7bf8aaa4378da5ecb
+
+Package: 6tunnel
+Architecture: amd64
+Version: 1:0.13-2
+Priority: optional
+Section: universe/net
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian QA Group <packages@qa.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 48
+Depends: libc6 (>= 2.15)
+Filename: pool/universe/6/6tunnel/6tunnel_0.13-2_amd64.deb
+Size: 14760
+MD5sum: a5451005d898432026bd0fd142cb9ee1
+SHA1: 24648c57e59dddf7fdb1e7d16d1c145bdc6455fe
+SHA256: d04909ee3644a3b5bed6ea8ba4764b463beb3f2a2592e28b9a790b8abac01a25
+SHA512: 8bc77327e15b50e62d4c814102bc23eacd00ac59fbca2fb71f810ee7529b58931a010905c6fd21bb1fb20bfef587dac1de15c885595137f81998b0c0805bd3b4
+Homepage: https://toxygen.net/6tunnel
+Description: TCP proxy for non-IPv6 applications
+Description-md5: 860002e3477a2706be336a14451bba8e
+
+Package: 7zip
+Architecture: amd64
+Version: 23.01+dfsg-11
+Priority: optional
+Section: universe/utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 6158
+Provides: p7zip, p7zip-full
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.3.1), libstdc++6 (>= 5)
+Suggests: 7zip-standalone, 7zip-rar
+Breaks: p7zip (<= 16.02+dfsg-8), p7zip-full (<= 16.02+dfsg-8)
+Replaces: p7zip (<= 16.02+dfsg-8), p7zip-full (<= 16.02+dfsg-8)
+Filename: pool/universe/7/7zip/7zip_23.01+dfsg-11_amd64.deb
+Size: 1846156
+MD5sum: 5d1cd5bb2a061e14fdd24beb725f40d1
+SHA1: b3165bbe56beb78ab0e11c490ab65d3258c20413
+SHA256: 0f79450d81e64326a862a8645ae1613890e486115101e51e41ca07d929388d87
+SHA512: ad98665092f93b16534184ec64c3325f5f3019a8af9c45fa15199380d9e23a79ed3eceea175c4ba477de1174a790ed29c42eec66a48991c9cf36c0141e3f10f1
+Homepage: https://www.7-zip.org/
+Description: 7-Zip file archiver with a high compression ratio
+Task: kubuntu-desktop, kubuntu-full, xubuntu-desktop, lubuntu-desktop, ubuntustudio-desktop, ubuntukylin-desktop, ubuntukylin-desktop-minimal, ubuntu-mate-core, ubuntu-mate-desktop
+Description-md5: 391063b95a84a6bdd7463a9ac8f12500
+
+Package: 9base
+Architecture: amd64
+Version: 1:6-14
+Priority: optional
+Section: universe/utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian QA Group <packages@qa.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 4474
+Depends: libc6 (>= 2.38), debianutils (>= 5.3-1~)
+Filename: pool/universe/9/9base/9base_6-14_amd64.deb
+Size: 768058
+MD5sum: 0bddea43a3b7e9e1f5c13ff01d731a50
+SHA1: 747b5a07ee5a8308e6ec799c521e1f28010a2339
+SHA256: 39e2d4abfc83c2c96afe37e5c6e9a6a39a6287be42aa33672c8145ba271d3c94
+SHA512: 81aba7203bd69c010a45a55ac810703be71d0f54c1fe7a64819e5bcd79a92abe058d7b6e95be4f234d188ac1cb8eda21a9c8ea630858a7e5e781215ae62686d3
+Homepage: https://tools.suckless.org/9base/
+Description: Plan 9 userland tools
+Description-md5: ba92532ca0abb19498113de24635b819
+
+Package: a11y-profile-manager
+Architecture: amd64
+Version: 0.1.11-0ubuntu7
+Multi-Arch: foreign
+Priority: optional
+Section: universe/misc
+Origin: Ubuntu
+Maintainer: Luke Yelavich <themuso@ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 35
+Depends: liba11y-profile-manager-0.1-0 (>= 0.1.11), libc6 (>= 2.34), libglib2.0-0 (>= 2.26.0)
+Filename: pool/universe/a/a11y-profile-manager/a11y-profile-manager_0.1.11-0ubuntu7_amd64.deb
+Size: 6738
+MD5sum: 57a1abb815872130ccddba23007fb4e3
+SHA1: 8be7ca04a6713aa792e561c66486a6f18b4ae925
+SHA256: 6d70d29bca3ec2f89712751ab6c52ff4ee97fe1f32165b42020d49216c8e0ff9
+SHA512: baa90ccd9447787f4a55174ca69aa4e53cc89f360073d4d0d7dd3c879f310de65710a86aa8c363855cfff6279f65172514cdb021a5c9284795a7e45b0b925f05
+Homepage: https://launchpad.net/a11y-profile-manager
+Description: Accessibility Profile Manager - Command-line utility
+Description-md5: ecbac70f8ff00c7dbf5fdc46d7819613
+
+Package: a2jmidid
+Architecture: amd64
+Version: 9-3ubuntu3
+Priority: extra
+Section: universe/sound
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Multimedia Maintainers <debian-multimedia@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 121
+Depends: python3-dbus, python3:any, libasound2t64 (>= 1.0.16), libc6 (>= 2.34), libdbus-1-3 (>= 1.9.14), libjack-jackd2-0 (>= 1.9.10+20150825) | libjack-0.125
+Filename: pool/universe/a/a2jmidid/a2jmidid_9-3ubuntu3_amd64.deb
+Size: 30762
+MD5sum: b54904f8c494b0bee7915904882d2f00
+SHA1: 675b904d74e7ae416143cb66e4d79cc3948bc926
+SHA256: 07eb1aee1298e89dbdc4de897573904ca314d0ff119cb1edd9b1d2184ac26ad6
+SHA512: b0a773513e710abedd6a7d5c2c7f75d804a525b2e2d487dade065c054023ffc0123c37cb6ef3803bbd1b9b0389d6dc78eabc37cfec1c6835b34973af4224d317
+Homepage: https://github.com/linuxaudio/a2jmidid/
+Description: Daemon for exposing legacy ALSA MIDI in JACK MIDI systems
+Task: ubuntustudio-audio
+Description-md5: a182a4ee1593f675a64da0a57440bb9a
+
+Package: a2ps
+Architecture: amd64
+Version: 1:4.15.5-2
+Priority: optional
+Section: universe/text
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian QA Group <packages@qa.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3942
+Depends: file, psutils, libc6 (>= 2.34), libgc1 (>= 1:7.2d), libpaper1
+Recommends: bzip2, lpr | rlpr | cups-client, wdiff
+Suggests: emacsen-common, ghostscript, graphicsmagick-imagemagick-compat | imagemagick, groff, gv, html2ps, t1-cyrillic, texlive-base-bin
+Filename: pool/universe/a/a2ps/a2ps_4.15.5-2_amd64.deb
+Size: 675434
+MD5sum: ad9a5443ae316b208968c9d53f10789e
+SHA1: b9662536d98ba0ae1c23b515d7613bb70533ddcf
+SHA256: 43aff5b96e15a0cb40c140f13270974ee4f690c379dc7f6fcda48485b994abdb
+SHA512: 4cfaa25f355c43ac02b703ab9593c383d13a39921ed36e85c308d6ed1c5eff74f09fcd6d5555948e8100c766b57b08103cf2e1441b49bb3ac88c60747cc61d65
+Homepage: https://www.gnu.org/software/a2ps/
+Description: GNU a2ps - 'Anything to PostScript' converter and pretty-printer
+Description-md5: 732bd45324c6fce1aa914b7b0167c68a
+
+Package: a56
+Architecture: amd64
+Version: 1.3+dfsg-10.1
+Priority: extra
+Section: universe/devel
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Thorsten Alteholz <debian@alteholz.de>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 223
+Depends: libc6 (>= 2.34)
+Filename: pool/universe/a/a56/a56_1.3+dfsg-10.1_amd64.deb
+Size: 36702
+MD5sum: 4c61dd4290540edee819c54be760ff81
+SHA1: 35d9351595a380165100442cac8290efb89c4c08
+SHA256: d08e47d0bddf6ff145096a7cedf1672bf06736d402a97247568c35829be48d9a
+SHA512: b8c3348f7f8a90a7789a0567fcb55973813cea6aa02ad63de63513e9058b400623aacbdf3779c5d65c20364b06d35e5d37a5dde3d804a381d1c529d7369494c1
+Homepage: http://www.zdomain.com/a56.html
+Description: Motorola DSP56001 assembler
+Description-md5: e2a5c0e79ee0be60f379e6e2377bc1b4
+
+Package: adwaita-qt
+Architecture: amd64
+Version: 1.4.2-3build4
+Multi-Arch: same
+Priority: optional
+Section: universe/gnome
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Dmitry Shachnev <mitya57@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 284
+Depends: libadwaitaqt1 (>= 1.4.0), libadwaitaqtpriv1 (>= 1.1.90), libc6 (>= 2.14), libgcc-s1 (>= 3.0), libqt5core5t64 (>= 5.15.1), libqt5gui5t64 (>= 5.14.1) | libqt5gui5-gles (>= 5.14.1), libqt5widgets5t64 (>= 5.12.0), libqt5x11extras5 (>= 5.6.0), libstdc++6 (>= 4.1.1), libxcb1
+Filename: pool/universe/a/adwaita-qt/adwaita-qt_1.4.2-3build4_amd64.deb
+Size: 96674
+MD5sum: e514e1d5ef6ede07067d5476a7fefed0
+SHA1: 4feb9d0f7bed68750be1e5668a7413d27877bbdc
+SHA256: 4e671ff8dd8290c9ba09e602ebbfda4ce0258950b7e95c9dce1df371e8744ebd
+SHA512: 92b26ef9bef7bbe19877d1e160fb008d33fbe8605cbc8601ce0a20c30382bfc501e285f28ff7e4477fe658d41bbfcae72012075039cc904ee2cf2947d7e1262e
+Homepage: https://github.com/FedoraQt/adwaita-qt
+Description: Qt 5 port of GNOME’s Adwaita theme
+Description-md5: 2dcac42ee1ee4eeaecbdef44bb880176
+
+Package: agda-stdlib-doc
+Architecture: all
+Version: 1.7.3-1
+Multi-Arch: foreign
+Priority: extra
+Section: universe/doc
+Source: agda-stdlib
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Iain Lane <laney@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 42726
+Suggests: agda-stdlib
+Filename: pool/universe/a/agda-stdlib/agda-stdlib-doc_1.7.3-1_all.deb
+Size: 2981076
+MD5sum: cf80cd3180eed043dcf32d17b5e77fd9
+SHA1: 4b18bf48e0127b54c2f3e4e3bfe62e80484005a6
+SHA256: c22ae103d5c36a2beec58f4701e8f203056d89d6cd572ac024e85cd464cfe12c
+SHA512: 0497e0714fd0dae2e6ef67fa7dbcea2d8bb26ae2f0da8d574f9105f105bccddb0d61c8a91e656d6ff2afd831af92da6ba400eb3c4330bd5172a93cbb021a31ca
+Homepage: https://wiki.portal.chalmers.se/agda/
+Description: standard library for Agda — documentation
+Description-md5: fd3b8a8baa471f456e06046d5280b6e7
+
+Package: apertium-nno-nob
+Architecture: all
+Version: 1.5.0-1
+Priority: optional
+Section: universe/science
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Science Team <debian-science-maintainers@alioth-lists.debian.net>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 16503
+Provides: apertium-nob-nno
+Depends: apertium (>= 3.8.3), apertium-lex-tools (>= 0.4.2), apertium-separable (>= 0.6.1), cg3 (>= 1.3.9)
+Conflicts: apertium-nob-nno
+Filename: pool/universe/a/apertium-nno-nob/apertium-nno-nob_1.5.0-1_all.deb
+Size: 8289892
+MD5sum: 8ae0be0351c5831ae50b3416544e4d18
+SHA1: 9d500dc565065e6e29d5f142b315a8e6aaa61ae4
+SHA256: b7db39077c6f0bb26eaed5fbbfa1a40c7f527a71673828cb10e1967958795609
+SHA512: 04908148d9dbe8913aa0722caf08c1968c3253664b18628bc4d0589ae607dce82ce2830ec0cc58dc5d2fda3d99c53225aefcefc136963861fc3aeece350853ae
+Homepage: https://apertium.org/
+Description: Apertium translation data for the Norwegian Nynorsk-Norwegian Bokmål pair
+Description-md5: 44643e4a6d0f3cd6a22313a6531d89c0
+
+Package: liblucene++0t64
+Architecture: amd64
+Version: 3.0.9-3.1build1
+Multi-Arch: same
+Priority: optional
+Section: universe/libs
+Source: lucene++
+Origin: Ubuntu
+Maintainer: Łukasz 'sil2100' Zemczak <lukasz.zemczak@ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 5421
+Provides: liblucene++0v5 (= 3.0.9-3.1build1)
+Depends: libboost-filesystem1.83.0 (>= 1.83.0), libboost-iostreams1.83.0 (>= 1.83.0), libboost-thread1.83.0 (>= 1.83.0), libc6 (>= 2.38), libgcc-s1 (>= 3.3.1), libstdc++6 (>= 13.1)
+Conflicts: liblucene++0
+Breaks: liblucene++0v5 (<< 3.0.9-3.1build1)
+Replaces: liblucene++0, liblucene++0v5
+Filename: pool/universe/l/lucene++/liblucene++0t64_3.0.9-3.1build1_amd64.deb
+Size: 1457854
+MD5sum: 4410f1a37761e34b99f1db6279c7197e
+SHA1: abedecf2962e1cf434471ef1636ef44adda164c2
+SHA256: 7a7533b3dec4bd05410134ba2d3dfd5baafa577612858eb0b6319a6325db36be
+SHA512: 76ade86aa5f44697a94966caec0692c0e6fbd3d33206e2e5734c492e6f9b6f2fa2dd9b3e8e4b7989e3ce6d2af86f464c5a7c1eced119f31b8df941859554dd26
+Homepage: https://github.com/luceneplusplus/LucenePlusPlus
+Description: Shared library for Lucene++
+Description-md5: d589a4bd4bc8ae15b105cb8e241bfcc2
+
+Package: revu-tools
+Architecture: all
+Version: 0.6.1.5
+Priority: optional
+Section: universe/admin
+Origin: Ubuntu
+Maintainer: Raphaël Pinson <raphink@ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 96
+Depends: devscripts, pbuilder, lintian
+Filename: pool/universe/r/revu-tools/revu-tools_0.6.1.5_all.deb
+Size: 14548
+MD5sum: c5e390b6cf2859741320fbf3c076a6aa
+SHA1: b1e0852153954b0af04ac15b5214b4aa62c10ac1
+SHA256: 9743c09956cb875f6d19782abfaa8f5c7224ca41ca45873a26f1d2b57ae513e2
+SHA512: f636a6cd6289a2eb882d48c395bec604a22d81b3d769e474e73c9abb07c892149890575f989e79a8139bd56e6a68a451a5d380ca741fe7ebbb8c1cdcc75d1eb5
+Homepage: http://revu.ubuntuwire.com/
+Description: reviewing tools for Debian packages
+Description-md5: dc8b9567a7d3567c184d01ae990c7ae3
+
+Package: sbuild-launchpad-chroot
+Architecture: all
+Version: 0.20
+Priority: optional
+Section: universe/misc
+Origin: Ubuntu
+Maintainer: Stéphane Graber <stgraber@ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 36
+Depends: python3, python3-launchpadlib, sbuild, python3-ubuntutools
+Filename: pool/universe/s/sbuild-launchpad-chroot/sbuild-launchpad-chroot_0.20_all.deb
+Size: 7712
+MD5sum: b0caa68535f83683407c7f54a9e7b5e5
+SHA1: 0878d1e5945b9c9d684693512fd4f63018e6c5e7
+SHA256: d29cfca746932fd73a2dde52408b69a5ac23f74c8d8d00a5195d5c2ae6d79ad2
+SHA512: df3f503bd3cc9bc2eda383f53d1f6f86c98153ce2886a8c5e5556d26fae90c3087c7f5d222d7c603b006ede548a629559c30cc10d8b91d6db78d88d0ecd074a0
+Homepage: https://www.stgraber.org
+Description: Launchpad integration for sbuild
+Description-md5: f29a5d8002fc0d7ae79e1fbbe79033f4
+
+Package: android-platform-frameworks-native-headers
+Architecture: all
+Version: 1:10.0.0+r36-1
+Priority: optional
+Section: universe/libdevel
+Source: android-platform-frameworks-native
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Android Tools Maintainers <android-tools-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 296
+Breaks: android-libutils-dev (<< 1:6.0.0+r26)
+Replaces: android-libutils-dev (<< 1:6.0.0+r26)
+Filename: pool/universe/a/android-platform-frameworks-native/android-platform-frameworks-native-headers_10.0.0+r36-1_all.deb
+Size: 53548
+MD5sum: 00e39ce3efc2d2326648dc1d6f9fb4fc
+SHA1: eb825eb1a848e05d9b73944e8d82da6cae485ea5
+SHA256: 91b996a9829a51a6a767949d602cf582626366538653026177586e5052f736f8
+SHA512: 2027ed64d21e401537d410b011a6c3683239d08fc02943621248a330ff21dbc236efb89aa55215df7218873cbff9db10e3f086dcd3eb8c437e494f167ba4e0f3
+Homepage: https://android.googlesource.com/platform/frameworks/native
+Description: Headers of android-platform-frameworks-native
+Description-md5: 432d3ef0a04b352ab3c290d31ffd367b
+
+Package: android-platform-frameworks-native-headers
+Architecture: all
+Version: 1:34.0.4-1build3
+Multi-Arch: foreign
+Priority: optional
+Section: universe/libdevel
+Source: android-platform-tools (34.0.4-1build3)
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Android Tools Maintainers <android-tools-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 724
+Filename: pool/universe/a/android-platform-tools/android-platform-frameworks-native-headers_34.0.4-1build3_all.deb
+Size: 128234
+MD5sum: 8e79fab94fe66338008082d59d6a5a8d
+SHA1: 4a06802ba14f39ba7f65af6e80092d6aefa09876
+SHA256: 92856bbadf2ceb57894fdeeebb787dfef4af80560a0f18a47ad33910935f5f34
+SHA512: 687e566f50b981bb88bc77b27a0c87bc9dc9f410f3d369622cce208c6a61e61039c7f9a02b7a8701a94ed8f5b9b6d1595c5bb4442b9cd77165eab577e6b1bd85
+Homepage: https://developer.android.com/studio/releases/platform-tools
+Description: Headers of android-platform-frameworks-native
+Description-md5: 432d3ef0a04b352ab3c290d31ffd367b
+
+Package: libmono-cil-dev
+Architecture: all
+Version: 6.8.0.105+dfsg-3.6ubuntu2
+Priority: optional
+Section: universe/cli-mono
+Source: mono
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Mono Group <pkg-mono-group@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 72
+Depends: libmono-accessibility4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-cairo4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-cecil-private-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-codecontracts4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-compilerservices-symbolwriter4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-corlib4.5-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-cscompmgd0.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-csharp4.0c-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-custommarshalers4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-data-tds4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-db2-1.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-debugger-soft4.0a-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-http4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-i18n4.0-all (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-ldap4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-management4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-messaging4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-messaging-rabbitmq4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-build4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-build-engine4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-build-framework4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-build-tasks-v4.0-4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-build-utilities-v4.0-4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-csharp4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-visualc10.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-microsoft-web-infrastructure1.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-oracle4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-parallel4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-peapi4.0a-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-posix4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-rabbitmq4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-relaxng4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-security4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-sharpzip4.84-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-simd4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-smdiagnostics0.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-sqlite4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-componentmodel-composition4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-componentmodel-dataannotations4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-configuration4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-configuration-install4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-core4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-data4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-data-datasetextensions4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-data-entity4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-data-linq4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-data-services4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-data-services-client4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-deployment4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-design4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-drawing4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-drawing-design4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-dynamic4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-enterpriseservices4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-identitymodel4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-identitymodel-selectors4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-io-compression4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-io-compression-filesystem4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-json4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-json-microsoft4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-ldap4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-ldap-protocols4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-management4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-messaging4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-net4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-net-http4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-net-http-formatting4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-net-http-webrequest4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-numerics4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-numerics-vectors4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-core2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-debugger2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-experimental2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-interfaces2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-linq2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-observable-aliases0.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-platformservices2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-providers2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-runtime-remoting2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-windows-forms2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reactive-windows-threading2.2-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-reflection-context4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-runtime4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-runtime-caching4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-runtime-durableinstancing4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-runtime-serialization4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-runtime-serialization-formatters-soap4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-security4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-servicemodel4.0a-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-servicemodel-activation4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-servicemodel-discovery4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-servicemodel-internals0.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-servicemodel-routing4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-servicemodel-web4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-serviceprocess4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-threading-tasks-dataflow4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-transactions4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-abstractions4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-applicationservices4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-dynamicdata4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-extensions4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-extensions-design4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-http4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-http-selfhost4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-http-webhost4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-mobile4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-mvc3.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-razor2.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-regularexpressions4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-routing4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-services4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-webpages2.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-webpages-deployment2.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-web-webpages-razor2.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-windows4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-windows-forms4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-windows-forms-datavisualization4.0a-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-workflow-activities4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-workflow-componentmodel4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-workflow-runtime4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-xaml4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-xml4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-xml-linq4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-system-xml-serialization4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-tasklets4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-webbrowser4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-webmatrix-data4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-windowsbase4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2), libmono-xbuild-tasks4.0-cil (= 6.8.0.105+dfsg-3.6ubuntu2)
+Conflicts: libmono-nunit2.2-cil, libmono-nunit2.4-cil
+Breaks: libmono-dev (<< 2.10~)
+Replaces: libmono-cairo2.0-cil (<< 2.4.3), libmono-cecil-private-cil (<< 2.4.3), libmono-dev (<< 2.10~), libmono-nunit2.2-cil (<< 2.4.3), libmono-nunit2.4-cil (<< 2.4.3), libmono-system-web2.0-cil (<< 2.4.3), libmono-wcf3.0-cil (<< 2.4.3), libmono2.0-cil (<< 2.4.3), mono-devel (<< 2.4.3)
+Filename: pool/universe/m/mono/libmono-cil-dev_6.8.0.105+dfsg-3.6ubuntu2_all.deb
+Size: 15318
+MD5sum: e3821f8b52497f678678f1346f723072
+SHA1: dce67bd124ac945fdc839466f38d837a12573a9f
+SHA256: 056098ef291ddb9e09aee1f0b5105ea8b92d0446b12f16d2297aadd7036518fd
+SHA512: 20e1be5235b538d2315eca97b0b071f2dca0304733c6ff62c4e218f9b57445e0f3a4f936c48dce9e9864345ed6335a737bc5835fc1d5dde67fb767705eab48ba
+Homepage: http://www.mono-project.com/
+Description: Mono Base Class Libraries (BCL) - Development files
+Description-md5: b3ffc3f2c198d9bf41ba035ceb7c5c5e
+
+Package: librust-winapi-dev
+Architecture: amd64
+Version: 0.3.9-1
+Multi-Arch: same
+Priority: optional
+Section: universe/rust
+Source: rust-winapi
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 7003
+Provides: librust-winapi+accctrl-dev (= 0.3.9-1), librust-winapi+aclapi-dev (= 0.3.9-1), librust-winapi+activation-dev (= 0.3.9-1), librust-winapi+adhoc-dev (= 0.3.9-1), librust-winapi+appmgmt-dev (= 0.3.9-1), librust-winapi+audioclient-dev (= 0.3.9-1), librust-winapi+audiosessiontypes-dev (= 0.3.9-1), librust-winapi+avrt-dev (= 0.3.9-1), librust-winapi+basetsd-dev (= 0.3.9-1), librust-winapi+bcrypt-dev (= 0.3.9-1), librust-winapi+bits-dev (= 0.3.9-1), librust-winapi+bits1-5-dev (= 0.3.9-1), librust-winapi+bits10-1-dev (= 0.3.9-1), librust-winapi+bits2-0-dev (= 0.3.9-1), librust-winapi+bits2-5-dev (= 0.3.9-1), librust-winapi+bits3-0-dev (= 0.3.9-1), librust-winapi+bits4-0-dev (= 0.3.9-1), librust-winapi+bits5-0-dev (= 0.3.9-1), librust-winapi+bitscfg-dev (= 0.3.9-1), librust-winapi+bitsmsg-dev (= 0.3.9-1), librust-winapi+bluetoothapis-dev (= 0.3.9-1), librust-winapi+bluetoothleapis-dev (= 0.3.9-1), librust-winapi+bthdef-dev (= 0.3.9-1), librust-winapi+bthioctl-dev (= 0.3.9-1), librust-winapi+bthledef-dev (= 0.3.9-1), librust-winapi+bthsdpdef-dev (= 0.3.9-1), librust-winapi+bugcodes-dev (= 0.3.9-1), librust-winapi+cderr-dev (= 0.3.9-1), librust-winapi+cfg-dev (= 0.3.9-1), librust-winapi+cfgmgr32-dev (= 0.3.9-1), librust-winapi+cguid-dev (= 0.3.9-1), librust-winapi+combaseapi-dev (= 0.3.9-1), librust-winapi+coml2api-dev (= 0.3.9-1), librust-winapi+commapi-dev (= 0.3.9-1), librust-winapi+commctrl-dev (= 0.3.9-1), librust-winapi+commdlg-dev (= 0.3.9-1), librust-winapi+commoncontrols-dev (= 0.3.9-1), librust-winapi+consoleapi-dev (= 0.3.9-1), librust-winapi+corecrt-dev (= 0.3.9-1), librust-winapi+corsym-dev (= 0.3.9-1), librust-winapi+d2d1-1-dev (= 0.3.9-1), librust-winapi+d2d1-2-dev (= 0.3.9-1), librust-winapi+d2d1-3-dev (= 0.3.9-1), librust-winapi+d2d1-dev (= 0.3.9-1), librust-winapi+d2d1effectauthor-dev (= 0.3.9-1), librust-winapi+d2d1effects-1-dev (= 0.3.9-1), librust-winapi+d2d1effects-2-dev (= 0.3.9-1), librust-winapi+d2d1effects-dev (= 0.3.9-1), librust-winapi+d2d1svg-dev (= 0.3.9-1), librust-winapi+d2dbasetypes-dev (= 0.3.9-1), librust-winapi+d3d-dev (= 0.3.9-1), librust-winapi+d3d10-1-dev (= 0.3.9-1), librust-winapi+d3d10-1shader-dev (= 0.3.9-1), librust-winapi+d3d10-dev (= 0.3.9-1), librust-winapi+d3d10effect-dev (= 0.3.9-1), librust-winapi+d3d10misc-dev (= 0.3.9-1), librust-winapi+d3d10sdklayers-dev (= 0.3.9-1), librust-winapi+d3d10shader-dev (= 0.3.9-1), librust-winapi+d3d11-1-dev (= 0.3.9-1), librust-winapi+d3d11-2-dev (= 0.3.9-1), librust-winapi+d3d11-3-dev (= 0.3.9-1), librust-winapi+d3d11-4-dev (= 0.3.9-1), librust-winapi+d3d11-dev (= 0.3.9-1), librust-winapi+d3d11on12-dev (= 0.3.9-1), librust-winapi+d3d11sdklayers-dev (= 0.3.9-1), librust-winapi+d3d11shader-dev (= 0.3.9-1), librust-winapi+d3d11tokenizedprogramformat-dev (= 0.3.9-1), librust-winapi+d3d12-dev (= 0.3.9-1), librust-winapi+d3d12sdklayers-dev (= 0.3.9-1), librust-winapi+d3d12shader-dev (= 0.3.9-1), librust-winapi+d3d9-dev (= 0.3.9-1), librust-winapi+d3d9caps-dev (= 0.3.9-1), librust-winapi+d3d9types-dev (= 0.3.9-1), librust-winapi+d3dcommon-dev (= 0.3.9-1), librust-winapi+d3dcompiler-dev (= 0.3.9-1), librust-winapi+d3dcsx-dev (= 0.3.9-1), librust-winapi+d3dkmdt-dev (= 0.3.9-1), librust-winapi+d3dkmthk-dev (= 0.3.9-1), librust-winapi+d3dukmdt-dev (= 0.3.9-1), librust-winapi+d3dx10core-dev (= 0.3.9-1), librust-winapi+d3dx10math-dev (= 0.3.9-1), librust-winapi+d3dx10mesh-dev (= 0.3.9-1), librust-winapi+datetimeapi-dev (= 0.3.9-1), librust-winapi+davclnt-dev (= 0.3.9-1), librust-winapi+dbghelp-dev (= 0.3.9-1), librust-winapi+dbt-dev (= 0.3.9-1), librust-winapi+dcommon-dev (= 0.3.9-1), librust-winapi+dcomp-dev (= 0.3.9-1), librust-winapi+dcompanimation-dev (= 0.3.9-1), librust-winapi+dcomptypes-dev (= 0.3.9-1), librust-winapi+dde-dev (= 0.3.9-1), librust-winapi+ddraw-dev (= 0.3.9-1), librust-winapi+ddrawi-dev (= 0.3.9-1), librust-winapi+ddrawint-dev (= 0.3.9-1), librust-winapi+debug-dev (= 0.3.9-1), librust-winapi+debugapi-dev (= 0.3.9-1), librust-winapi+default-dev (= 0.3.9-1), librust-winapi+devguid-dev (= 0.3.9-1), librust-winapi+devicetopology-dev (= 0.3.9-1), librust-winapi+devpkey-dev (= 0.3.9-1), librust-winapi+devpropdef-dev (= 0.3.9-1), librust-winapi+dinput-dev (= 0.3.9-1), librust-winapi+dinputd-dev (= 0.3.9-1), librust-winapi+dispex-dev (= 0.3.9-1), librust-winapi+dmksctl-dev (= 0.3.9-1), librust-winapi+dmusicc-dev (= 0.3.9-1), librust-winapi+docobj-dev (= 0.3.9-1), librust-winapi+documenttarget-dev (= 0.3.9-1), librust-winapi+dot1x-dev (= 0.3.9-1), librust-winapi+dpa-dsa-dev (= 0.3.9-1), librust-winapi+dpapi-dev (= 0.3.9-1), librust-winapi+dsgetdc-dev (= 0.3.9-1), librust-winapi+dsound-dev (= 0.3.9-1), librust-winapi+dsrole-dev (= 0.3.9-1), librust-winapi+dvp-dev (= 0.3.9-1), librust-winapi+dwmapi-dev (= 0.3.9-1), librust-winapi+dwrite-1-dev (= 0.3.9-1), librust-winapi+dwrite-2-dev (= 0.3.9-1), librust-winapi+dwrite-3-dev (= 0.3.9-1), librust-winapi+dwrite-dev (= 0.3.9-1), librust-winapi+dxdiag-dev (= 0.3.9-1), librust-winapi+dxfile-dev (= 0.3.9-1), librust-winapi+dxgi-dev (= 0.3.9-1), librust-winapi+dxgi1-2-dev (= 0.3.9-1), librust-winapi+dxgi1-3-dev (= 0.3.9-1), librust-winapi+dxgi1-4-dev (= 0.3.9-1), librust-winapi+dxgi1-5-dev (= 0.3.9-1), librust-winapi+dxgi1-6-dev (= 0.3.9-1), librust-winapi+dxgidebug-dev (= 0.3.9-1), librust-winapi+dxgiformat-dev (= 0.3.9-1), librust-winapi+dxgitype-dev (= 0.3.9-1), librust-winapi+dxva2api-dev (= 0.3.9-1), librust-winapi+dxvahd-dev (= 0.3.9-1), librust-winapi+eaptypes-dev (= 0.3.9-1), librust-winapi+enclaveapi-dev (= 0.3.9-1), librust-winapi+endpointvolume-dev (= 0.3.9-1), librust-winapi+errhandlingapi-dev (= 0.3.9-1), librust-winapi+everything-dev (= 0.3.9-1), librust-winapi+evntcons-dev (= 0.3.9-1), librust-winapi+evntprov-dev (= 0.3.9-1), librust-winapi+evntrace-dev (= 0.3.9-1), librust-winapi+excpt-dev (= 0.3.9-1), librust-winapi+exdisp-dev (= 0.3.9-1), librust-winapi+fibersapi-dev (= 0.3.9-1), librust-winapi+fileapi-dev (= 0.3.9-1), librust-winapi+functiondiscoverykeys-devpkey-dev (= 0.3.9-1), librust-winapi+gl-gl-dev (= 0.3.9-1), librust-winapi+guiddef-dev (= 0.3.9-1), librust-winapi+handleapi-dev (= 0.3.9-1), librust-winapi+heapapi-dev (= 0.3.9-1), librust-winapi+hidclass-dev (= 0.3.9-1), librust-winapi+hidpi-dev (= 0.3.9-1), librust-winapi+hidsdi-dev (= 0.3.9-1), librust-winapi+hidusage-dev (= 0.3.9-1), librust-winapi+highlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi+hstring-dev (= 0.3.9-1), librust-winapi+http-dev (= 0.3.9-1), librust-winapi+ifdef-dev (= 0.3.9-1), librust-winapi+ifmib-dev (= 0.3.9-1), librust-winapi+imm-dev (= 0.3.9-1), librust-winapi+impl-debug-dev (= 0.3.9-1), librust-winapi+impl-default-dev (= 0.3.9-1), librust-winapi+in6addr-dev (= 0.3.9-1), librust-winapi+inaddr-dev (= 0.3.9-1), librust-winapi+inspectable-dev (= 0.3.9-1), librust-winapi+interlockedapi-dev (= 0.3.9-1), librust-winapi+intsafe-dev (= 0.3.9-1), librust-winapi+ioapiset-dev (= 0.3.9-1), librust-winapi+ipexport-dev (= 0.3.9-1), librust-winapi+iphlpapi-dev (= 0.3.9-1), librust-winapi+ipifcons-dev (= 0.3.9-1), librust-winapi+ipmib-dev (= 0.3.9-1), librust-winapi+iprtrmib-dev (= 0.3.9-1), librust-winapi+iptypes-dev (= 0.3.9-1), librust-winapi+jobapi-dev (= 0.3.9-1), librust-winapi+jobapi2-dev (= 0.3.9-1), librust-winapi+knownfolders-dev (= 0.3.9-1), librust-winapi+ks-dev (= 0.3.9-1), librust-winapi+ksmedia-dev (= 0.3.9-1), librust-winapi+ktmtypes-dev (= 0.3.9-1), librust-winapi+ktmw32-dev (= 0.3.9-1), librust-winapi+l2cmn-dev (= 0.3.9-1), librust-winapi+libloaderapi-dev (= 0.3.9-1), librust-winapi+limits-dev (= 0.3.9-1), librust-winapi+lmaccess-dev (= 0.3.9-1), librust-winapi+lmalert-dev (= 0.3.9-1), librust-winapi+lmapibuf-dev (= 0.3.9-1), librust-winapi+lmat-dev (= 0.3.9-1), librust-winapi+lmcons-dev (= 0.3.9-1), librust-winapi+lmdfs-dev (= 0.3.9-1), librust-winapi+lmerrlog-dev (= 0.3.9-1), librust-winapi+lmjoin-dev (= 0.3.9-1), librust-winapi+lmmsg-dev (= 0.3.9-1), librust-winapi+lmremutl-dev (= 0.3.9-1), librust-winapi+lmrepl-dev (= 0.3.9-1), librust-winapi+lmserver-dev (= 0.3.9-1), librust-winapi+lmshare-dev (= 0.3.9-1), librust-winapi+lmstats-dev (= 0.3.9-1), librust-winapi+lmsvc-dev (= 0.3.9-1), librust-winapi+lmuse-dev (= 0.3.9-1), librust-winapi+lmwksta-dev (= 0.3.9-1), librust-winapi+lowlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi+lsalookup-dev (= 0.3.9-1), librust-winapi+memoryapi-dev (= 0.3.9-1), librust-winapi+minschannel-dev (= 0.3.9-1), librust-winapi+minwinbase-dev (= 0.3.9-1), librust-winapi+minwindef-dev (= 0.3.9-1), librust-winapi+mmdeviceapi-dev (= 0.3.9-1), librust-winapi+mmeapi-dev (= 0.3.9-1), librust-winapi+mmreg-dev (= 0.3.9-1), librust-winapi+mmsystem-dev (= 0.3.9-1), librust-winapi+mprapidef-dev (= 0.3.9-1), librust-winapi+msaatext-dev (= 0.3.9-1), librust-winapi+mscat-dev (= 0.3.9-1), librust-winapi+mschapp-dev (= 0.3.9-1), librust-winapi+mssip-dev (= 0.3.9-1), librust-winapi+mstcpip-dev (= 0.3.9-1), librust-winapi+mswsock-dev (= 0.3.9-1), librust-winapi+mswsockdef-dev (= 0.3.9-1), librust-winapi+namedpipeapi-dev (= 0.3.9-1), librust-winapi+namespaceapi-dev (= 0.3.9-1), librust-winapi+nb30-dev (= 0.3.9-1), librust-winapi+ncrypt-dev (= 0.3.9-1), librust-winapi+netioapi-dev (= 0.3.9-1), librust-winapi+nldef-dev (= 0.3.9-1), librust-winapi+ntddndis-dev (= 0.3.9-1), librust-winapi+ntddscsi-dev (= 0.3.9-1), librust-winapi+ntddser-dev (= 0.3.9-1), librust-winapi+ntdef-dev (= 0.3.9-1), librust-winapi+ntlsa-dev (= 0.3.9-1), librust-winapi+ntsecapi-dev (= 0.3.9-1), librust-winapi+ntstatus-dev (= 0.3.9-1), librust-winapi+oaidl-dev (= 0.3.9-1), librust-winapi+objbase-dev (= 0.3.9-1), librust-winapi+objidl-dev (= 0.3.9-1), librust-winapi+objidlbase-dev (= 0.3.9-1), librust-winapi+ocidl-dev (= 0.3.9-1), librust-winapi+ole2-dev (= 0.3.9-1), librust-winapi+oleauto-dev (= 0.3.9-1), librust-winapi+olectl-dev (= 0.3.9-1), librust-winapi+oleidl-dev (= 0.3.9-1), librust-winapi+opmapi-dev (= 0.3.9-1), librust-winapi+pdh-dev (= 0.3.9-1), librust-winapi+perflib-dev (= 0.3.9-1), librust-winapi+physicalmonitorenumerationapi-dev (= 0.3.9-1), librust-winapi+playsoundapi-dev (= 0.3.9-1), librust-winapi+portabledevice-dev (= 0.3.9-1), librust-winapi+portabledeviceapi-dev (= 0.3.9-1), librust-winapi+portabledevicetypes-dev (= 0.3.9-1), librust-winapi+powerbase-dev (= 0.3.9-1), librust-winapi+powersetting-dev (= 0.3.9-1), librust-winapi+powrprof-dev (= 0.3.9-1), librust-winapi+processenv-dev (= 0.3.9-1), librust-winapi+processsnapshot-dev (= 0.3.9-1), librust-winapi+processthreadsapi-dev (= 0.3.9-1), librust-winapi+processtopologyapi-dev (= 0.3.9-1), librust-winapi+profileapi-dev (= 0.3.9-1), librust-winapi+propidl-dev (= 0.3.9-1), librust-winapi+propkey-dev (= 0.3.9-1), librust-winapi+propkeydef-dev (= 0.3.9-1), librust-winapi+propsys-dev (= 0.3.9-1), librust-winapi+prsht-dev (= 0.3.9-1), librust-winapi+psapi-dev (= 0.3.9-1), librust-winapi+qos-dev (= 0.3.9-1), librust-winapi+realtimeapiset-dev (= 0.3.9-1), librust-winapi+reason-dev (= 0.3.9-1), librust-winapi+restartmanager-dev (= 0.3.9-1), librust-winapi+restrictederrorinfo-dev (= 0.3.9-1), librust-winapi+rmxfguid-dev (= 0.3.9-1), librust-winapi+roapi-dev (= 0.3.9-1), librust-winapi+robuffer-dev (= 0.3.9-1), librust-winapi+roerrorapi-dev (= 0.3.9-1), librust-winapi+rpc-dev (= 0.3.9-1), librust-winapi+rpcdce-dev (= 0.3.9-1), librust-winapi+rpcndr-dev (= 0.3.9-1), librust-winapi+rtinfo-dev (= 0.3.9-1), librust-winapi+sapi-dev (= 0.3.9-1), librust-winapi+sapi51-dev (= 0.3.9-1), librust-winapi+sapi53-dev (= 0.3.9-1), librust-winapi+sapiddk-dev (= 0.3.9-1), librust-winapi+sapiddk51-dev (= 0.3.9-1), librust-winapi+schannel-dev (= 0.3.9-1), librust-winapi+sddl-dev (= 0.3.9-1), librust-winapi+securityappcontainer-dev (= 0.3.9-1), librust-winapi+securitybaseapi-dev (= 0.3.9-1), librust-winapi+servprov-dev (= 0.3.9-1), librust-winapi+setupapi-dev (= 0.3.9-1), librust-winapi+shellapi-dev (= 0.3.9-1), librust-winapi+shellscalingapi-dev (= 0.3.9-1), librust-winapi+shlobj-dev (= 0.3.9-1), librust-winapi+shobjidl-core-dev (= 0.3.9-1), librust-winapi+shobjidl-dev (= 0.3.9-1), librust-winapi+shtypes-dev (= 0.3.9-1), librust-winapi+softpub-dev (= 0.3.9-1), librust-winapi+spapidef-dev (= 0.3.9-1), librust-winapi+spellcheck-dev (= 0.3.9-1), librust-winapi+sporder-dev (= 0.3.9-1), librust-winapi+sql-dev (= 0.3.9-1), librust-winapi+sqlext-dev (= 0.3.9-1), librust-winapi+sqltypes-dev (= 0.3.9-1), librust-winapi+sqlucode-dev (= 0.3.9-1), librust-winapi+sspi-dev (= 0.3.9-1), librust-winapi+std-dev (= 0.3.9-1), librust-winapi+stralign-dev (= 0.3.9-1), librust-winapi+stringapiset-dev (= 0.3.9-1), librust-winapi+strmif-dev (= 0.3.9-1), librust-winapi+subauth-dev (= 0.3.9-1), librust-winapi+synchapi-dev (= 0.3.9-1), librust-winapi+sysinfoapi-dev (= 0.3.9-1), librust-winapi+systemtopologyapi-dev (= 0.3.9-1), librust-winapi+taskschd-dev (= 0.3.9-1), librust-winapi+tcpestats-dev (= 0.3.9-1), librust-winapi+tcpmib-dev (= 0.3.9-1), librust-winapi+textstor-dev (= 0.3.9-1), librust-winapi+threadpoolapiset-dev (= 0.3.9-1), librust-winapi+threadpoollegacyapiset-dev (= 0.3.9-1), librust-winapi+timeapi-dev (= 0.3.9-1), librust-winapi+timezoneapi-dev (= 0.3.9-1), librust-winapi+tlhelp32-dev (= 0.3.9-1), librust-winapi+transportsettingcommon-dev (= 0.3.9-1), librust-winapi+tvout-dev (= 0.3.9-1), librust-winapi+udpmib-dev (= 0.3.9-1), librust-winapi+unknwnbase-dev (= 0.3.9-1), librust-winapi+urlhist-dev (= 0.3.9-1), librust-winapi+urlmon-dev (= 0.3.9-1), librust-winapi+usb-dev (= 0.3.9-1), librust-winapi+usbioctl-dev (= 0.3.9-1), librust-winapi+usbiodef-dev (= 0.3.9-1), librust-winapi+usbscan-dev (= 0.3.9-1), librust-winapi+usbspec-dev (= 0.3.9-1), librust-winapi+userenv-dev (= 0.3.9-1), librust-winapi+usp10-dev (= 0.3.9-1), librust-winapi+utilapiset-dev (= 0.3.9-1), librust-winapi+uxtheme-dev (= 0.3.9-1), librust-winapi+vadefs-dev (= 0.3.9-1), librust-winapi+vcruntime-dev (= 0.3.9-1), librust-winapi+vsbackup-dev (= 0.3.9-1), librust-winapi+vss-dev (= 0.3.9-1), librust-winapi+vsserror-dev (= 0.3.9-1), librust-winapi+vswriter-dev (= 0.3.9-1), librust-winapi+wbemads-dev (= 0.3.9-1), librust-winapi+wbemcli-dev (= 0.3.9-1), librust-winapi+wbemdisp-dev (= 0.3.9-1), librust-winapi+wbemprov-dev (= 0.3.9-1), librust-winapi+wbemtran-dev (= 0.3.9-1), librust-winapi+wct-dev (= 0.3.9-1), librust-winapi+werapi-dev (= 0.3.9-1), librust-winapi+winbase-dev (= 0.3.9-1), librust-winapi+wincodec-dev (= 0.3.9-1), librust-winapi+wincodecsdk-dev (= 0.3.9-1), librust-winapi+wincon-dev (= 0.3.9-1), librust-winapi+wincontypes-dev (= 0.3.9-1), librust-winapi+wincred-dev (= 0.3.9-1), librust-winapi+wincrypt-dev (= 0.3.9-1), librust-winapi+windef-dev (= 0.3.9-1), librust-winapi+windot11-dev (= 0.3.9-1), librust-winapi+windowsceip-dev (= 0.3.9-1), librust-winapi+windowsx-dev (= 0.3.9-1), librust-winapi+winefs-dev (= 0.3.9-1), librust-winapi+winerror-dev (= 0.3.9-1), librust-winapi+winevt-dev (= 0.3.9-1), librust-winapi+wingdi-dev (= 0.3.9-1), librust-winapi+winhttp-dev (= 0.3.9-1), librust-winapi+wininet-dev (= 0.3.9-1), librust-winapi+winineti-dev (= 0.3.9-1), librust-winapi+winioctl-dev (= 0.3.9-1), librust-winapi+winnetwk-dev (= 0.3.9-1), librust-winapi+winnls-dev (= 0.3.9-1), librust-winapi+winnt-dev (= 0.3.9-1), librust-winapi+winreg-dev (= 0.3.9-1), librust-winapi+winsafer-dev (= 0.3.9-1), librust-winapi+winscard-dev (= 0.3.9-1), librust-winapi+winsmcrd-dev (= 0.3.9-1), librust-winapi+winsock2-dev (= 0.3.9-1), librust-winapi+winspool-dev (= 0.3.9-1), librust-winapi+winstring-dev (= 0.3.9-1), librust-winapi+winsvc-dev (= 0.3.9-1), librust-winapi+wintrust-dev (= 0.3.9-1), librust-winapi+winusb-dev (= 0.3.9-1), librust-winapi+winusbio-dev (= 0.3.9-1), librust-winapi+winuser-dev (= 0.3.9-1), librust-winapi+winver-dev (= 0.3.9-1), librust-winapi+wlanapi-dev (= 0.3.9-1), librust-winapi+wlanihv-dev (= 0.3.9-1), librust-winapi+wlanihvtypes-dev (= 0.3.9-1), librust-winapi+wlantypes-dev (= 0.3.9-1), librust-winapi+wlclient-dev (= 0.3.9-1), librust-winapi+wmistr-dev (= 0.3.9-1), librust-winapi+wnnc-dev (= 0.3.9-1), librust-winapi+wow64apiset-dev (= 0.3.9-1), librust-winapi+wpdmtpextensions-dev (= 0.3.9-1), librust-winapi+ws2bth-dev (= 0.3.9-1), librust-winapi+ws2def-dev (= 0.3.9-1), librust-winapi+ws2ipdef-dev (= 0.3.9-1), librust-winapi+ws2spi-dev (= 0.3.9-1), librust-winapi+ws2tcpip-dev (= 0.3.9-1), librust-winapi+wtsapi32-dev (= 0.3.9-1), librust-winapi+wtypes-dev (= 0.3.9-1), librust-winapi+wtypesbase-dev (= 0.3.9-1), librust-winapi+xinput-dev (= 0.3.9-1), librust-winapi-0+accctrl-dev (= 0.3.9-1), librust-winapi-0+aclapi-dev (= 0.3.9-1), librust-winapi-0+activation-dev (= 0.3.9-1), librust-winapi-0+adhoc-dev (= 0.3.9-1), librust-winapi-0+appmgmt-dev (= 0.3.9-1), librust-winapi-0+audioclient-dev (= 0.3.9-1), librust-winapi-0+audiosessiontypes-dev (= 0.3.9-1), librust-winapi-0+avrt-dev (= 0.3.9-1), librust-winapi-0+basetsd-dev (= 0.3.9-1), librust-winapi-0+bcrypt-dev (= 0.3.9-1), librust-winapi-0+bits-dev (= 0.3.9-1), librust-winapi-0+bits1-5-dev (= 0.3.9-1), librust-winapi-0+bits10-1-dev (= 0.3.9-1), librust-winapi-0+bits2-0-dev (= 0.3.9-1), librust-winapi-0+bits2-5-dev (= 0.3.9-1), librust-winapi-0+bits3-0-dev (= 0.3.9-1), librust-winapi-0+bits4-0-dev (= 0.3.9-1), librust-winapi-0+bits5-0-dev (= 0.3.9-1), librust-winapi-0+bitscfg-dev (= 0.3.9-1), librust-winapi-0+bitsmsg-dev (= 0.3.9-1), librust-winapi-0+bluetoothapis-dev (= 0.3.9-1), librust-winapi-0+bluetoothleapis-dev (= 0.3.9-1), librust-winapi-0+bthdef-dev (= 0.3.9-1), librust-winapi-0+bthioctl-dev (= 0.3.9-1), librust-winapi-0+bthledef-dev (= 0.3.9-1), librust-winapi-0+bthsdpdef-dev (= 0.3.9-1), librust-winapi-0+bugcodes-dev (= 0.3.9-1), librust-winapi-0+cderr-dev (= 0.3.9-1), librust-winapi-0+cfg-dev (= 0.3.9-1), librust-winapi-0+cfgmgr32-dev (= 0.3.9-1), librust-winapi-0+cguid-dev (= 0.3.9-1), librust-winapi-0+combaseapi-dev (= 0.3.9-1), librust-winapi-0+coml2api-dev (= 0.3.9-1), librust-winapi-0+commapi-dev (= 0.3.9-1), librust-winapi-0+commctrl-dev (= 0.3.9-1), librust-winapi-0+commdlg-dev (= 0.3.9-1), librust-winapi-0+commoncontrols-dev (= 0.3.9-1), librust-winapi-0+consoleapi-dev (= 0.3.9-1), librust-winapi-0+corecrt-dev (= 0.3.9-1), librust-winapi-0+corsym-dev (= 0.3.9-1), librust-winapi-0+d2d1-1-dev (= 0.3.9-1), librust-winapi-0+d2d1-2-dev (= 0.3.9-1), librust-winapi-0+d2d1-3-dev (= 0.3.9-1), librust-winapi-0+d2d1-dev (= 0.3.9-1), librust-winapi-0+d2d1effectauthor-dev (= 0.3.9-1), librust-winapi-0+d2d1effects-1-dev (= 0.3.9-1), librust-winapi-0+d2d1effects-2-dev (= 0.3.9-1), librust-winapi-0+d2d1effects-dev (= 0.3.9-1), librust-winapi-0+d2d1svg-dev (= 0.3.9-1), librust-winapi-0+d2dbasetypes-dev (= 0.3.9-1), librust-winapi-0+d3d-dev (= 0.3.9-1), librust-winapi-0+d3d10-1-dev (= 0.3.9-1), librust-winapi-0+d3d10-1shader-dev (= 0.3.9-1), librust-winapi-0+d3d10-dev (= 0.3.9-1), librust-winapi-0+d3d10effect-dev (= 0.3.9-1), librust-winapi-0+d3d10misc-dev (= 0.3.9-1), librust-winapi-0+d3d10sdklayers-dev (= 0.3.9-1), librust-winapi-0+d3d10shader-dev (= 0.3.9-1), librust-winapi-0+d3d11-1-dev (= 0.3.9-1), librust-winapi-0+d3d11-2-dev (= 0.3.9-1), librust-winapi-0+d3d11-3-dev (= 0.3.9-1), librust-winapi-0+d3d11-4-dev (= 0.3.9-1), librust-winapi-0+d3d11-dev (= 0.3.9-1), librust-winapi-0+d3d11on12-dev (= 0.3.9-1), librust-winapi-0+d3d11sdklayers-dev (= 0.3.9-1), librust-winapi-0+d3d11shader-dev (= 0.3.9-1), librust-winapi-0+d3d11tokenizedprogramformat-dev (= 0.3.9-1), librust-winapi-0+d3d12-dev (= 0.3.9-1), librust-winapi-0+d3d12sdklayers-dev (= 0.3.9-1), librust-winapi-0+d3d12shader-dev (= 0.3.9-1), librust-winapi-0+d3d9-dev (= 0.3.9-1), librust-winapi-0+d3d9caps-dev (= 0.3.9-1), librust-winapi-0+d3d9types-dev (= 0.3.9-1), librust-winapi-0+d3dcommon-dev (= 0.3.9-1), librust-winapi-0+d3dcompiler-dev (= 0.3.9-1), librust-winapi-0+d3dcsx-dev (= 0.3.9-1), librust-winapi-0+d3dkmdt-dev (= 0.3.9-1), librust-winapi-0+d3dkmthk-dev (= 0.3.9-1), librust-winapi-0+d3dukmdt-dev (= 0.3.9-1), librust-winapi-0+d3dx10core-dev (= 0.3.9-1), librust-winapi-0+d3dx10math-dev (= 0.3.9-1), librust-winapi-0+d3dx10mesh-dev (= 0.3.9-1), librust-winapi-0+datetimeapi-dev (= 0.3.9-1), librust-winapi-0+davclnt-dev (= 0.3.9-1), librust-winapi-0+dbghelp-dev (= 0.3.9-1), librust-winapi-0+dbt-dev (= 0.3.9-1), librust-winapi-0+dcommon-dev (= 0.3.9-1), librust-winapi-0+dcomp-dev (= 0.3.9-1), librust-winapi-0+dcompanimation-dev (= 0.3.9-1), librust-winapi-0+dcomptypes-dev (= 0.3.9-1), librust-winapi-0+dde-dev (= 0.3.9-1), librust-winapi-0+ddraw-dev (= 0.3.9-1), librust-winapi-0+ddrawi-dev (= 0.3.9-1), librust-winapi-0+ddrawint-dev (= 0.3.9-1), librust-winapi-0+debug-dev (= 0.3.9-1), librust-winapi-0+debugapi-dev (= 0.3.9-1), librust-winapi-0+default-dev (= 0.3.9-1), librust-winapi-0+devguid-dev (= 0.3.9-1), librust-winapi-0+devicetopology-dev (= 0.3.9-1), librust-winapi-0+devpkey-dev (= 0.3.9-1), librust-winapi-0+devpropdef-dev (= 0.3.9-1), librust-winapi-0+dinput-dev (= 0.3.9-1), librust-winapi-0+dinputd-dev (= 0.3.9-1), librust-winapi-0+dispex-dev (= 0.3.9-1), librust-winapi-0+dmksctl-dev (= 0.3.9-1), librust-winapi-0+dmusicc-dev (= 0.3.9-1), librust-winapi-0+docobj-dev (= 0.3.9-1), librust-winapi-0+documenttarget-dev (= 0.3.9-1), librust-winapi-0+dot1x-dev (= 0.3.9-1), librust-winapi-0+dpa-dsa-dev (= 0.3.9-1), librust-winapi-0+dpapi-dev (= 0.3.9-1), librust-winapi-0+dsgetdc-dev (= 0.3.9-1), librust-winapi-0+dsound-dev (= 0.3.9-1), librust-winapi-0+dsrole-dev (= 0.3.9-1), librust-winapi-0+dvp-dev (= 0.3.9-1), librust-winapi-0+dwmapi-dev (= 0.3.9-1), librust-winapi-0+dwrite-1-dev (= 0.3.9-1), librust-winapi-0+dwrite-2-dev (= 0.3.9-1), librust-winapi-0+dwrite-3-dev (= 0.3.9-1), librust-winapi-0+dwrite-dev (= 0.3.9-1), librust-winapi-0+dxdiag-dev (= 0.3.9-1), librust-winapi-0+dxfile-dev (= 0.3.9-1), librust-winapi-0+dxgi-dev (= 0.3.9-1), librust-winapi-0+dxgi1-2-dev (= 0.3.9-1), librust-winapi-0+dxgi1-3-dev (= 0.3.9-1), librust-winapi-0+dxgi1-4-dev (= 0.3.9-1), librust-winapi-0+dxgi1-5-dev (= 0.3.9-1), librust-winapi-0+dxgi1-6-dev (= 0.3.9-1), librust-winapi-0+dxgidebug-dev (= 0.3.9-1), librust-winapi-0+dxgiformat-dev (= 0.3.9-1), librust-winapi-0+dxgitype-dev (= 0.3.9-1), librust-winapi-0+dxva2api-dev (= 0.3.9-1), librust-winapi-0+dxvahd-dev (= 0.3.9-1), librust-winapi-0+eaptypes-dev (= 0.3.9-1), librust-winapi-0+enclaveapi-dev (= 0.3.9-1), librust-winapi-0+endpointvolume-dev (= 0.3.9-1), librust-winapi-0+errhandlingapi-dev (= 0.3.9-1), librust-winapi-0+everything-dev (= 0.3.9-1), librust-winapi-0+evntcons-dev (= 0.3.9-1), librust-winapi-0+evntprov-dev (= 0.3.9-1), librust-winapi-0+evntrace-dev (= 0.3.9-1), librust-winapi-0+excpt-dev (= 0.3.9-1), librust-winapi-0+exdisp-dev (= 0.3.9-1), librust-winapi-0+fibersapi-dev (= 0.3.9-1), librust-winapi-0+fileapi-dev (= 0.3.9-1), librust-winapi-0+functiondiscoverykeys-devpkey-dev (= 0.3.9-1), librust-winapi-0+gl-gl-dev (= 0.3.9-1), librust-winapi-0+guiddef-dev (= 0.3.9-1), librust-winapi-0+handleapi-dev (= 0.3.9-1), librust-winapi-0+heapapi-dev (= 0.3.9-1), librust-winapi-0+hidclass-dev (= 0.3.9-1), librust-winapi-0+hidpi-dev (= 0.3.9-1), librust-winapi-0+hidsdi-dev (= 0.3.9-1), librust-winapi-0+hidusage-dev (= 0.3.9-1), librust-winapi-0+highlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi-0+hstring-dev (= 0.3.9-1), librust-winapi-0+http-dev (= 0.3.9-1), librust-winapi-0+ifdef-dev (= 0.3.9-1), librust-winapi-0+ifmib-dev (= 0.3.9-1), librust-winapi-0+imm-dev (= 0.3.9-1), librust-winapi-0+impl-debug-dev (= 0.3.9-1), librust-winapi-0+impl-default-dev (= 0.3.9-1), librust-winapi-0+in6addr-dev (= 0.3.9-1), librust-winapi-0+inaddr-dev (= 0.3.9-1), librust-winapi-0+inspectable-dev (= 0.3.9-1), librust-winapi-0+interlockedapi-dev (= 0.3.9-1), librust-winapi-0+intsafe-dev (= 0.3.9-1), librust-winapi-0+ioapiset-dev (= 0.3.9-1), librust-winapi-0+ipexport-dev (= 0.3.9-1), librust-winapi-0+iphlpapi-dev (= 0.3.9-1), librust-winapi-0+ipifcons-dev (= 0.3.9-1), librust-winapi-0+ipmib-dev (= 0.3.9-1), librust-winapi-0+iprtrmib-dev (= 0.3.9-1), librust-winapi-0+iptypes-dev (= 0.3.9-1), librust-winapi-0+jobapi-dev (= 0.3.9-1), librust-winapi-0+jobapi2-dev (= 0.3.9-1), librust-winapi-0+knownfolders-dev (= 0.3.9-1), librust-winapi-0+ks-dev (= 0.3.9-1), librust-winapi-0+ksmedia-dev (= 0.3.9-1), librust-winapi-0+ktmtypes-dev (= 0.3.9-1), librust-winapi-0+ktmw32-dev (= 0.3.9-1), librust-winapi-0+l2cmn-dev (= 0.3.9-1), librust-winapi-0+libloaderapi-dev (= 0.3.9-1), librust-winapi-0+limits-dev (= 0.3.9-1), librust-winapi-0+lmaccess-dev (= 0.3.9-1), librust-winapi-0+lmalert-dev (= 0.3.9-1), librust-winapi-0+lmapibuf-dev (= 0.3.9-1), librust-winapi-0+lmat-dev (= 0.3.9-1), librust-winapi-0+lmcons-dev (= 0.3.9-1), librust-winapi-0+lmdfs-dev (= 0.3.9-1), librust-winapi-0+lmerrlog-dev (= 0.3.9-1), librust-winapi-0+lmjoin-dev (= 0.3.9-1), librust-winapi-0+lmmsg-dev (= 0.3.9-1), librust-winapi-0+lmremutl-dev (= 0.3.9-1), librust-winapi-0+lmrepl-dev (= 0.3.9-1), librust-winapi-0+lmserver-dev (= 0.3.9-1), librust-winapi-0+lmshare-dev (= 0.3.9-1), librust-winapi-0+lmstats-dev (= 0.3.9-1), librust-winapi-0+lmsvc-dev (= 0.3.9-1), librust-winapi-0+lmuse-dev (= 0.3.9-1), librust-winapi-0+lmwksta-dev (= 0.3.9-1), librust-winapi-0+lowlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi-0+lsalookup-dev (= 0.3.9-1), librust-winapi-0+memoryapi-dev (= 0.3.9-1), librust-winapi-0+minschannel-dev (= 0.3.9-1), librust-winapi-0+minwinbase-dev (= 0.3.9-1), librust-winapi-0+minwindef-dev (= 0.3.9-1), librust-winapi-0+mmdeviceapi-dev (= 0.3.9-1), librust-winapi-0+mmeapi-dev (= 0.3.9-1), librust-winapi-0+mmreg-dev (= 0.3.9-1), librust-winapi-0+mmsystem-dev (= 0.3.9-1), librust-winapi-0+mprapidef-dev (= 0.3.9-1), librust-winapi-0+msaatext-dev (= 0.3.9-1), librust-winapi-0+mscat-dev (= 0.3.9-1), librust-winapi-0+mschapp-dev (= 0.3.9-1), librust-winapi-0+mssip-dev (= 0.3.9-1), librust-winapi-0+mstcpip-dev (= 0.3.9-1), librust-winapi-0+mswsock-dev (= 0.3.9-1), librust-winapi-0+mswsockdef-dev (= 0.3.9-1), librust-winapi-0+namedpipeapi-dev (= 0.3.9-1), librust-winapi-0+namespaceapi-dev (= 0.3.9-1), librust-winapi-0+nb30-dev (= 0.3.9-1), librust-winapi-0+ncrypt-dev (= 0.3.9-1), librust-winapi-0+netioapi-dev (= 0.3.9-1), librust-winapi-0+nldef-dev (= 0.3.9-1), librust-winapi-0+ntddndis-dev (= 0.3.9-1), librust-winapi-0+ntddscsi-dev (= 0.3.9-1), librust-winapi-0+ntddser-dev (= 0.3.9-1), librust-winapi-0+ntdef-dev (= 0.3.9-1), librust-winapi-0+ntlsa-dev (= 0.3.9-1), librust-winapi-0+ntsecapi-dev (= 0.3.9-1), librust-winapi-0+ntstatus-dev (= 0.3.9-1), librust-winapi-0+oaidl-dev (= 0.3.9-1), librust-winapi-0+objbase-dev (= 0.3.9-1), librust-winapi-0+objidl-dev (= 0.3.9-1), librust-winapi-0+objidlbase-dev (= 0.3.9-1), librust-winapi-0+ocidl-dev (= 0.3.9-1), librust-winapi-0+ole2-dev (= 0.3.9-1), librust-winapi-0+oleauto-dev (= 0.3.9-1), librust-winapi-0+olectl-dev (= 0.3.9-1), librust-winapi-0+oleidl-dev (= 0.3.9-1), librust-winapi-0+opmapi-dev (= 0.3.9-1), librust-winapi-0+pdh-dev (= 0.3.9-1), librust-winapi-0+perflib-dev (= 0.3.9-1), librust-winapi-0+physicalmonitorenumerationapi-dev (= 0.3.9-1), librust-winapi-0+playsoundapi-dev (= 0.3.9-1), librust-winapi-0+portabledevice-dev (= 0.3.9-1), librust-winapi-0+portabledeviceapi-dev (= 0.3.9-1), librust-winapi-0+portabledevicetypes-dev (= 0.3.9-1), librust-winapi-0+powerbase-dev (= 0.3.9-1), librust-winapi-0+powersetting-dev (= 0.3.9-1), librust-winapi-0+powrprof-dev (= 0.3.9-1), librust-winapi-0+processenv-dev (= 0.3.9-1), librust-winapi-0+processsnapshot-dev (= 0.3.9-1), librust-winapi-0+processthreadsapi-dev (= 0.3.9-1), librust-winapi-0+processtopologyapi-dev (= 0.3.9-1), librust-winapi-0+profileapi-dev (= 0.3.9-1), librust-winapi-0+propidl-dev (= 0.3.9-1), librust-winapi-0+propkey-dev (= 0.3.9-1), librust-winapi-0+propkeydef-dev (= 0.3.9-1), librust-winapi-0+propsys-dev (= 0.3.9-1), librust-winapi-0+prsht-dev (= 0.3.9-1), librust-winapi-0+psapi-dev (= 0.3.9-1), librust-winapi-0+qos-dev (= 0.3.9-1), librust-winapi-0+realtimeapiset-dev (= 0.3.9-1), librust-winapi-0+reason-dev (= 0.3.9-1), librust-winapi-0+restartmanager-dev (= 0.3.9-1), librust-winapi-0+restrictederrorinfo-dev (= 0.3.9-1), librust-winapi-0+rmxfguid-dev (= 0.3.9-1), librust-winapi-0+roapi-dev (= 0.3.9-1), librust-winapi-0+robuffer-dev (= 0.3.9-1), librust-winapi-0+roerrorapi-dev (= 0.3.9-1), librust-winapi-0+rpc-dev (= 0.3.9-1), librust-winapi-0+rpcdce-dev (= 0.3.9-1), librust-winapi-0+rpcndr-dev (= 0.3.9-1), librust-winapi-0+rtinfo-dev (= 0.3.9-1), librust-winapi-0+sapi-dev (= 0.3.9-1), librust-winapi-0+sapi51-dev (= 0.3.9-1), librust-winapi-0+sapi53-dev (= 0.3.9-1), librust-winapi-0+sapiddk-dev (= 0.3.9-1), librust-winapi-0+sapiddk51-dev (= 0.3.9-1), librust-winapi-0+schannel-dev (= 0.3.9-1), librust-winapi-0+sddl-dev (= 0.3.9-1), librust-winapi-0+securityappcontainer-dev (= 0.3.9-1), librust-winapi-0+securitybaseapi-dev (= 0.3.9-1), librust-winapi-0+servprov-dev (= 0.3.9-1), librust-winapi-0+setupapi-dev (= 0.3.9-1), librust-winapi-0+shellapi-dev (= 0.3.9-1), librust-winapi-0+shellscalingapi-dev (= 0.3.9-1), librust-winapi-0+shlobj-dev (= 0.3.9-1), librust-winapi-0+shobjidl-core-dev (= 0.3.9-1), librust-winapi-0+shobjidl-dev (= 0.3.9-1), librust-winapi-0+shtypes-dev (= 0.3.9-1), librust-winapi-0+softpub-dev (= 0.3.9-1), librust-winapi-0+spapidef-dev (= 0.3.9-1), librust-winapi-0+spellcheck-dev (= 0.3.9-1), librust-winapi-0+sporder-dev (= 0.3.9-1), librust-winapi-0+sql-dev (= 0.3.9-1), librust-winapi-0+sqlext-dev (= 0.3.9-1), librust-winapi-0+sqltypes-dev (= 0.3.9-1), librust-winapi-0+sqlucode-dev (= 0.3.9-1), librust-winapi-0+sspi-dev (= 0.3.9-1), librust-winapi-0+std-dev (= 0.3.9-1), librust-winapi-0+stralign-dev (= 0.3.9-1), librust-winapi-0+stringapiset-dev (= 0.3.9-1), librust-winapi-0+strmif-dev (= 0.3.9-1), librust-winapi-0+subauth-dev (= 0.3.9-1), librust-winapi-0+synchapi-dev (= 0.3.9-1), librust-winapi-0+sysinfoapi-dev (= 0.3.9-1), librust-winapi-0+systemtopologyapi-dev (= 0.3.9-1), librust-winapi-0+taskschd-dev (= 0.3.9-1), librust-winapi-0+tcpestats-dev (= 0.3.9-1), librust-winapi-0+tcpmib-dev (= 0.3.9-1), librust-winapi-0+textstor-dev (= 0.3.9-1), librust-winapi-0+threadpoolapiset-dev (= 0.3.9-1), librust-winapi-0+threadpoollegacyapiset-dev (= 0.3.9-1), librust-winapi-0+timeapi-dev (= 0.3.9-1), librust-winapi-0+timezoneapi-dev (= 0.3.9-1), librust-winapi-0+tlhelp32-dev (= 0.3.9-1), librust-winapi-0+transportsettingcommon-dev (= 0.3.9-1), librust-winapi-0+tvout-dev (= 0.3.9-1), librust-winapi-0+udpmib-dev (= 0.3.9-1), librust-winapi-0+unknwnbase-dev (= 0.3.9-1), librust-winapi-0+urlhist-dev (= 0.3.9-1), librust-winapi-0+urlmon-dev (= 0.3.9-1), librust-winapi-0+usb-dev (= 0.3.9-1), librust-winapi-0+usbioctl-dev (= 0.3.9-1), librust-winapi-0+usbiodef-dev (= 0.3.9-1), librust-winapi-0+usbscan-dev (= 0.3.9-1), librust-winapi-0+usbspec-dev (= 0.3.9-1), librust-winapi-0+userenv-dev (= 0.3.9-1), librust-winapi-0+usp10-dev (= 0.3.9-1), librust-winapi-0+utilapiset-dev (= 0.3.9-1), librust-winapi-0+uxtheme-dev (= 0.3.9-1), librust-winapi-0+vadefs-dev (= 0.3.9-1), librust-winapi-0+vcruntime-dev (= 0.3.9-1), librust-winapi-0+vsbackup-dev (= 0.3.9-1), librust-winapi-0+vss-dev (= 0.3.9-1), librust-winapi-0+vsserror-dev (= 0.3.9-1), librust-winapi-0+vswriter-dev (= 0.3.9-1), librust-winapi-0+wbemads-dev (= 0.3.9-1), librust-winapi-0+wbemcli-dev (= 0.3.9-1), librust-winapi-0+wbemdisp-dev (= 0.3.9-1), librust-winapi-0+wbemprov-dev (= 0.3.9-1), librust-winapi-0+wbemtran-dev (= 0.3.9-1), librust-winapi-0+wct-dev (= 0.3.9-1), librust-winapi-0+werapi-dev (= 0.3.9-1), librust-winapi-0+winbase-dev (= 0.3.9-1), librust-winapi-0+wincodec-dev (= 0.3.9-1), librust-winapi-0+wincodecsdk-dev (= 0.3.9-1), librust-winapi-0+wincon-dev (= 0.3.9-1), librust-winapi-0+wincontypes-dev (= 0.3.9-1), librust-winapi-0+wincred-dev (= 0.3.9-1), librust-winapi-0+wincrypt-dev (= 0.3.9-1), librust-winapi-0+windef-dev (= 0.3.9-1), librust-winapi-0+windot11-dev (= 0.3.9-1), librust-winapi-0+windowsceip-dev (= 0.3.9-1), librust-winapi-0+windowsx-dev (= 0.3.9-1), librust-winapi-0+winefs-dev (= 0.3.9-1), librust-winapi-0+winerror-dev (= 0.3.9-1), librust-winapi-0+winevt-dev (= 0.3.9-1), librust-winapi-0+wingdi-dev (= 0.3.9-1), librust-winapi-0+winhttp-dev (= 0.3.9-1), librust-winapi-0+wininet-dev (= 0.3.9-1), librust-winapi-0+winineti-dev (= 0.3.9-1), librust-winapi-0+winioctl-dev (= 0.3.9-1), librust-winapi-0+winnetwk-dev (= 0.3.9-1), librust-winapi-0+winnls-dev (= 0.3.9-1), librust-winapi-0+winnt-dev (= 0.3.9-1), librust-winapi-0+winreg-dev (= 0.3.9-1), librust-winapi-0+winsafer-dev (= 0.3.9-1), librust-winapi-0+winscard-dev (= 0.3.9-1), librust-winapi-0+winsmcrd-dev (= 0.3.9-1), librust-winapi-0+winsock2-dev (= 0.3.9-1), librust-winapi-0+winspool-dev (= 0.3.9-1), librust-winapi-0+winstring-dev (= 0.3.9-1), librust-winapi-0+winsvc-dev (= 0.3.9-1), librust-winapi-0+wintrust-dev (= 0.3.9-1), librust-winapi-0+winusb-dev (= 0.3.9-1), librust-winapi-0+winusbio-dev (= 0.3.9-1), librust-winapi-0+winuser-dev (= 0.3.9-1), librust-winapi-0+winver-dev (= 0.3.9-1), librust-winapi-0+wlanapi-dev (= 0.3.9-1), librust-winapi-0+wlanihv-dev (= 0.3.9-1), librust-winapi-0+wlanihvtypes-dev (= 0.3.9-1), librust-winapi-0+wlantypes-dev (= 0.3.9-1), librust-winapi-0+wlclient-dev (= 0.3.9-1), librust-winapi-0+wmistr-dev (= 0.3.9-1), librust-winapi-0+wnnc-dev (= 0.3.9-1), librust-winapi-0+wow64apiset-dev (= 0.3.9-1), librust-winapi-0+wpdmtpextensions-dev (= 0.3.9-1), librust-winapi-0+ws2bth-dev (= 0.3.9-1), librust-winapi-0+ws2def-dev (= 0.3.9-1), librust-winapi-0+ws2ipdef-dev (= 0.3.9-1), librust-winapi-0+ws2spi-dev (= 0.3.9-1), librust-winapi-0+ws2tcpip-dev (= 0.3.9-1), librust-winapi-0+wtsapi32-dev (= 0.3.9-1), librust-winapi-0+wtypes-dev (= 0.3.9-1), librust-winapi-0+wtypesbase-dev (= 0.3.9-1), librust-winapi-0+xinput-dev (= 0.3.9-1), librust-winapi-0-dev (= 0.3.9-1), librust-winapi-0.3+accctrl-dev (= 0.3.9-1), librust-winapi-0.3+aclapi-dev (= 0.3.9-1), librust-winapi-0.3+activation-dev (= 0.3.9-1), librust-winapi-0.3+adhoc-dev (= 0.3.9-1), librust-winapi-0.3+appmgmt-dev (= 0.3.9-1), librust-winapi-0.3+audioclient-dev (= 0.3.9-1), librust-winapi-0.3+audiosessiontypes-dev (= 0.3.9-1), librust-winapi-0.3+avrt-dev (= 0.3.9-1), librust-winapi-0.3+basetsd-dev (= 0.3.9-1), librust-winapi-0.3+bcrypt-dev (= 0.3.9-1), librust-winapi-0.3+bits-dev (= 0.3.9-1), librust-winapi-0.3+bits1-5-dev (= 0.3.9-1), librust-winapi-0.3+bits10-1-dev (= 0.3.9-1), librust-winapi-0.3+bits2-0-dev (= 0.3.9-1), librust-winapi-0.3+bits2-5-dev (= 0.3.9-1), librust-winapi-0.3+bits3-0-dev (= 0.3.9-1), librust-winapi-0.3+bits4-0-dev (= 0.3.9-1), librust-winapi-0.3+bits5-0-dev (= 0.3.9-1), librust-winapi-0.3+bitscfg-dev (= 0.3.9-1), librust-winapi-0.3+bitsmsg-dev (= 0.3.9-1), librust-winapi-0.3+bluetoothapis-dev (= 0.3.9-1), librust-winapi-0.3+bluetoothleapis-dev (= 0.3.9-1), librust-winapi-0.3+bthdef-dev (= 0.3.9-1), librust-winapi-0.3+bthioctl-dev (= 0.3.9-1), librust-winapi-0.3+bthledef-dev (= 0.3.9-1), librust-winapi-0.3+bthsdpdef-dev (= 0.3.9-1), librust-winapi-0.3+bugcodes-dev (= 0.3.9-1), librust-winapi-0.3+cderr-dev (= 0.3.9-1), librust-winapi-0.3+cfg-dev (= 0.3.9-1), librust-winapi-0.3+cfgmgr32-dev (= 0.3.9-1), librust-winapi-0.3+cguid-dev (= 0.3.9-1), librust-winapi-0.3+combaseapi-dev (= 0.3.9-1), librust-winapi-0.3+coml2api-dev (= 0.3.9-1), librust-winapi-0.3+commapi-dev (= 0.3.9-1), librust-winapi-0.3+commctrl-dev (= 0.3.9-1), librust-winapi-0.3+commdlg-dev (= 0.3.9-1), librust-winapi-0.3+commoncontrols-dev (= 0.3.9-1), librust-winapi-0.3+consoleapi-dev (= 0.3.9-1), librust-winapi-0.3+corecrt-dev (= 0.3.9-1), librust-winapi-0.3+corsym-dev (= 0.3.9-1), librust-winapi-0.3+d2d1-1-dev (= 0.3.9-1), librust-winapi-0.3+d2d1-2-dev (= 0.3.9-1), librust-winapi-0.3+d2d1-3-dev (= 0.3.9-1), librust-winapi-0.3+d2d1-dev (= 0.3.9-1), librust-winapi-0.3+d2d1effectauthor-dev (= 0.3.9-1), librust-winapi-0.3+d2d1effects-1-dev (= 0.3.9-1), librust-winapi-0.3+d2d1effects-2-dev (= 0.3.9-1), librust-winapi-0.3+d2d1effects-dev (= 0.3.9-1), librust-winapi-0.3+d2d1svg-dev (= 0.3.9-1), librust-winapi-0.3+d2dbasetypes-dev (= 0.3.9-1), librust-winapi-0.3+d3d-dev (= 0.3.9-1), librust-winapi-0.3+d3d10-1-dev (= 0.3.9-1), librust-winapi-0.3+d3d10-1shader-dev (= 0.3.9-1), librust-winapi-0.3+d3d10-dev (= 0.3.9-1), librust-winapi-0.3+d3d10effect-dev (= 0.3.9-1), librust-winapi-0.3+d3d10misc-dev (= 0.3.9-1), librust-winapi-0.3+d3d10sdklayers-dev (= 0.3.9-1), librust-winapi-0.3+d3d10shader-dev (= 0.3.9-1), librust-winapi-0.3+d3d11-1-dev (= 0.3.9-1), librust-winapi-0.3+d3d11-2-dev (= 0.3.9-1), librust-winapi-0.3+d3d11-3-dev (= 0.3.9-1), librust-winapi-0.3+d3d11-4-dev (= 0.3.9-1), librust-winapi-0.3+d3d11-dev (= 0.3.9-1), librust-winapi-0.3+d3d11on12-dev (= 0.3.9-1), librust-winapi-0.3+d3d11sdklayers-dev (= 0.3.9-1), librust-winapi-0.3+d3d11shader-dev (= 0.3.9-1), librust-winapi-0.3+d3d11tokenizedprogramformat-dev (= 0.3.9-1), librust-winapi-0.3+d3d12-dev (= 0.3.9-1), librust-winapi-0.3+d3d12sdklayers-dev (= 0.3.9-1), librust-winapi-0.3+d3d12shader-dev (= 0.3.9-1), librust-winapi-0.3+d3d9-dev (= 0.3.9-1), librust-winapi-0.3+d3d9caps-dev (= 0.3.9-1), librust-winapi-0.3+d3d9types-dev (= 0.3.9-1), librust-winapi-0.3+d3dcommon-dev (= 0.3.9-1), librust-winapi-0.3+d3dcompiler-dev (= 0.3.9-1), librust-winapi-0.3+d3dcsx-dev (= 0.3.9-1), librust-winapi-0.3+d3dkmdt-dev (= 0.3.9-1), librust-winapi-0.3+d3dkmthk-dev (= 0.3.9-1), librust-winapi-0.3+d3dukmdt-dev (= 0.3.9-1), librust-winapi-0.3+d3dx10core-dev (= 0.3.9-1), librust-winapi-0.3+d3dx10math-dev (= 0.3.9-1), librust-winapi-0.3+d3dx10mesh-dev (= 0.3.9-1), librust-winapi-0.3+datetimeapi-dev (= 0.3.9-1), librust-winapi-0.3+davclnt-dev (= 0.3.9-1), librust-winapi-0.3+dbghelp-dev (= 0.3.9-1), librust-winapi-0.3+dbt-dev (= 0.3.9-1), librust-winapi-0.3+dcommon-dev (= 0.3.9-1), librust-winapi-0.3+dcomp-dev (= 0.3.9-1), librust-winapi-0.3+dcompanimation-dev (= 0.3.9-1), librust-winapi-0.3+dcomptypes-dev (= 0.3.9-1), librust-winapi-0.3+dde-dev (= 0.3.9-1), librust-winapi-0.3+ddraw-dev (= 0.3.9-1), librust-winapi-0.3+ddrawi-dev (= 0.3.9-1), librust-winapi-0.3+ddrawint-dev (= 0.3.9-1), librust-winapi-0.3+debug-dev (= 0.3.9-1), librust-winapi-0.3+debugapi-dev (= 0.3.9-1), librust-winapi-0.3+default-dev (= 0.3.9-1), librust-winapi-0.3+devguid-dev (= 0.3.9-1), librust-winapi-0.3+devicetopology-dev (= 0.3.9-1), librust-winapi-0.3+devpkey-dev (= 0.3.9-1), librust-winapi-0.3+devpropdef-dev (= 0.3.9-1), librust-winapi-0.3+dinput-dev (= 0.3.9-1), librust-winapi-0.3+dinputd-dev (= 0.3.9-1), librust-winapi-0.3+dispex-dev (= 0.3.9-1), librust-winapi-0.3+dmksctl-dev (= 0.3.9-1), librust-winapi-0.3+dmusicc-dev (= 0.3.9-1), librust-winapi-0.3+docobj-dev (= 0.3.9-1), librust-winapi-0.3+documenttarget-dev (= 0.3.9-1), librust-winapi-0.3+dot1x-dev (= 0.3.9-1), librust-winapi-0.3+dpa-dsa-dev (= 0.3.9-1), librust-winapi-0.3+dpapi-dev (= 0.3.9-1), librust-winapi-0.3+dsgetdc-dev (= 0.3.9-1), librust-winapi-0.3+dsound-dev (= 0.3.9-1), librust-winapi-0.3+dsrole-dev (= 0.3.9-1), librust-winapi-0.3+dvp-dev (= 0.3.9-1), librust-winapi-0.3+dwmapi-dev (= 0.3.9-1), librust-winapi-0.3+dwrite-1-dev (= 0.3.9-1), librust-winapi-0.3+dwrite-2-dev (= 0.3.9-1), librust-winapi-0.3+dwrite-3-dev (= 0.3.9-1), librust-winapi-0.3+dwrite-dev (= 0.3.9-1), librust-winapi-0.3+dxdiag-dev (= 0.3.9-1), librust-winapi-0.3+dxfile-dev (= 0.3.9-1), librust-winapi-0.3+dxgi-dev (= 0.3.9-1), librust-winapi-0.3+dxgi1-2-dev (= 0.3.9-1), librust-winapi-0.3+dxgi1-3-dev (= 0.3.9-1), librust-winapi-0.3+dxgi1-4-dev (= 0.3.9-1), librust-winapi-0.3+dxgi1-5-dev (= 0.3.9-1), librust-winapi-0.3+dxgi1-6-dev (= 0.3.9-1), librust-winapi-0.3+dxgidebug-dev (= 0.3.9-1), librust-winapi-0.3+dxgiformat-dev (= 0.3.9-1), librust-winapi-0.3+dxgitype-dev (= 0.3.9-1), librust-winapi-0.3+dxva2api-dev (= 0.3.9-1), librust-winapi-0.3+dxvahd-dev (= 0.3.9-1), librust-winapi-0.3+eaptypes-dev (= 0.3.9-1), librust-winapi-0.3+enclaveapi-dev (= 0.3.9-1), librust-winapi-0.3+endpointvolume-dev (= 0.3.9-1), librust-winapi-0.3+errhandlingapi-dev (= 0.3.9-1), librust-winapi-0.3+everything-dev (= 0.3.9-1), librust-winapi-0.3+evntcons-dev (= 0.3.9-1), librust-winapi-0.3+evntprov-dev (= 0.3.9-1), librust-winapi-0.3+evntrace-dev (= 0.3.9-1), librust-winapi-0.3+excpt-dev (= 0.3.9-1), librust-winapi-0.3+exdisp-dev (= 0.3.9-1), librust-winapi-0.3+fibersapi-dev (= 0.3.9-1), librust-winapi-0.3+fileapi-dev (= 0.3.9-1), librust-winapi-0.3+functiondiscoverykeys-devpkey-dev (= 0.3.9-1), librust-winapi-0.3+gl-gl-dev (= 0.3.9-1), librust-winapi-0.3+guiddef-dev (= 0.3.9-1), librust-winapi-0.3+handleapi-dev (= 0.3.9-1), librust-winapi-0.3+heapapi-dev (= 0.3.9-1), librust-winapi-0.3+hidclass-dev (= 0.3.9-1), librust-winapi-0.3+hidpi-dev (= 0.3.9-1), librust-winapi-0.3+hidsdi-dev (= 0.3.9-1), librust-winapi-0.3+hidusage-dev (= 0.3.9-1), librust-winapi-0.3+highlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi-0.3+hstring-dev (= 0.3.9-1), librust-winapi-0.3+http-dev (= 0.3.9-1), librust-winapi-0.3+ifdef-dev (= 0.3.9-1), librust-winapi-0.3+ifmib-dev (= 0.3.9-1), librust-winapi-0.3+imm-dev (= 0.3.9-1), librust-winapi-0.3+impl-debug-dev (= 0.3.9-1), librust-winapi-0.3+impl-default-dev (= 0.3.9-1), librust-winapi-0.3+in6addr-dev (= 0.3.9-1), librust-winapi-0.3+inaddr-dev (= 0.3.9-1), librust-winapi-0.3+inspectable-dev (= 0.3.9-1), librust-winapi-0.3+interlockedapi-dev (= 0.3.9-1), librust-winapi-0.3+intsafe-dev (= 0.3.9-1), librust-winapi-0.3+ioapiset-dev (= 0.3.9-1), librust-winapi-0.3+ipexport-dev (= 0.3.9-1), librust-winapi-0.3+iphlpapi-dev (= 0.3.9-1), librust-winapi-0.3+ipifcons-dev (= 0.3.9-1), librust-winapi-0.3+ipmib-dev (= 0.3.9-1), librust-winapi-0.3+iprtrmib-dev (= 0.3.9-1), librust-winapi-0.3+iptypes-dev (= 0.3.9-1), librust-winapi-0.3+jobapi-dev (= 0.3.9-1), librust-winapi-0.3+jobapi2-dev (= 0.3.9-1), librust-winapi-0.3+knownfolders-dev (= 0.3.9-1), librust-winapi-0.3+ks-dev (= 0.3.9-1), librust-winapi-0.3+ksmedia-dev (= 0.3.9-1), librust-winapi-0.3+ktmtypes-dev (= 0.3.9-1), librust-winapi-0.3+ktmw32-dev (= 0.3.9-1), librust-winapi-0.3+l2cmn-dev (= 0.3.9-1), librust-winapi-0.3+libloaderapi-dev (= 0.3.9-1), librust-winapi-0.3+limits-dev (= 0.3.9-1), librust-winapi-0.3+lmaccess-dev (= 0.3.9-1), librust-winapi-0.3+lmalert-dev (= 0.3.9-1), librust-winapi-0.3+lmapibuf-dev (= 0.3.9-1), librust-winapi-0.3+lmat-dev (= 0.3.9-1), librust-winapi-0.3+lmcons-dev (= 0.3.9-1), librust-winapi-0.3+lmdfs-dev (= 0.3.9-1), librust-winapi-0.3+lmerrlog-dev (= 0.3.9-1), librust-winapi-0.3+lmjoin-dev (= 0.3.9-1), librust-winapi-0.3+lmmsg-dev (= 0.3.9-1), librust-winapi-0.3+lmremutl-dev (= 0.3.9-1), librust-winapi-0.3+lmrepl-dev (= 0.3.9-1), librust-winapi-0.3+lmserver-dev (= 0.3.9-1), librust-winapi-0.3+lmshare-dev (= 0.3.9-1), librust-winapi-0.3+lmstats-dev (= 0.3.9-1), librust-winapi-0.3+lmsvc-dev (= 0.3.9-1), librust-winapi-0.3+lmuse-dev (= 0.3.9-1), librust-winapi-0.3+lmwksta-dev (= 0.3.9-1), librust-winapi-0.3+lowlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi-0.3+lsalookup-dev (= 0.3.9-1), librust-winapi-0.3+memoryapi-dev (= 0.3.9-1), librust-winapi-0.3+minschannel-dev (= 0.3.9-1), librust-winapi-0.3+minwinbase-dev (= 0.3.9-1), librust-winapi-0.3+minwindef-dev (= 0.3.9-1), librust-winapi-0.3+mmdeviceapi-dev (= 0.3.9-1), librust-winapi-0.3+mmeapi-dev (= 0.3.9-1), librust-winapi-0.3+mmreg-dev (= 0.3.9-1), librust-winapi-0.3+mmsystem-dev (= 0.3.9-1), librust-winapi-0.3+mprapidef-dev (= 0.3.9-1), librust-winapi-0.3+msaatext-dev (= 0.3.9-1), librust-winapi-0.3+mscat-dev (= 0.3.9-1), librust-winapi-0.3+mschapp-dev (= 0.3.9-1), librust-winapi-0.3+mssip-dev (= 0.3.9-1), librust-winapi-0.3+mstcpip-dev (= 0.3.9-1), librust-winapi-0.3+mswsock-dev (= 0.3.9-1), librust-winapi-0.3+mswsockdef-dev (= 0.3.9-1), librust-winapi-0.3+namedpipeapi-dev (= 0.3.9-1), librust-winapi-0.3+namespaceapi-dev (= 0.3.9-1), librust-winapi-0.3+nb30-dev (= 0.3.9-1), librust-winapi-0.3+ncrypt-dev (= 0.3.9-1), librust-winapi-0.3+netioapi-dev (= 0.3.9-1), librust-winapi-0.3+nldef-dev (= 0.3.9-1), librust-winapi-0.3+ntddndis-dev (= 0.3.9-1), librust-winapi-0.3+ntddscsi-dev (= 0.3.9-1), librust-winapi-0.3+ntddser-dev (= 0.3.9-1), librust-winapi-0.3+ntdef-dev (= 0.3.9-1), librust-winapi-0.3+ntlsa-dev (= 0.3.9-1), librust-winapi-0.3+ntsecapi-dev (= 0.3.9-1), librust-winapi-0.3+ntstatus-dev (= 0.3.9-1), librust-winapi-0.3+oaidl-dev (= 0.3.9-1), librust-winapi-0.3+objbase-dev (= 0.3.9-1), librust-winapi-0.3+objidl-dev (= 0.3.9-1), librust-winapi-0.3+objidlbase-dev (= 0.3.9-1), librust-winapi-0.3+ocidl-dev (= 0.3.9-1), librust-winapi-0.3+ole2-dev (= 0.3.9-1), librust-winapi-0.3+oleauto-dev (= 0.3.9-1), librust-winapi-0.3+olectl-dev (= 0.3.9-1), librust-winapi-0.3+oleidl-dev (= 0.3.9-1), librust-winapi-0.3+opmapi-dev (= 0.3.9-1), librust-winapi-0.3+pdh-dev (= 0.3.9-1), librust-winapi-0.3+perflib-dev (= 0.3.9-1), librust-winapi-0.3+physicalmonitorenumerationapi-dev (= 0.3.9-1), librust-winapi-0.3+playsoundapi-dev (= 0.3.9-1), librust-winapi-0.3+portabledevice-dev (= 0.3.9-1), librust-winapi-0.3+portabledeviceapi-dev (= 0.3.9-1), librust-winapi-0.3+portabledevicetypes-dev (= 0.3.9-1), librust-winapi-0.3+powerbase-dev (= 0.3.9-1), librust-winapi-0.3+powersetting-dev (= 0.3.9-1), librust-winapi-0.3+powrprof-dev (= 0.3.9-1), librust-winapi-0.3+processenv-dev (= 0.3.9-1), librust-winapi-0.3+processsnapshot-dev (= 0.3.9-1), librust-winapi-0.3+processthreadsapi-dev (= 0.3.9-1), librust-winapi-0.3+processtopologyapi-dev (= 0.3.9-1), librust-winapi-0.3+profileapi-dev (= 0.3.9-1), librust-winapi-0.3+propidl-dev (= 0.3.9-1), librust-winapi-0.3+propkey-dev (= 0.3.9-1), librust-winapi-0.3+propkeydef-dev (= 0.3.9-1), librust-winapi-0.3+propsys-dev (= 0.3.9-1), librust-winapi-0.3+prsht-dev (= 0.3.9-1), librust-winapi-0.3+psapi-dev (= 0.3.9-1), librust-winapi-0.3+qos-dev (= 0.3.9-1), librust-winapi-0.3+realtimeapiset-dev (= 0.3.9-1), librust-winapi-0.3+reason-dev (= 0.3.9-1), librust-winapi-0.3+restartmanager-dev (= 0.3.9-1), librust-winapi-0.3+restrictederrorinfo-dev (= 0.3.9-1), librust-winapi-0.3+rmxfguid-dev (= 0.3.9-1), librust-winapi-0.3+roapi-dev (= 0.3.9-1), librust-winapi-0.3+robuffer-dev (= 0.3.9-1), librust-winapi-0.3+roerrorapi-dev (= 0.3.9-1), librust-winapi-0.3+rpc-dev (= 0.3.9-1), librust-winapi-0.3+rpcdce-dev (= 0.3.9-1), librust-winapi-0.3+rpcndr-dev (= 0.3.9-1), librust-winapi-0.3+rtinfo-dev (= 0.3.9-1), librust-winapi-0.3+sapi-dev (= 0.3.9-1), librust-winapi-0.3+sapi51-dev (= 0.3.9-1), librust-winapi-0.3+sapi53-dev (= 0.3.9-1), librust-winapi-0.3+sapiddk-dev (= 0.3.9-1), librust-winapi-0.3+sapiddk51-dev (= 0.3.9-1), librust-winapi-0.3+schannel-dev (= 0.3.9-1), librust-winapi-0.3+sddl-dev (= 0.3.9-1), librust-winapi-0.3+securityappcontainer-dev (= 0.3.9-1), librust-winapi-0.3+securitybaseapi-dev (= 0.3.9-1), librust-winapi-0.3+servprov-dev (= 0.3.9-1), librust-winapi-0.3+setupapi-dev (= 0.3.9-1), librust-winapi-0.3+shellapi-dev (= 0.3.9-1), librust-winapi-0.3+shellscalingapi-dev (= 0.3.9-1), librust-winapi-0.3+shlobj-dev (= 0.3.9-1), librust-winapi-0.3+shobjidl-core-dev (= 0.3.9-1), librust-winapi-0.3+shobjidl-dev (= 0.3.9-1), librust-winapi-0.3+shtypes-dev (= 0.3.9-1), librust-winapi-0.3+softpub-dev (= 0.3.9-1), librust-winapi-0.3+spapidef-dev (= 0.3.9-1), librust-winapi-0.3+spellcheck-dev (= 0.3.9-1), librust-winapi-0.3+sporder-dev (= 0.3.9-1), librust-winapi-0.3+sql-dev (= 0.3.9-1), librust-winapi-0.3+sqlext-dev (= 0.3.9-1), librust-winapi-0.3+sqltypes-dev (= 0.3.9-1), librust-winapi-0.3+sqlucode-dev (= 0.3.9-1), librust-winapi-0.3+sspi-dev (= 0.3.9-1), librust-winapi-0.3+std-dev (= 0.3.9-1), librust-winapi-0.3+stralign-dev (= 0.3.9-1), librust-winapi-0.3+stringapiset-dev (= 0.3.9-1), librust-winapi-0.3+strmif-dev (= 0.3.9-1), librust-winapi-0.3+subauth-dev (= 0.3.9-1), librust-winapi-0.3+synchapi-dev (= 0.3.9-1), librust-winapi-0.3+sysinfoapi-dev (= 0.3.9-1), librust-winapi-0.3+systemtopologyapi-dev (= 0.3.9-1), librust-winapi-0.3+taskschd-dev (= 0.3.9-1), librust-winapi-0.3+tcpestats-dev (= 0.3.9-1), librust-winapi-0.3+tcpmib-dev (= 0.3.9-1), librust-winapi-0.3+textstor-dev (= 0.3.9-1), librust-winapi-0.3+threadpoolapiset-dev (= 0.3.9-1), librust-winapi-0.3+threadpoollegacyapiset-dev (= 0.3.9-1), librust-winapi-0.3+timeapi-dev (= 0.3.9-1), librust-winapi-0.3+timezoneapi-dev (= 0.3.9-1), librust-winapi-0.3+tlhelp32-dev (= 0.3.9-1), librust-winapi-0.3+transportsettingcommon-dev (= 0.3.9-1), librust-winapi-0.3+tvout-dev (= 0.3.9-1), librust-winapi-0.3+udpmib-dev (= 0.3.9-1), librust-winapi-0.3+unknwnbase-dev (= 0.3.9-1), librust-winapi-0.3+urlhist-dev (= 0.3.9-1), librust-winapi-0.3+urlmon-dev (= 0.3.9-1), librust-winapi-0.3+usb-dev (= 0.3.9-1), librust-winapi-0.3+usbioctl-dev (= 0.3.9-1), librust-winapi-0.3+usbiodef-dev (= 0.3.9-1), librust-winapi-0.3+usbscan-dev (= 0.3.9-1), librust-winapi-0.3+usbspec-dev (= 0.3.9-1), librust-winapi-0.3+userenv-dev (= 0.3.9-1), librust-winapi-0.3+usp10-dev (= 0.3.9-1), librust-winapi-0.3+utilapiset-dev (= 0.3.9-1), librust-winapi-0.3+uxtheme-dev (= 0.3.9-1), librust-winapi-0.3+vadefs-dev (= 0.3.9-1), librust-winapi-0.3+vcruntime-dev (= 0.3.9-1), librust-winapi-0.3+vsbackup-dev (= 0.3.9-1), librust-winapi-0.3+vss-dev (= 0.3.9-1), librust-winapi-0.3+vsserror-dev (= 0.3.9-1), librust-winapi-0.3+vswriter-dev (= 0.3.9-1), librust-winapi-0.3+wbemads-dev (= 0.3.9-1), librust-winapi-0.3+wbemcli-dev (= 0.3.9-1), librust-winapi-0.3+wbemdisp-dev (= 0.3.9-1), librust-winapi-0.3+wbemprov-dev (= 0.3.9-1), librust-winapi-0.3+wbemtran-dev (= 0.3.9-1), librust-winapi-0.3+wct-dev (= 0.3.9-1), librust-winapi-0.3+werapi-dev (= 0.3.9-1), librust-winapi-0.3+winbase-dev (= 0.3.9-1), librust-winapi-0.3+wincodec-dev (= 0.3.9-1), librust-winapi-0.3+wincodecsdk-dev (= 0.3.9-1), librust-winapi-0.3+wincon-dev (= 0.3.9-1), librust-winapi-0.3+wincontypes-dev (= 0.3.9-1), librust-winapi-0.3+wincred-dev (= 0.3.9-1), librust-winapi-0.3+wincrypt-dev (= 0.3.9-1), librust-winapi-0.3+windef-dev (= 0.3.9-1), librust-winapi-0.3+windot11-dev (= 0.3.9-1), librust-winapi-0.3+windowsceip-dev (= 0.3.9-1), librust-winapi-0.3+windowsx-dev (= 0.3.9-1), librust-winapi-0.3+winefs-dev (= 0.3.9-1), librust-winapi-0.3+winerror-dev (= 0.3.9-1), librust-winapi-0.3+winevt-dev (= 0.3.9-1), librust-winapi-0.3+wingdi-dev (= 0.3.9-1), librust-winapi-0.3+winhttp-dev (= 0.3.9-1), librust-winapi-0.3+wininet-dev (= 0.3.9-1), librust-winapi-0.3+winineti-dev (= 0.3.9-1), librust-winapi-0.3+winioctl-dev (= 0.3.9-1), librust-winapi-0.3+winnetwk-dev (= 0.3.9-1), librust-winapi-0.3+winnls-dev (= 0.3.9-1), librust-winapi-0.3+winnt-dev (= 0.3.9-1), librust-winapi-0.3+winreg-dev (= 0.3.9-1), librust-winapi-0.3+winsafer-dev (= 0.3.9-1), librust-winapi-0.3+winscard-dev (= 0.3.9-1), librust-winapi-0.3+winsmcrd-dev (= 0.3.9-1), librust-winapi-0.3+winsock2-dev (= 0.3.9-1), librust-winapi-0.3+winspool-dev (= 0.3.9-1), librust-winapi-0.3+winstring-dev (= 0.3.9-1), librust-winapi-0.3+winsvc-dev (= 0.3.9-1), librust-winapi-0.3+wintrust-dev (= 0.3.9-1), librust-winapi-0.3+winusb-dev (= 0.3.9-1), librust-winapi-0.3+winusbio-dev (= 0.3.9-1), librust-winapi-0.3+winuser-dev (= 0.3.9-1), librust-winapi-0.3+winver-dev (= 0.3.9-1), librust-winapi-0.3+wlanapi-dev (= 0.3.9-1), librust-winapi-0.3+wlanihv-dev (= 0.3.9-1), librust-winapi-0.3+wlanihvtypes-dev (= 0.3.9-1), librust-winapi-0.3+wlantypes-dev (= 0.3.9-1), librust-winapi-0.3+wlclient-dev (= 0.3.9-1), librust-winapi-0.3+wmistr-dev (= 0.3.9-1), librust-winapi-0.3+wnnc-dev (= 0.3.9-1), librust-winapi-0.3+wow64apiset-dev (= 0.3.9-1), librust-winapi-0.3+wpdmtpextensions-dev (= 0.3.9-1), librust-winapi-0.3+ws2bth-dev (= 0.3.9-1), librust-winapi-0.3+ws2def-dev (= 0.3.9-1), librust-winapi-0.3+ws2ipdef-dev (= 0.3.9-1), librust-winapi-0.3+ws2spi-dev (= 0.3.9-1), librust-winapi-0.3+ws2tcpip-dev (= 0.3.9-1), librust-winapi-0.3+wtsapi32-dev (= 0.3.9-1), librust-winapi-0.3+wtypes-dev (= 0.3.9-1), librust-winapi-0.3+wtypesbase-dev (= 0.3.9-1), librust-winapi-0.3+xinput-dev (= 0.3.9-1), librust-winapi-0.3-dev (= 0.3.9-1), librust-winapi-0.3.9+accctrl-dev (= 0.3.9-1), librust-winapi-0.3.9+aclapi-dev (= 0.3.9-1), librust-winapi-0.3.9+activation-dev (= 0.3.9-1), librust-winapi-0.3.9+adhoc-dev (= 0.3.9-1), librust-winapi-0.3.9+appmgmt-dev (= 0.3.9-1), librust-winapi-0.3.9+audioclient-dev (= 0.3.9-1), librust-winapi-0.3.9+audiosessiontypes-dev (= 0.3.9-1), librust-winapi-0.3.9+avrt-dev (= 0.3.9-1), librust-winapi-0.3.9+basetsd-dev (= 0.3.9-1), librust-winapi-0.3.9+bcrypt-dev (= 0.3.9-1), librust-winapi-0.3.9+bits-dev (= 0.3.9-1), librust-winapi-0.3.9+bits1-5-dev (= 0.3.9-1), librust-winapi-0.3.9+bits10-1-dev (= 0.3.9-1), librust-winapi-0.3.9+bits2-0-dev (= 0.3.9-1), librust-winapi-0.3.9+bits2-5-dev (= 0.3.9-1), librust-winapi-0.3.9+bits3-0-dev (= 0.3.9-1), librust-winapi-0.3.9+bits4-0-dev (= 0.3.9-1), librust-winapi-0.3.9+bits5-0-dev (= 0.3.9-1), librust-winapi-0.3.9+bitscfg-dev (= 0.3.9-1), librust-winapi-0.3.9+bitsmsg-dev (= 0.3.9-1), librust-winapi-0.3.9+bluetoothapis-dev (= 0.3.9-1), librust-winapi-0.3.9+bluetoothleapis-dev (= 0.3.9-1), librust-winapi-0.3.9+bthdef-dev (= 0.3.9-1), librust-winapi-0.3.9+bthioctl-dev (= 0.3.9-1), librust-winapi-0.3.9+bthledef-dev (= 0.3.9-1), librust-winapi-0.3.9+bthsdpdef-dev (= 0.3.9-1), librust-winapi-0.3.9+bugcodes-dev (= 0.3.9-1), librust-winapi-0.3.9+cderr-dev (= 0.3.9-1), librust-winapi-0.3.9+cfg-dev (= 0.3.9-1), librust-winapi-0.3.9+cfgmgr32-dev (= 0.3.9-1), librust-winapi-0.3.9+cguid-dev (= 0.3.9-1), librust-winapi-0.3.9+combaseapi-dev (= 0.3.9-1), librust-winapi-0.3.9+coml2api-dev (= 0.3.9-1), librust-winapi-0.3.9+commapi-dev (= 0.3.9-1), librust-winapi-0.3.9+commctrl-dev (= 0.3.9-1), librust-winapi-0.3.9+commdlg-dev (= 0.3.9-1), librust-winapi-0.3.9+commoncontrols-dev (= 0.3.9-1), librust-winapi-0.3.9+consoleapi-dev (= 0.3.9-1), librust-winapi-0.3.9+corecrt-dev (= 0.3.9-1), librust-winapi-0.3.9+corsym-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1-1-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1-2-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1-3-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1effectauthor-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1effects-1-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1effects-2-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1effects-dev (= 0.3.9-1), librust-winapi-0.3.9+d2d1svg-dev (= 0.3.9-1), librust-winapi-0.3.9+d2dbasetypes-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d10-1-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d10-1shader-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d10-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d10effect-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d10misc-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d10sdklayers-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d10shader-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11-1-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11-2-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11-3-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11-4-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11on12-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11sdklayers-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11shader-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d11tokenizedprogramformat-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d12-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d12sdklayers-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d12shader-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d9-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d9caps-dev (= 0.3.9-1), librust-winapi-0.3.9+d3d9types-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dcommon-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dcompiler-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dcsx-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dkmdt-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dkmthk-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dukmdt-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dx10core-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dx10math-dev (= 0.3.9-1), librust-winapi-0.3.9+d3dx10mesh-dev (= 0.3.9-1), librust-winapi-0.3.9+datetimeapi-dev (= 0.3.9-1), librust-winapi-0.3.9+davclnt-dev (= 0.3.9-1), librust-winapi-0.3.9+dbghelp-dev (= 0.3.9-1), librust-winapi-0.3.9+dbt-dev (= 0.3.9-1), librust-winapi-0.3.9+dcommon-dev (= 0.3.9-1), librust-winapi-0.3.9+dcomp-dev (= 0.3.9-1), librust-winapi-0.3.9+dcompanimation-dev (= 0.3.9-1), librust-winapi-0.3.9+dcomptypes-dev (= 0.3.9-1), librust-winapi-0.3.9+dde-dev (= 0.3.9-1), librust-winapi-0.3.9+ddraw-dev (= 0.3.9-1), librust-winapi-0.3.9+ddrawi-dev (= 0.3.9-1), librust-winapi-0.3.9+ddrawint-dev (= 0.3.9-1), librust-winapi-0.3.9+debug-dev (= 0.3.9-1), librust-winapi-0.3.9+debugapi-dev (= 0.3.9-1), librust-winapi-0.3.9+default-dev (= 0.3.9-1), librust-winapi-0.3.9+devguid-dev (= 0.3.9-1), librust-winapi-0.3.9+devicetopology-dev (= 0.3.9-1), librust-winapi-0.3.9+devpkey-dev (= 0.3.9-1), librust-winapi-0.3.9+devpropdef-dev (= 0.3.9-1), librust-winapi-0.3.9+dinput-dev (= 0.3.9-1), librust-winapi-0.3.9+dinputd-dev (= 0.3.9-1), librust-winapi-0.3.9+dispex-dev (= 0.3.9-1), librust-winapi-0.3.9+dmksctl-dev (= 0.3.9-1), librust-winapi-0.3.9+dmusicc-dev (= 0.3.9-1), librust-winapi-0.3.9+docobj-dev (= 0.3.9-1), librust-winapi-0.3.9+documenttarget-dev (= 0.3.9-1), librust-winapi-0.3.9+dot1x-dev (= 0.3.9-1), librust-winapi-0.3.9+dpa-dsa-dev (= 0.3.9-1), librust-winapi-0.3.9+dpapi-dev (= 0.3.9-1), librust-winapi-0.3.9+dsgetdc-dev (= 0.3.9-1), librust-winapi-0.3.9+dsound-dev (= 0.3.9-1), librust-winapi-0.3.9+dsrole-dev (= 0.3.9-1), librust-winapi-0.3.9+dvp-dev (= 0.3.9-1), librust-winapi-0.3.9+dwmapi-dev (= 0.3.9-1), librust-winapi-0.3.9+dwrite-1-dev (= 0.3.9-1), librust-winapi-0.3.9+dwrite-2-dev (= 0.3.9-1), librust-winapi-0.3.9+dwrite-3-dev (= 0.3.9-1), librust-winapi-0.3.9+dwrite-dev (= 0.3.9-1), librust-winapi-0.3.9+dxdiag-dev (= 0.3.9-1), librust-winapi-0.3.9+dxfile-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgi-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgi1-2-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgi1-3-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgi1-4-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgi1-5-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgi1-6-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgidebug-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgiformat-dev (= 0.3.9-1), librust-winapi-0.3.9+dxgitype-dev (= 0.3.9-1), librust-winapi-0.3.9+dxva2api-dev (= 0.3.9-1), librust-winapi-0.3.9+dxvahd-dev (= 0.3.9-1), librust-winapi-0.3.9+eaptypes-dev (= 0.3.9-1), librust-winapi-0.3.9+enclaveapi-dev (= 0.3.9-1), librust-winapi-0.3.9+endpointvolume-dev (= 0.3.9-1), librust-winapi-0.3.9+errhandlingapi-dev (= 0.3.9-1), librust-winapi-0.3.9+everything-dev (= 0.3.9-1), librust-winapi-0.3.9+evntcons-dev (= 0.3.9-1), librust-winapi-0.3.9+evntprov-dev (= 0.3.9-1), librust-winapi-0.3.9+evntrace-dev (= 0.3.9-1), librust-winapi-0.3.9+excpt-dev (= 0.3.9-1), librust-winapi-0.3.9+exdisp-dev (= 0.3.9-1), librust-winapi-0.3.9+fibersapi-dev (= 0.3.9-1), librust-winapi-0.3.9+fileapi-dev (= 0.3.9-1), librust-winapi-0.3.9+functiondiscoverykeys-devpkey-dev (= 0.3.9-1), librust-winapi-0.3.9+gl-gl-dev (= 0.3.9-1), librust-winapi-0.3.9+guiddef-dev (= 0.3.9-1), librust-winapi-0.3.9+handleapi-dev (= 0.3.9-1), librust-winapi-0.3.9+heapapi-dev (= 0.3.9-1), librust-winapi-0.3.9+hidclass-dev (= 0.3.9-1), librust-winapi-0.3.9+hidpi-dev (= 0.3.9-1), librust-winapi-0.3.9+hidsdi-dev (= 0.3.9-1), librust-winapi-0.3.9+hidusage-dev (= 0.3.9-1), librust-winapi-0.3.9+highlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi-0.3.9+hstring-dev (= 0.3.9-1), librust-winapi-0.3.9+http-dev (= 0.3.9-1), librust-winapi-0.3.9+ifdef-dev (= 0.3.9-1), librust-winapi-0.3.9+ifmib-dev (= 0.3.9-1), librust-winapi-0.3.9+imm-dev (= 0.3.9-1), librust-winapi-0.3.9+impl-debug-dev (= 0.3.9-1), librust-winapi-0.3.9+impl-default-dev (= 0.3.9-1), librust-winapi-0.3.9+in6addr-dev (= 0.3.9-1), librust-winapi-0.3.9+inaddr-dev (= 0.3.9-1), librust-winapi-0.3.9+inspectable-dev (= 0.3.9-1), librust-winapi-0.3.9+interlockedapi-dev (= 0.3.9-1), librust-winapi-0.3.9+intsafe-dev (= 0.3.9-1), librust-winapi-0.3.9+ioapiset-dev (= 0.3.9-1), librust-winapi-0.3.9+ipexport-dev (= 0.3.9-1), librust-winapi-0.3.9+iphlpapi-dev (= 0.3.9-1), librust-winapi-0.3.9+ipifcons-dev (= 0.3.9-1), librust-winapi-0.3.9+ipmib-dev (= 0.3.9-1), librust-winapi-0.3.9+iprtrmib-dev (= 0.3.9-1), librust-winapi-0.3.9+iptypes-dev (= 0.3.9-1), librust-winapi-0.3.9+jobapi-dev (= 0.3.9-1), librust-winapi-0.3.9+jobapi2-dev (= 0.3.9-1), librust-winapi-0.3.9+knownfolders-dev (= 0.3.9-1), librust-winapi-0.3.9+ks-dev (= 0.3.9-1), librust-winapi-0.3.9+ksmedia-dev (= 0.3.9-1), librust-winapi-0.3.9+ktmtypes-dev (= 0.3.9-1), librust-winapi-0.3.9+ktmw32-dev (= 0.3.9-1), librust-winapi-0.3.9+l2cmn-dev (= 0.3.9-1), librust-winapi-0.3.9+libloaderapi-dev (= 0.3.9-1), librust-winapi-0.3.9+limits-dev (= 0.3.9-1), librust-winapi-0.3.9+lmaccess-dev (= 0.3.9-1), librust-winapi-0.3.9+lmalert-dev (= 0.3.9-1), librust-winapi-0.3.9+lmapibuf-dev (= 0.3.9-1), librust-winapi-0.3.9+lmat-dev (= 0.3.9-1), librust-winapi-0.3.9+lmcons-dev (= 0.3.9-1), librust-winapi-0.3.9+lmdfs-dev (= 0.3.9-1), librust-winapi-0.3.9+lmerrlog-dev (= 0.3.9-1), librust-winapi-0.3.9+lmjoin-dev (= 0.3.9-1), librust-winapi-0.3.9+lmmsg-dev (= 0.3.9-1), librust-winapi-0.3.9+lmremutl-dev (= 0.3.9-1), librust-winapi-0.3.9+lmrepl-dev (= 0.3.9-1), librust-winapi-0.3.9+lmserver-dev (= 0.3.9-1), librust-winapi-0.3.9+lmshare-dev (= 0.3.9-1), librust-winapi-0.3.9+lmstats-dev (= 0.3.9-1), librust-winapi-0.3.9+lmsvc-dev (= 0.3.9-1), librust-winapi-0.3.9+lmuse-dev (= 0.3.9-1), librust-winapi-0.3.9+lmwksta-dev (= 0.3.9-1), librust-winapi-0.3.9+lowlevelmonitorconfigurationapi-dev (= 0.3.9-1), librust-winapi-0.3.9+lsalookup-dev (= 0.3.9-1), librust-winapi-0.3.9+memoryapi-dev (= 0.3.9-1), librust-winapi-0.3.9+minschannel-dev (= 0.3.9-1), librust-winapi-0.3.9+minwinbase-dev (= 0.3.9-1), librust-winapi-0.3.9+minwindef-dev (= 0.3.9-1), librust-winapi-0.3.9+mmdeviceapi-dev (= 0.3.9-1), librust-winapi-0.3.9+mmeapi-dev (= 0.3.9-1), librust-winapi-0.3.9+mmreg-dev (= 0.3.9-1), librust-winapi-0.3.9+mmsystem-dev (= 0.3.9-1), librust-winapi-0.3.9+mprapidef-dev (= 0.3.9-1), librust-winapi-0.3.9+msaatext-dev (= 0.3.9-1), librust-winapi-0.3.9+mscat-dev (= 0.3.9-1), librust-winapi-0.3.9+mschapp-dev (= 0.3.9-1), librust-winapi-0.3.9+mssip-dev (= 0.3.9-1), librust-winapi-0.3.9+mstcpip-dev (= 0.3.9-1), librust-winapi-0.3.9+mswsock-dev (= 0.3.9-1), librust-winapi-0.3.9+mswsockdef-dev (= 0.3.9-1), librust-winapi-0.3.9+namedpipeapi-dev (= 0.3.9-1), librust-winapi-0.3.9+namespaceapi-dev (= 0.3.9-1), librust-winapi-0.3.9+nb30-dev (= 0.3.9-1), librust-winapi-0.3.9+ncrypt-dev (= 0.3.9-1), librust-winapi-0.3.9+netioapi-dev (= 0.3.9-1), librust-winapi-0.3.9+nldef-dev (= 0.3.9-1), librust-winapi-0.3.9+ntddndis-dev (= 0.3.9-1), librust-winapi-0.3.9+ntddscsi-dev (= 0.3.9-1), librust-winapi-0.3.9+ntddser-dev (= 0.3.9-1), librust-winapi-0.3.9+ntdef-dev (= 0.3.9-1), librust-winapi-0.3.9+ntlsa-dev (= 0.3.9-1), librust-winapi-0.3.9+ntsecapi-dev (= 0.3.9-1), librust-winapi-0.3.9+ntstatus-dev (= 0.3.9-1), librust-winapi-0.3.9+oaidl-dev (= 0.3.9-1), librust-winapi-0.3.9+objbase-dev (= 0.3.9-1), librust-winapi-0.3.9+objidl-dev (= 0.3.9-1), librust-winapi-0.3.9+objidlbase-dev (= 0.3.9-1), librust-winapi-0.3.9+ocidl-dev (= 0.3.9-1), librust-winapi-0.3.9+ole2-dev (= 0.3.9-1), librust-winapi-0.3.9+oleauto-dev (= 0.3.9-1), librust-winapi-0.3.9+olectl-dev (= 0.3.9-1), librust-winapi-0.3.9+oleidl-dev (= 0.3.9-1), librust-winapi-0.3.9+opmapi-dev (= 0.3.9-1), librust-winapi-0.3.9+pdh-dev (= 0.3.9-1), librust-winapi-0.3.9+perflib-dev (= 0.3.9-1), librust-winapi-0.3.9+physicalmonitorenumerationapi-dev (= 0.3.9-1), librust-winapi-0.3.9+playsoundapi-dev (= 0.3.9-1), librust-winapi-0.3.9+portabledevice-dev (= 0.3.9-1), librust-winapi-0.3.9+portabledeviceapi-dev (= 0.3.9-1), librust-winapi-0.3.9+portabledevicetypes-dev (= 0.3.9-1), librust-winapi-0.3.9+powerbase-dev (= 0.3.9-1), librust-winapi-0.3.9+powersetting-dev (= 0.3.9-1), librust-winapi-0.3.9+powrprof-dev (= 0.3.9-1), librust-winapi-0.3.9+processenv-dev (= 0.3.9-1), librust-winapi-0.3.9+processsnapshot-dev (= 0.3.9-1), librust-winapi-0.3.9+processthreadsapi-dev (= 0.3.9-1), librust-winapi-0.3.9+processtopologyapi-dev (= 0.3.9-1), librust-winapi-0.3.9+profileapi-dev (= 0.3.9-1), librust-winapi-0.3.9+propidl-dev (= 0.3.9-1), librust-winapi-0.3.9+propkey-dev (= 0.3.9-1), librust-winapi-0.3.9+propkeydef-dev (= 0.3.9-1), librust-winapi-0.3.9+propsys-dev (= 0.3.9-1), librust-winapi-0.3.9+prsht-dev (= 0.3.9-1), librust-winapi-0.3.9+psapi-dev (= 0.3.9-1), librust-winapi-0.3.9+qos-dev (= 0.3.9-1), librust-winapi-0.3.9+realtimeapiset-dev (= 0.3.9-1), librust-winapi-0.3.9+reason-dev (= 0.3.9-1), librust-winapi-0.3.9+restartmanager-dev (= 0.3.9-1), librust-winapi-0.3.9+restrictederrorinfo-dev (= 0.3.9-1), librust-winapi-0.3.9+rmxfguid-dev (= 0.3.9-1), librust-winapi-0.3.9+roapi-dev (= 0.3.9-1), librust-winapi-0.3.9+robuffer-dev (= 0.3.9-1), librust-winapi-0.3.9+roerrorapi-dev (= 0.3.9-1), librust-winapi-0.3.9+rpc-dev (= 0.3.9-1), librust-winapi-0.3.9+rpcdce-dev (= 0.3.9-1), librust-winapi-0.3.9+rpcndr-dev (= 0.3.9-1), librust-winapi-0.3.9+rtinfo-dev (= 0.3.9-1), librust-winapi-0.3.9+sapi-dev (= 0.3.9-1), librust-winapi-0.3.9+sapi51-dev (= 0.3.9-1), librust-winapi-0.3.9+sapi53-dev (= 0.3.9-1), librust-winapi-0.3.9+sapiddk-dev (= 0.3.9-1), librust-winapi-0.3.9+sapiddk51-dev (= 0.3.9-1), librust-winapi-0.3.9+schannel-dev (= 0.3.9-1), librust-winapi-0.3.9+sddl-dev (= 0.3.9-1), librust-winapi-0.3.9+securityappcontainer-dev (= 0.3.9-1), librust-winapi-0.3.9+securitybaseapi-dev (= 0.3.9-1), librust-winapi-0.3.9+servprov-dev (= 0.3.9-1), librust-winapi-0.3.9+setupapi-dev (= 0.3.9-1), librust-winapi-0.3.9+shellapi-dev (= 0.3.9-1), librust-winapi-0.3.9+shellscalingapi-dev (= 0.3.9-1), librust-winapi-0.3.9+shlobj-dev (= 0.3.9-1), librust-winapi-0.3.9+shobjidl-core-dev (= 0.3.9-1), librust-winapi-0.3.9+shobjidl-dev (= 0.3.9-1), librust-winapi-0.3.9+shtypes-dev (= 0.3.9-1), librust-winapi-0.3.9+softpub-dev (= 0.3.9-1), librust-winapi-0.3.9+spapidef-dev (= 0.3.9-1), librust-winapi-0.3.9+spellcheck-dev (= 0.3.9-1), librust-winapi-0.3.9+sporder-dev (= 0.3.9-1), librust-winapi-0.3.9+sql-dev (= 0.3.9-1), librust-winapi-0.3.9+sqlext-dev (= 0.3.9-1), librust-winapi-0.3.9+sqltypes-dev (= 0.3.9-1), librust-winapi-0.3.9+sqlucode-dev (= 0.3.9-1), librust-winapi-0.3.9+sspi-dev (= 0.3.9-1), librust-winapi-0.3.9+std-dev (= 0.3.9-1), librust-winapi-0.3.9+stralign-dev (= 0.3.9-1), librust-winapi-0.3.9+stringapiset-dev (= 0.3.9-1), librust-winapi-0.3.9+strmif-dev (= 0.3.9-1), librust-winapi-0.3.9+subauth-dev (= 0.3.9-1), librust-winapi-0.3.9+synchapi-dev (= 0.3.9-1), librust-winapi-0.3.9+sysinfoapi-dev (= 0.3.9-1), librust-winapi-0.3.9+systemtopologyapi-dev (= 0.3.9-1), librust-winapi-0.3.9+taskschd-dev (= 0.3.9-1), librust-winapi-0.3.9+tcpestats-dev (= 0.3.9-1), librust-winapi-0.3.9+tcpmib-dev (= 0.3.9-1), librust-winapi-0.3.9+textstor-dev (= 0.3.9-1), librust-winapi-0.3.9+threadpoolapiset-dev (= 0.3.9-1), librust-winapi-0.3.9+threadpoollegacyapiset-dev (= 0.3.9-1), librust-winapi-0.3.9+timeapi-dev (= 0.3.9-1), librust-winapi-0.3.9+timezoneapi-dev (= 0.3.9-1), librust-winapi-0.3.9+tlhelp32-dev (= 0.3.9-1), librust-winapi-0.3.9+transportsettingcommon-dev (= 0.3.9-1), librust-winapi-0.3.9+tvout-dev (= 0.3.9-1), librust-winapi-0.3.9+udpmib-dev (= 0.3.9-1), librust-winapi-0.3.9+unknwnbase-dev (= 0.3.9-1), librust-winapi-0.3.9+urlhist-dev (= 0.3.9-1), librust-winapi-0.3.9+urlmon-dev (= 0.3.9-1), librust-winapi-0.3.9+usb-dev (= 0.3.9-1), librust-winapi-0.3.9+usbioctl-dev (= 0.3.9-1), librust-winapi-0.3.9+usbiodef-dev (= 0.3.9-1), librust-winapi-0.3.9+usbscan-dev (= 0.3.9-1), librust-winapi-0.3.9+usbspec-dev (= 0.3.9-1), librust-winapi-0.3.9+userenv-dev (= 0.3.9-1), librust-winapi-0.3.9+usp10-dev (= 0.3.9-1), librust-winapi-0.3.9+utilapiset-dev (= 0.3.9-1), librust-winapi-0.3.9+uxtheme-dev (= 0.3.9-1), librust-winapi-0.3.9+vadefs-dev (= 0.3.9-1), librust-winapi-0.3.9+vcruntime-dev (= 0.3.9-1), librust-winapi-0.3.9+vsbackup-dev (= 0.3.9-1), librust-winapi-0.3.9+vss-dev (= 0.3.9-1), librust-winapi-0.3.9+vsserror-dev (= 0.3.9-1), librust-winapi-0.3.9+vswriter-dev (= 0.3.9-1), librust-winapi-0.3.9+wbemads-dev (= 0.3.9-1), librust-winapi-0.3.9+wbemcli-dev (= 0.3.9-1), librust-winapi-0.3.9+wbemdisp-dev (= 0.3.9-1), librust-winapi-0.3.9+wbemprov-dev (= 0.3.9-1), librust-winapi-0.3.9+wbemtran-dev (= 0.3.9-1), librust-winapi-0.3.9+wct-dev (= 0.3.9-1), librust-winapi-0.3.9+werapi-dev (= 0.3.9-1), librust-winapi-0.3.9+winbase-dev (= 0.3.9-1), librust-winapi-0.3.9+wincodec-dev (= 0.3.9-1), librust-winapi-0.3.9+wincodecsdk-dev (= 0.3.9-1), librust-winapi-0.3.9+wincon-dev (= 0.3.9-1), librust-winapi-0.3.9+wincontypes-dev (= 0.3.9-1), librust-winapi-0.3.9+wincred-dev (= 0.3.9-1), librust-winapi-0.3.9+wincrypt-dev (= 0.3.9-1), librust-winapi-0.3.9+windef-dev (= 0.3.9-1), librust-winapi-0.3.9+windot11-dev (= 0.3.9-1), librust-winapi-0.3.9+windowsceip-dev (= 0.3.9-1), librust-winapi-0.3.9+windowsx-dev (= 0.3.9-1), librust-winapi-0.3.9+winefs-dev (= 0.3.9-1), librust-winapi-0.3.9+winerror-dev (= 0.3.9-1), librust-winapi-0.3.9+winevt-dev (= 0.3.9-1), librust-winapi-0.3.9+wingdi-dev (= 0.3.9-1), librust-winapi-0.3.9+winhttp-dev (= 0.3.9-1), librust-winapi-0.3.9+wininet-dev (= 0.3.9-1), librust-winapi-0.3.9+winineti-dev (= 0.3.9-1), librust-winapi-0.3.9+winioctl-dev (= 0.3.9-1), librust-winapi-0.3.9+winnetwk-dev (= 0.3.9-1), librust-winapi-0.3.9+winnls-dev (= 0.3.9-1), librust-winapi-0.3.9+winnt-dev (= 0.3.9-1), librust-winapi-0.3.9+winreg-dev (= 0.3.9-1), librust-winapi-0.3.9+winsafer-dev (= 0.3.9-1), librust-winapi-0.3.9+winscard-dev (= 0.3.9-1), librust-winapi-0.3.9+winsmcrd-dev (= 0.3.9-1), librust-winapi-0.3.9+winsock2-dev (= 0.3.9-1), librust-winapi-0.3.9+winspool-dev (= 0.3.9-1), librust-winapi-0.3.9+winstring-dev (= 0.3.9-1), librust-winapi-0.3.9+winsvc-dev (= 0.3.9-1), librust-winapi-0.3.9+wintrust-dev (= 0.3.9-1), librust-winapi-0.3.9+winusb-dev (= 0.3.9-1), librust-winapi-0.3.9+winusbio-dev (= 0.3.9-1), librust-winapi-0.3.9+winuser-dev (= 0.3.9-1), librust-winapi-0.3.9+winver-dev (= 0.3.9-1), librust-winapi-0.3.9+wlanapi-dev (= 0.3.9-1), librust-winapi-0.3.9+wlanihv-dev (= 0.3.9-1), librust-winapi-0.3.9+wlanihvtypes-dev (= 0.3.9-1), librust-winapi-0.3.9+wlantypes-dev (= 0.3.9-1), librust-winapi-0.3.9+wlclient-dev (= 0.3.9-1), librust-winapi-0.3.9+wmistr-dev (= 0.3.9-1), librust-winapi-0.3.9+wnnc-dev (= 0.3.9-1), librust-winapi-0.3.9+wow64apiset-dev (= 0.3.9-1), librust-winapi-0.3.9+wpdmtpextensions-dev (= 0.3.9-1), librust-winapi-0.3.9+ws2bth-dev (= 0.3.9-1), librust-winapi-0.3.9+ws2def-dev (= 0.3.9-1), librust-winapi-0.3.9+ws2ipdef-dev (= 0.3.9-1), librust-winapi-0.3.9+ws2spi-dev (= 0.3.9-1), librust-winapi-0.3.9+ws2tcpip-dev (= 0.3.9-1), librust-winapi-0.3.9+wtsapi32-dev (= 0.3.9-1), librust-winapi-0.3.9+wtypes-dev (= 0.3.9-1), librust-winapi-0.3.9+wtypesbase-dev (= 0.3.9-1), librust-winapi-0.3.9+xinput-dev (= 0.3.9-1), librust-winapi-0.3.9-dev (= 0.3.9-1)
+Depends: librust-winapi-i686-pc-windows-gnu-0.4+default-dev, librust-winapi-x86-64-pc-windows-gnu-0.4+default-dev
+Filename: pool/universe/r/rust-winapi/librust-winapi-dev_0.3.9-1_amd64.deb
+Size: 953322
+MD5sum: 3961fffd0aa68358bc7e53fcde5482e7
+SHA1: 6609b6681df71ce7306e57918d512dbe2a0942fc
+SHA256: fe5c9d8ac4da6fac42b626d44f4ba32fa3a9e6e368b29f461d50bc8408d1bab5
+SHA512: 1b9704fcda74c97310c1b945b415c82490dba62e1df744a7f7a611b4ad83a0a7a1869f19692157f45af0072fd693e6e3ddf05f9073710965d68d7296df8d886c
+Description: Raw FFI bindings for all of Windows API - Rust source code
+Description-md5: 821b11c73d75f1725d657149cfcc63f2
+
+Package: librust-dirs-next-dev
+Architecture: amd64
+Version: 2.0.0-1
+Multi-Arch: same
+Priority: optional
+Section: universe/rust
+Source: rust-dirs-next
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 68
+Provides: librust-dirs-next+default-dev (= 2.0.0-1), librust-dirs-next-2+default-dev (= 2.0.0-1), librust-dirs-next-2-dev (= 2.0.0-1), librust-dirs-next-2.0+default-dev (= 2.0.0-1), librust-dirs-next-2.0-dev (= 2.0.0-1), librust-dirs-next-2.0.0+default-dev (= 2.0.0-1), librust-dirs-next-2.0.0-dev (= 2.0.0-1)
+Depends: librust-cfg-if-0+default-dev, librust-dirs-sys-next-0.1+default-dev
+Filename: pool/universe/r/rust-dirs-next/librust-dirs-next-dev_2.0.0-1_amd64.deb
+Size: 13144
+MD5sum: fcd7c5b6df39431dbf316c0a58022e2d
+SHA1: 9340449064df294a5787bdb966fc2c41e3ab2258
+SHA256: e3af6379074b0aa54bd53365eb25bbd29241283b2b273650bcc734ace8429af7
+SHA512: 69d72052fba953f2c9e0512a3a9cadf048b5811683b1689f9d9f0e41312f20b2cf5a38142a3bd5096b38e6cd005caef1e05dc7b1ebd194c6c0cefecd024650e5
+Description: Tiny low-level library that provides platform-specific standard locations of directories for config, cache and other data on Linux, Windows, macOS and Redox by leveraging the mechanisms defined by the XDG base/user directory specifications on Linux, the Known Folder API on Windows, and the Standard Directory guidelines on macOS - Rust source code
+Description-md5: c20435351a5f87b61749864583b81527
+
+Package: btm
+Architecture: amd64
+Version: 0.9.6-4
+Built-Using: rust-ahash-0.7 (= 0.7.7-2), rust-nix (= 0.26.2-1), rust-option-ext (= 0.2.0-1), rustc (= 1.75.0+dfsg0ubuntu1-0ubuntu1)
+Multi-Arch: allowed
+Priority: optional
+Section: universe/utils
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Jonas Smedegaard <dr@jones.dk>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 4799
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 4.2)
+Suggests: bash-completion
+Filename: pool/universe/b/btm/btm_0.9.6-4_amd64.deb
+Size: 1607224
+MD5sum: 5af6a25fa3b1bb766aecbc7a290670e7
+SHA1: 5a8e3563ffc958d5a7b1dff8b97300eb03b1cd02
+SHA256: 62b3c95436097e45edeebd72396831938df40de055d2e0dd9fcf276639314799
+SHA512: 29806c67d9f74461eedadb488a94bf66d478cda15f33c44fbbc2c710902455fff875d38cada331c1aea84fc2fc6d7bf80aecb0c415273a70751a7ce543ff5518
+Homepage: https://clementtsang.github.io/bottom
+Description: customizable graphical process/system monitor for the terminal
+X-Cargo-Built-Using:
+ rust-addr2line (= 0.21.0-2), rust-adler (= 1.0.2-2), rust-ahash-0.7 (= 0.7.7-2), rust-aho-corasick (= 1.1.2-1), rust-anstream (= 0.6.7-1), rust-anstyle (= 1.0.4-1), rust-anstyle-parse (= 0.2.1-1), rust-anstyle-query (= 1.0.0-1), rust-anyhow (= 1.0.75-1), rust-assert-cmd (= 2.0.12-1), rust-backtrace (= 0.3.69-2), rust-bitflags-1 (= 1.3.2-5), rust-bitflags (= 2.4.2-1), rust-bstr (= 1.7.0-2build1), rust-cassowary (= 0.3.0-2), rust-cfg-if (= 1.0.0-1), rust-clap-builder (= 4.4.18-1), rust-clap (= 4.4.18-1), rust-clap-lex (= 0.6.0-2), rust-colorchoice (= 1.0.0-1), rust-concat-string (= 1.0.1-1), rust-crossbeam-deque (= 0.8.5-1), rust-crossbeam-epoch (= 0.9.18-1), rust-crossbeam-utils (= 0.8.19-1), rust-crossterm (= 0.27.0-3), rust-ctrlc (= 3.4.2-1), rust-difflib (= 0.4.0-1), rust-dirs (= 5.0.1-1), rust-dirs-sys (= 0.4.1-1), rust-doc-comment (= 0.3.3-1), rust-either (= 1.9.0-1), rust-float-cmp (= 0.9.0-1), rust-getrandom (= 0.2.10-1), rust-gimli (= 0.28.1-2), rust-hashbrown (= 0.12.3-1), rust-humantime (= 2.1.0-1), rust-indexmap (= 1.9.3-2), rust-itertools (= 0.10.5-1), rust-itoa (= 1.0.9-1), rust-kstring (= 2.0.0-1), rust-lazycell (= 1.3.0-3), rust-libc (= 0.2.152-1), rust-libloading (= 0.7.4-1), rust-linux-raw-sys (= 0.4.12-1), rust-lock-api (= 0.4.11-1), rust-log (= 0.4.20-2), rust-memchr (= 2.7.1-1), rust-miniz-oxide (= 0.7.1-1), rust-mio (= 0.8.10-1), rust-nix (= 0.26.2-1), rust-normalize-line-endings (= 0.3.0-1), rust-num-traits (= 0.2.15-1), rust-nvml-wrapper (= 0.9.0-1), rust-nvml-wrapper-sys (= 0.7.0-1), rust-object (= 0.32.2-1), rust-once-cell (= 1.19.0-1), rust-option-ext (= 0.2.0-1), rust-parking-lot-core (= 0.9.9-1), rust-parking-lot (= 0.12.1-2build1), rust-predicates-core (= 1.0.6-1), rust-predicates (= 3.0.3-1), rust-predicates-tree (= 1.0.7-1), rust-ratatui (= 0.23.0-4), rust-rayon-core (= 1.12.1-1), rust-rayon (= 1.8.1-1), rust-regex-automata (= 0.4.3-1build2), rust-regex (= 1.10.2-2build2), rust-regex-syntax (= 0.8.2-1), rust-rustc-demangle (= 0.1.21-1), rust-rustix (= 0.38.30-1), rust-scopeguard (= 1.1.0-1), rust-serde (= 1.0.195-1), rust-serde-spanned (= 0.6.4-1), rust-signal-hook (= 0.3.17-1), rust-signal-hook-mio (= 0.2.3-2), rust-signal-hook-registry (= 1.4.0-1), rust-smallvec (= 1.11.2-1), rust-starship-battery (= 0.8.2-1), rust-static-assertions (= 1.1.0-1), rust-strsim (= 0.10.0-1), rust-strum (= 0.25.0-1), rust-sysinfo (= 0.28.4-4), rust-terminal-size (= 0.3.0-2), rust-termtree (= 0.4.1-1), rust-thiserror (= 1.0.50-1), rust-time-core (= 0.1.1-1), rust-time (= 0.3.23-2), rust-toml-datetime (= 0.6.5-1), rust-toml-edit (= 0.21.0-2), rust-typenum (= 1.16.0-2), rust-unicode-segmentation (= 1.10.1-1), rust-unicode-width (= 0.1.11-1), rust-uom (= 0.35.0-1), rust-utf8parse (= 0.2.1-1), rust-wait-timeout (= 0.2.0-1), rust-winnow (= 0.5.15-1), rustc (= 1.75.0+dfsg0ubuntu1-0ubuntu1),
+Description-md5: e39e31ca350d6a0cb1ee1479936064f3
+
+Package: git-delta
+Architecture: amd64
+Version: 0.16.5-5
+Built-Using: rust-ansi-colours (= 1.2.2-1), rust-fast-srgb8 (= 1.0.0-5), rust-nix (= 0.26.2-1), rust-onig-sys (= 69.8.1-1), rust-option-ext (= 0.2.0-1), rust-palette (= 0.7.3+dfsg-2), rustc (= 1.73.0+dfsg0ubuntu1-0ubuntu1)
+Priority: optional
+Section: universe/vcs
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Jonas Smedegaard <dr@jones.dk>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 6236
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 4.2), libgit2-1.7 (>= 1.7.0)
+Suggests: bash-completion
+Filename: pool/universe/g/git-delta/git-delta_0.16.5-5_amd64.deb
+Size: 2410050
+MD5sum: 3a3f6774e090d185ce3a994103b8c222
+SHA1: 2a6ebf4508b2b29bc1c25b1484d0de25c0aec9ec
+SHA256: 0f906942cfade9962b2652cee4d956c93c24fe8d926436266c7e0ac5d71d05c2
+SHA512: 8d980afd7c0325debbb57ed3a0661a04c60efc4df3669a17f4f4d0dd3f7ea799e6cebc14b6423a9cca45cee050bc844b02d9321a2aca11c26dc6c2a1a0aa0e90
+Homepage: https://dandavison.github.io/delta/
+Description: syntax-highlighting pager for git, diff, and grep output
+X-Cargo-Built-Using:
+ rust-adler (= 1.0.2-2), rust-aho-corasick (= 1.1.2-1), rust-ansi-colours (= 1.2.2-1), rust-ansi-term (= 0.12.1-1), rust-anstream (= 0.6.4-1), rust-anstyle (= 1.0.4-1), rust-anstyle-parse (= 0.2.1-1), rust-anstyle-query (= 1.0.0-1), rust-anyhow (= 1.0.75-1), rust-approx (= 0.5.0-1), rust-arrayvec (= 0.7.4-2), rust-atty (= 0.2.14-2), rust-base64 (= 0.21.5-1), rust-bat (= 0.24.0-1build1), rust-bincode (= 1.3.3-1), rust-bitflags-1 (= 1.3.2-5), rust-bitflags (= 2.4.0-2), rust-box-drawing (= 0.1.2-1), rust-bstr (= 1.7.0-2build1), rust-bytelines (= 2.4.0-1), rust-bytemuck (= 1.14.0-1), rust-bytes (= 1.5.0-1), rust-bytesize (= 1.3.0-1), rust-cfg-if (= 1.0.0-1), rust-chrono (= 0.4.31-2), rust-chrono-humanize (= 0.2.2-1), rust-clap-builder (= 4.4.6-1), rust-clap (= 4.4.6-1), rust-clap-lex (= 0.5.0-1), rust-clircle (= 0.4.0-1), rust-colorchoice (= 1.0.0-1), rust-console (= 0.15.7-1), rust-content-inspector (= 0.2.4-1), rust-crc32fast (= 1.3.2-2), rust-ctrlc (= 3.4.0-1), rust-dirs (= 5.0.1-1), rust-dirs-sys (= 0.4.1-1), rust-either (= 1.9.0-1), rust-encoding-rs (= 0.8.33-1), rust-fast-srgb8 (= 1.0.0-5), rust-flate2 (= 1.0.27-2), rust-fnv (= 1.0.7-1), rust-form-urlencoded (= 1.2.1-1), rust-futures-channel (= 0.3.29-1), rust-futures-core (= 0.3.29-1), rust-futures (= 0.3.29-1), rust-futures-executor (= 0.3.29-1), rust-futures-io (= 0.3.29-1), rust-futures-sink (= 0.3.29-1), rust-futures-task (= 0.3.29-1), rust-futures-util (= 0.3.29-1), rust-git2 (= 0.18.1-1), rust-globset (= 0.4.14-1), rust-grep-cli (= 0.1.10-1), rust-hashbrown (= 0.12.3-1), rust-iana-time-zone (= 0.1.53-1), rust-idna (= 0.4.0-1), rust-indexmap (= 1.9.3-1), rust-itertools (= 0.10.5-1), rust-itoa (= 1.0.9-1), rust-lazy-static (= 1.4.0-2), rust-libc (= 0.2.150-1), rust-libgit2-sys (= 0.16.1-1), rust-libz-sys (= 1.1.8-2), rust-line-wrap (= 0.1.1-1), rust-linked-hash-map (= 0.5.6-1), rust-linux-raw-sys (= 0.4.11-1), rust-log (= 0.4.20-2), rust-memchr (= 2.6.4-3build2), rust-miniz-oxide (= 0.7.1-1), rust-nix (= 0.26.2-1), rust-nu-ansi-term (= 0.48.0-2), rust-num-traits (= 0.2.15-1), rust-once-cell (= 1.18.0-1), rust-onig (= 6.3.2-1), rust-onig-sys (= 69.8.1-1), rust-onig-sys (= 69.8.1-1), rust-option-ext (= 0.2.0-1), rust-palette (= 0.7.3+dfsg-2), rust-path-abs (= 0.5.1-1), rust-pathdiff (= 0.2.1-1), rust-percent-encoding (= 2.3.0-1), rust-phf (= 0.11.2-1), rust-phf-shared (= 0.11.2-1), rust-pin-project-lite (= 0.2.13-1), rust-pin-utils (= 0.1.0-1), rust-plist (= 1.6.0-1), rust-quick-xml (= 0.27.1-3), rust-regex-automata (= 0.4.3-1build2), rust-regex (= 1.10.2-2build2), rust-regex-syntax (= 0.8.2-1), rust-rgb (= 0.8.36-1), rust-rustix (= 0.38.25-1), rust-ryu (= 1.0.15-1), rust-safemem (= 0.3.3-1), rust-same-file (= 1.0.6-1), rust-semver (= 1.0.18-1), rust-serde (= 1.0.192-1build1), rust-serde-json (= 1.0.108-1), rust-serde-yaml (= 0.8.26-1), rust-shell-words (= 1.1.0-1), rust-siphasher (= 0.3.10-1), rust-slab (= 0.4.4-1), rust-smallvec (= 1.11.2-1), rust-smol-str (= 0.2.0-1), rust-static-assertions (= 1.1.0-1), rust-std-prelude (= 0.2.12-1), rust-strsim (= 0.10.0-1), rust-syntect (= 5.1.0-2), rust-sysinfo (= 0.28.4-4), rust-termcolor (= 1.4.0-1), rust-terminal-size (= 0.2.6-3), rust-thiserror (= 1.0.50-1), rust-time-core (= 0.1.1-1), rust-time (= 0.3.23-2), rust-tokio (= 1.33.0-1), rust-unicode-bidi (= 0.3.13-1), rust-unicode-normalization (= 0.1.22-1), rust-unicode-segmentation (= 1.10.1-1), rust-unicode-width (= 0.1.11-1), rust-url (= 2.4.1-1), rust-utf8parse (= 0.2.1-1), rust-vte (= 0.11.1-1), rust-walkdir (= 2.4.0-1), rust-xdg (= 2.5.2-3), rust-yaml-rust (= 0.4.5-1), rustc (= 1.73.0+dfsg0ubuntu1-0ubuntu1),
+Description-md5: 5321a4c9ad3ebbcc7fa824cddf867acf
+
+Package: aggregate
+Architecture: amd64
+Version: 1.6-7build1
+Priority: optional
+Section: universe/net
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Erik Wenzel <erik@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 29
+Depends: libc6 (>= 2.4)
+Filename: pool/universe/a/aggregate/aggregate_1.6-7build1_amd64.deb
+Size: 11600
+MD5sum: 3768f334d983352fbffd78f29edf8c07
+SHA1: bdbb4447fb6af18943d52febaf73ee56901515f9
+SHA256: ebb5d5f7fae94d6afc40bfe647421d4c8b50915ee437ec6e45938e5d8869979d
+SHA512: 1b027336dfa82ca4ce2a5d85199d7f037765efdc9e82c44de6dfe6d8b1baca969e9595407e8743e69ee1409a602188a0fec294d71417097ed157e92d1b30914b
+Description: ipv4 cidr prefix aggregator
+Tag: implemented-in::c, interface::commandline, network::configuration, network::routing, protocol::ip, role::program, scope::utility, use::analysing, use::configuring, use::converting, use::routing, works-with-format::plaintext, works-with::network-traffic, works-with::text
+Description-md5: f997a857d65d21bbf877320588a8a99c
+
+Package: bamf-dbg
+Architecture: amd64
+Version: 0.5.6+22.04.20220217-0ubuntu5
+Priority: extra
+Section: universe/debug
+Source: bamf
+Origin: Ubuntu
+Maintainer: Didier Roche <didrocks@ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 802
+Depends: libbamf3-2t64 (= 0.5.6+22.04.20220217-0ubuntu5)
+Filename: pool/universe/b/bamf/bamf-dbg_0.5.6+22.04.20220217-0ubuntu5_amd64.deb
+Size: 566442
+MD5sum: fb0b2ec89f1def3386faf46fb3f9379f
+SHA1: 12a904b7b51f617607dea3d5494b8545a4b18ade
+SHA256: d112f0f06f9c47891ff562e83261d94ab57b8bc881266faa64baba868838436b
+SHA512: b3ee5876d0acfe74d060724cb11eecda43bfc05be243c8127a25a408b3516b8ae82ac435645f09dfb6f78fb53f3519b4a8b62e8579bee41a461e97de605b3d25
+Homepage: https://launchpad.net/bamf
+Description: Window matching library - debugging symbols
+Build-Ids: 07d784366547e41c9cc3b3fe0aa2cfb6ba9fa8c5 bc064955b93c61719b4a0b428396af3a694686a1
+Description-md5: d08673dde009c4e5d772fa886e34cfd2
+
+Package: certspotter
+Architecture: amd64
+Version: 0.18.0-1
+Priority: optional
+Section: universe/devel
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Go Packaging Team <pkg-go-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 5379
+Depends: libc6 (>= 2.34), systemd | systemd-standalone-sysusers | systemd-sysusers, ca-certificates
+Filename: pool/universe/c/certspotter/certspotter_0.18.0-1_amd64.deb
+Size: 2027364
+MD5sum: c1417f3eb90e882ea76ef4b8bfe77de3
+SHA1: 1bda21be3bffaf891d1212968ff0710819d366f6
+SHA256: 39b0c1b68fa4f9340a0f41b28b7931cf99fe28e12fd159dc0db6be2a2c350eca
+SHA512: f448b8140843a935ef8ccd5e272998762d828f18de9c32bdce53595cb034084b158bab7a9c1197fea30744fd808d50e2fa1b9026dcaf16911b903ccc4d807195
+Homepage: https://github.com/SSLMate/certspotter
+Description: Certificate Transparency Log Monitor
+Static-Built-Using: golang-1.21 (= 1.21.4-1), golang-golang-x-net (= 1:0.17.0+dfsg-1), golang-golang-x-sync (= 0.4.0-1), golang-golang-x-text (= 0.13.0-1)
+Description-md5: ee49d3ade971aafc0de8c11dfe612d7c
+
+Package: gstreamer1.0-libav
+Architecture: amd64
+Version: 1.24.1-1build1
+Multi-Arch: same
+Priority: optional
+Section: universe/libs
+Source: gst-libav1.0
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Maintainers of GStreamer packages <gst-libav1.0@packages.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 276
+Depends: libavcodec60 (>= 7:6.0), libavfilter9 (>= 7:6.0), libavformat60 (>= 7:6.0), libavutil58 (>= 7:6.0), libc6 (>= 2.34), libglib2.0-0t64 (>= 2.79.0), libgstreamer-plugins-base1.0-0 (>= 1.24.0), libgstreamer1.0-0 (>= 1.24.0)
+Filename: pool/universe/g/gst-libav1.0/gstreamer1.0-libav_1.24.1-1build1_amd64.deb
+Size: 103214
+MD5sum: eab5447b8fbda312487006e178652a8f
+SHA1: 9f8ccc3adc164e3e297a762ec2e13fcefa55b198
+SHA256: 06f33e40a9e13173e0b8593f8d507dc665e9e6acc3af7fea359fb8131944553d
+SHA512: 99a0d4117b1f2df87c46ec7610a59543bea22cb4f88c6ad66338237845b7b6f83dc67b4bc99d9629ecaf2ccb8448143786c69a0d0c5d7d6e650f493ea59e8e30
+Homepage: https://gstreamer.freedesktop.org
+Description: ffmpeg plugin for GStreamer
+Task: xubuntu-desktop, ubuntustudio-photography, ubuntu-budgie-desktop, ubuntu-budgie-desktop-raspi, ubuntu-unity-desktop, ubuntucinnamon-desktop-minimal, ubuntucinnamon-desktop
+Gstreamer-Decoders: application/gxf; application/mxf; application/x-ape; application/x-gst-av-avs; application/x-gst-av-daud; application/x-gst-av-dsf; application/x-gst-av-ea; application/x-gst-av-film_cpk; application/x-gst-av-idcin; application/x-gst-av-iff; application/x-gst-av-ipmovie; application/x-gst-av-mm; application/x-gst-av-mmf; application/x-gst-av-nut; application/x-gst-av-nuv; application/x-gst-av-psxstr; application/x-gst-av-smk; application/x-gst-av-sol; application/x-gst-av-vmd; application/x-gst-av-wc3movie; application/x-gst-av-wsaud; application/x-gst-av-wsvqa; application/x-gst-av-xwma; application/x-yuv4mpeg, y4mversion=(int)2; audio/AMR; audio/AMR-WB; audio/G722; audio/G729; audio/aptx; audio/aptx-hd; audio/mpeg, mpegversion=(int)1, layer=(int)[ 1, 3 ]; audio/mpeg, mpegversion=(int)4, stream-format=(string)loas; audio/mpeg, mpegversion=(int){ 2, 4 }, stream-format=(string){ raw, adts, adif }; audio/ms-gsm; audio/qcelp; audio/x-ac3; audio/x-adpcm, layout=(string){ yamaha, xa, thp, swf, sbpro4, sbpro3, sbpro2, microsoft, westwood, dvi, smjpeg, quicktime, oki, iss, ea-sead, ea-eacs, dk4, dk3, amv, g726, g721, ea-xas, ea-r1, ea-maxis-xa, ea, ct, adx, 4xm, ea-r3 }; audio/x-aiff; audio/x-alac; audio/x-bfstm; audio/x-brstm; audio/x-dpcm, layout=(string){ xan, sol, roq, interplay }; audio/x-dsd, format=(string)DSDU8, reversed-bytes=(boolean){ false, true }, layout=(string){ interleaved, non-interleaved }; audio/x-dts; audio/x-dv; audio/x-eac3; audio/x-ffmpeg-parsed-ape; audio/x-ffmpeg-parsed-musepack, streamversion=(int){ 8, 7 }; audio/x-flac; audio/x-gsm; audio/x-gst-av-mp3adufloat; audio/x-gst-av-mp3on4float; audio/x-gst-av-vmdaudio; audio/x-gst-av-ws_snd1; audio/x-imc; audio/x-mace, maceversion=(int){ 6, 3 }; audio/x-mlp; audio/x-musepack, streamversion=(int){ 8, 7 }; audio/x-nellymoser; audio/x-opus, channel-mapping-family=(int)0; audio/x-pn-realaudio, raversion=(int){ 2, 1, 8 }; audio/x-qdm2; audio/x-shorten; audio/x-sipro; audio/x-smpte-302m; audio/x-true-hd; audio/x-truespeech; audio/x-tta; audio/x-ttafile; audio/x-twin-vq; audio/x-vnd.sony.atrac1; audio/x-vnd.sony.atrac3; audio/x-voc; audio/x-voxware; audio/x-wma, wmaversion=(int){ 2, 1, 3, 4 }; audio/x-wms; audio/x-xma, xmaversion=(int){ 2, 1 }; image/bmp; image/gif; image/gst-libav-gif, parsed=(boolean)true; image/jp2; image/jpeg, parsed=(boolean)true; image/pbm; image/png; image/ppm; image/tiff; image/x-j2c; image/x-jpc; image/x-pcx; image/x-portable-anymap; image/x-portable-graymap; image/x-sgi; image/x-sun-raster; image/x-tga; unknown/unknown; video/mpeg, mpegversion=(int)[ 1, 2 ], systemstream=(boolean)false; video/mpeg, mpegversion=(int)4, systemstream=(boolean)false; video/sp5x; video/x-4xm; video/x-aasc; video/x-amv; video/x-apple-intermediate-codec; video/x-apple-video; video/x-asus, asusversion=(int){ 2, 1 }; video/x-ati-vcr, vcrversion=(int)1; video/x-camstudio; video/x-camtasia; video/x-cavs; video/x-cineform; video/x-cinepak; video/x-cirrus-logic-accupak; video/x-compressed-yuv; video/x-divx, divxversion=(int)[ 3, 5 ]; video/x-dnxhd; video/x-dv, systemstream=(boolean)false; video/x-ffv, ffvversion=(int)1; video/x-ffvhuff; video/x-flash-screen; video/x-flash-screen2; video/x-flash-video, flvversion=(int)1; video/x-fraps; video/x-gst-av-8bps; video/x-gst-av-avs; video/x-gst-av-flic; video/x-gst-av-idcinvideo; video/x-gst-av-interplayvideo; video/x-gst-av-mdec; video/x-gst-av-mmvideo; video/x-gst-av-pgmyuv; video/x-gst-av-qpeg; video/x-gst-av-roqvideo; video/x-gst-av-vmdvideo; video/x-gst-av-vqavideo; video/x-gst-av-wnv1; video/x-gst-av-xl; video/x-h261; video/x-h263, variant=(string)itu; video/x-h264, alignment=(string)au, stream-format=(string){ avc, byte-stream }; video/x-h264, alignment=(string)nal, stream-format=(string)byte-stream; video/x-h265, alignment=(string)au, stream-format=(string){ hvc1, hev1, byte-stream }; video/x-huffyuv; video/x-indeo, indeoversion=(int){ 5, 4, 3, 2 }; video/x-intel-h263, variant=(string)intel; video/x-ivf; video/x-kmvc; video/x-lagarith; video/x-loco; video/x-mimic; video/x-mjpeg-b; video/x-msmpeg, msmpegversion=(int){ 43, 42, 41 }; video/x-msvideocodec, msvideoversion=(int)1; video/x-mszh; video/x-mxpeg; video/x-nsv; video/x-nuv; video/x-pn-realvideo, rmversion=(int){ 4, 3, 2, 1 }; video/x-prores; video/x-pva; video/x-qdrw; video/x-rle, layout=(string){ quicktime, microsoft }; video/x-smc; video/x-speedhq; video/x-svq, svqversion=(int){ 3, 1 }; video/x-truemotion, trueversion=(int){ 2, 1 }; video/x-tscc, tsccversion=(int)2; video/x-ultimotion; video/x-vmnc; video/x-vp3; video/x-vp5; video/x-vp6; video/x-vp6-alpha; video/x-vp6-flash; video/x-vp8; video/x-vp9; video/x-wmv, wmvversion=(int)3, format=(string){ WMV3, WVC1, WMVA, MSS2 }; video/x-wmv, wmvversion=(int){ 2, 1 }; video/x-xan, wcversion=(int){ 4, 3 }; video/x-zmbv
+Gstreamer-Elements: avdec_4xm, avdec_8bps, avdec_8svx_exp, avdec_8svx_fib, avdec_aac, avdec_aac_fixed, avdec_aac_latm, avdec_aasc, avdec_ac3, avdec_ac3_fixed, avdec_acelp_kelvin, avdec_adpcm_4xm, avdec_adpcm_adx, avdec_adpcm_afc, avdec_adpcm_agm, avdec_adpcm_aica, avdec_adpcm_argo, avdec_adpcm_ct, avdec_adpcm_dtk, avdec_adpcm_ea, avdec_adpcm_ea_maxis_xa, avdec_adpcm_ea_r1, avdec_adpcm_ea_r2, avdec_adpcm_ea_r3, avdec_adpcm_ea_xas, avdec_adpcm_ima_acorn, avdec_adpcm_ima_alp, avdec_adpcm_ima_amv, avdec_adpcm_ima_apc, avdec_adpcm_ima_apm, avdec_adpcm_ima_cunning, avdec_adpcm_ima_dat4, avdec_adpcm_ima_dk3, avdec_adpcm_ima_dk4, avdec_adpcm_ima_ea_eacs, avdec_adpcm_ima_ea_sead, avdec_adpcm_ima_iss, avdec_adpcm_ima_moflex, avdec_adpcm_ima_mtf, avdec_adpcm_ima_oki, avdec_adpcm_ima_qt, avdec_adpcm_ima_rad, avdec_adpcm_ima_smjpeg, avdec_adpcm_ima_ssi, avdec_adpcm_ima_wav, avdec_adpcm_ima_ws, avdec_adpcm_ms, avdec_adpcm_mtaf, avdec_adpcm_psx, avdec_adpcm_sbpro_2, avdec_adpcm_sbpro_3, avdec_adpcm_sbpro_4, avdec_adpcm_swf, avdec_adpcm_thp, avdec_adpcm_thp_le, avdec_adpcm_vima, avdec_adpcm_xa, avdec_adpcm_xmd, avdec_adpcm_yamaha, avdec_adpcm_zork, avdec_agm, avdec_aic, avdec_alac, avdec_alias_pix, avdec_als, avdec_amrnb, avdec_amrwb, avdec_amv, avdec_anm, avdec_ansi, avdec_anull, avdec_apac, avdec_ape, avdec_apng, avdec_aptx, avdec_aptx_hd, avdec_arbc, avdec_argo, avdec_asv1, avdec_asv2, avdec_atrac1, avdec_atrac3, avdec_atrac3al, avdec_atrac3plus, avdec_atrac3plusal, avdec_atrac9, avdec_aura, avdec_aura2, avdec_avrn, avdec_avrp, avdec_avs, avdec_avui, avdec_bethsoftvid, avdec_bfi, avdec_binkaudio_dct, avdec_binkaudio_rdft, avdec_binkvideo, avdec_bintext, avdec_bitpacked, avdec_bmp, avdec_bmv_audio, avdec_bmv_video, avdec_bonk, avdec_brender_pix, avdec_c93, avdec_camstudio, avdec_camtasia, avdec_cavs, avdec_cbd2_dpcm, avdec_cdtoons, avdec_cdxl, avdec_cfhd, avdec_cinepak, avdec_clearvideo, avdec_cljr, avdec_cllc, avdec_comfortnoise, avdec_cook, avdec_cpia, avdec_cri, avdec_cyuv, avdec_dca, avdec_dds, avdec_derf_dpcm, avdec_dfa, avdec_dfpwm, avdec_dirac, avdec_dnxhd, avdec_dolby_e, avdec_dpx, avdec_dsd_lsbf, avdec_dsd_lsbf_planar, avdec_dsd_msbf, avdec_dsd_msbf_planar, avdec_dsicinaudio, avdec_dsicinvideo, avdec_dss_sp, avdec_dst, avdec_dvaudio, avdec_dvvideo, avdec_dxa, avdec_dxtory, avdec_dxv, avdec_eac3, avdec_eacmv, avdec_eamad, avdec_eatgq, avdec_eatgv, avdec_eatqi, avdec_escape124, avdec_escape130, avdec_evrc, avdec_exr, avdec_fastaudio, avdec_ffv1, avdec_ffvhuff, avdec_fic, avdec_fits, avdec_flac, avdec_flashsv, avdec_flashsv2, avdec_flic, avdec_flv, avdec_fmvc, avdec_fraps, avdec_frwu, avdec_ftr, avdec_g2m, avdec_g722, avdec_g723_1, avdec_g726, avdec_g726le, avdec_g729, avdec_gdv, avdec_gem, avdec_gif, avdec_gremlin_dpcm, avdec_gsm, avdec_gsm_ms, avdec_h261, avdec_h263, avdec_h263i, avdec_h263p, avdec_h264, avdec_h265, avdec_hap, avdec_hca, avdec_hcom, avdec_hdr, avdec_hnm4video, avdec_hq_hqa, avdec_hqx, avdec_huffyuv, avdec_hymt, avdec_iac, avdec_idcinvideo, avdec_idf, avdec_iff, avdec_ilbc, avdec_imc, avdec_imm4, avdec_imm5, avdec_indeo2, avdec_indeo3, avdec_indeo4, avdec_indeo5, avdec_interplay_dpcm, avdec_interplayacm, avdec_interplayvideo, avdec_ipu, avdec_jpeg2000, avdec_jpegls, avdec_jv, avdec_kgv1, avdec_kmvc, avdec_lagarith, avdec_loco, avdec_lscr, avdec_m101, avdec_mace3, avdec_mace6, avdec_magicyuv, avdec_mdec, avdec_media100, avdec_metasound, avdec_mimic, avdec_misc4, avdec_mjpeg, avdec_mjpegb, avdec_mlp, avdec_mmvideo, avdec_mobiclip, avdec_motionpixels, avdec_mp1float, avdec_mp2float, avdec_mp3, avdec_mp3adu, avdec_mp3adufloat, avdec_mp3float, avdec_mp3on4, avdec_mp3on4float, avdec_mpc7, avdec_mpc8, avdec_mpeg2video, avdec_mpeg4, avdec_mpegvideo, avdec_msa1, avdec_mscc, avdec_msmpeg4, avdec_msmpeg4v1, avdec_msmpeg4v2, avdec_msnsiren, avdec_msp2, avdec_msrle, avdec_mss1, avdec_mss2, avdec_msvideo1, avdec_mszh, avdec_mts2, avdec_mv30, avdec_mvc1, avdec_mvc2, avdec_mvdv, avdec_mvha, avdec_mwsc, avdec_mxpeg, avdec_nellymoser, avdec_notchlc, avdec_nuv, avdec_on2avc, avdec_opus, avdec_osq, avdec_paf_audio, avdec_paf_video, avdec_pam, avdec_pbm, avdec_pcm_lxf, avdec_pcm_sga, avdec_pcm_vidc, avdec_pcx, avdec_pdv, avdec_pfm, avdec_pgm, avdec_pgmyuv, avdec_pgx, avdec_phm, avdec_photocd, avdec_pictor, avdec_pixlet, avdec_png, avdec_ppm, avdec_prores, avdec_prosumer, avdec_psd, avdec_ptx, avdec_qcelp, avdec_qdm2, avdec_qdmc, avdec_qdraw, avdec_qoi, avdec_qpeg, avdec_qtrle, avdec_r10k, avdec_ralf, avdec_rasc, avdec_real_144, avdec_real_288, avdec_rka, avdec_rl2, avdec_roq_dpcm, avdec_roqvideo, avdec_rpza, avdec_rscc, avdec_rtv1, avdec_rv10, avdec_rv20, avdec_rv30, avdec_rv40, avdec_s302m, avdec_sanm, avdec_sbc, avdec_scpr, avdec_screenpresso, avdec_sdx2_dpcm, avdec_sga, avdec_sgi, avdec_sgirle, avdec_sheervideo, avdec_shorten, avdec_simbiosis_imx, avdec_sipr, avdec_siren, avdec_smackaud, avdec_smackvid, avdec_smc, avdec_smvjpeg, avdec_snow, avdec_sol_dpcm, avdec_sonic, avdec_sp5x, avdec_speedhq, avdec_speex, avdec_srgc, avdec_sunrast, avdec_svq1, avdec_svq3, avdec_tak, avdec_targa, avdec_targa_y216, avdec_tdsc, avdec_thp, avdec_tiertexseqvideo, avdec_tiff, avdec_tmv, avdec_truehd, avdec_truemotion1, avdec_truemotion2, avdec_truemotion2rt, avdec_truespeech, avdec_tscc2, avdec_tta, avdec_twinvq, avdec_txd, avdec_ultimotion, avdec_utvideo, avdec_vb, avdec_vble, avdec_vbn, avdec_vc1, avdec_vc1image, avdec_vcr1, avdec_vmdaudio, avdec_vmdvideo, avdec_vmix, avdec_vmnc, avdec_vnull, avdec_vp3, avdec_vp4, avdec_vp5, avdec_vp6, avdec_vp6a, avdec_vp6f, avdec_vp7, avdec_vp8, avdec_vp9, avdec_vqavideo, avdec_vqc, avdec_wady_dpcm, avdec_wavarc, avdec_wavesynth, avdec_wbmp, avdec_wcmv, avdec_webp, avdec_wmalossless, avdec_wmapro, avdec_wmav1, avdec_wmav2, avdec_wmavoice, avdec_wmv1, avdec_wmv2, avdec_wmv3, avdec_wmv3image, avdec_wnv1, avdec_ws_snd1, avdec_xan_dpcm, avdec_xan_wc3, avdec_xan_wc4, avdec_xbin, avdec_xbm, avdec_xface, avdec_xl, avdec_xma1, avdec_xma2, avdec_xpm, avdec_xwd, avdec_ylc, avdec_yop, avdec_zerocodec, avdec_zmbv, avdeinterlace, avdemux_4xm, avdemux_aiff, avdemux_ape, avdemux_avs, avdemux_bfstm, avdemux_brstm, avdemux_daud, avdemux_dsf, avdemux_ea, avdemux_film_cpk, avdemux_gif, avdemux_gxf, avdemux_idcin, avdemux_iff, avdemux_ipmovie, avdemux_ivf, avdemux_mm, avdemux_mmf, avdemux_mpc, avdemux_mpc8, avdemux_mxf, avdemux_nsv, avdemux_nut, avdemux_nuv, avdemux_psxstr, avdemux_pva, avdemux_smk, avdemux_sol, avdemux_tta, avdemux_vmd, avdemux_voc, avdemux_wc3movie, avdemux_wsaud, avdemux_wsvqa, avdemux_xwma, avdemux_yuv4mpegpipe, avenc_a64multi, avenc_a64multi5, avenc_aac, avenc_ac3, avenc_ac3_fixed, avenc_adpcm_adx, avenc_adpcm_argo, avenc_adpcm_ima_alp, avenc_adpcm_ima_amv, avenc_adpcm_ima_apm, avenc_adpcm_ima_qt, avenc_adpcm_ima_ssi, avenc_adpcm_ima_wav, avenc_adpcm_ima_ws, avenc_adpcm_ms, avenc_adpcm_swf, avenc_adpcm_yamaha, avenc_alac, avenc_alias_pix, avenc_amv, avenc_anull, avenc_apng, avenc_aptx, avenc_aptx_hd, avenc_asv1, avenc_asv2, avenc_avrp, avenc_avui, avenc_bitpacked, avenc_bmp, avenc_cfhd, avenc_cinepak, avenc_cljr, avenc_comfortnoise, avenc_dca, avenc_dfpwm, avenc_dnxhd, avenc_dpx, avenc_dvvideo, avenc_eac3, avenc_exr, avenc_ffv1, avenc_ffvhuff, avenc_fits, avenc_flashsv, avenc_flashsv2, avenc_flv, avenc_g722, avenc_g723_1, avenc_g726, avenc_g726le, avenc_h261, avenc_h263, avenc_h263p, avenc_hap, avenc_hdr, avenc_huffyuv, avenc_jpeg2000, avenc_jpegls, avenc_ljpeg, avenc_magicyuv, avenc_mjpeg, avenc_mlp, avenc_mp2, avenc_mp2fixed, avenc_mpeg1video, avenc_mpeg2video, avenc_mpeg4, avenc_msmpeg4, avenc_msmpeg4v2, avenc_msrle, avenc_msvideo1, avenc_nellymoser, avenc_opus, avenc_pam, avenc_pbm, avenc_pcm_vidc, avenc_pcx, avenc_pfm, avenc_pgm, avenc_pgmyuv, avenc_phm, avenc_png, avenc_ppm, avenc_prores, avenc_prores_aw, avenc_prores_ks, avenc_qoi, avenc_qtrle, avenc_r10k, avenc_real_144, avenc_roq_dpcm, avenc_roqvideo, avenc_rpza, avenc_rv10, avenc_rv20, avenc_s302m, avenc_sbc, avenc_sgi, avenc_smc, avenc_snow, avenc_sonic, avenc_sonicls, avenc_speedhq, avenc_sunrast, avenc_svq1, avenc_targa, avenc_tiff, avenc_truehd, avenc_tta, avenc_utvideo, avenc_vbn, avenc_vc2, avenc_vnull, avenc_wavpack, avenc_wbmp, avenc_wmav1, avenc_wmav2, avenc_wmv1, avenc_wmv2, avenc_xbm, avenc_xface, avenc_xwd, avenc_zmbv, avmux_3g2, avmux_3gp, avmux_a64, avmux_adts, avmux_adx, avmux_aiff, avmux_alp, avmux_amr, avmux_amv, avmux_apm, avmux_apng, avmux_argo_asf, avmux_argo_cvg, avmux_asf, avmux_asf_stream, avmux_ast, avmux_au, avmux_avi, avmux_avif, avmux_avm2, avmux_avs3, avmux_bit, avmux_caf, avmux_chromaprint, avmux_codec2, avmux_dash, avmux_daud, avmux_dv, avmux_dvd, avmux_f4v, avmux_film_cpk, avmux_filmstrip, avmux_fits, avmux_flv, avmux_gxf, avmux_hash, avmux_hds, avmux_hls, avmux_ico, avmux_ilbc, avmux_ipod, avmux_ircam, avmux_ismv, avmux_ivf, avmux_kvag, avmux_latm, avmux_matroska, avmux_md5, avmux_mkvtimestamp_v2, avmux_mmf, avmux_mov, avmux_mp2, avmux_mp3, avmux_mp4, avmux_mpeg, avmux_mpegts, avmux_mpjpeg, avmux_mxf, avmux_mxf_d10, avmux_mxf_opatom, avmux_nut, avmux_obu, avmux_oga, avmux_ogg, avmux_ogv, avmux_oma, avmux_opus, avmux_psp, avmux_rm, avmux_rso, avmux_rtsp, avmux_sap, avmux_smjpeg, avmux_smoothstreaming, avmux_sox, avmux_spdif, avmux_spx, avmux_streamhash, avmux_svcd, avmux_swf, avmux_tta, avmux_uncodedframecrc, avmux_vc1test, avmux_vcd, avmux_vidc, avmux_vob, avmux_voc, avmux_w64, avmux_wav, avmux_webp, avmux_wsaud, avmux_wtv, avmux_yuv4mpegpipe, avvideocompare
+Gstreamer-Encoders: application/gxf; application/mxf; application/ogg; application/x-gst-av-a64; application/x-gst-av-adts; application/x-gst-av-adx; application/x-gst-av-alp; application/x-gst-av-amv; application/x-gst-av-apm; application/x-gst-av-apng; application/x-gst-av-argo_asf; application/x-gst-av-argo_cvg; application/x-gst-av-asf_stream; application/x-gst-av-ast; application/x-gst-av-avif; application/x-gst-av-avm2; application/x-gst-av-avs3; application/x-gst-av-bit; application/x-gst-av-caf; application/x-gst-av-chromaprint; application/x-gst-av-codec2; application/x-gst-av-dash; application/x-gst-av-daud; application/x-gst-av-dvd; application/x-gst-av-f4v; application/x-gst-av-film_cpk; application/x-gst-av-filmstrip; application/x-gst-av-fits; application/x-gst-av-hash; application/x-gst-av-hds; application/x-gst-av-hls; application/x-gst-av-ico; application/x-gst-av-ilbc; application/x-gst-av-ircam; application/x-gst-av-ismv; application/x-gst-av-kvag; application/x-gst-av-latm; application/x-gst-av-md5; application/x-gst-av-mkvtimestamp_v2; application/x-gst-av-mmf; application/x-gst-av-mpjpeg; application/x-gst-av-mxf_opatom; application/x-gst-av-nut; application/x-gst-av-obu; application/x-gst-av-oga; application/x-gst-av-ogv; application/x-gst-av-oma; application/x-gst-av-opus; application/x-gst-av-rso; application/x-gst-av-rtsp; application/x-gst-av-sap; application/x-gst-av-smjpeg; application/x-gst-av-smoothstreaming; application/x-gst-av-sox; application/x-gst-av-spdif; application/x-gst-av-spx; application/x-gst-av-streamhash; application/x-gst-av-svcd; application/x-gst-av-uncodedframecrc; application/x-gst-av-vc1test; application/x-gst-av-vcd; application/x-gst-av-vidc; application/x-gst-av-vob; application/x-gst-av-w64; application/x-gst-av-webp; application/x-gst-av-wsaud; application/x-gst-av-wtv; application/x-pn-realmedia, systemstream=(boolean)true; application/x-shockwave-flash; application/x-yuv4mpeg, y4mversion=(int)2; audio/G722; audio/aptx; audio/aptx-hd; audio/mpeg, mpegversion=(int)1, layer=(int)2; audio/mpeg, mpegversion=(int)4, base-profile=(string)lc; audio/x-ac3; audio/x-adpcm, layout=(string){ yamaha, swf, microsoft, westwood, dvi, quicktime, amv, g726, adx }; audio/x-aiff; audio/x-alac; audio/x-amr-nb-sh; audio/x-au; audio/x-dpcm, layout=(string)roq; audio/x-dts; audio/x-eac3; audio/x-mlp; audio/x-nellymoser; audio/x-pn-realaudio, raversion=(int)1; audio/x-smpte-302m; audio/x-true-hd; audio/x-tta; audio/x-ttafile; audio/x-voc; audio/x-wav; audio/x-wma, wmaversion=(int){ 2, 1 }; image/bmp; image/jpeg, parsed=(boolean)true; image/pbm; image/png; image/ppm; image/tiff; image/x-j2c; image/x-pcx; image/x-portable-anymap; image/x-portable-graymap; image/x-sgi; image/x-sun-raster; image/x-tga; unknown/unknown; video/mpeg, mpegversion=(int)4, systemstream=(boolean)false, profile=(string){ simple, advanced-simple }; video/mpeg, mpegversion=(int){ 2, 1 }, systemstream=(boolean)false; video/mpeg, systemstream=(boolean)true; video/mpegts, systemstream=(boolean)true; video/quicktime, variant=(string){ 3gpp, 3g2, psp, iso, apple, ipod }; video/x-amv; video/x-apple-video; video/x-asus, asusversion=(int){ 2, 1 }; video/x-cineform; video/x-cinepak; video/x-cirrus-logic-accupak; video/x-divx, divxversion=(int)5; video/x-dnxhd; video/x-dv, systemstream=(boolean){ true, false }; video/x-ffv, ffvversion=(int)1; video/x-ffvhuff; video/x-flash-screen; video/x-flash-screen2; video/x-flash-video, flvversion=(int)1; video/x-flv; video/x-gst-av-pgmyuv; video/x-gst-av-roqvideo; video/x-h261; video/x-h263, variant=(string)itu, h263version=(string){ h263p, h263 }; video/x-huffyuv; video/x-ivf; video/x-matroska; video/x-ms-asf; video/x-msmpeg, msmpegversion=(int){ 43, 42 }; video/x-msvideo; video/x-msvideocodec, msvideoversion=(int)1; video/x-pn-realvideo, rmversion=(int){ 2, 1 }; video/x-prores; video/x-rle, layout=(string){ quicktime, microsoft }; video/x-smc; video/x-speedhq; video/x-svq, svqversion=(int)1; video/x-wmv, wmvversion=(int){ 2, 1 }; video/x-zmbv
+Gstreamer-Version: 1.24
+Description-md5: bf84995f63f72239acc44385b62f37da
+
+Package: lua-argparse
+Architecture: all
+Version: 0.7.1-2
+Multi-Arch: foreign
+Priority: optional
+Section: universe/interpreters
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Lua Team <pkg-lua-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 112
+Provides: lua5.1-argparse, lua5.2-argparse, lua5.3-argparse, lua5.4-argparse
+Filename: pool/universe/l/lua-argparse/lua-argparse_0.7.1-2_all.deb
+Size: 36142
+MD5sum: a1b739b6a466f187cf8eb2f0553914cb
+SHA1: 643da8b639fb2bc135ce7db9b4d48120a2995fd5
+SHA256: d42ab7983ed5e6d547b459d5d4215640ce240f2d3555c4e33e76c51c66b14b9e
+SHA512: 55223d6aa5f7eb83405ea0ef4ec301e83f87091eda3de7b90f7dd037b0957544552711f84d1a3cf3ea65553671e8bbe6e0628aadeefb0ded7daf7b2938762770
+Homepage: https://github.com/luarocks/argparse
+Description: feature-rich command line parser for Lua language
+Lua-Versions: 5.1 5.2 5.3 5.4
+Description-md5: 120209fdfca6c33aa99022cc7204987c
+
+Package: batalert
+Architecture: all
+Version: 0.4.0-1
+Priority: optional
+Section: universe/ruby
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Ruby Team <pkg-ruby-extras-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 27
+Depends: ruby, ruby-espeak, ruby-libnotify
+Filename: pool/universe/b/batalert/batalert_0.4.0-1_all.deb
+Size: 4376
+MD5sum: 20e8c4d83979245b6626185d093a4a42
+SHA1: 4dfbaa28ba555808fa3b48d5b510805b205a8453
+SHA256: a556b2385c20ca47bfe2d0461bbf0f2165564fef118f049730da20ee3104af0d
+SHA512: b1ad476a9fba736bc099ecb5e83bd4ae0fc41af7997e90adb2bb86cee3239de799ffe4a46184609b305a12a8ac0557fe930ac19b5e05372438e42b2bf6087b26
+Homepage: https://github.com/utkarsh2102/batalert
+Description: Battery notifications/alerts for your favorite WM!
+Ruby-Versions: all
+Description-md5: 4a30da299a07e14e930604af30e8b9b7
+
+Package: libghc-prettyprinter-convert-ansi-wl-pprint-dev
+Architecture: amd64
+Version: 1.1.2-2
+Priority: optional
+Section: universe/haskell
+Source: haskell-prettyprinter-convert-ansi-wl-pprint
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 126
+Provides: libghc-prettyprinter-convert-ansi-wl-pprint-dev-1.1.2-98fa3
+Depends: libghc-ansi-terminal-dev-0.11.5-ca1dc, libghc-ansi-wl-pprint-dev-0.6.9-82323, libghc-base-dev-4.17.2.0-68dfe, libghc-prettyprinter-ansi-terminal-dev-1.1.3-d4b66, libghc-prettyprinter-dev-1.7.1-0f57b, libghc-text-dev-2.0.2-0847e, libc6 (>= 2.2.5), libgmp10 (>= 2:6.3.0+dfsg)
+Filename: pool/universe/h/haskell-prettyprinter-convert-ansi-wl-pprint/libghc-prettyprinter-convert-ansi-wl-pprint-dev_1.1.2-2_amd64.deb
+Size: 18574
+MD5sum: 6816a505fe618d88bb022c3c867e80e5
+SHA1: fa502a085fb0efc506bf343093f7a681b7192708
+SHA256: 5ac3ee33b6bfff746fe8ff581993c15577b328436fd3972f3bef5c0d4973b65b
+SHA512: ee247e1e922399c351dc116b13e127684fa4fe6529bc84945d8cb9953fbb5d2538b11108b6fa92ed877456e3102a50dd854118827ee9b390e32e3acc142b866f
+Homepage: https://github.com/quchen/prettyprinter
+Description: convert documents between ansi-wl-pprint and prettyprinter
+Ghc-Package: prettyprinter-convert-ansi-wl-pprint-1.1.2-2Q0KntSsrfbEdtmumMUWdZ
+Description-md5: 7713fa0ef2a459f488104cecfed41f88
+
+Package: python3-biomaj3-process
+Architecture: all
+Version: 3.0.19-1
+Priority: optional
+Section: universe/python
+Source: biomaj3-process
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Med Packaging Team <debian-med-packaging@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 124
+Depends: python3-biomaj3-core, python3-biomaj3-zipkin, python3-consul, python3-flask, python3-pika, python3-prometheus-client, python3-protobuf, python3-redis, python3-requests, python3-yaml, python3:any
+Suggests: python3-gunicorn, redis-server
+Filename: pool/universe/b/biomaj3-process/python3-biomaj3-process_3.0.19-1_all.deb
+Size: 25660
+MD5sum: 6e8e71e7bbf93beb450f00550716a0e5
+SHA1: 53559de2cadff2eb0c8b750abdd7335b08ee3312
+SHA256: 0204b1793e08b592d81b5d43c4a4cdf3770d17eeac09d8077912b66ca16dfcc1
+SHA512: dc4a0743611431b40363be114f5a1e6a91b38e561653be99c7934bdaf069f5b0a0b05696b99f068950eba992d5058327ce37db3130113d25d42917526e2f1dda
+Homepage: https://github.com/genouest/biomaj-process
+Description: BioMAJ process management library
+Python-Egg-Name: biomaj-process
+Description-md5: 85eaea3dd1f8d7f30a46cc5d00145237
+
+Package: rtl8812au-dkms
+Architecture: all
+Version: 4.3.8.12175.20140902+dfsg-0ubuntu22
+Priority: optional
+Section: universe/kernel
+Source: rtl8812au
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 8698
+Depends: dkms (>= 3.0.3-4~), linux-libc-dev, libc6-dev
+Filename: pool/universe/r/rtl8812au/rtl8812au-dkms_4.3.8.12175.20140902+dfsg-0ubuntu22_all.deb
+Size: 1153772
+MD5sum: da05b3c81f52d9b5223d5e2578a478d3
+SHA1: 43536d78183d8d9f49b08c6e812a9038c7bbc9c2
+SHA256: d6a453da899bc04f0988a76e9dfea02cd94c456f3747f25f58a2e841ab44e5ad
+SHA512: 38028a949f42b93ee1733d75992c2e85e2656cfa8283c5e056888049330aa141ec61f0d4d32acfab2dfcd7c4b89ccd22386776d24f032219298c90ede743a327
+Homepage: http://www.realtek.com.tw/
+Description: dkms source for the r8812au network driver
+Modaliases: 8812au(usb:v056Ep4007d*dc*dsc*dp*ic*isc*ip*in*, usb:v0411p0242d*dc*dsc*dp*ic*isc*ip*in*, usb:v2019pAB32d*dc*dsc*dp*ic*isc*ip*in*, usb:v0846p9052d*dc*dsc*dp*ic*isc*ip*in*, usb:v0E66p0023d*dc*dsc*dp*ic*isc*ip*in*, usb:v2001p3318d*dc*dsc*dp*ic*isc*ip*in*, usb:v2001p3314d*dc*dsc*dp*ic*isc*ip*in*, usb:v04BBp0953d*dc*dsc*dp*ic*isc*ip*in*, usb:v7392pA813d*dc*dsc*dp*ic*isc*ip*in*, usb:v7392pA812d*dc*dsc*dp*ic*isc*ip*in*, usb:v7392pA811d*dc*dsc*dp*ic*isc*ip*in*, usb:v0BDAp0820d*dc*dsc*dp*icFFiscFFipFFin*, usb:v0BDAp8822d*dc*dsc*dp*ic*isc*ip*in*, usb:v0BDAp0821d*dc*dsc*dp*ic*isc*ip*in*, usb:v0BDAp0811d*dc*dsc*dp*ic*isc*ip*in*, usb:v0411p025Dd*dc*dsc*dp*ic*isc*ip*in*, usb:v2357p0103d*dc*dsc*dp*ic*isc*ip*in*, usb:v2357p0101d*dc*dsc*dp*ic*isc*ip*in*, usb:v20F4p805Bd*dc*dsc*dp*ic*isc*ip*in*, usb:v2001p3316d*dc*dsc*dp*ic*isc*ip*in*, usb:v2001p3315d*dc*dsc*dp*ic*isc*ip*in*, usb:v07B8p8812d*dc*dsc*dp*ic*isc*ip*in*, usb:v2019pAB30d*dc*dsc*dp*ic*isc*ip*in*, usb:v1740p0100d*dc*dsc*dp*ic*isc*ip*in*, usb:v148Fp9097d*dc*dsc*dp*ic*isc*ip*in*, usb:v13B1p003Fd*dc*dsc*dp*ic*isc*ip*in*, usb:v1058p0632d*dc*dsc*dp*ic*isc*ip*in*, usb:v2001p3313d*dc*dsc*dp*ic*isc*ip*in*, usb:v0586p3426d*dc*dsc*dp*ic*isc*ip*in*, usb:v0E66p0022d*dc*dsc*dp*ic*isc*ip*in*, usb:v0B05p17D2d*dc*dsc*dp*ic*isc*ip*in*, usb:v0409p0408d*dc*dsc*dp*ic*isc*ip*in*, usb:v0789p016Ed*dc*dsc*dp*ic*isc*ip*in*, usb:v04BBp0952d*dc*dsc*dp*ic*isc*ip*in*, usb:v0DF6p0074d*dc*dsc*dp*ic*isc*ip*in*, usb:v7392pA822d*dc*dsc*dp*ic*isc*ip*in*, usb:v2001p330Ed*dc*dsc*dp*ic*isc*ip*in*, usb:v050Dp1109d*dc*dsc*dp*ic*isc*ip*in*, usb:v050Dp1106d*dc*dsc*dp*ic*isc*ip*in*, usb:v0BDAp881Cd*dc*dsc*dp*ic*isc*ip*in*, usb:v0BDAp881Bd*dc*dsc*dp*ic*isc*ip*in*, usb:v0BDAp881Ad*dc*dsc*dp*ic*isc*ip*in*, usb:v0BDAp8812d*dc*dsc*dp*ic*isc*ip*in*)
+Description-md5: c9d0c822d4f1ddbb15a058cd3313eabb
+
+Package: hugo
+Architecture: amd64
+Version: 0.123.7-1build1
+Priority: optional
+Section: universe/web
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Go Packaging Team <team+pkg-go@tracker.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 78678
+Depends: libsass1 (>= 3.6.5), libc6 (>= 2.34), libwebp7 (>= 1.3.2)
+Recommends: git, golang-any
+Suggests: asciidoctor, npm, pandoc, python3-docutils
+Filename: pool/universe/h/hugo/hugo_0.123.7-1build1_amd64.deb
+Size: 15475098
+MD5sum: 4790a44957ce5c557d9ea84fd0eccac9
+SHA1: bc154b989741b6c47c49d25808a1dbb06291e7b9
+SHA256: 2c290a1c7181eaca8c6628497889447a3303deed8296d62e88747b4278b9eaa1
+SHA512: 8b986cc9d04c5b0af2d3b80835d42e3300a5e2b790863fc1585618d41e82ad39cbdec754c77cf819b58ff0583e8fb3d1c459f6fc5ad1fc9b4ee69d07066366a4
+Homepage: https://gohugo.io/
+Description: Fast and flexible Static Site Generator written in Go
+Static-Built-Using: go-md2man-v2 (= 2.0.3+ds1-1), golang-1.22 (= 1.22.1-1build1), golang-blackfriday-v2 (= 2.1.0-1), golang-fsnotify (= 1.7.0-1), golang-github-alecthomas-chroma-v2 (= 2.12.0-2), golang-github-armon-go-radix (= 1.0.0+git20221118.54df44f-1), golang-github-aws-aws-sdk-go (= 1.49.0-2), golang-github-aws-aws-sdk-go-v2 (= 1.24.1-2), golang-github-aws-smithy-go (= 1.19.0-1), golang-github-azure-azure-pipeline-go (= 0.2.3-1), golang-github-azure-azure-storage-blob-go (= 0.15.0-1), golang-github-azure-go-autorest (= 14.2.0+git20220726.711dde1-1), golang-github-bep-clocks (= 0.5.0-2), golang-github-bep-debounce (= 1.2.0+really1.2.0-2), golang-github-bep-gitmap (= 1.3.0-1), golang-github-bep-goat (= 0.5.0-2), golang-github-bep-godartsass (= 1.2.0-1), golang-github-bep-godartsass-v2 (= 2.0.0-2), golang-github-bep-golibsass (= 1.1.1-1), golang-github-bep-gowebp (= 0.3.0+dfsg-1), golang-github-bep-lazycache (= 0.4.0-1), golang-github-bep-logg (= 0.4.0-1), golang-github-bep-mclib (= 1.20400.20402-2), golang-github-bep-overlayfs (= 0.9.2-1), golang-github-bep-simplecobra (= 0.4.0-1), golang-github-bep-tmc (= 0.5.1-3), golang-github-burntsushi-locker (= 0.0~git20171006.a6e239e-3), golang-github-clbanning-mxj (= 2.7.0-1), golang-github-cli-safeexec (= 1.0.1-1), golang-github-disintegration-gift (= 1.2.1-3), golang-github-dlclark-regexp2 (= 1.10.0+ds1-1), golang-github-dustin-go-humanize (= 1.0.1-1), golang-github-evanw-esbuild (= 0.20.1-1), golang-github-fatih-color (= 1.16.0-1), golang-github-frankban-quicktest (= 1.14.6-1), golang-github-getkin-kin-openapi (= 0.123.0-1), golang-github-ghodss-yaml (= 1.0.0+git20220118.d8423dc-2), golang-github-go-openapi-jsonpointer (= 1:0.20.2-1), golang-github-go-openapi-swag (= 1:0.22.8-1), golang-github-gobuffalo-flect (= 1.0.2-1), golang-github-gobwas-glob (= 0.2.3+git20180208.19c076c-2), golang-github-golang-groupcache (= 0.0~git20210331.41bb18b-1), golang-github-golang-jwt-jwt (= 5.0.0+really4.5.0-1), golang-github-golang-protobuf-1-5 (= 1.5.3-1), golang-github-google-go-cmp (= 0.6.0-1), golang-github-google-uuid (= 1.6.0-1), golang-github-google-wire (= 0.5.0-2build1), golang-github-googleapis-gax-go (= 2.0.5-4), golang-github-gorilla-websocket (= 1.5.1-1), golang-github-hairyhenderson-go-codeowners (= 0.4.0-1), golang-github-hashicorp-golang-lru-v2 (= 2.0.7-1), golang-github-invopop-yaml (= 0.2.0-2), golang-github-jdkato-prose (= 1.2.1-1), golang-github-jmespath-go-jmespath (= 0.4.0-2), golang-github-josharian-intern (= 1.0.0-3), golang-github-kyokomi-emoji (= 2.2.12-1), golang-github-mailru-easyjson (= 0.7.7-1build1), golang-github-marekm4-color-extractor (= 1.2.1-1), golang-github-mattn-go-colorable (= 0.1.13-1), golang-github-mattn-go-ieproxy (= 0.0.9-1), golang-github-mattn-go-isatty (= 0.0.20-1), golang-github-mattn-go-runewidth (= 0.0.15-2), golang-github-mitchellh-hashstructure (= 1.1.0-1), golang-github-mitchellh-mapstructure (= 1.5.0+git20231216.8508981-1), golang-github-mohae-deepcopy (= 0.0~git20170929.c48cc78-4), golang-github-muesli-smartcrop (= 0.3.0+dfsg1-2), golang-github-niklasfasching-go-org (= 1.7.0-1), golang-github-olekukonko-tablewriter (= 0.0.5-2), golang-github-pbnjay-memory (= 0.0~git20210728.7b4eea6-2), golang-github-pelletier-go-toml.v2 (= 2.1.1-1), golang-github-perimeterx-marshmallow (= 1.1.5-1), golang-github-pkg-errors (= 0.9.1-3), golang-github-rivo-uniseg (= 0.4.4-1), golang-github-rogpeppe-go-internal (= 1.12.0-3), golang-github-rwcarlsen-goexif (= 0.0~git20190401.9e8deec-2), golang-github-sanity-io-litter (= 1.5.5-1), golang-github-spf13-afero (= 1.11.0-1), golang-github-spf13-cast (= 1.6.0-1), golang-github-spf13-cobra (= 1.8.0-1), golang-github-spf13-fsync (= 0.10.1-1), golang-github-spf13-pflag (= 1.0.6~git20210604-d5e0c0615ace-1), golang-github-tdewolff-minify (= 2.20.17-1), golang-github-tdewolff-parse (= 2.7.12-1), golang-github-yuin-goldmark (= 1.7.0-1), golang-github-yuin-goldmark-emoji (= 1.0.2-1), golang-go.crypto (= 1:0.19.0-1), golang-go.opencensus (= 0.24.0-1), golang-gocloud (= 0.26.0-1), golang-golang-x-exp (= 0.0~git20231006.7918f67-1), golang-golang-x-image (= 0.15.0-1), golang-golang-x-mod (= 0.15.0-1), golang-golang-x-net (= 1:0.21.0+dfsg-1), golang-golang-x-oauth2 (= 0.15.0-1), golang-golang-x-sync (= 0.6.0-1), golang-golang-x-sys (= 0.17.0-1), golang-golang-x-text (= 0.14.0-2), golang-golang-x-tools (= 1:0.18.0+ds-1), golang-golang-x-xerrors (= 0.0~git20231012.104605a-1), golang-google-api (= 0.61.0-4), golang-google-cloud (= 0.56.0-3), golang-google-genproto (= 0.0~git20200413.b5235f6-3), golang-google-grpc (= 1.38.0+really1.33.3-1build1), golang-google-protobuf (= 1.32.0-1), golang-gopkg-yaml.v3 (= 3.0.1-3), golang-pretty (= 0.3.1-1), golang-sslmate-src-go-pkcs12 (= 0.2.0-1), golang-text (= 0.2.0-2), golang-uber-automaxprocs (= 1.5.3-1), golang-yaml.v2 (= 2.4.0-4)
+Description-md5: 9151e417bc3d41f66f63544cd771c463
+
+Package: golang-github-svent-go-nbreader-dev
+Architecture: all
+Version: 0~20150201-4
+Multi-Arch: foreign
+Priority: extra
+Section: universe/devel
+Source: golang-github-svent-go-nbreader
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Go Packaging Team <team+pkg-go@tracker.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 19
+Filename: pool/universe/g/golang-github-svent-go-nbreader/golang-github-svent-go-nbreader-dev_0~20150201-4_all.deb
+Size: 4104
+MD5sum: 7c1e1d96e488df38907f74e93aaf20e2
+SHA1: 5d72db779ddf390d4d8ff45b044881eb584a7856
+SHA256: 7bd9ed588400afa75fc1a0c5acf84d02f4c752869877d84f7f958acb282506dd
+SHA512: f7cfa4eb976a904b77cab57284ed1fcb3a2a8fa2393073d3d3128c362aa99858199ba95ef6e103279a8c3c4cee0d1b6cc936ea7eb82670961356599fc0a8a803
+Homepage: https://github.com/svent/go-nbreader
+Description: non-blocking io.Reader for go
+Go-Import-Path: github.com/svent/go-nbreader
+Description-md5: a89514cbd10ab48091190112beb2fecf
+
+Package: python3.12-nopie
+Architecture: amd64
+Version: 3.12.3-1
+Multi-Arch: allowed
+Priority: optional
+Section: universe/python
+Source: python3.12
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Matthias Klose <doko@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 7903
+Depends: python3.12-minimal (= 3.12.3-1), libc6 (>= 2.38), libexpat1 (>= 2.6.0), zlib1g (>= 1:1.2.0)
+Filename: pool/universe/p/python3.12/python3.12-nopie_3.12.3-1_amd64.deb
+Size: 2331560
+MD5sum: 19919b6a986e3a0326299a21d6a2113e
+SHA1: fb5b2c67ee475364a81ab2079db84e894ef36406
+SHA256: 37935093ea17024e8f2530f019fa6ffa87b25157a068251a9f9779915bc0258e
+SHA512: b0c4c043d84f82d179add58ac4c6586dd40dd5a310d5abae7f565494fce852582b653dbdb4b20dfaaadb205fa5b3c6630ee6ded228c3321a243c52e6de1c3b0f
+Description: Python interpreter linked without PIE (version 3.12)
+Cnf-Visible-Pkgname: python3.12
+Description-md5: b2caa9209422575dc286fad5c3159b64
+
+Package: libcleri1-dbgsym
+Architecture: amd64
+Version: 1.0.1-2
+Auto-Built-Package: debug-symbols
+Multi-Arch: same
+Priority: optional
+Section: universe/debug
+Source: libcleri
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: SiriDB Maintainers <libcleri@packages.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 2
+Depends: libcleri1 (= 1.0.1-2)
+Filename: pool/universe/libc/libcleri/libcleri1-dbgsym_1.0.1-2_amd64.deb
+Size: 37362
+MD5sum: b36572074b037527b46db9cf881c3c83
+SHA1: 35d5a42917c16eaa1641b13b3d9817c4ec32f3f5
+SHA256: 97f3f2ec3e935f49badc4f21db591a38fa025c664342c70e6ec7c0ee8564e293
+SHA512: 643fda575f7564dcfcec9e12cdd4d792e84ab75235b5e01a67fb0bd500f75edc57cfe4b26ae6a49adffde4a80156ebe9957de2780b020f2c3f6be725ba50f3d3
+Description: debug symbols for libcleri1
+Build-Ids: bc1c19361b79171c06f481c3a561430527ce53bb
+Description-md5: 35eca3f197fd23b7219058b35148a884
+
+Package: node-buble
+Architecture: all
+Version: 0.20.0+~0.20.1-5
+Priority: optional
+Section: universe/javascript
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian Javascript Maintainers <pkg-javascript-devel@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 5606
+Provides: node-types-buble (= 0.20.1)
+Depends: node-acorn, node-chalk, node-magic-string, node-minimist, node-regexpu-core, nodejs:any
+Filename: pool/universe/n/node-buble/node-buble_0.20.0+~0.20.1-5_all.deb
+Size: 314350
+MD5sum: 930147ac67652530b19d41c903fef107
+SHA1: cab7e3cac45dd182543c92df8ccc1c0305c44a88
+SHA256: 5ae5b8af25092f75722882c8e07d01c5be104a5ff729714dc72c17bac0672e7c
+SHA512: 7007dfc17d3122e7a06d4c0da4d6ee39ae908fa4f0f1f5b0483e18a3c84b6b79a177e365ba1c68879539dca93970928493a9c8084a51a367e4f92b9e4a2cd303
+Homepage: https://github.com/bublejs/buble
+Description: Fast ES2015 compiler for Node.js
+Javascript-Built-Using: mocha (= 10.2.0+ds1+~cs29.5.1-1),node-acorn (= 8.8.1+ds+~cs25.17.7-2),node-chalk (= 5.2.0-1),node-console-group (= 0.3.3-5),node-glob (= 8.0.3+~cs8.4.15-1),node-magic-string (= 0.30.1-1),node-minimist (= 1.2.7+~cs5.3.2-2),node-regexpu-core (= 5.2.2-3),node-rimraf (= 3.0.2-2),node-rollup-plugin-commonjs (= 24.0.1+ds1-2),node-rollup-plugin-json (= 6.0.0+ds1-2),node-rollup-plugin-node-resolve (= 15.0.1+ds-1),node-source-map (= 0.7.0++dfsg2+really.0.6.1-15),node-source-map-support (= 0.5.21+ds+~0.5.4-1),rollup (= 3.15.0-2)
+Description-md5: e4a9f069782f79ae20e81974f3cee405
+
+Package: kawari8
+Architecture: amd64
+Version: 8.2.8-11build4
+Priority: optional
+Section: universe/games
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Ying-Chun Liu (PaulLiu) <paulliu@debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 1589
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.3.1), libpython3.12t64 (>= 3.12.1), libstdc++6 (>= 13.1)
+Suggests: ninix-aya
+Filename: pool/universe/k/kawari8/kawari8_8.2.8-11build4_amd64.deb
+Size: 532064
+MD5sum: e0022778d8996a64a63936174d1c65d3
+SHA1: 53930900325e83232dc12e2a380b15bc7f3a36f3
+SHA256: b2634a447ce38ec7dad28688d7fad545b94ed7b77a36c64c9d6438121eddd71c
+SHA512: 08c20274e8f79df1dfc947ba42400e1d0caf0be862f5529fa91ec7b3a26af9cce1e2c21c1613d63247565cc8135a76e54270f85d8eb2e2ec9a3ee70b9c94bf06
+Homepage: http://kawari.sourceforge.net/
+Description: Pseudo AI Shiori module used to create ghosts for Ukagaka
+Python-Version: current
+Description-md5: 1d68762b755b9f76813a648cf0346d13
+

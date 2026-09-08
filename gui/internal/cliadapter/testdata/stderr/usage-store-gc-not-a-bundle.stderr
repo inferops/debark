@@ -1,0 +1,16 @@
+debark: lock: read emptydir\lock.json: GetFileAttributesEx emptydir\lock.json: The system cannot find the file specified.
+
+Usage:
+  debark store gc [BUNDLE...] [flags]
+
+Flags:
+      --dry-run        report what would be removed without removing anything
+  -h, --help           help for gc
+      --store string   store location (default: config store_dir, else the XDG-correct default)
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

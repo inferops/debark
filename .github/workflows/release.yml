@@ -1,0 +1,430 @@
+name: Release
+
+# Triggered by pushing a "vX.Y.Z" tag. Publishes BOTH halves of this monorepo
+# onto ONE GitHub release: the `debark` CLI (.goreleaser.yaml) and the
+# `debark-gui` desktop application (gui/.goreleaser.yaml). Signs each half's
+# checksums file with cosign in keyless mode (Sigstore Fulcio/Rekor through
+# this workflow's own OIDC token - no private key is stored anywhere), attaches
+# an SBOM per archive, and generates SLSA build provenance for each half.
+#
+# Nothing here phones home, and nothing it produces does either: no telemetry,
+# no analytics, no crash reporting, no update check (docs/dev/contract-brief.md
+# rules 3 and 4). Publishing a GitHub release is not a call to a
+# debark-operated endpoint; an update check would be, and there is none.
+#
+# ---------------------------------------------------------------------------
+# WHY THIS SHAPE: one tag, one release, two goreleaser runs in sequence.
+#
+# Two Go modules with two goreleaser configs live in this repository. GoReleaser
+# has a built-in `monorepo:` feature (tag_prefix/dir) that exists for exactly
+# this, and it is GoReleaser Pro only - so it is not available here and this
+# workflow does the sequencing itself.
+#
+# The two options considered:
+#
+#   A. ONE `vX.Y.Z` tag -> ONE release carrying both products. The `cli` job
+#      runs .goreleaser.yaml, which CREATES the release. The `gui` job then
+#      runs gui/.goreleaser.yaml with `release.mode: append`, which finds that
+#      release and adds its artefacts and its own notes section to it.
+#
+#   B. TWO tags - `vX.Y.Z` for the CLI and `gui-vX.Y.Z` for the desktop app -
+#      driving two independent releases.
+#
+# A was chosen. B's problem is that goreleaser derives the version from the tag
+# and parses it as semver: `gui-v1.2.3` is not a version it can read, so B needs
+# GORELEASER_CURRENT_TAG spoofing or a synthetic tag, and the release it then
+# creates is attached to the wrong ref. It also splits one product's provenance
+# across two release pages and asks a user to work out which tag pairs with
+# which. A's cost, paid deliberately: the two runs are ordered (the `gui` job
+# `needs` the `cli` job), so a GUI build failure leaves a published release with
+# only the CLI half in it, and the fix is to re-run the `gui` job. That failure
+# is visible and recoverable; B's is a permanently confusing release history.
+#
+# Two properties of goreleaser v2 were read out of its source before relying on
+# them (v2.18.0, internal/client/github.go and internal/client/release_notes.go):
+#
+#   * `release.mode: append` is a RELEASE-NOTES mode: the new body becomes
+#     "existing\n\ncurrent". It does not delete or replace assets.
+#   * When goreleaser updates an existing release it reuses that release's own
+#     draft state (`data.Draft = new(release.Draft)`), so the second run does
+#     NOT push the published release back to draft.
+#   * Uploading an asset whose name already exists on the release gets a 422,
+#     which goreleaser marks unrecoverable unless
+#     `release.replace_existing_artifacts` is set. Nothing sets it, so the two
+#     configs must not produce a single shared filename - which is why each
+#     checksums file is now project-scoped (`debark_checksums.txt` and
+#     `debark-gui_checksums.txt`) instead of both being `checksums.txt`.
+#
+# Three further things are NOT the same across the two jobs, each because a
+# fact about the desktop application forces it (gui/docs/release.md is the long
+# form):
+#
+#   1. The `gui` job is pinned to ubuntu-24.04, not ubuntu-latest. That build
+#      links GTK3 and WebKitGTK through cgo, so the C toolchain and the system
+#      headers are inputs to the binary - measured, the same source built with
+#      gcc 13.3.0 and gcc 12.4.0 gives two different binaries. `ubuntu-latest`
+#      is a floating label that re-points without warning. The `cli` job is
+#      CGO_ENABLED=0 and does not have that exposure, but is pinned to the same
+#      image anyway rather than leaving one floating label in the file.
+#   2. The `gui` job installs libgtk-3-dev and libwebkit2gtk-4.1-dev. Those are
+#      needed to COMPILE, not just to run, and apt resolves whatever the archive
+#      holds that day - so the job records the resolved versions in the job
+#      summary. That does not make the Linux build reproducible; it makes it
+#      attributable.
+#   3. Every third-party action is pinned to a full commit SHA with the version
+#      in a trailing comment. A major tag is a mutable pointer, and re-pointing
+#      it runs arbitrary code with this workspace, the module cache and the job
+#      token. The one exception is documented at the provenance jobs.
+#
+# What is NOT here any more: the sibling-checkout dance the desktop app's own
+# release workflow used to need. `gui/go.mod` resolves the engine through
+# `replace github.com/inferops/debark => ../`, and after the merge into this
+# monorepo that is a path inside the same checkout - so there is no second
+# repository to check out, no DEBARK_CORE_REF to pin, and no drift to assert.
+# One commit describes both halves.
+#
+# Also gone: HOMEBREW_TAP_GITHUB_TOKEN. The homebrew_casks pipe it fed has been
+# removed from .goreleaser.yaml (macOS-only, and it pointed at a
+# `debark/homebrew-tap` repository that does not exist).
+# ---------------------------------------------------------------------------
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+
+permissions:
+  contents: read
+
+env:
+  # Use the toolchain setup-go installed; never silently download another one.
+  GOTOOLCHAIN: local
+
+jobs:
+  # ===========================================================================
+  # 1/2 - the CLI. Runs FIRST because it is the run that creates the GitHub
+  # release for this tag and writes the changelog into it. Pure Go,
+  # CGO_ENABLED=0, cross-compiled to linux/amd64, linux/arm64 and
+  # windows/amd64 from this one runner.
+  # ===========================================================================
+  cli:
+    name: goreleaser (debark CLI)
+    # Pinned, not ubuntu-latest. See note 1 in the header.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # create the GitHub release and upload assets
+      id-token: write # cosign keyless signing (Sigstore OIDC)
+    outputs:
+      hashes: ${{ steps.hashes.outputs.hashes }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0 # goreleaser needs full history and tags
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
+
+      - name: Install syft (SBOM)
+        uses: anchore/sbom-action/download-syft@43a17d6e7add2b5535efe4dcae9952337c479a93 # v0.20.11
+
+      # The repository's goreleaser version lives in gui/Makefile beside the
+      # other pinned tools (GORELEASER_VERSION), and both jobs read it back out
+      # of that one line, for the same reason the actions are pinned by SHA: a
+      # release produced by a different goreleaser than the one somebody
+      # dry-ran with is a release nobody rehearsed. `version: "~> v2"` is a
+      # floating range, and this workflow does not float anything.
+      - name: Resolve the pinned goreleaser version
+        run: |
+          set -euo pipefail
+          value="$(sed -n 's/^GORELEASER_VERSION[[:space:]]*:=[[:space:]]*\([^[:space:]]*\).*/\1/p' gui/Makefile)"
+          case "${value}" in
+            v[0-9]*.[0-9]*.[0-9]*) ;;
+            *)
+              echo "Could not read a version number for GORELEASER_VERSION from gui/Makefile" >&2
+              echo "(got: '${value}'). Fix the Makefile or this parser." >&2
+              exit 1
+              ;;
+          esac
+          echo "GORELEASER_VERSION=${value}" >> "$GITHUB_ENV"
+          echo "goreleaser ${value}"
+
+      - name: Pin SOURCE_DATE_EPOCH to the tag commit
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+
+      # Prove the reproducibility property before shipping something that
+      # claims it, rather than after. This builds ./cmd/debark twice with the
+      # release flags and fails the release if the two outputs differ. It is
+      # the same script ci.yml's determinism job runs.
+      - name: Reproducibility check (two builds, diffed)
+        run: bash hack/reproducible-check.sh
+
+      # Creates the GitHub release for this tag. The `gui` job below appends to
+      # whatever this produces, so if this step fails there is nothing for it to
+      # append to and the whole workflow stops here - which is the right order.
+      - name: goreleaser release (creates the release)
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
+        with:
+          distribution: goreleaser
+          version: ${{ env.GORELEASER_VERSION }}
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # SLSA provenance (build-level, generic-artifact track) needs the sha256
+      # of every published artifact, base64-encoded as a "<digest>  <filename>"
+      # list. The checksums file already has exactly that, so just re-encode it.
+      # It is named for its project rather than the goreleaser default, because
+      # the desktop app publishes its own onto this same release - so assert the
+      # name rather than globbing, and fail loudly if .goreleaser.yaml's
+      # checksum.name_template and this line ever drift apart.
+      - name: Compute artifact hashes for SLSA provenance
+        id: hashes
+        run: |
+          set -euo pipefail
+          f=dist/debark_checksums.txt
+          if [ ! -s "$f" ]; then
+            echo "Expected $f, produced by .goreleaser.yaml's checksum block." >&2
+            echo "dist/ contains:" >&2
+            ls -la dist >&2 || true
+            exit 1
+          fi
+          echo "hashes=$(base64 -w0 < "$f")" >> "$GITHUB_OUTPUT"
+
+  # ===========================================================================
+  # 2/2 - the desktop application. `needs: cli`, so it always runs against a
+  # release that already exists; gui/.goreleaser.yaml's `release.mode: append`
+  # is what makes it add to that release instead of fighting it.
+  #
+  # This job CANNOT be merged into the one above: its Linux target is
+  # CGO_ENABLED=1 against GTK3/WebKitGTK 4.1, so it needs the apt packages
+  # installed below and the pinned runner image they come from.
+  # ===========================================================================
+  gui:
+    name: goreleaser (debark-gui desktop)
+    needs: [cli]
+    # Pinned, not ubuntu-latest, and 24.04 specifically: it is the oldest image
+    # carrying webkit2gtk-4.1, which is the ABI the `webkit2_41` build tag
+    # selects. See note 1 in the header.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # upload assets onto the release the cli job created
+      id-token: write # cosign keyless signing (Sigstore OIDC)
+    outputs:
+      hashes: ${{ steps.hashes.outputs.hashes }}
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: gui
+
+    steps:
+      # No `path:` and no second checkout. gui/go.mod's
+      # `replace github.com/inferops/debark => ../` resolves inside this one
+      # checkout, so the engine this build links against is, by construction,
+      # the engine this tag ships.
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0 # goreleaser needs full history and tags
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: gui/go.mod
+          cache-dependency-path: gui/go.sum
+
+      # -------------------------------------------------------------------
+      # cgo, not a convenience. Wails renders through WebKitGTK on Linux and the
+      # binding is cgo, so these headers are needed to COMPILE, not just to run.
+      # This is also the step that makes the Linux artefact's reproducibility
+      # conditional on the runner image: apt resolves whatever the archive holds
+      # today, and nothing in this repository pins it. Recording the resolved
+      # versions below is the honest mitigation - it does not make the build
+      # reproducible, it makes it attributable.
+      # -------------------------------------------------------------------
+      - name: Install Linux webview build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev \
+            libwebkit2gtk-4.1-dev
+
+      - name: Record the C toolchain and system libraries this build used
+        run: |
+          set -euo pipefail
+          {
+            echo '### Linux build environment (debark-gui)'
+            echo
+            echo 'The Linux binary links GTK3 and WebKitGTK through cgo, so these are'
+            echo 'inputs to it. They are recorded because they are not pinned.'
+            echo
+            echo '```'
+            gcc --version | head -1
+            ld --version | head -1
+            dpkg-query -W -f='${Package} ${Version}\n' \
+              libgtk-3-dev libwebkit2gtk-4.1-dev libc6-dev
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
+
+      - name: Install syft (SBOM)
+        uses: anchore/sbom-action/download-syft@43a17d6e7add2b5535efe4dcae9952337c479a93 # v0.20.11
+
+      # Same single pin the cli job reads; this job's working-directory is gui/,
+      # so `Makefile` here IS gui/Makefile.
+      - name: Resolve the pinned goreleaser version
+        run: |
+          set -euo pipefail
+          value="$(sed -n 's/^GORELEASER_VERSION[[:space:]]*:=[[:space:]]*\([^[:space:]]*\).*/\1/p' Makefile)"
+          case "${value}" in
+            v[0-9]*.[0-9]*.[0-9]*) ;;
+            *)
+              echo "Could not read a version number for GORELEASER_VERSION from the Makefile" >&2
+              echo "(got: '${value}'). Fix the Makefile or this parser." >&2
+              exit 1
+              ;;
+          esac
+          echo "GORELEASER_VERSION=${value}" >> "$GITHUB_ENV"
+          echo "goreleaser ${value}"
+
+      - name: Pin SOURCE_DATE_EPOCH to the tag commit
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+
+      # -------------------------------------------------------------------
+      # Prove the reproducibility property before shipping something that
+      # claims it, rather than after. Builds both targets twice with the
+      # release flags and fails the release if the two outputs differ. It costs
+      # about two minutes and it is the difference between a property and a
+      # sentence in a README.
+      # -------------------------------------------------------------------
+      - name: Reproducibility check (two builds, diffed)
+        run: bash hack/reproducible-check.sh linux windows
+
+      # workdir: gui, so goreleaser picks up gui/.goreleaser.yaml and treats
+      # gui/ as the project root (its `before` hook, its packaging/build-deb.sh
+      # post hook and its dist/ are all relative to it). It still reads the git
+      # repository - one directory up is the same repository - so it sees the
+      # same tag and the same remote, and lands on the same GitHub release.
+      - name: goreleaser release (appends to the release)
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
+        with:
+          distribution: goreleaser
+          version: ${{ env.GORELEASER_VERSION }}
+          args: release --clean
+          workdir: gui
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # As in the cli job - and because gui/.goreleaser.yaml adds the .deb to
+      # the checksums file through checksum.extra_files, the package built by
+      # packaging/build-deb.sh is covered here too.
+      - name: Compute artifact hashes for SLSA provenance
+        id: hashes
+        run: |
+          set -euo pipefail
+          f=dist/debark-gui_checksums.txt
+          if [ ! -s "$f" ]; then
+            echo "Expected gui/$f, produced by gui/.goreleaser.yaml's checksum block." >&2
+            echo "gui/dist/ contains:" >&2
+            ls -la dist >&2 || true
+            exit 1
+          fi
+          echo "hashes=$(base64 -w0 < "$f")" >> "$GITHUB_OUTPUT"
+
+  # ===========================================================================
+  # Provenance, one job per product. Each depends only on its own build job, so
+  # a failure in the desktop half never costs the CLI half its provenance. Both
+  # upload onto the same release under distinct filenames.
+  # ===========================================================================
+  # Skipped while this repository is private, and it turns itself on the day
+  # the repository is made public -- no edit needed.
+  #
+  # slsa-github-generator refuses to run against a private repository:
+  # "Repository is private. The workflow has halted in order to keep the
+  # repository name from being exposed in the public transparency log. Set
+  # 'private-repository' to override." That refusal is a hard failure, so
+  # without this condition every release cut before publication goes red on a
+  # job that did exactly what it should.
+  #
+  # The override is deliberately NOT set. It would publish this repository's
+  # name to the public Rekor log, and that is the repository owner's call to
+  # make, not this file's.
+  #
+  # Worth knowing when making that call: the cosign signing above ALREADY
+  # writes to Rekor, and its Fulcio certificate carries this workflow's full
+  # identity -- owner, repository and workflow path. The v0.0.1-rc1 rehearsal
+  # created tlog entry 2755247190 on a private repository. So the disclosure
+  # this condition avoids has, on that one path, already happened, and Rekor
+  # entries cannot be withdrawn.
+  provenance-cli:
+    name: SLSA provenance (debark CLI)
+    needs: [cli]
+    if: ${{ github.event.repository.private == false }}
+    permissions:
+      actions: read # to read the workflow path
+      id-token: write # to sign the provenance
+      contents: write # to upload the provenance to the release
+    # -------------------------------------------------------------------------
+    # The single deliberate exception to "pin every action by SHA" in this
+    # repository. slsa-github-generator refuses to run when it is referenced by
+    # commit SHA: it inspects its own ref to put a trustworthy builder identity
+    # into the provenance it issues, and a SHA gives it nothing to name. Its own
+    # documentation requires a semantic version tag. Pinning it by SHA does not
+    # fail closed, it fails the job. dependabot.yml keeps the tag current.
+    # -------------------------------------------------------------------------
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    with:
+      base64-subjects: "${{ needs.cli.outputs.hashes }}"
+      upload-assets: true # attaches the provenance file to this tag's GitHub release
+      provenance-name: "debark.intoto.jsonl"
+
+  # Skipped while this repository is private, and it turns itself on the day
+  # the repository is made public -- no edit needed.
+  #
+  # slsa-github-generator refuses to run against a private repository:
+  # "Repository is private. The workflow has halted in order to keep the
+  # repository name from being exposed in the public transparency log. Set
+  # 'private-repository' to override." That refusal is a hard failure, so
+  # without this condition every release cut before publication goes red on a
+  # job that did exactly what it should.
+  #
+  # The override is deliberately NOT set. It would publish this repository's
+  # name to the public Rekor log, and that is the repository owner's call to
+  # make, not this file's.
+  #
+  # Worth knowing when making that call: the cosign signing above ALREADY
+  # writes to Rekor, and its Fulcio certificate carries this workflow's full
+  # identity -- owner, repository and workflow path. The v0.0.1-rc1 rehearsal
+  # created tlog entry 2755247190 on a private repository. So the disclosure
+  # this condition avoids has, on that one path, already happened, and Rekor
+  # entries cannot be withdrawn.
+  provenance-gui:
+    name: SLSA provenance (debark-gui desktop)
+    needs: [gui]
+    if: ${{ github.event.repository.private == false }}
+    permissions:
+      actions: read # to read the workflow path
+      id-token: write # to sign the provenance
+      contents: write # to upload the provenance to the release
+    # Same version as provenance-cli, on purpose: provenance for the two halves
+    # of one release should be issued by one builder identity. Bumping it is a
+    # decision for both jobs at once, never for one alone. See the note above
+    # for why this one reference is a tag and not a SHA.
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    with:
+      base64-subjects: "${{ needs.gui.outputs.hashes }}"
+      upload-assets: true # attaches the provenance file to this tag's GitHub release
+      provenance-name: "debark-gui.intoto.jsonl"

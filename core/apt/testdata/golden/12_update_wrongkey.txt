@@ -1,0 +1,4 @@
+### apt-get update -qq ###
+W: GPG error: http://deb.debian.org/debian bookworm-backports InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 6ED0E7B82643E131 NO_PUBKEY 78DBA3BC47EF2265
+E: The repository 'http://deb.debian.org/debian bookworm-backports InRelease' is not signed.
+EXIT:100

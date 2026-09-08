@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/storeindex/v1",
+  "title": "debark store index v1",
+  "description": "debark.storeindex/v1 - the content-addressed object store's metadata index: package identity for every object the store holds, so `store ls` and prune can work without opening every .deb. Written as index.json at the store root. Internal to one builder's local store; it never crosses the gap, but is versioned like every other debark document.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "entries"],
+  "properties": {
+    "schema_version": { "const": "debark.storeindex/v1", "description": "Fixed schema identifier; always debark.storeindex/v1." },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Entry" },
+      "description": "One entry per object known to the store."
+    }
+  },
+  "$defs": {
+    "Entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "name", "version", "arch", "size", "filename", "added_at"],
+      "properties": {
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Lowercase hex SHA-256 of the object's bytes; also its path under sha256/<first two hex chars>/<digest>."
+        },
+        "name": { "type": "string", "description": "Debian package name." },
+        "version": { "type": "string", "description": "Debian version string." },
+        "arch": { "type": "string", "description": "dpkg architecture, e.g. \"amd64\" or \"all\"." },
+        "size": { "type": "integer", "minimum": 0, "description": "Object size in bytes." },
+        "filename": { "type": "string", "description": "The .deb file's base name." },
+        "added_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "description": "When this object entered the store, RFC 3339 UTC, second precision."
+        },
+        "user_supplied": {
+          "type": "boolean",
+          "description": "True for objects that came from an operator-provided file or URL. Never pruned from a bundle and never garbage-collected without an explicit request."
+        }
+      }
+    }
+  }
+}

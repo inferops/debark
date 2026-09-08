@@ -1,0 +1,5 @@
+Types: deb
+URIs: https://example.invalid/repo
+Suites: stable
+Components: main
+Signed-By: /usr/share/keyrings/does-not-exist.gpg

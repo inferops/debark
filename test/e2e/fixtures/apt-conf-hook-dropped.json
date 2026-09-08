@@ -1,0 +1,89 @@
+/*
+ * apt-conf-hook-dropped — a captured apt.conf.d command hook must never run
+ * on the builder.
+ *
+ * Protects: the arbitrary-code-execution finding in
+ * docs/security/review-2026-09.md, and core/apt/aptconf.go's allow-list
+ * (filterAptConf). apt runs APT::Update::Pre-Invoke through /bin/sh on every
+ * `apt-get update`, as root, and apt-get still exits 0 afterwards — so a
+ * hook that fires leaves no trace in any exit code, warning or resolved
+ * plan. A snapshot is untrusted input carried across the air gap, and the
+ * builder is the one host in this design holding a signing key, so a hook
+ * the builder honours is remote code execution on exactly the machine that
+ * must not have any.
+ *
+ * Why this fixture exists at all, when core/apt already unit-tests the
+ * filter: the unit tests prove filterAptConf drops the key from a byte
+ * slice. They cannot prove that the file apt ACTUALLY reads is the filtered
+ * one — that is a property of how the private root is assembled and how
+ * APT_CONFIG is set (docs/experiments/E4-*.md: `-o Dir::Etc::parts=` cannot
+ * carry the target's apt.conf.d, because apt reads that directory before
+ * command-line -o processing, so only the environment variable works). The
+ * only honest evidence that a command never ran is that the file it would
+ * have created is not there.
+ *
+ * How it is constructed, and why each half is needed:
+ *
+ *   - The target's apt.conf.d gets APT::Update::Pre-Invoke, whose payload
+ *     touches a marker in /tmp. ApplyTargetState writes apt.conf.d overrides
+ *     before its own `apt-get update` (test/e2e/harness/target.go), so the
+ *     hook fires there — and the "state" container's present:true check
+ *     asserts exactly that. That check is about the FIXTURE, not the
+ *     product: it proves the payload this row plants really does execute
+ *     when something honours it. Without it, a mistyped path or a hook apt
+ *     never invokes would leave the negative check below passing for a
+ *     reason having nothing to do with debark — the vacuous-test trap this
+ *     harness has already been bitten by five times.
+ *   - The "builder" container's present:false check is the product claim:
+ *     the same captured hook, carried in the snapshot and assembled into the
+ *     private root, must not have executed while debark resolved.
+ *
+ * The build is required to SUCCEED, and that requirement is load-bearing
+ * rather than incidental: a successful build means apt-get update genuinely
+ * ran inside the private root against the captured configuration. Marker
+ * absent alone would also be satisfied by a build that fell over before apt
+ * ever started, which would prove nothing. Success plus absence is what
+ * pins the claim down.
+ *
+ * The lock.json assertion is deliberately secondary. A warning proves only
+ * that the filter NOTICED the key; the absent marker proves it worked. Both
+ * are checked because the warning is also the operator-facing mitigation for
+ * every setting the allow-list withholds — a fidelity loss nobody is told
+ * about is its own defect — but if only one of the two could be kept, it
+ * would be the marker.
+ *
+ * What would break if this regressed: any target whose apt.conf.d a third
+ * party can write — a compromised machine, a shared appliance image, a
+ * snapshot mailed in by the very customer the bundle is being built for —
+ * would execute its chosen command as root on the build host, and nothing
+ * in the build output would say so.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "apt-conf-hook-dropped",
+  "protects": "docs/security/review-2026-09.md RCE via captured apt.conf.d; core/apt/aptconf.go filterAptConf allow-list.1 apt.conf.d capture",
+  "tags": ["edge", "security"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "apt_conf": {
+      "APT::Update::Pre-Invoke": "{\"touch /tmp/debark-apt-conf-hook-fired\";}"
+    },
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["jq"],
+    "container_paths": [
+      { "container": "state", "path": "/tmp/debark-apt-conf-hook-fired", "present": true },
+      { "container": "builder", "path": "/tmp/debark-apt-conf-hook-fired", "present": false }
+    ],
+    "bundle_files": [
+      { "path": "lock.json", "contains": ["private-root.apt-conf-dropped", "APT::Update::Pre-Invoke"] }
+    ]
+  }
+}

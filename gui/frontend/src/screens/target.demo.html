@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>debark — target screen harness</title>
+
+<!-- Load order is not optional: components.css reads tokens from tokens.css. -->
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="../design/components.css">
+
+<!--
+  Standalone harness for frontend/src/screens/target.js.
+
+  Open it directly from disk. It makes no network request, loads no font, no
+  icon library and no script other than this file and the screen module.
+
+  The <style> block below is PAGE SHELL ONLY — the harness has no window
+  chrome of its own and needs somewhere to put the screen. It defines no
+  component and overrides nothing in the design system; every rule is a
+  container box or the harness bar, and every value it uses is a design token.
+-->
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background-color: var(--color-surface-0); }
+  .h-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+  .h-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    flex: none;
+    padding: var(--space-2) var(--space-4);
+    border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+    background-color: var(--color-surface-0);
+  }
+  .h-bar__label {
+    font-family: var(--font-family-ui);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+  /* .df-app__main bounds the height; .df-app__pane inside it is what the shell
+     hands a screen — no padding, no measure, `overflow: auto`. */
+  .h-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .h-toasts {
+    position: fixed;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-width: var(--measure-prose);
+  }
+</style>
+</head>
+<body>
+
+<div class="df-app h-page">
+  <div class="h-bar" id="bar"></div>
+  <!-- The real frame, not an approximation of it: .df-app__main bounds the
+       height and .df-app__pane is what the shell hands a screen — no padding, no
+       measure, and `overflow: auto` so the SCREEN's own column scrolls. A
+       harness that mounts into an unbounded block cannot reproduce the class of
+       bug where a flex child with `min-height: 0` collapses below its content
+       and a boxed list clips what is inside it, which is exactly what the first
+       run on WebKit2GTK found. -->
+  <main class="h-body df-app__main">
+    <div class="df-app__pane" id="screen-root"></div>
+  </main>
+</div>
+<div class="h-toasts" id="toasts"></div>
+
+<script type="module">
+import screen from './target.js';
+
+// The shell hands screens their loading/empty/error helpers as ctx.states.
+// Imported dynamically so this harness still opens if shell/states.js is not
+// there, and toggleable below so both the shared helpers and the screen's own
+// fallback markup can be reviewed side by side.
+let sharedStates = null;
+try {
+  sharedStates = (await import('../shell/states.js')).default;
+} catch (e) {
+  console.warn('shell/states.js not available; the screen fallback is all you will see.', e);
+}
+
+/* ==========================================================================
+   Fixtures.
+
+   The base list mirrors what `debark snapshot list-bases --json` really
+   returns at the verified commit: fifteen rows, releases oldest-first and
+   variants least-inclusive-first, because that ORDER IS THE CONTRACT and the
+   screen must not re-derive it. Seeds and exclusions are the real ones from
+   core/base's builtin table.
+   ========================================================================== */
+
+const VARIANTS = [
+  { name: 'minimal', blurb: 'a minimal install: the base system and apt, nothing chosen by an installer profile',
+    debian: ['apt', 'init'], ubuntu: ['ubuntu-minimal'] },
+  { name: 'server', blurb: 'a server install: the minimal system plus the standard server set',
+    debian: ['apt', 'init', 'openssh-server'], ubuntu: ['ubuntu-server-minimal'] },
+  { name: 'desktop', blurb: 'a desktop install: the minimal system plus the default desktop environment',
+    debian: ['apt', 'init', 'task-gnome-desktop'], ubuntu: ['ubuntu-desktop-minimal'] },
+];
+
+const RELEASES = [
+  { distro: 'debian', version: '12', codename: 'bookworm', display: 'Debian' },
+  { distro: 'debian', version: '13', codename: 'trixie', display: 'Debian' },
+  { distro: 'ubuntu', version: '22.04', codename: 'jammy', display: 'Ubuntu' },
+  { distro: 'ubuntu', version: '24.04', codename: 'noble', display: 'Ubuntu' },
+  { distro: 'ubuntu', version: '26.04', codename: 'resolute', display: 'Ubuntu' },
+];
+
+// Stable-looking fake digests. A digest's job in the UI is to tell two builds
+// claiming the same id apart, so the harness needs them to differ per row and
+// per architecture — exactly as the real ones do.
+function fakeDigest(seed) {
+  let h1 = 0x811c9dc5, h2 = 0x01000193;
+  for (let i = 0; i < seed.length; i += 1) {
+    h1 = (h1 ^ seed.charCodeAt(i)) >>> 0;
+    h1 = (h1 * 16777619) >>> 0;
+    h2 = (h2 + h1 * (i + 7)) >>> 0;
+  }
+  let out = '';
+  let x = h1, y = h2;
+  while (out.length < 64) {
+    x = (x * 1103515245 + 12345) >>> 0;
+    y = (y ^ (x >>> 3)) >>> 0;
+    out += ('00000000' + y.toString(16)).slice(-8);
+  }
+  return out.slice(0, 64);
+}
+
+function baseList(arch) {
+  const rows = [];
+  for (const r of RELEASES) {
+    for (const v of VARIANTS) {
+      const id = r.distro + ':' + r.version + '/' + v.name;
+      rows.push({
+        id: id,
+        description: r.display + ' ' + r.version + ' (' + r.codename + ') — ' + v.blurb,
+        distro_id: r.distro,
+        version_id: r.version,
+        codename: r.codename,
+        variant: v.name,
+        arch: arch,
+        seeds: (r.distro === 'debian' ? v.debian : v.ubuntu).slice(),
+        excludes: r.distro === 'ubuntu' ? ['lsb-base'] : [],
+        recommends: false,
+        digest: fakeDigest(id + '/' + arch),
+      });
+    }
+  }
+  return rows;
+}
+
+const CAVEAT =
+  'A stock base is an assumption about a default install, not a measurement of ' +
+  'the machine you are building for. If the target has packages a default ' +
+  'install does not, the bundle may be short. Take a snapshot on the real ' +
+  'machine when you can.';
+
+// A snapshot CAPTURED on a real machine: a measurement.
+const SNAP_CAPTURED = {
+  path: '/media/usb/airgap-site-04/noble-web-01.tar.zst',
+  schema_version: 'debark.snapshot/v1',
+  distro_id: 'ubuntu',
+  version_id: '24.04',
+  codename: 'noble',
+  arch: 'amd64',
+  origin_kind: 'captured',
+  created_at: '2026-08-19T09:41:12Z',
+  package_count: 1847,
+  foreign_archs: ['i386'],
+  // No components or suites: a snapshot captures its apt sources as FILES, so
+  // InspectSnapshot has nothing parsed to report. They arrive on TargetView
+  // after resolution instead.
+  //
+  // base_id, origin_source and origin_source_digest are all empty for a
+  // CAPTURED snapshot, and that emptiness is the signal.
+  base_id: '',
+  origin_source: '',
+  origin_source_digest: '',
+};
+
+// A snapshot SYNTHESIZED from a base: an assumption wearing a snapshot's
+// clothes. This is the case the screen exists to make visible.
+const SNAP_SYNTHESIZED = {
+  path: '/home/op/handover/trixie-server-arm64.tar.zst',
+  schema_version: 'debark.snapshot/v1',
+  distro_id: 'debian',
+  version_id: '13',
+  codename: 'trixie',
+  variant: 'server',
+  arch: 'arm64',
+  origin_kind: 'synthesized',
+  created_at: '2026-09-01T14:07:55Z',
+  package_count: 412,
+  foreign_archs: [],
+  // Equals the definition digest of debian:13/server for arm64, so an operator
+  // can match this file to the row on the stock-base half of the screen. The
+  // field was called `digest`, and the rename is the point: it is the digest
+  // of the BASE DEFINITION, not of the snapshot.
+  base_id: 'debian:13/server',
+  origin_source: 'builtin',
+  origin_source_digest: fakeDigest('debian:13/server/arm64'),
+};
+
+const INSPECT_FAILURE = {
+  code: 'cli.failed',
+  message: 'That file is not a debark snapshot.',
+  hint: 'Choose the .tar.zst that `debark snapshot create` wrote on the target machine. A bundle folder, a .deb or an ISO will not work here.',
+  details:
+    'debark: snapshot: archive contains no snapshot.json member\n' +
+    '  read /home/op/Downloads/ubuntu-24.04.4-live-server-amd64.iso\n' +
+    '  expected a zstd-compressed tar with snapshot.json at its root',
+  command: ['debark', 'snapshot', 'inspect', '--json', '/home/op/Downloads/ubuntu-24.04.4-live-server-amd64.iso'],
+  exit_class: 'verification',
+  exit_code: 4,
+  retryable: false,
+};
+
+const LIST_BASES_FAILURE = {
+  code: 'cli.failed',
+  message: 'This debark does not understand `snapshot list-bases --json`.',
+  hint: 'Update debark to 0.4 or later, or choose a snapshot file taken on the real machine.',
+  details:
+    'Error: unknown command "list-bases" for "debark snapshot"\n' +
+    'Run \'debark snapshot --help\' for usage.',
+  command: ['debark', 'snapshot', 'list-bases', '--json', '--arch', 'amd64'],
+  exit_class: 'usage',
+  exit_code: 1,
+  retryable: true,
+};
+
+/* ==========================================================================
+   The stubbed backend. Same shape as window.go.app.App: every method returns
+   a promise resolving to the view type from internal/app/types.go.
+   ========================================================================== */
+
+const scenario = {
+  bases: 'full',        // full | empty | error | slow
+  snapshot: 'captured', // captured | synthesized | error | cancel
+  arch: 'amd64',
+  states: 'shared',     // shared | fallback
+  job: 'none',         // none | build | copy
+};
+
+let targetGeneration = 0;
+let currentTarget = { selected: false, generation: targetGeneration };
+
+function delay(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+const stubBindings = {
+  async LifecycleStatus() {
+    return { build_running: scenario.job === 'build', export_running: scenario.job === 'copy', stopping: false, unsaved_selection: false, target_generation: targetGeneration, selection_revision: 0 };
+  },
+  async SupportedArchitectures() {
+    await delay(20);
+    return { arches: ['amd64', 'arm64'], default: 'amd64' };
+  },
+
+  async ListBases(arch) {
+    const a = arch || scenario.arch || 'amd64';
+    if (scenario.bases === 'slow') await delay(2200);
+    else await delay(120);
+    if (scenario.bases === 'error') {
+      return { arch: a, bases: [], caveat: CAVEAT, error: LIST_BASES_FAILURE };
+    }
+    if (scenario.bases === 'empty') {
+      return { arch: a, bases: [], caveat: CAVEAT };
+    }
+    return { arch: a, bases: baseList(a), caveat: CAVEAT };
+  },
+
+  async ChooseSnapshotFile() {
+    await delay(350); // a native dialog is not instant
+    if (scenario.snapshot === 'cancel') {
+      return { path: '', paths: [], cancelled: true };
+    }
+    if (scenario.snapshot === 'error') {
+      return { path: '/home/op/Downloads/ubuntu-24.04.4-live-server-amd64.iso', paths: [], cancelled: false };
+    }
+    const snap = scenario.snapshot === 'synthesized' ? SNAP_SYNTHESIZED : SNAP_CAPTURED;
+    return { path: snap.path, paths: [snap.path], cancelled: false };
+  },
+
+  async InspectSnapshot(path) {
+    await delay(400);
+    if (!path) {
+      return { snapshot: {}, error: { code: 'app.invalid_input', message: 'No snapshot file was given.', hint: 'Choose a snapshot file first.' } };
+    }
+    if (scenario.snapshot === 'error') {
+      return { snapshot: {}, error: INSPECT_FAILURE };
+    }
+    const snap = scenario.snapshot === 'synthesized' ? SNAP_SYNTHESIZED : SNAP_CAPTURED;
+    return { snapshot: JSON.parse(JSON.stringify(snap)) };
+  },
+
+  async SelectTarget(sel) {
+    if (scenario.job !== 'none') return { target: { selected: false, generation: 0 }, error: { code: 'app.busy', message: 'A build or copy is running.', hint: 'Wait for it to finish before editing the target.' } };
+    await delay(150);
+    if (sel.kind === 'snapshot') {
+      const snap = scenario.snapshot === 'synthesized' ? SNAP_SYNTHESIZED : SNAP_CAPTURED;
+      currentTarget = {
+        generation: ++targetGeneration,
+        selected: true,
+        kind: 'snapshot',
+        id: snap.distro_id + '/' + snap.codename + '/' + snap.arch,
+        label: snap.distro_id + ' ' + snap.version_id + ' (' + snap.arch + ')',
+        distro_id: snap.distro_id,
+        version_id: snap.version_id,
+        codename: snap.codename,
+        variant: snap.variant || '',
+        arch: snap.arch,
+        snapshot_path: sel.snapshot_path,
+        // A synthesized snapshot is still an assumption. The real backend sets
+        // Assumed false for every snapshot today — see the report.
+        assumed: snap.origin_kind === 'synthesized',
+        caveat: snap.origin_kind === 'synthesized' ? CAVEAT : '',
+        // Parsed when the target is selected, never before: `universe` present
+        // or absent is the difference between 70,000 catalogue rows and 25,000.
+        suites: snap.distro_id === 'ubuntu'
+          ? ['noble', 'noble-updates', 'noble-security']
+          : ['trixie', 'trixie-updates', 'trixie-security'],
+        components: snap.distro_id === 'ubuntu'
+          ? ['main', 'restricted', 'universe', 'multiverse']
+          : ['main'],
+        catalog_ready: false,
+      };
+      emit('target:changed', currentTarget);
+      return { target: currentTarget };
+    }
+    const row = baseList(sel.arch || 'amd64').find((b) => b.id === sel.base_id);
+    if (!row) {
+      return { target: { selected: false }, error: { code: 'target.invalid', message: 'That base is not one this debark knows.', hint: 'Pick a distribution, release and variant from the list.' } };
+    }
+    currentTarget = {
+      generation: ++targetGeneration,
+      selected: true,
+      kind: 'base',
+      id: row.id,
+      label: (row.distro_id === 'ubuntu' ? 'Ubuntu' : 'Debian') + ' ' + row.version_id + ' ' + row.variant + ' (' + row.arch + ')',
+      distro_id: row.distro_id,
+      version_id: row.version_id,
+      codename: row.codename,
+      variant: row.variant,
+      arch: row.arch,
+      assumed: true,
+      caveat: CAVEAT,
+      suites: row.distro_id === 'ubuntu'
+        ? [row.codename, row.codename + '-updates', row.codename + '-security']
+        : [row.codename, row.codename + '-updates', row.codename + '-security'],
+      components: row.distro_id === 'ubuntu'
+        ? ['main', 'restricted', 'universe', 'multiverse']
+        : ['main', 'contrib', 'non-free-firmware'],
+      catalog_ready: false,
+    };
+    emit('target:changed', currentTarget);
+    return { target: currentTarget };
+  },
+
+  async CurrentTarget() {
+    return { target: currentTarget };
+  },
+
+  async ClearTarget() {
+    currentTarget = { selected: false, generation: ++targetGeneration };
+    emit('target:changed', currentTarget);
+    return { ok: true };
+  },
+
+  async CopyToClipboard(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return { ok: true };
+      }
+    } catch (e) { /* fall through */ }
+    return { ok: false, error: { code: 'app.no_runtime', message: 'The clipboard is not available in this harness.', hint: 'Select the command text and copy it by hand.' } };
+  },
+};
+
+/* ==========================================================================
+   The fake shell: ctx.
+   ========================================================================== */
+
+const listeners = Object.create(null);
+
+function emit(event, payload) {
+  const hs = listeners[event] || [];
+  for (const h of hs.slice()) h(payload);
+}
+
+const toastHost = document.getElementById('toasts');
+
+function toast(kind, message) {
+  const role = ({ info: 'info', success: 'success', warning: 'warning', danger: 'danger' })[kind] || 'info';
+  const b = document.createElement('div');
+  b.className = 'df-banner df-banner--' + role;
+  b.setAttribute('role', role === 'danger' ? 'alert' : 'status');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'df-banner__icon');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('aria-hidden', 'true');
+  const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  c.setAttribute('cx', '12'); c.setAttribute('cy', '12'); c.setAttribute('r', '9');
+  svg.appendChild(c);
+  b.appendChild(svg);
+  const body = document.createElement('div');
+  body.className = 'df-banner__body';
+  const p = document.createElement('p');
+  p.className = 'df-banner__text';
+  p.textContent = message;
+  body.appendChild(p);
+  b.appendChild(body);
+  const acts = document.createElement('div');
+  acts.className = 'df-banner__actions';
+  b.appendChild(acts);
+  toastHost.appendChild(b);
+  setTimeout(() => { if (b.parentNode) b.parentNode.removeChild(b); }, 7000);
+}
+
+const ctx = {
+  bindings: stubBindings,
+  go(id, params) {
+    toast('success', 'ctx.go("' + id + '") — the shell would navigate to the ' + id + ' screen now.');
+  },
+  back() { toast('info', 'ctx.back()'); },
+  on(event, handler) {
+    (listeners[event] || (listeners[event] = [])).push(handler);
+  },
+  off(event, handler) {
+    const hs = listeners[event] || [];
+    const i = hs.indexOf(handler);
+    if (i >= 0) hs.splice(i, 1);
+  },
+  toast: toast,
+  // Swapped by the harness bar. null exercises the screen's own fallback
+  // .df-state markup; sharedStates exercises the real shell helpers.
+  get states() { return scenario.states === 'shared' ? sharedStates : null; },
+  theme: null,
+};
+
+/* ==========================================================================
+   Harness bar.
+   ========================================================================== */
+
+const bar = document.getElementById('bar');
+
+function label(text) {
+  const s = document.createElement('span');
+  s.className = 'h-bar__label';
+  s.textContent = text;
+  bar.appendChild(s);
+}
+
+function divider() {
+  const d = document.createElement('div');
+  d.className = 'df-toolbar__divider';
+  bar.appendChild(d);
+}
+
+function group(values, get, set) {
+  const g = document.createElement('div');
+  g.className = 'df-cluster';
+  g.setAttribute('role', 'radiogroup');
+  const chips = [];
+  values.forEach(([value, text]) => {
+    const c = document.createElement('button');
+    c.type = 'button';
+    c.className = 'df-chip df-chip--filter';
+    c.setAttribute('role', 'radio');
+    c.textContent = text;
+    c.addEventListener('click', () => { set(value); sync(); });
+    chips.push([value, c]);
+    g.appendChild(c);
+  });
+  function sync() {
+    const cur = get();
+    for (const [value, c] of chips) {
+      const on = value === cur;
+      c.setAttribute('aria-checked', on ? 'true' : 'false');
+      c.classList.toggle('is-active', on);
+      c.tabIndex = on ? 0 : -1;
+    }
+  }
+  sync();
+  bar.appendChild(g);
+  return sync;
+}
+
+label('Bases');
+group(
+  [['full', 'Full list'], ['empty', 'Empty'], ['error', 'Error'], ['slow', 'Slow (loading)']],
+  () => scenario.bases,
+  (v) => { scenario.bases = v; remount(); },
+);
+
+divider();
+
+label('Snapshot');
+group(
+  [['captured', 'Captured'], ['synthesized', 'Synthesized'], ['error', 'Bad file'], ['cancel', 'Dialog cancelled']],
+  () => scenario.snapshot,
+  (v) => { scenario.snapshot = v; },
+);
+
+label('Job');
+group([['none', 'Idle'], ['build', 'Build running'], ['copy', 'Copy running']],
+  () => scenario.job,
+  async (value) => { scenario.job = value; emit('app:lifecycle', await stubBindings.LifecycleStatus()); });
+
+divider();
+
+label('Target');
+(function () {
+  const b1 = document.createElement('button');
+  b1.type = 'button';
+  b1.className = 'df-btn df-btn--secondary df-btn--sm';
+  b1.textContent = 'Preset: base chosen';
+  b1.addEventListener('click', async () => {
+    await stubBindings.SelectTarget({ kind: 'base', base_id: 'ubuntu:24.04/server', arch: 'amd64' });
+    remount();
+  });
+  bar.appendChild(b1);
+
+  const b2 = document.createElement('button');
+  b2.type = 'button';
+  b2.className = 'df-btn df-btn--secondary df-btn--sm';
+  b2.textContent = 'Preset: snapshot chosen';
+  b2.addEventListener('click', async () => {
+    await stubBindings.SelectTarget({ kind: 'snapshot', snapshot_path: SNAP_CAPTURED.path });
+    remount();
+  });
+  bar.appendChild(b2);
+
+  const b3 = document.createElement('button');
+  b3.type = 'button';
+  b3.className = 'df-btn df-btn--ghost df-btn--sm';
+  b3.textContent = 'Clear';
+  b3.addEventListener('click', async () => { await stubBindings.ClearTarget(); remount(); });
+  bar.appendChild(b3);
+})();
+
+divider();
+
+label('ctx.states');
+group(
+  [['shared', 'Shared helpers'], ['fallback', 'Screen fallback']],
+  () => scenario.states,
+  (v) => { scenario.states = v; remount(); },
+);
+
+divider();
+
+label('Theme');
+group(
+  [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']],
+  () => document.documentElement.getAttribute('data-theme') || 'system',
+  (v) => {
+    if (v === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', v);
+  },
+);
+
+/* ==========================================================================
+   Mount.
+   ========================================================================== */
+
+const host = document.getElementById('screen-root');
+let mounted = false;
+
+function remount() {
+  if (mounted) screen.destroy();
+  while (host.firstChild) host.removeChild(host.firstChild);
+  for (const k in listeners) delete listeners[k];
+  const root = document.createElement('div');
+  host.appendChild(root);
+  screen.mount(root, ctx);
+  screen.show(ctx, {});
+  mounted = true;
+}
+
+remount();
+
+// Handy for poking at the harness from a console.
+window.__demo = { scenario, remount, stubBindings, emit, get currentTarget() { return currentTarget; } };
+</script>
+</body>
+</html>

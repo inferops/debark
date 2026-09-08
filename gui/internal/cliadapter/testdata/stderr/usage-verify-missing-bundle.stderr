@@ -1,0 +1,18 @@
+debark: verify: C:\Users\operator\bundles\no-such-bundle: GetFileAttributesEx C:\Users\operator\bundles\no-such-bundle: The system cannot find the file specified.
+
+Usage:
+  debark verify BUNDLE [flags]
+
+Flags:
+      --allow-unsigned        accept a bundle with no valid signature (must be an explicit choice)
+      --gpg-keyring string    gpg keyring FILE holding the expected release key(s), for gpg-signed bundles; without it gpg uses this machine's default keyring
+  -h, --help                  help for verify
+      --key stringArray       operator public key file; repeatable
+      --keyring stringArray   directory of trusted public keys; repeatable
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

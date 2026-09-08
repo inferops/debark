@@ -1,0 +1,53 @@
+debark offline bundle
+=====================
+
+Target
+------
+  Distro:       debian 12 (bookworm)
+  Architecture: amd64
+
+Contents
+--------
+  2 package(s) will be installed (exact versions, from lock.json):
+    jq=1.6-2.1+deb12u2
+    vendor-tool=9.0
+
+  4 file(s) in the repository pool, 448.0 KB total.
+
+Provenance
+----------
+  3 package(s) verified against a signed apt archive.
+  1 package(s) downloaded with no publisher signature or digest (unverified - HTTPS is not provenance).
+
+Trust
+-----
+  This bundle is signed. Verify the signature before installing:
+    debark verify <bundle-path> --key <operator-public-key>
+  Closed-world check: passed - this bundle installs with no network access.
+
+Warnings
+--------
+  - publisher.url-unverified: downloaded over HTTPS with no publisher signature (vendor-tool)
+
+Built
+-----
+  2026-09-03T00:00:00Z by debark 1.0.0 (community)
+  Bundle ID: abcdef0123456789
+
+Verify
+------
+    debark verify <bundle-path>
+
+Install
+-------
+    debark install <bundle-path>
+    debark install <bundle-path> --status      # report only, changes nothing
+    debark install <bundle-path> --dry-run     # full simulation, changes nothing
+
+  This bundle is also a plain apt repository. To use it directly, point
+  a source at its repo/ directory:
+    Types: deb
+    URIs: file:///path/to/bundle/repo
+    Suites: ./
+    Trusted: yes
+  then: apt-get update && apt-get install <package>=<version>

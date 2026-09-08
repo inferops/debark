@@ -1,0 +1,765 @@
+/* ==========================================================================
+   debark-gui — design tokens
+   --------------------------------------------------------------------------
+   The token layer. Every value a screen may use lives here; nothing else in
+   the app hard-codes a colour, a size or a duration.
+
+   Load order matters:
+       <link rel="stylesheet" href="design/tokens.css">
+       <link rel="stylesheet" href="design/components.css">
+
+   No build step, no npm, no @import, no webfont, no network reference.
+
+   THEMING CONTRACT
+   ----------------
+   * Modern engines use the light-dark(<light>, <dark>) pairs on :root.
+     color-scheme follows the system unless data-theme explicitly pins it.
+   * WebKitGTK 2.36 accepts unknown functions inside custom properties but
+     cannot resolve light-dark() as a color. A var() fallback cannot repair
+     that: the token exists, then the consuming color declaration becomes
+     invalid at computed-value time. The @supports-not block below supplies
+     the exact same explicit palettes for that measured compatibility floor.
+   * The fallback's light arm is the default. A dark system applies the dark
+     arm unless data-theme="light"; data-theme="dark" pins dark on any system.
+     Theme selectors keep :root specificity so later contrast overrides win.
+   * color-scheme also sets native form controls, scrollbars and the webview
+     background. It remains required even with explicit fallback colors.
+   * Elevation changes geometry as well as colors. Dark shadow values live
+     beside the light values and are selected with the same theme policy.
+
+   CONTRAST
+     Every text/surface and border/surface pair in both themes is measured;
+     the numbers are in README.md. Body text >= 4.5:1, UI and non-text >= 3:1.
+     The alert colours are additionally tuned so warning, danger and success
+     stay separable under simulated protanopia and deuteranopia — see the
+     "SEMANTIC ROLES" note below.
+   ========================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* ======================================================================
+     COLOUR — SURFACES
+     Elevation runs 0 (furthest back) to 3 (floating). Controls are expected
+     to sit on surface-1, -2 or -3; surface-0 is window chrome behind them.
+     ====================================================================== */
+
+  /* Window chrome / sunken well behind the working area. */
+  --color-surface-0: light-dark(#E6E8EC, #101216);
+  /* The main canvas a screen paints on. */
+  --color-surface-1: light-dark(#F2F4F6, #181B20);
+  /* Panels, cards, list rows, toolbars — anything that reads as "a thing". */
+  --color-surface-2: light-dark(#FFFFFF, #20242A);
+  /* Floating: dialogs, menus, popovers. Separated from -2 by shadow + border. */
+  --color-surface-3: light-dark(#FFFFFF, #282D34);
+  /* Recessed: log output, NDJSON drawer, code and digest blocks. */
+  --color-surface-inset: light-dark(#EDEFF2, #0C0E11);
+
+  /* Row / list-item interaction states. Not general-purpose backgrounds. */
+  --color-row-hover: light-dark(#EFF2F5, #272C33);
+  --color-row-active: light-dark(#E4E8ED, #2E343C);
+  --color-row-selected: light-dark(#E3EDFA, #17293D);
+
+  /* Dialog backdrop. */
+  --color-backdrop: light-dark(rgba(16, 20, 26, 0.45), rgba(0, 0, 0, 0.62));
+
+  /* ======================================================================
+     COLOUR — TEXT
+     ====================================================================== */
+
+  /* Body copy, package names, headings. The default. */
+  --color-text-primary: light-dark(#14181D, #E8EBEF);
+  /* Supporting copy: summaries, versions, captions, help text. */
+  --color-text-secondary: light-dark(#545B66, #A7AFBA);
+  /* Disabled control labels only. Never for text a user must read. */
+  --color-text-disabled: light-dark(#858B95, #727A85);
+  /* Text placed on a solid accent/danger fill. */
+  --color-text-on-fill: #FFFFFF;
+
+  /* ======================================================================
+     COLOUR — BORDERS
+     ====================================================================== */
+
+  /* Hairline separators between rows and sections. DECORATIVE ONLY:
+     this is deliberately below 3:1 and must never be the sole thing that
+     marks the boundary of a control. Use border-default for that. */
+  --color-border-subtle: light-dark(#DCE0E6, #2E333A);
+  /* The boundary of an interactive control — input, checkbox, secondary
+     button. Meets 3:1 against every surface token above. */
+  --color-border-default: light-dark(#7D8592, #747D8B);
+  /* Emphasised boundary: hovered control, active tab underline, table rule. */
+  --color-border-strong: light-dark(#58606A, #8E95A0);
+  /* The focus ring colour. Always paired with --color-focus-halo. */
+  --color-border-focus: light-dark(#165EB5, #7AB2F8);
+
+  /* ======================================================================
+     COLOUR — SEMANTIC ROLES
+     ----------------------------------------------------------------------
+     Every role (accent, info, success, warning, danger) exposes the SAME
+     five tokens. Learn the quintet once and it applies everywhere:
+
+       --color-<role>          icon / rule / border / meter fill.  >= 3:1
+       --color-<role>-text     text in that role.                  >= 4.5:1
+       --color-<role>-bg       quiet tinted background (banners, badges)
+       --color-<role>-fill     solid fill for a filled button or badge
+       --color-<role>-on-fill  text/icon ON that solid fill.       >= 4.5:1
+
+     `--color-<role>` and `--color-<role>-text` differ because they have
+     different jobs and different contrast floors. Using the icon colour for
+     text (or vice versa) is the most likely way to break contrast.
+
+     The three ALERT colours (success, warning, danger) are tuned against a
+     deuteranopia simulation, not chosen by eye, so they keep a luminance gap
+     when hue information is lost. warning vs danger holds 2.37:1 (light) /
+     2.23:1 (dark) under deuteranopia. Even so: NEVER signal state by colour
+     alone — always pair the colour with an icon shape and a text label.
+     ====================================================================== */
+
+  /* accent — the single interactive colour: primary action, link, selection,
+     focus ring. Blue is reserved for "you can act on this". */
+  --color-accent: light-dark(#165EB5, #7AB2F8);
+  --color-accent-text: light-dark(#165EB5, #7AB2F8);
+  --color-accent-bg: light-dark(#E3EDFA, #17273A);
+  --color-accent-fill: light-dark(#165EB5, #2970C6);
+  --color-accent-fill-hover: light-dark(#1454A1, #2B75D1);
+  --color-accent-fill-active: light-dark(#124A8F, #2566B6);
+  --color-accent-on-fill: #FFFFFF;
+
+  /* info — neutral notice. "Here is a fact you should know." */
+  --color-info: light-dark(#1579BF, #7CC8F7);
+  --color-info-text: light-dark(#0C5F99, #7CC8F7);
+  --color-info-bg: light-dark(#E1EFF9, #12293A);
+  --color-info-fill: light-dark(#1579BF, #1E76AC);
+  --color-info-on-fill: #FFFFFF;
+
+  /* success — a check passed, a bundle verified, a copy completed. */
+  --color-success: light-dark(#0B864C, #3AD994);
+  --color-success-text: light-dark(#0B663B, #46DE9D);
+  --color-success-bg: light-dark(#DFF2E7, #0F2D20);
+  --color-success-fill: light-dark(#0A7644, #0E804B);
+  --color-success-on-fill: #FFFFFF;
+
+  /* warning — it will work, but not the way you might assume.
+     (the snap-vs-deb caveat, "a base is an assumption, not a measurement") */
+  --color-warning: light-dark(#C17A00, #FCD589);
+  --color-warning-text: light-dark(#8B5004, #FAD98D);
+  --color-warning-bg: light-dark(#FBEFD8, #2E2510);
+  --color-warning-fill: light-dark(#C17A00, #FCD589);
+  --color-warning-on-fill: #1F1600;
+
+  /* danger — it failed, or it destroys something. Never decorative. */
+  --color-danger: light-dark(#910E15, #EE4431);
+  --color-danger-text: light-dark(#9B131A, #F88B7F);
+  --color-danger-bg: light-dark(#FBE3E4, #331716);
+  --color-danger-fill: light-dark(#BF1B24, #D32E22);
+  --color-danger-fill-hover: light-dark(#AA1820, #DC362A);
+  --color-danger-fill-active: light-dark(#98161C, #C22A20);
+  --color-danger-on-fill: #FFFFFF;
+
+
+  /* ======================================================================
+     COLOUR — BRAND / IDENTITY
+     ----------------------------------------------------------------------
+     Debark's desert warmth, deliberately quarantined.
+
+     WHERE IT IS ALLOWED: the headerbar and other window chrome, the logo mark
+     and wordmark, and the about surface. That is the entire list. These are
+     the app's IDENTITY; they are not its interaction language.
+
+     WHY --color-accent IS NOT AMBER. The accent carries the selected-row tint,
+     the focus ring, the checked box, the primary fill, badges and the progress
+     fill — constantly, on working surfaces, next to 60,000 rows of text. Brand
+     amber is 1.96:1 on the light brand ground and 2.08:1 on paper, which is why
+     it is quarantined as decorative wherever this brand is applied. The
+     identity accent that IS allowed to carry meaning is a desaturated brown,
+     --color-brand-accent, at 4.84:1 / 5.12:1 — not amber. Repainting
+     --color-accent amber is the single most likely way this palette gets
+     broken. Do not do it.
+
+     WHY BRAND HUES STAY OFF WORKING SURFACES. Measured, not asserted (the
+     numbers are in README.md §8.2):
+       brand amber vs --color-warning   1.56:1 / dE 12 light, 1.59:1 / dE 13 dark
+       brand clay  vs --color-warning   1.32:1 / dE 19 light
+       brand clay  vs --color-danger    1.46:1 / dE 15 dark  (dE 2 under tritanopia)
+       brand oasis vs --color-success   1.22:1 / dE  6 dark
+     Those are not "similar", they are the same colour to a reader. A brand fill
+     next to a status is therefore forbidden, and the separation is enforced by
+     scope — brand tokens appear only inside .df-brand and .df-headerbar--brand.
+     ====================================================================== */
+
+  /* Chrome ground. Warm, and a shade below --color-surface-1, so a headerbar
+     reads as chrome rather than as another panel. Its luminance is not free:
+     it is the lightest value at which --color-warning still clears the 3:1
+     icon floor on it (3.06:1). A warmer, deeper sand looked better and put a
+     status icon in the headerbar under the floor. */
+  --color-brand-surface: light-dark(#F6F0E7, #1C1710);
+  /* The identity ground: the about surface, a splash, the first-run panel.
+     These two values are the brand's page ground in each theme. They are given,
+     not derived from the ramp above; do not re-solve them. */
+  --color-brand-canvas: light-dark(#FBF7F0, #14100C);
+  /* Ghost-control hover / press ON brand chrome. Replaces row-hover/row-active
+     inside .df-brand so the warm ground does not get a cool grey patch. The two
+     steps mirror the standard ramp's perceptual steps (about 4.7 and 3.5 L*),
+     and both hold --color-text-secondary above 4.5:1. Semantic role COLOURS are
+     measured against --color-brand-surface and --color-brand-canvas only: a
+     status icon lives on the resting chrome, never inside a hovered ghost
+     button. */
+  --color-brand-hover: light-dark(#EDE2D0, #262019);
+  --color-brand-active: light-dark(#E6D8BF, #302820);
+  /* Hairline under the headerbar. DECORATIVE ONLY, like --color-border-subtle:
+     1.31:1, and never the sole marker of a control's boundary. */
+  --color-brand-border: light-dark(#DCCFB8, #362C20);
+  /* The boundary of an interactive control standing on brand chrome. Solved
+     against --color-brand-active, the darkest brand ground (3.16:1), because
+     the cool --color-border-default only reaches 2.45:1 there. */
+  --color-brand-border-control: light-dark(#827664, #8A7D6A);
+  /* Text on brand chrome. */
+  --color-brand-text: light-dark(#33291D, #E6DCCD);
+  --color-brand-text-muted: light-dark(#685A45, #A3947F);
+  /* The identity accent, for the about surface only: 4.84:1 on brand-surface
+     and 5.12:1 on brand-canvas. It is NOT --color-accent, it must never stand
+     in for it, and it must not be used on brand-hover or brand-active, where it
+     falls to 3.87:1 / 3.51:1. */
+  --color-brand-accent: light-dark(#965C14, #E8A33D);
+
+  /* Fixed across BOTH themes, exactly as the brand palette fixes them. Decorative
+     fills and the logo crate only: never text, never a border a reader must
+     find, never a state. Clay and oasis are about-surface fills and must not
+     appear beside a status — see the collision numbers above. */
+  --color-brand-amber: #E0A33A;
+  --color-brand-clay: #E08A6A;
+  --color-brand-oasis: #4CC38A;
+
+  /* Skeleton / shimmer base for loading placeholders. */
+  --color-skeleton: light-dark(#E2E6EA, #2A2F36);
+  --color-skeleton-highlight: light-dark(#EFF2F5, #343A43);
+
+  /* ======================================================================
+     TYPE
+     ----------------------------------------------------------------------
+     Sizes are px, not rem, on purpose: the virtualised list depends on a
+     fixed --row-height, and a row whose text scales independently of its
+     box overflows. Ctrl+= zoom in the webview still scales everything
+     together, so zoom is unaffected.
+     ====================================================================== */
+
+  /* UI stack. Resolves to Cantarell on GNOME, Ubuntu on Ubuntu, DejaVu/Noto
+     on minimal Debian, Segoe UI Variable / Segoe UI on Windows. */
+  --font-family-ui:
+    system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI",
+    Cantarell, Ubuntu, "Noto Sans", "DejaVu Sans", "Liberation Sans",
+    Roboto, Arial, sans-serif;
+
+  /* Monospace is load-bearing here: package names, versions, architectures,
+     SHA digests and NDJSON all need column alignment and unambiguous 0/O
+     and 1/l/I. Never render a version or a digest in the UI stack. */
+  --font-family-mono:
+    ui-monospace, "Cascadia Mono", "Cascadia Code", "JetBrains Mono",
+    "Source Code Pro", "DejaVu Sans Mono", "Liberation Mono",
+    "Noto Sans Mono", "Ubuntu Mono", Consolas, "Courier New", monospace;
+
+  /* Modular scale, ~1.15–1.2 per step, snapped to whole px. */
+  --font-size-2xs: 10px;  /* badge counts, table super-labels */
+  --font-size-xs: 11px;   /* chip text, dense metadata */
+  --font-size-sm: 12px;   /* secondary row text, help text, log output */
+  --font-size-md: 13px;   /* control labels, table cells */
+  --font-size-base: 14px; /* body default */
+  --font-size-lg: 16px;   /* section heading, dialog title */
+  --font-size-xl: 19px;   /* screen title — the largest size in the app */
+  /* There is deliberately nothing above 19px. A 23px and a 28px step used
+     to live here, referenced by nothing but gallery.html. They were an
+     invitation to put a marketing headline inside a tool window, which is
+     half of why the app read as a web page. Deleted by the brand pass. If a
+     splash or about surface genuinely wants poster type, it is a one-off
+     on that surface, not a token every screen can reach for. */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  --line-height-tight: 1.2;   /* headings, single-line rows */
+  --line-height-snug: 1.35;   /* control labels */
+  --line-height-normal: 1.5;  /* body copy, banners */
+  --line-height-loose: 1.6;   /* long-form help */
+
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.02em;  /* small caps-ish labels */
+  /* The wordmark, and nothing else. Brand shows in the type through weight
+     and tracking on the SYSTEM font — never through a webfont, and never by
+     putting a brand face ahead of system-ui in a UI stack. */
+  --letter-spacing-brand: 0.05em;
+
+  /* ======================================================================
+     SPACING — 4px base, one scale, no exceptions
+     ====================================================================== */
+
+  --space-0: 0;
+  --space-px: 1px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ======================================================================
+     RADIUS — restrained. This is a tool, not a consumer app.
+     ====================================================================== */
+
+  --radius-none: 0;
+  --radius-sm: 3px;    /* checkbox, badge, chip */
+  --radius-md: 5px;    /* button, input, card */
+  --radius-lg: 8px;    /* dialog, panel */
+  --radius-pill: 999px;/* progress track, removable chip */
+  --radius-circle: 50%;/* radio, spinner */
+
+  /* ======================================================================
+     BORDER WIDTH
+     ====================================================================== */
+
+  --border-width-hairline: 1px;  /* default for everything */
+  --border-width-thick: 2px;     /* selected tab, checked control */
+  --border-width-rule: 3px;      /* banner left rule */
+
+  /* ======================================================================
+     ELEVATION
+     ====================================================================== */
+
+  --shadow-0: none;
+  /* Resting card / toolbar edge. */
+  --shadow-1: 0 1px 2px rgba(16, 20, 26, 0.08), 0 0 0 1px rgba(16, 20, 26, 0.04);
+  /* Popover, dropdown, sticky header once scrolled. */
+  --shadow-2: 0 2px 6px rgba(16, 20, 26, 0.10), 0 1px 2px rgba(16, 20, 26, 0.06);
+  /* Dialog. */
+  --shadow-3: 0 12px 32px rgba(16, 20, 26, 0.18), 0 2px 8px rgba(16, 20, 26, 0.10);
+
+  /* The dark elevation set. light-dark() switches colours, not lengths,
+     and the dark shadows change blur and layer geometry as well as
+     colour, so these three cannot be folded into the declarations above.
+     They live here, once, beside their light counterparts; the two theme
+     rules at the foot of this file only re-point --shadow-1..3 at them
+     and carry no values of their own. Not for screens: use --shadow-1..3,
+     which already resolve to the right set. */
+  --shadow-1-dark: 0 1px 2px rgba(0, 0, 0, 0.50), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-2-dark: 0 2px 8px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-3-dark: 0 14px 36px rgba(0, 0, 0, 0.66), 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  /* ======================================================================
+     FOCUS RING
+     ----------------------------------------------------------------------
+     Two rings: a halo the colour of the surface, then the accent ring. The
+     halo keeps the ring visible even when the control sits on a fill of a
+     similar colour to the ring itself.
+     ====================================================================== */
+
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --color-focus-ring: light-dark(#165EB5, #7AB2F8);
+  --color-focus-halo: light-dark(#FFFFFF, #20242A);
+
+  /* ======================================================================
+     MOTION
+     ----------------------------------------------------------------------
+     Motion communicates state (a drawer opening, a bar filling) or it does
+     not exist. Under prefers-reduced-motion these all collapse to ~0 —
+     see the block at the foot of this file.
+     ====================================================================== */
+
+  --duration-instant: 0ms;
+  --duration-fast: 80ms;    /* hover, press */
+  --duration-base: 140ms;   /* disclosure, tab change */
+  --duration-slow: 240ms;   /* dialog entry */
+  --duration-indeterminate: 1100ms; /* looping progress / spinner cycle */
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-linear: linear;
+
+  /* ======================================================================
+     DENSITY
+     ----------------------------------------------------------------------
+     --row-height is a CONTRACT with the virtualiser. It is a round number
+     and it must stay one. The virtualiser computes
+        topIndex    = floor(scrollTop / rowHeight)
+        spacerBefore= topIndex * rowHeight
+     If this stops matching the rendered row box, the list tears while
+     scrolling. Change it only together with the virtualiser, and never to a
+     fractional value.
+     ====================================================================== */
+
+  --row-height: 32px;         /* THE virtualised catalogue row height */
+  --row-height-comfortable: 44px; /* readiness table / non-virtualised rows */
+  --skeleton-row-height: 32px;    /* must equal --row-height */
+
+  /* Control heights follow GTK/Adwaita, which is the app these sit beside
+     on a GNOME desktop. Adwaita's standard button is ~34px tall including
+     its border at 1x; this file shipped 30px, which is under that floor and
+     is one of the things that made the app read as a web form. Raised by
+     the brand pass to 34px, with the small step at 26px (Adwaita `.small`) and the
+     large step at 40px.
+     --toolbar-height stays 44px: components.css tightened .df-toolbar's
+     vertical padding to --space-1 so a 34px control still fits inside it. */
+  --control-height-sm: 26px;
+  --control-height: 34px;
+  --control-height-lg: 40px;
+
+  --toolbar-height: 44px;
+  --headerbar-height: 48px;
+  --actionbar-height: 56px;
+
+  --icon-size-sm: 14px;
+  --icon-size: 16px;
+  --icon-size-lg: 20px;
+  --icon-size-xl: 32px;   /* empty / error state glyph */
+
+  --hit-target-min: 24px; /* smallest clickable box; chip remove uses this */
+
+  /* Container widths. */
+  --measure-prose: 68ch;  /* max width for readable paragraphs */
+  --sidebar-width: 240px;
+  --tray-width: 320px;
+  --toast-width: 400px;   /* max width of the single bottom-centre toast */
+
+  /* ======================================================================
+     Z-INDEX — one ordered scale, no ad-hoc values
+     ====================================================================== */
+
+  --z-base: 0;
+  --z-sticky: 10;
+  --z-dropdown: 100;
+  --z-overlay: 1000;
+  --z-modal: 1001;
+  --z-toast: 1100;
+  --z-progress-top: 1200; /* the thin top-of-screen bar sits above all */
+}
+
+/* ==========================================================================
+   THE THREE THEME STATES
+   --------------------------------------------------------------------------
+   color-scheme chooses each light-dark() arm on modern engines and keeps
+   native controls consistent on every engine. The explicit fallback below
+   uses the same system/override policy. :where() prevents an explicit theme
+   from outranking the later high-contrast and forced-color rules.
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --shadow-1: var(--shadow-1-dark);
+    --shadow-2: var(--shadow-2-dark);
+    --shadow-3: var(--shadow-3-dark);
+  }
+}
+
+:root:where([data-theme="light"]) {
+  color-scheme: light;
+}
+
+:root:where([data-theme="dark"]) {
+  color-scheme: dark;
+
+  --shadow-1: var(--shadow-1-dark);
+  --shadow-2: var(--shadow-2-dark);
+  --shadow-3: var(--shadow-3-dark);
+}
+
+/* Exact copies of the palette arms above for engines without light-dark().
+   Keep both dark blocks identical; no contrast, hue or alpha is changed.
+   This block must precede the high-contrast/forced-color overrides. */
+@supports not (color: light-dark(#FFFFFF, #000000)) {
+  :root {
+    --color-surface-0: #E6E8EC;
+    --color-surface-1: #F2F4F6;
+    --color-surface-2: #FFFFFF;
+    --color-surface-3: #FFFFFF;
+    --color-surface-inset: #EDEFF2;
+    --color-row-hover: #EFF2F5;
+    --color-row-active: #E4E8ED;
+    --color-row-selected: #E3EDFA;
+    --color-backdrop: rgba(16, 20, 26, 0.45);
+    --color-text-primary: #14181D;
+    --color-text-secondary: #545B66;
+    --color-text-disabled: #858B95;
+    --color-border-subtle: #DCE0E6;
+    --color-border-default: #7D8592;
+    --color-border-strong: #58606A;
+    --color-border-focus: #165EB5;
+    --color-accent: #165EB5;
+    --color-accent-text: #165EB5;
+    --color-accent-bg: #E3EDFA;
+    --color-accent-fill: #165EB5;
+    --color-accent-fill-hover: #1454A1;
+    --color-accent-fill-active: #124A8F;
+    --color-info: #1579BF;
+    --color-info-text: #0C5F99;
+    --color-info-bg: #E1EFF9;
+    --color-info-fill: #1579BF;
+    --color-success: #0B864C;
+    --color-success-text: #0B663B;
+    --color-success-bg: #DFF2E7;
+    --color-success-fill: #0A7644;
+    --color-warning: #C17A00;
+    --color-warning-text: #8B5004;
+    --color-warning-bg: #FBEFD8;
+    --color-warning-fill: #C17A00;
+    --color-danger: #910E15;
+    --color-danger-text: #9B131A;
+    --color-danger-bg: #FBE3E4;
+    --color-danger-fill: #BF1B24;
+    --color-danger-fill-hover: #AA1820;
+    --color-danger-fill-active: #98161C;
+    --color-brand-surface: #F6F0E7;
+    --color-brand-canvas: #FBF7F0;
+    --color-brand-hover: #EDE2D0;
+    --color-brand-active: #E6D8BF;
+    --color-brand-border: #DCCFB8;
+    --color-brand-border-control: #827664;
+    --color-brand-text: #33291D;
+    --color-brand-text-muted: #685A45;
+    --color-brand-accent: #965C14;
+    --color-skeleton: #E2E6EA;
+    --color-skeleton-highlight: #EFF2F5;
+    --color-focus-ring: #165EB5;
+    --color-focus-halo: #FFFFFF;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      --color-surface-0: #101216;
+      --color-surface-1: #181B20;
+      --color-surface-2: #20242A;
+      --color-surface-3: #282D34;
+      --color-surface-inset: #0C0E11;
+      --color-row-hover: #272C33;
+      --color-row-active: #2E343C;
+      --color-row-selected: #17293D;
+      --color-backdrop: rgba(0, 0, 0, 0.62);
+      --color-text-primary: #E8EBEF;
+      --color-text-secondary: #A7AFBA;
+      --color-text-disabled: #727A85;
+      --color-border-subtle: #2E333A;
+      --color-border-default: #747D8B;
+      --color-border-strong: #8E95A0;
+      --color-border-focus: #7AB2F8;
+      --color-accent: #7AB2F8;
+      --color-accent-text: #7AB2F8;
+      --color-accent-bg: #17273A;
+      --color-accent-fill: #2970C6;
+      --color-accent-fill-hover: #2B75D1;
+      --color-accent-fill-active: #2566B6;
+      --color-info: #7CC8F7;
+      --color-info-text: #7CC8F7;
+      --color-info-bg: #12293A;
+      --color-info-fill: #1E76AC;
+      --color-success: #3AD994;
+      --color-success-text: #46DE9D;
+      --color-success-bg: #0F2D20;
+      --color-success-fill: #0E804B;
+      --color-warning: #FCD589;
+      --color-warning-text: #FAD98D;
+      --color-warning-bg: #2E2510;
+      --color-warning-fill: #FCD589;
+      --color-danger: #EE4431;
+      --color-danger-text: #F88B7F;
+      --color-danger-bg: #331716;
+      --color-danger-fill: #D32E22;
+      --color-danger-fill-hover: #DC362A;
+      --color-danger-fill-active: #C22A20;
+      --color-brand-surface: #1C1710;
+      --color-brand-canvas: #14100C;
+      --color-brand-hover: #262019;
+      --color-brand-active: #302820;
+      --color-brand-border: #362C20;
+      --color-brand-border-control: #8A7D6A;
+      --color-brand-text: #E6DCCD;
+      --color-brand-text-muted: #A3947F;
+      --color-brand-accent: #E8A33D;
+      --color-skeleton: #2A2F36;
+      --color-skeleton-highlight: #343A43;
+      --color-focus-ring: #7AB2F8;
+      --color-focus-halo: #20242A;
+    }
+  }
+
+  :root:where([data-theme="dark"]) {
+    --color-surface-0: #101216;
+    --color-surface-1: #181B20;
+    --color-surface-2: #20242A;
+    --color-surface-3: #282D34;
+    --color-surface-inset: #0C0E11;
+    --color-row-hover: #272C33;
+    --color-row-active: #2E343C;
+    --color-row-selected: #17293D;
+    --color-backdrop: rgba(0, 0, 0, 0.62);
+    --color-text-primary: #E8EBEF;
+    --color-text-secondary: #A7AFBA;
+    --color-text-disabled: #727A85;
+    --color-border-subtle: #2E333A;
+    --color-border-default: #747D8B;
+    --color-border-strong: #8E95A0;
+    --color-border-focus: #7AB2F8;
+    --color-accent: #7AB2F8;
+    --color-accent-text: #7AB2F8;
+    --color-accent-bg: #17273A;
+    --color-accent-fill: #2970C6;
+    --color-accent-fill-hover: #2B75D1;
+    --color-accent-fill-active: #2566B6;
+    --color-info: #7CC8F7;
+    --color-info-text: #7CC8F7;
+    --color-info-bg: #12293A;
+    --color-info-fill: #1E76AC;
+    --color-success: #3AD994;
+    --color-success-text: #46DE9D;
+    --color-success-bg: #0F2D20;
+    --color-success-fill: #0E804B;
+    --color-warning: #FCD589;
+    --color-warning-text: #FAD98D;
+    --color-warning-bg: #2E2510;
+    --color-warning-fill: #FCD589;
+    --color-danger: #EE4431;
+    --color-danger-text: #F88B7F;
+    --color-danger-bg: #331716;
+    --color-danger-fill: #D32E22;
+    --color-danger-fill-hover: #DC362A;
+    --color-danger-fill-active: #C22A20;
+    --color-brand-surface: #1C1710;
+    --color-brand-canvas: #14100C;
+    --color-brand-hover: #262019;
+    --color-brand-active: #302820;
+    --color-brand-border: #362C20;
+    --color-brand-border-control: #8A7D6A;
+    --color-brand-text: #E6DCCD;
+    --color-brand-text-muted: #A3947F;
+    --color-brand-accent: #E8A33D;
+    --color-skeleton: #2A2F36;
+    --color-skeleton-highlight: #343A43;
+    --color-focus-ring: #7AB2F8;
+    --color-focus-halo: #20242A;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Collapsing the duration tokens turns off every transition expressed in
+   tokens at once. components.css additionally hard-stops animations.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+    --duration-indeterminate: 1ms;
+  }
+}
+
+/* ==========================================================================
+   HIGH CONTRAST, PART 1 OF 2 — prefers-contrast: more
+   --------------------------------------------------------------------------
+   This is the query that Linux actually signals. Measured on WebKit2GTK
+   2.52.6 by writing real GTK settings and restarting the view:
+
+       gtk-theme-name        forced-colors  prefers-contrast
+       (unset) / Adwaita     none           no-preference
+       Adwaita-dark          none           no-preference
+       HighContrast          none           MORE
+       HighContrastInverse   none           MORE
+       highcontrast          none           no-preference
+       HighContrastFoo       none           no-preference
+       NotAThemeAtAll        none           no-preference
+
+   It is an exact, case-sensitive test of the GTK theme *name*, and the theme
+   need not be installed — HighContrastInverse flipped it in an image that has
+   no such theme. Those are precisely the two names GNOME's high-contrast
+   toggle sets, so the signal is the setting, and `forced-colors` below is
+   dead on this platform. docs/accessibility.md 8.3 has the run.
+
+   WHAT THIS BLOCK CHANGES, AND WHY IT IS ONLY THIS
+   The palette already clears every floor it has: every text pair is >= 4.5:1
+   and every control boundary >= 3:1 (7.2). Exactly two colours sit below 3:1,
+   and both are there on purpose — the decorative separators exempted under
+   WCAG 1.4.11 in 7.1. Under `more` they stop being decorative, because the
+   operator has asked to be able to see edges. So each is re-pointed at a
+   colour THIS FILE ALREADY DEFINES and 7.2 already measures:
+
+       --color-border-subtle  1.01-1.52:1  ->  --color-border-default  >= 3.02:1
+       --color-brand-border   1.06-1.44:1  ->  --color-brand-border-control
+                                                                       >= 3.16:1
+
+   and the focus ring is drawn thicker. A width is not a colour: no pair moves.
+   52 pairs re-measured, 0 failures, worst 3.02:1 against a 3:1 floor. The six
+   that 7.2 did not already carry are published in 7.4.
+
+   NO NEW COLOUR IS INTRODUCED, deliberately. Inventing a high-contrast palette
+   would invalidate the 292 measured pairs and the CVD solve in 8, and this
+   project's rule is to measure rather than assert.
+
+   TWO THINGS IT DOES NOT DO, SO NOBODY READS MORE INTO IT
+   * `--border-width-hairline` stays 1px. A border is in the box model, so
+     doubling 31 of them is a layout change and would need the whole
+     five-screen x eight-case reflow matrix re-run (docs/accessibility.md 8.1).
+     The outline is not: it is drawn outside layout, so the ring can thicken
+     for free.
+   * Text is not repainted. Promoting --color-text-secondary would flatten the
+     label/description hierarchy that every boxed-list row is built from, to
+     fix nothing: its worst pair is 5.57:1 against a 4.5:1 floor.
+
+   ONE CONSEQUENCE, STATED RATHER THAN HIDDEN
+   --color-border-subtle is also the border of a disabled or aria-disabled
+   control, so under `more` a gated control's boundary becomes as visible as an
+   enabled one's. That is right here: the design system never carried the state
+   in that border — 6.23 bans `disabled` outright and puts the state in
+   `aria-disabled`, the dimmed label, a padlock glyph and a spoken reason — and
+   WCAG 1.4.11 exempts a disabled control from the floor in either direction.
+
+   CASCADE TRAP, MEASURED NOT ASSUMED
+   Nothing here may re-point a token at another token that this same rule also
+   re-points. A var() inside a custom property resolves against the CASCADED
+   value, so `--a: var(--b); --b: var(--c)` in one rule collapses BOTH to --c.
+   Driven on WebKit2GTK 2.52.6 with a three-token probe: with the rule off,
+   --a/--b/--c read back #111/#222/#333; with it on, #333/#333/#333. Both
+   targets below are therefore tokens this rule leaves alone.
+
+   Ordered before FORCED COLOURS on purpose: where a platform signals both,
+   the OS palette must be the last word.
+   ========================================================================== */
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-border-subtle: var(--color-border-default);
+    --color-brand-border: var(--color-brand-border-control);
+    --focus-ring-width: 3px;
+  }
+}
+
+/* ==========================================================================
+   HIGH CONTRAST, PART 2 OF 2 — forced-colors: active
+   --------------------------------------------------------------------------
+   Hand the palette back to the OS rather than fighting it.
+
+   WINDOWS / WEBVIEW2 ONLY. Measured on WebKit2GTK 2.52.6: `forced-colors`
+   never matched under any GTK setting including HighContrast, `forced-colors:
+   none` was true throughout, and `forced-color-adjust` computed to the empty
+   string, i.e. the property is not implemented. This block and the one in
+   components.css section 30 are dead code on the shipping Linux engine; the
+   block above is what fires there. Keep both: WebView2 is a supported target
+   and implements forced colours properly. docs/accessibility.md 8.3.
+   ========================================================================== */
+
+@media (forced-colors: active) {
+  :root {
+    --color-focus-ring: Highlight;
+    --color-border-default: ButtonBorder;
+    --color-border-strong: ButtonBorder;
+    --shadow-1: none;
+    --shadow-2: none;
+    --shadow-3: none;
+  }
+}

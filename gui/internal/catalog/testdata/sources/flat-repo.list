@@ -1,0 +1,2 @@
+deb [trusted=yes] file:///src/hack/experiments/out/e3/origin-vendor ./
+deb [trusted=yes] file:///src/hack/experiments/out/e3/origin-backports ./

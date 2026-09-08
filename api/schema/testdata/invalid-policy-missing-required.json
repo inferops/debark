@@ -1,0 +1,23 @@
+{
+  "allow_components": [
+    "main",
+    "contrib"
+  ],
+  "deny_components": [
+    "non-free",
+    "non-free-firmware"
+  ],
+  "deny_packages": [
+    "telnet",
+    "rsh-*"
+  ],
+  "require_signed_publisher": true,
+  "allow_url_inputs": false,
+  "approved_keys": [
+    "CAE265BE4F5710A1C6714384E04F6BB6DC1AE916"
+  ],
+  "deny_flags": [
+    "dkms"
+  ],
+  "default_severity": "warn"
+}

@@ -1,0 +1,126 @@
+/*
+ * vendor-url-fetch — the one input shape this suite never had: a vendor
+ * .deb that is DOWNLOADED.
+ *
+ * Protects: the design (a URL is a first-class build input) and
+ * contract-brief.md rule 2 (two builds of one request are byte-identical)
+ * for the code path that only a real download reaches.
+ *
+ * Why it exists. Every other vendor input in this suite is staged as a local
+ * file path, so core/fetch's HTTP path had no covering row at all. Measured
+ * on the 2026-09-07 matrix run, before this fixture: of the 35 evidence.json
+ * files the run produced, ZERO contained a progress event. Three commits
+ * landed against that path with nothing in the suite able to see any of
+ * them:
+ *
+ *   - the progress-event determinism fix (core/engine's liveOnlyTypes),
+ *   - vendor-URL redaction on the way into the signed bundle, and
+ *   - the fetch-failure reason classification.
+ *
+ * The first of those had made EVERY build with a vendor URL unreproducible —
+ * two bundle ids for byte-identical output — and it had to be found by
+ * reading core/fetch, because the one fixture carrying determinism:true
+ * resolves apt:jq, which apt downloads in its own private root, so
+ * core/fetch never runs.
+ *
+ * What it asserts, and why each half is needed.
+ *
+ * 1. determinism:true, against a server that serves the SAME BYTES at two
+ *    different speeds. checkDeterminism runs this request twice; the
+ *    harness's RepoServer sends the first vendor response at full speed and
+ *    paces every later one (httprepo.go's pacedFileHandler). core/fetch's
+ *    progressWriter emits on a 250ms wall clock, so build one produces about
+ *    two progress events and build two about ten. If those events reach the
+ *    collector that becomes evidence.json — which the manifest hashes and
+ *    the signature covers — the two builds differ by eight events and this
+ *    row is RED. Serving both at the same speed would make the row green
+ *    whether or not the drop existed, which is a green row proving nothing.
+ *
+ * 2. A credential-shaped query string on the URL, and BOTH directions
+ *    asserted about it. evidence.json must contain "?REDACTED" (proving the
+ *    redaction ran at all) and must NOT contain the token (proving it ran
+ *    correctly). Either half alone is vacuous: the absence of a string is
+ *    the normal state of almost every string, and a build that never fetched
+ *    anything would satisfy it. lock.json carries the same pair because
+ *    redaction there is a separate call site (redactOrigin) that a change to
+ *    core/fetch alone would not fix.
+ *
+ * 3. The package actually installs and runs on the offline target, so the
+ *    downloaded bytes are the ones that crossed the air gap rather than
+ *    merely the ones that were hashed.
+ *
+ * KNOWN RED, and deliberately so: the lock.json half of assertion 2 fails
+ * today. On its first run this fixture found that a vendor URL's query
+ * credential is written VERBATIM into lock.json's packages[].origin.uri —
+ * inside the bundle, hashed by the manifest, covered by the signature, and
+ * carried across the air gap. evidence.json is clean, so this is the second
+ * half of the leak 034f709 closed, in a place that commit did not know
+ * about.
+ *
+ * The cause is two writers of lock.Package and only one of them redacting:
+ * core/engine/lockbuild.go writes Origin: redactOrigin(sel.Origin), and
+ * core/bundle/assemble.go's own buildLock then rebuilds l.Packages from the
+ * same selections with a bare Origin: sel.Origin. The assembler's copy is
+ * the one that reaches disk. redactOrigin's doc comment still says "No
+ * backend populates Origin.URI with a live vendor URL as of this writing",
+ * which stopped being true when attributeExternalOrigins landed.
+ *
+ * Reproduced outside this harness, in one container with the real binary and
+ * no fixture involved: build with one http:// vendor URL carrying
+ * ?token=..., then grep the bundle. lock.json leaks it; evidence.json,
+ * debark.manifest.json and repo/Packages do not.
+ *
+ * The assertion stays. A row that is red because the product leaks a
+ * credential into a signed artefact is this suite working, and weakening it
+ * to recover a green tick is the exact trade this project has written down
+ * that it does not make.
+ *
+ * The URL is http:// rather than https:// because the server is this run's
+ * own loopback RepoServer and there is no certificate to trust. debark
+ * honours http:// with an explicit warning (core/fetch's scheme switch),
+ * which is the documented behaviour and is itself worth having a row over.
+ *
+ * Not matrixed across releases: the claim is about core/fetch and
+ * core/engine, which do not vary by target release, and a second release
+ * would buy a duplicate at the cost of another download. The release grid is
+ * basic-install-matrix's job.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "vendor-url-fetch",
+  "protects": "URL inputs; contract-brief.md rule 2 determinism over a real download; vendor-URL redaction",
+  "tags": ["edge", "determinism", "fetch"],
+  "determinism": true,
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "sign": true,
+    "vendor_urls": [
+      { "name": "acme-url-tool", "version": "1.0", "depends": "jq", "bin": true, "pad_bytes": 4194304 }
+    ],
+    "vendor_url_query": "token=DFE2E-QUERY-TOKEN-MUST-NOT-SHIP"
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-url-tool", "jq"],
+    "binaries": [
+      { "path": "/usr/bin/acme-url-tool", "exit_code": 0, "stdout_contains": "acme-url-tool 1.0" }
+    ],
+    "bundle_files": [
+      {
+        "path": "evidence.json",
+        "contains": ["?REDACTED", "acme-url-tool"],
+        "absent": ["DFE2E-QUERY-TOKEN-MUST-NOT-SHIP", "token="]
+      },
+      {
+        "path": "lock.json",
+        "contains": ["acme-url-tool"],
+        "absent": ["DFE2E-QUERY-TOKEN-MUST-NOT-SHIP"]
+      }
+    ]
+  }
+}

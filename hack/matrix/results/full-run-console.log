@@ -1,0 +1,97 @@
+matrix: run rbf989290, 30 row(s), 4 worker(s), workdir=matrix-work
+START basic-install-matrix / debian 12 / amd64
+START basic-install-matrix / debian 13 / amd64
+START alt-deps / debian 12 / amd64
+START basic-install-matrix / debian 12 / arm64
+FAIL     alt-deps / debian 12 / amd64 (build, 34.4s)
+START basic-install-matrix / debian 13 / arm64
+FAIL     basic-install-matrix / debian 12 / amd64 (determinism, 38.7s)
+START basic-install-matrix / ubuntu 22.04 / amd64
+FAIL     basic-install-matrix / debian 13 / amd64 (determinism, 45.2s)
+START basic-install-matrix / ubuntu 22.04 / arm64
+FAIL     basic-install-matrix / debian 12 / arm64 (determinism, 157.5s)
+START basic-install-matrix / ubuntu 24.04 / amd64
+FAIL     basic-install-matrix / ubuntu 22.04 / amd64 (determinism, 147.0s)
+START basic-install-matrix / ubuntu 24.04 / arm64
+FAIL     basic-install-matrix / debian 13 / arm64 (determinism, 180.4s)
+START basic-install-matrix / ubuntu 26.04 / amd64
+FAIL     basic-install-matrix / ubuntu 24.04 / amd64 (determinism, 103.7s)
+START basic-install-matrix / ubuntu 26.04 / arm64
+FAIL     basic-install-matrix / ubuntu 26.04 / amd64 (determinism, 87.1s)
+START dkms-without-headers / debian 12 / amd64
+FAIL     dkms-without-headers / debian 12 / amd64 (build, 19.5s)
+START external-deb-closure / debian 12 / amd64
+FAIL     external-deb-closure / debian 12 / amd64 (build, 46.3s)
+START external-deb-missing-deps / debian 12 / amd64
+FAIL     basic-install-matrix / ubuntu 22.04 / arm64 (determinism, 324.3s)
+START foreign-arch-i386 / debian 12 / amd64
+FAIL     external-deb-missing-deps / debian 12 / amd64 (build, 21.4s)
+START held-package / debian 12 / amd64
+FAIL     foreign-arch-i386 / debian 12 / amd64 (build, 49.5s)
+START multiarch-coexist / ubuntu 24.04 / amd64
+FAIL     basic-install-matrix / ubuntu 24.04 / arm64 (determinism, 242.8s)
+START no-recommends-target / debian 12 / amd64
+FAIL     held-package / debian 12 / amd64 (build, 41.5s)
+START origin-release-pin / debian 12 / amd64
+FAIL     basic-install-matrix / ubuntu 26.04 / arm64 (determinism, 174.3s)
+START phased-updates / ubuntu 24.04 / amd64
+FAIL     no-recommends-target / debian 12 / amd64 (build, 21.1s)
+START snap-shim-package / ubuntu 24.04 / amd64
+FAIL     origin-release-pin / debian 12 / amd64 (build, 24.2s)
+START stale-installed-version / debian 12 / amd64
+FAIL     stale-installed-version / debian 12 / amd64 (build, 27.9s)
+START tamper-added-file / debian 12 / amd64
+FAIL     phased-updates / ubuntu 24.04 / amd64 (build, 47.6s)
+START tamper-edited-manifest / debian 12 / amd64
+FAIL     multiarch-coexist / ubuntu 24.04 / amd64 (build, 75.7s)
+START tamper-modified-deb / debian 12 / amd64
+PASS     tamper-added-file / debian 12 / amd64 (done, 22.7s)
+START tamper-removed-file / debian 12 / amd64
+FAIL     snap-shim-package / ubuntu 24.04 / amd64 (build, 54.7s)
+START tamper-swapped-signature / debian 12 / amd64
+PASS     tamper-edited-manifest / debian 12 / amd64 (done, 23.8s)
+START tamper-wrong-key / debian 12 / amd64
+PASS     tamper-modified-deb / debian 12 / amd64 (done, 24.1s)
+START third-party-repo / debian 12 / amd64
+PASS     tamper-removed-file / debian 12 / amd64 (done, 28.0s)
+START virtual-provides / debian 12 / amd64
+PASS     tamper-wrong-key / debian 12 / amd64 (done, 31.0s)
+FAIL     third-party-repo / debian 12 / amd64 (build, 24.2s)
+PASS     tamper-swapped-signature / debian 12 / amd64 (done, 38.1s)
+FAIL     virtual-provides / debian 12 / amd64 (build, 18.7s)
+matrix: result written to hack/matrix/results/result.json
+FIXTURE                    RELEASE       ARCH   STATUS  STAGE        TIME    NOTE                                                                            
+-------------------------  ------------  -----  ------  -----------  ------  --------------------------------------------------------------------------------
+alt-deps                   debian 12     amd64  FAIL    build        34.4s   exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme...
+basic-install-matrix       debian 12     amd64  FAIL    determinism  38.7s   not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       debian 12     arm64  FAIL    determinism  157.5s  not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       debian 13     amd64  FAIL    determinism  45.2s   not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       debian 13     arm64  FAIL    determinism  180.4s  not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       ubuntu 22.04  amd64  FAIL    determinism  147.0s  not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       ubuntu 22.04  arm64  FAIL    determinism  324.3s  not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       ubuntu 24.04  amd64  FAIL    determinism  103.7s  not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       ubuntu 24.04  arm64  FAIL    determinism  242.8s  not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       ubuntu 26.04  amd64  FAIL    determinism  87.1s   not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+basic-install-matrix       ubuntu 26.04  arm64  FAIL    determinism  174.3s  not byte-identical: not byte-identical: debark.manifest.json: differs betwe...
+dkms-without-headers       debian 12     amd64  FAIL    build        19.5s   exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme...
+external-deb-closure       debian 12     amd64  FAIL    build        46.3s   exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme...
+external-deb-missing-deps  debian 12     amd64  FAIL    build        21.4s   exit 5 (resolution), want 3 (incomplete): resolution  /work/bundle   target: ...
+foreign-arch-i386          debian 12     amd64  FAIL    build        49.5s   exit 2 (environment), want 0 (success): debark: engine: store zlib1g_1.2.13...
+held-package               debian 12     amd64  FAIL    build        41.5s   exit 5 (resolution), want 0 (success): debark: apt-get install --print-uris...
+multiarch-coexist          ubuntu 24.04  amd64  FAIL    build        75.7s   exit 2 (environment), want 0 (success): debark: engine: store zlib1g_1.3.df...
+no-recommends-target       debian 12     amd64  FAIL    build        21.1s   exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme...
+origin-release-pin         debian 12     amd64  FAIL    build        24.2s   exit 2 (environment), want 0 (success): debark: engine: store acme-pin-demo...
+phased-updates             ubuntu 24.04  amd64  FAIL    build        47.6s   exit 2 (environment), want 0 (success): debark: engine: store acme-phased-d...
+snap-shim-package          ubuntu 24.04  amd64  FAIL    build        54.7s   exit 2 (environment), want 0 (success): debark: engine: store vendor-0-acme...
+stale-installed-version    debian 12     amd64  FAIL    build        27.9s   exit 2 (environment), want 0 (success): debark: engine: store acme-stale-de...
+tamper-added-file          debian 12     amd64  PASS    done         22.7s                                                                                   
+tamper-edited-manifest     debian 12     amd64  PASS    done         23.8s                                                                                   
+tamper-modified-deb        debian 12     amd64  PASS    done         24.1s                                                                                   
+tamper-removed-file        debian 12     amd64  PASS    done         28.0s                                                                                   
+tamper-swapped-signature   debian 12     amd64  PASS    done         38.1s                                                                                   
+tamper-wrong-key           debian 12     amd64  PASS    done         31.0s                                                                                   
+third-party-repo           debian 12     amd64  FAIL    build        24.2s   exit 2 (environment), want 0 (success): debark: engine: store acme-vendor-t...
+virtual-provides           debian 12     amd64  FAIL    build        18.7s   exit 2 (environment), want 0 (success): debark: engine: store vendor-1-acme...
+
+30 total: 6 pass, 24 fail, 0 blocked, 0 skipped
+exit status 1

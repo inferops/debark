@@ -1,0 +1,51 @@
+/*
+ * external-deb-closure — an external .deb whose dependency closure resolves.
+ *
+ * Protects: the differentiation claim ("vendor .deb dependency
+ * closure... adds what nothing else does") and D5 ("Vendor .deb files by
+ * URL or path are first-class dependency-bearing inputs"). This is the
+ * success companion to external-deb-missing-deps.json's failure case, and
+ * reproduces the design's own worked example almost verbatim
+ * ("synthetic mytool (Depends: jq, tree) ... resolves its
+ * closure").
+ *
+ * The mechanism under test: the vendor .deb is indexed as a
+ * private staging repo added to the private apt root (Trusted: yes, file:
+ * URI) so apt resolves *its* Depends against the real archive, in the same
+ * `apt-get install --download-only` pass as any plain package request —
+ * never a separate, hand-rolled dependency walk.
+ *
+ * What would break if this regressed: a vendor-supplied .deb with ordinary
+ * archive dependencies (the common case — most vendor packages only add a
+ * few files and depend on stock libraries) would either fail to resolve at
+ * all, or install without its dependencies and fail on the offline target —
+ * the kill scenario, on the one workflow (D5, the "External
+ * .deb workflow" success metric) this product exists to do that nothing
+ * else does.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "external-deb-closure",
+  "protects": "external .deb dependency closure",
+  "tags": ["edge", "external-deb"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {}
+  },
+  "request": {
+    "vendor_debs": [
+      { "name": "acme-mytool", "version": "1.0", "depends": "jq, tree", "bin": true }
+    ]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-mytool", "jq", "tree"],
+    "binaries": [
+      { "path": "/usr/bin/acme-mytool", "exit_code": 0, "stdout_contains": "acme-mytool 1.0" },
+      { "path": "/usr/bin/jq", "args": ["--version"], "exit_code": 0 },
+      { "path": "/usr/bin/tree", "args": ["--version"], "exit_code": 0 }
+    ]
+  }
+}

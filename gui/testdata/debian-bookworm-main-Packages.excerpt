@@ -1,0 +1,654 @@
+Package: 0ad
+Version: 0.0.26-3
+Installed-Size: 28591
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: 0ad-data (>= 0.0.26), 0ad-data (<= 0.0.26-3), 0ad-data-common (>= 0.0.26), 0ad-data-common (<= 0.0.26-3), libboost-filesystem1.74.0 (>= 1.74.0), libc6 (>= 2.34), libcurl3-gnutls (>= 7.32.0), libenet7, libfmt9 (>= 9.1.0+ds1), libfreetype6 (>= 2.2.1), libgcc-s1 (>= 3.4), libgloox18 (>= 1.0.24), libicu72 (>= 72.1~rc-1~), libminiupnpc17 (>= 1.9.20140610), libopenal1 (>= 1.14), libpng16-16 (>= 1.6.2-1), libsdl2-2.0-0 (>= 2.0.12), libsodium23 (>= 1.0.14), libstdc++6 (>= 12), libvorbisfile3 (>= 1.1.2), libwxbase3.2-1 (>= 3.2.1+dfsg), libwxgtk-gl3.2-1 (>= 3.2.1+dfsg), libwxgtk3.2-1 (>= 3.2.1+dfsg-2), libx11-6, libxml2 (>= 2.9.0), zlib1g (>= 1:1.2.0)
+Pre-Depends: dpkg (>= 1.15.6~)
+Description: Real-time strategy game of ancient warfare
+Homepage: https://play0ad.com/
+Description-md5: d943033bedada21853d2ae54a2578a7b
+Tag: game::strategy, interface::graphical, interface::x11, role::program,
+ uitoolkit::sdl, uitoolkit::wxwidgets, use::gameplaying,
+ x11::application
+Section: games
+Priority: optional
+Filename: pool/main/0/0ad/0ad_0.0.26-3_amd64.deb
+Size: 7891488
+MD5sum: 4d471183a39a3a11d00cd35bf9f6803d
+SHA256: 3a2118df47bf3f04285649f0455c2fc6fe2dc7f0b237073038aa00af41f0d5f2
+
+Package: 0ad-data
+Version: 0.0.26-1
+Installed-Size: 3218736
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: all
+Pre-Depends: dpkg (>= 1.15.6~)
+Suggests: 0ad
+Description: Real-time strategy game of ancient warfare (data files)
+Homepage: https://play0ad.com/
+Description-md5: 26581e685027d5ae84824362a4ba59ee
+Tag: role::app-data
+Section: games
+Priority: optional
+Filename: pool/main/0/0ad-data/0ad-data_0.0.26-1_all.deb
+Size: 1377557908
+MD5sum: fc5ed8a20ce1861950c7ed3a5a615be0
+SHA256: 53745ae74d05bccf6783400fa98f3932b21729ab9d2e86151aa2c331c3455178
+
+Package: 0ad-data-common
+Source: 0ad-data
+Version: 0.0.26-1
+Installed-Size: 2428
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: all
+Replaces: 0ad-data (<< 0.0.12-1~)
+Depends: fonts-dejavu-core | ttf-dejavu-core, fonts-freefont-ttf | ttf-freefont, fonts-texgyre | tex-gyre
+Pre-Depends: dpkg (>= 1.15.6~)
+Suggests: 0ad
+Breaks: 0ad-data (<< 0.0.12-1~)
+Description: Real-time strategy game of ancient warfare (common data files)
+Homepage: https://play0ad.com/
+Description-md5: 8d014b839c4c4e9b6f82c7512d7e3496
+Tag: game::strategy, role::app-data, role::program, use::gameplaying
+Section: games
+Priority: optional
+Filename: pool/main/0/0ad-data/0ad-data-common_0.0.26-1_all.deb
+Size: 779908
+MD5sum: 7ce70dc6e6de01134d2e199499fd3925
+SHA256: 0a40074c844a304688e503dd0c3f8b04e10e40f6f81b8bad260e07c54aa37864
+
+Package: 0xffff
+Version: 0.9-1
+Installed-Size: 167
+Maintainer: Sebastian Reichel <sre@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.14), libusb-0.1-4 (>= 2:0.1.12)
+Description: Open Free Fiasco Firmware Flasher
+Multi-Arch: foreign
+Homepage: https://github.com/pali/0xFFFF
+Description-md5: 183c49f6505eb3432d1b069800f1f5b6
+Tag: admin::hardware, hardware::usb, implemented-in::c,
+ interface::commandline, role::program, scope::utility, works-with::file
+Section: misc
+Priority: optional
+Filename: pool/main/0/0xffff/0xffff_0.9-1_amd64.deb
+Size: 59232
+MD5sum: 3de8282ef18b53b11c8ad6d6481b3a14
+SHA256: 2c5a35bc4830379b565369ccbca608535d64577fb3244869a17cb6de8d9bda7d
+
+Package: 2048
+Version: 0.20220905.1556-1
+Installed-Size: 45
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Description: Slide and add puzzle game for text mode
+Homepage: https://github.com/mevdschee/2048.c
+Description-md5: 2d3a24661b5ec0391d6bd1aedf7c20b7
+Section: games
+Priority: optional
+Filename: pool/main/2/2048/2048_0.20220905.1556-1_amd64.deb
+Size: 14576
+MD5sum: 1dd32ceb185b8429437332d80512b99b
+SHA256: 90d69d97806396c25cec8e197f1d130cb901c814ffcebe105814e5e87b1ec1b5
+
+Package: 2048-qt
+Source: 2048-qt (0.1.6-2)
+Version: 0.1.6-2+b2
+Installed-Size: 3817
+Maintainer: Alejandro Garrido Mota <alejandro@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.4), libgcc1 (>= 1:3.0), libqt5core5a (>= 5.12.2), libqt5qml5 (>= 5.1.0), libqt5widgets5 (>= 5.0.2), libstdc++6 (>= 5), qml-module-qtquick-controls, qml-module-qtquick-dialogs
+Description: mathematics based puzzle game
+Homepage: https://github.com/xiaoyong/2048-Qt
+Description-md5: 0f25c2ca95ceff4500fde9f651d74f2e
+Tag: game::puzzle, interface::graphical, interface::x11, role::program,
+ uitoolkit::qt, use::gameplaying, x11::application
+Section: games
+Priority: optional
+Filename: pool/main/2/2048-qt/2048-qt_0.1.6-2+b2_amd64.deb
+Size: 1393256
+MD5sum: 38918b12a0ca4066403019b69e50adde
+SHA256: a7e575e574629d6151f27507b4c9b49bef3ad46ffaa08321ea487568c0153b65
+
+Package: 2ping
+Version: 4.5-1.1
+Installed-Size: 156
+Maintainer: Ryan Finnie <ryan@finnie.org>
+Architecture: all
+Depends: python3:any, python3-pkg-resources, lsb-base (>= 3.0-6)
+Recommends: python3-distro, python3-dnspython, python3-netifaces
+Suggests: python3-pycryptodome, python3-systemd
+Description: Ping utility to determine directional packet loss
+Homepage: https://www.finnie.org/software/2ping/
+Description-md5: 2543c220a763445976d1348c5b593743
+Tag: implemented-in::perl, interface::commandline, protocol::ip,
+ role::program, scope::utility, use::analysing, use::measuring,
+ works-with::network-traffic
+Section: net
+Priority: optional
+Filename: pool/main/2/2ping/2ping_4.5-1.1_all.deb
+Size: 33548
+MD5sum: 54cf56e79adb55c037c1ce36021ad37f
+SHA256: 5de1086c79cbf431697cc6a993a7378fe46488599cc640f5834caa9f9f3c517d
+
+Package: 2vcard
+Version: 0.6-4
+Installed-Size: 52
+Maintainer: Debian QA Group <packages@qa.debian.org>
+Architecture: all
+Depends: perl:any
+Description: convert an addressbook to VCARD file format
+Multi-Arch: foreign
+Homepage: https://www.netmeister.org/apps/2vcard/
+Description-md5: 772b42c5a35b82967966265253189059
+Tag: implemented-in::perl, role::program, use::converting, works-with::pim
+Section: utils
+Priority: optional
+Filename: pool/main/2/2vcard/2vcard_0.6-4_all.deb
+Size: 14544
+MD5sum: 46023286a6ffc78815e677e58e2c24f7
+SHA256: 91623506903574ec9d5a378489e71a2add9d6899f6f48eed5be21e13cb0d2f9c
+
+Package: 3dchess
+Version: 0.8.1-21
+Installed-Size: 118
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.4), libx11-6, libxpm4, libxt6, xaw3dg (>= 1.5+E-1)
+Description: Play chess across 3 boards!
+Homepage: https://www.ibiblio.org/pub/Linux/games/strategy/
+Description-md5: 12d01b96d7645ee302ebc29cde999e92
+Tag: game::board, game::board:chess, game::strategy, implemented-in::c,
+ interface::graphical, interface::x11, role::program, uitoolkit::xlib,
+ use::gameplaying, x11::application
+Section: games
+Priority: optional
+Filename: pool/main/3/3dchess/3dchess_0.8.1-21_amd64.deb
+Size: 39708
+MD5sum: dfae6ae525d2e962b03303473412f207
+SHA256: 84c46a8781829b7fae4d2a1f4fb911e488ef5b41052d2ee2dbc36270eb90bbdd
+
+Package: 3depict
+Version: 0.0.23-2
+Installed-Size: 8855
+Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libftgl2 (>= 2.4.0), libgcc-s1 (>= 3.0), libgl1, libglu1-mesa | libglu1, libgomp1 (>= 6), libgsl27 (>= 2.7.1), libmgl8 (>= 8.0.1), libpng16-16 (>= 1.6.2-1), libqhull8.0 (>= 2020.1), libstdc++6 (>= 11), libwxbase3.2-1 (>= 3.2.1+dfsg), libwxgtk-gl3.2-1 (>= 3.2.1+dfsg), libwxgtk3.2-1 (>= 3.2.1+dfsg-2), libxml2 (>= 2.7.4)
+Description: visualisation and analysis for single valued point data
+Homepage: http://threedepict.sourceforge.net/index.html
+Description-md5: 246db3da16c5305f24976464271087a5
+Tag: interface::graphical, interface::x11, role::program,
+ uitoolkit::wxwidgets, use::analysing, x11::application
+Section: science
+Priority: optional
+Filename: pool/main/3/3depict/3depict_0.0.23-2_amd64.deb
+Size: 5759560
+MD5sum: 8a28c8962c7a14887cb1e4f51b85349d
+SHA256: 13409969c8e24c7cf400ab95b19775c89c0bde68685288987e8870185ec4c5f2
+
+Package: linux-doc
+Source: linux
+Version: 6.1.170-3
+Installed-Size: 10
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Depends: linux-doc-6.1 (= 6.1.170-3)
+Description: Linux kernel specific documentation (meta-package)
+Homepage: https://www.kernel.org/
+Description-md5: 00ddef8fbf27444a48a36993f9c9d823
+Tag: admin::kernel, devel::doc, devel::lang:c, devel::library,
+ implemented-in::c, role::devel-lib, role::documentation,
+ role::metapackage
+Section: doc
+Priority: optional
+Filename: pool/main/l/linux/linux-doc_6.1.170-3_all.deb
+Size: 1100
+MD5sum: c9e313faefa6ce9fe33f475026052678
+SHA256: 91eb697a078d3d7cc020c84a34a664303db2106dbd15d8b342b255e5f80b4b8c
+
+Package: linux-doc
+Source: linux
+Version: 6.1.176-1
+Installed-Size: 10
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Depends: linux-doc-6.1 (= 6.1.176-1)
+Description: Linux kernel specific documentation (meta-package)
+Homepage: https://www.kernel.org/
+Description-md5: 00ddef8fbf27444a48a36993f9c9d823
+Tag: admin::kernel, devel::doc, devel::lang:c, devel::library,
+ implemented-in::c, role::devel-lib, role::documentation,
+ role::metapackage
+Section: doc
+Priority: optional
+Filename: pool/main/l/linux/linux-doc_6.1.176-1_all.deb
+Size: 1108
+MD5sum: 1bedfad34749cf4d23a983dbd74860b3
+SHA256: 516d79d4094811a9b9df9202856abe661c2e58cc363228fb6d7ba2620fd4ddb9
+
+Package: linux-source
+Source: linux
+Version: 6.1.170-3
+Installed-Size: 10
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Depends: linux-source-6.1 (= 6.1.170-3)
+Description: Linux kernel source (meta-package)
+Homepage: https://www.kernel.org/
+Description-md5: 295a0aae79622b42802dfa4bda819ae6
+Tag: admin::kernel, devel::lang:c, devel::library, implemented-in::c,
+ role::devel-lib, role::metapackage
+Section: kernel
+Priority: optional
+Filename: pool/main/l/linux/linux-source_6.1.170-3_all.deb
+Size: 1096
+MD5sum: 0e81c9c947f9655cf9d7c627124e341f
+SHA256: 87f86d525a2fcd93a2c3f68dc81ce6d7e2955892b775304f8de410554ace540e
+
+Package: linux-source
+Source: linux
+Version: 6.1.176-1
+Installed-Size: 10
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Depends: linux-source-6.1 (= 6.1.176-1)
+Description: Linux kernel source (meta-package)
+Homepage: https://www.kernel.org/
+Description-md5: 295a0aae79622b42802dfa4bda819ae6
+Tag: admin::kernel, devel::lang:c, devel::library, implemented-in::c,
+ role::devel-lib, role::metapackage
+Section: kernel
+Priority: optional
+Filename: pool/main/l/linux/linux-source_6.1.176-1_all.deb
+Size: 1100
+MD5sum: a7cec76e0228e96fac026e5fe90f230b
+SHA256: 7ec84db8e201377f240914ee8d800c2c2b0a17ccf4700ac475ef145c9c5df508
+
+Package: acme
+Source: acme (1:0.97~svn20211115+ds-1)
+Version: 1:0.97~svn20211115+ds-1+b1
+Installed-Size: 387
+Maintainer: Gürkan Myczko <tar@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Description: Multi-platform cross assembler for 6502/6510/65816 CPU
+Homepage: https://sourceforge.net/projects/acme-crossass/
+Description-md5: 3b8bfe55f1143c2db17b8974dceb5612
+Tag: devel::code-generator, devel::compiler, devel::machinecode,
+ implemented-in::c, role::program
+Section: devel
+Priority: optional
+Filename: pool/main/a/acme/acme_0.97~svn20211115+ds-1+b1_amd64.deb
+Size: 144796
+MD5sum: f5618025ce1d73881100352af855a903
+SHA256: 9f743950b7255501e9476542934745711370340bbb1ad027c2add000f8d7f930
+
+Package: acpi-call-dkms
+Source: acpi-call
+Version: 1.2.2-2.1
+Installed-Size: 50
+Maintainer: Raphaël Halimi <raphael.halimi@gmail.com>
+Architecture: all
+Provides: acpi-call
+Depends: dkms (>= 3.0.3-4~)
+Description: Kernel module that enables you to call ACPI methods
+Homepage: https://github.com/nix-community/acpi_call
+Description-md5: 556ad288ffebae3f7e62898d0c7abd68
+Section: kernel
+Priority: optional
+Filename: pool/main/a/acpi-call/acpi-call-dkms_1.2.2-2.1_all.deb
+Size: 14408
+MD5sum: fcbdb7febe7f9b9a662ad0a95b59dedf
+SHA256: cc37a02230559935661d16cda513b66de79efe2eec26035382fb40158f06e7bc
+
+Package: advancecomp
+Version: 2.5-1
+Installed-Size: 1101
+Maintainer: Piotr Ożarowski <piotr@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.0), libstdc++6 (>= 9), zlib1g (>= 1:1.1.4)
+Description: collection of recompression utilities
+Homepage: http://www.advancemame.it/
+Description-md5: 45269d7ed6ff6092f699fce2e0061b74
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, use::compressing, works-with-format::png,
+ works-with-format::zip, works-with::archive, works-with::file,
+ works-with::image, works-with::image:raster
+Section: utils
+Priority: optional
+Filename: pool/main/a/advancecomp/advancecomp_2.5-1_amd64.deb
+Size: 209692
+MD5sum: 5852cdfc10f515455798b7adbd5f8d0c
+SHA256: a8e86e50793a293e15b287622ea2b67f742dc453a546b367a36db55ac204df7a
+
+Package: aegisub
+Source: aegisub (3.2.2+dfsg-7)
+Version: 3.2.2+dfsg-7+b3
+Installed-Size: 8175
+Maintainer: Aniol Martí <amarti@caliu.cat>
+Architecture: amd64
+Depends: libasound2 (>= 1.0.18), libass9 (>= 1:0.13.6), libboost-chrono1.74.0 (>= 1.74.0), libboost-filesystem1.74.0 (>= 1.74.0), libboost-locale1.74.0 (>= 1.74.0), libboost-regex1.74.0-icu72, libboost-thread1.74.0 (>= 1.74.0), libc6 (>= 2.34), libffms2-5 (>= 2.21), libfftw3-double3 (>= 3.3.10), libfontconfig1 (>= 2.12.6), libgcc-s1 (>= 3.0), libgl1, libhunspell-1.7-0, libicu72 (>= 72.1~rc-1~), libluajit-5.1-2 (>= 2.0.4+dfsg) | libluajit2-5.1-2 (>= 2.1~), libpulse0 (>= 0.99.1), libstdc++6 (>= 12.2.0-10), libwxbase3.2-1 (>= 3.2.1+dfsg), libwxgtk-gl3.2-1 (>= 3.2.1+dfsg), libwxgtk3.2-1 (>= 3.2.1+dfsg-2), zlib1g (>= 1:1.1.4)
+Suggests: aegisub-l10n
+Description: advanced subtitle editor
+Homepage: http://www.aegisub.org/
+Description-md5: ac7c657c68b22f27b1565e35b32050af
+Tag: implemented-in::c++, interface::graphical, interface::x11,
+ role::program, scope::application, uitoolkit::wxwidgets, use::editing,
+ works-with::video, x11::application
+Section: video
+Priority: optional
+Filename: pool/main/a/aegisub/aegisub_3.2.2+dfsg-7+b3_amd64.deb
+Size: 2701916
+MD5sum: 77ad1f1a2454dcdfd32e5a2b0c827c4f
+SHA256: 1521b9690c44d868118314ec1edd9596a12807b5b1bab7423ae2098c61bc5b37
+
+Package: aephea
+Version: 12-248-3
+Installed-Size: 399
+Maintainer: Joost van Baal-Ilić <joostvb@debian.org>
+Architecture: all
+Replaces: zoem-doc
+Recommends: zoem
+Breaks: zoem-doc
+Description: text-based authoring tool for HTML
+Homepage: http://micans.org/aephea
+Description-md5: 2bec5eccdfb1fead541764a4fc088a53
+Section: text
+Priority: optional
+Filename: pool/main/a/aephea/aephea_12-248-3_all.deb
+Size: 149784
+MD5sum: d4823964480655585b8b11e1d8be7de2
+SHA256: 9306fab038b2b1ce75c12547381772a68cf27630f85bf41b41e89a3b3d3ed606
+
+Package: ahcpd
+Version: 0.53-3
+Installed-Size: 84
+Maintainer: Stéphane Glondu <glondu@debian.org>
+Architecture: amd64
+Depends: lsb-base, libc6 (>= 2.15)
+Pre-Depends: init-system-helpers (>= 1.54~)
+Enhances: babeld
+Description: Ad-Hoc Configuration Protocol
+Homepage: https://www.irif.fr/~jch/software/ahcp/
+Description-md5: f1c1a025e99acd7afd0c2b29e5c5fdef
+Tag: implemented-in::c, network::configuration, protocol::ip, protocol::ipv6,
+ role::program
+Section: net
+Priority: optional
+Filename: pool/main/a/ahcpd/ahcpd_0.53-3_amd64.deb
+Size: 29084
+MD5sum: 1eb30668df368a172567d8e741e1c4e2
+SHA256: fc0e9377ffb3c8bfd05f1e6279fa555dbc96e6749e9b0bfed18ffb34b03b882b
+
+Package: adwaita-qt
+Version: 1.4.2-3
+Installed-Size: 281
+Maintainer: Dmitry Shachnev <mitya57@debian.org>
+Architecture: amd64
+Depends: libadwaitaqt1 (>= 1.4.0), libadwaitaqtpriv1 (>= 1.1.90), libc6 (>= 2.14), libgcc-s1 (>= 3.0), libqt5core5a (>= 5.15.1), libqt5gui5 (>= 5.14.1) | libqt5gui5-gles (>= 5.14.1), libqt5widgets5 (>= 5.12.0), libqt5x11extras5 (>= 5.6.0), libstdc++6 (>= 4.1.1), libxcb1
+Description: Qt 5 port of GNOME’s Adwaita theme
+Multi-Arch: same
+Homepage: https://github.com/FedoraQt/adwaita-qt
+Description-md5: 2dcac42ee1ee4eeaecbdef44bb880176
+Tag: uitoolkit::qt
+Section: gnome
+Priority: optional
+Filename: pool/main/a/adwaita-qt/adwaita-qt_1.4.2-3_amd64.deb
+Size: 91656
+MD5sum: ec4bd8661fe50a5ec3bc9ade24c28980
+SHA256: 2f2327524f0fbc6f0ccb1d022868c19de5f454e680d885cef2c9853741a8aa85
+
+Package: libadwaitaqt1
+Source: adwaita-qt
+Version: 1.4.2-3
+Installed-Size: 182
+Maintainer: Dmitry Shachnev <mitya57@debian.org>
+Architecture: amd64
+Depends: libadwaitaqtpriv1 (>= 1.1.90), libc6 (>= 2.14), libgcc-s1 (>= 3.0), libqt5core5a (>= 5.15.1), libqt5gui5 (>= 5.14.1) | libqt5gui5-gles (>= 5.14.1), libstdc++6 (>= 4.1.1)
+Description: Qt 5 port of GNOME’s Adwaita theme — public library
+Multi-Arch: same
+Homepage: https://github.com/FedoraQt/adwaita-qt
+Description-md5: 55bffda473a1e82767c59c621d6444ca
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/a/adwaita-qt/libadwaitaqt1_1.4.2-3_amd64.deb
+Size: 55892
+MD5sum: a80d651fe1559df5303dc6b077c53c5a
+SHA256: db9dad6caa3ea43ad5644e86b5cf45f0d578d625ea7a9a76b7de7fad54000723
+
+Package: base-files
+Version: 12.4+deb12u15
+Essential: yes
+Installed-Size: 341
+Maintainer: Santiago Vila <sanvila@debian.org>
+Architecture: amd64
+Replaces: base, dpkg (<= 1.15.0), miscutils
+Provides: base
+Pre-Depends: awk
+Breaks: debian-security-support (<< 2019.04.25), initscripts (<< 2.88dsf-13.3), sendfile (<< 2.1b.20080616-5.2~)
+Description: Debian base system miscellaneous files
+Multi-Arch: foreign
+Description-md5: 6d16337f57b84c4747f56438355b2395
+Tag: admin::configuring, admin::filesystem, admin::install, admin::login,
+ role::app-data, suite::debian
+Section: admin
+Priority: required
+Filename: pool/main/b/base-files/base-files_12.4+deb12u15_amd64.deb
+Size: 70936
+MD5sum: 0d863c1ee183c8e006bd085d63f4874f
+SHA256: 3eb1ea6d85488f488cc2a163b98ad640ef88cee4c79287cf14e361aaf6206f47
+
+Package: bash
+Source: bash (5.2.15-2)
+Version: 5.2.15-2+b13
+Essential: yes
+Installed-Size: 7164
+Maintainer: Matthias Klose <doko@debian.org>
+Architecture: amd64
+Replaces: bash-completion (<< 20060301-0), bash-doc (<= 2.05-1)
+Depends: base-files (>= 2.1.12), debianutils (>= 5.6-0.1)
+Pre-Depends: libc6 (>= 2.36), libtinfo6 (>= 6)
+Recommends: bash-completion (>= 20060301-0)
+Suggests: bash-doc
+Conflicts: bash-completion (<< 20060301-0)
+Description: GNU Bourne Again SHell
+Multi-Arch: foreign
+Homepage: http://tiswww.case.edu/php/chet/bash/bashtop.html
+Description-md5: 3522aa7b4374048d6450e348a5bb45d9
+Tag: admin::TODO, devel::TODO, devel::interpreter, implemented-in::c,
+ interface::shell, interface::text-mode, role::program,
+ scope::application, suite::gnu, uitoolkit::ncurses
+Section: shells
+Priority: required
+Filename: pool/main/b/bash/bash_5.2.15-2+b13_amd64.deb
+Size: 1490652
+MD5sum: f973a067908f9c7579d30deddd8301ed
+SHA256: 82130bb6a560cd2a7234d8018baf73f188f5dd56413d5aa0accc987b2197a6a1
+
+Package: coreutils
+Version: 9.1-1
+Essential: yes
+Installed-Size: 18062
+Maintainer: Michael Stone <mstone@debian.org>
+Architecture: amd64
+Pre-Depends: libacl1 (>= 2.2.23), libattr1 (>= 1:2.4.44), libc6 (>= 2.34), libgmp10 (>= 2:6.2.1+dfsg1), libselinux1 (>= 3.1~)
+Description: GNU core utilities
+Multi-Arch: foreign
+Homepage: http://gnu.org/software/coreutils
+Description-md5: d0d975dec3625409d24be1238cede238
+Tag: admin::configuring, implemented-in::c, interface::commandline,
+ role::program, scope::utility, suite::gnu, works-with::file
+Section: utils
+Priority: required
+Filename: pool/main/c/coreutils/coreutils_9.1-1_amd64.deb
+Size: 2896560
+MD5sum: 422d5a39db59ce199e9588ac35167081
+SHA256: 61038f857e346e8500adf53a2a0a20859f4d3a3b51570cc876b153a2d51a3091
+
+Package: dpkg
+Version: 1.21.23
+Essential: yes
+Installed-Size: 6409
+Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
+Architecture: amd64
+Depends: tar (>= 1.28-1)
+Pre-Depends: libbz2-1.0, libc6 (>= 2.34), liblzma5 (>= 5.4.0), libmd0 (>= 0.0.0), libselinux1 (>= 3.1~), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.1.4)
+Suggests: apt, debsig-verify
+Breaks: libapt-pkg5.0 (<< 1.7~b), lsb-base (<< 10.2019031300)
+Description: Debian package management system
+Multi-Arch: foreign
+Homepage: https://wiki.debian.org/Teams/Dpkg
+Description-md5: 2f156c6a30cc39895ad3487111e8c190
+Tag: admin::package-management, devel::lang:perl, devel::library,
+ implemented-in::c, implemented-in::perl, interface::commandline,
+ role::devel-lib, role::program, scope::utility, suite::debian,
+ use::configuring, works-with::software:package
+Section: admin
+Priority: required
+Filename: pool/main/d/dpkg/dpkg_1.21.23_amd64.deb
+Size: 1567804
+MD5sum: 2858b1c15607a869ed221c922f06740e
+SHA256: f89e9f8d1a4a50ade44be3ed59a6ec55460fce205d2f8520c5c492137c5b609b
+
+Package: libc6
+Source: glibc
+Version: 2.36-9+deb12u14
+Installed-Size: 13001
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: amd64
+Replaces: libc6-amd64
+Depends: libgcc-s1
+Recommends: libidn2-0 (>= 2.0.5~)
+Suggests: glibc-doc, debconf | debconf-2.0, libc-l10n, locales, libnss-nis, libnss-nisplus
+Breaks: aide (<< 0.17.3-4+b3), busybox (<< 1.30.1-6), chrony (<< 4.2-3~), fakechroot (<< 2.19-3.5), firefox (<< 91~), firefox-esr (<< 91~), gnumach-image-1.8-486 (<< 2:1.8+git20210923~), gnumach-image-1.8-486-dbg (<< 2:1.8+git20210923~), gnumach-image-1.8-xen-486 (<< 2:1.8+git20210923~), gnumach-image-1.8-xen-486-dbg (<< 2:1.8+git20210923~), hurd (<< 1:0.9.git20220301-2), ioquake3 (<< 1.36+u20200211.f2c61c1~dfsg-2~), iraf-fitsutil (<< 2018.07.06-4), libgegl-0.4-0 (<< 0.4.18), libtirpc1 (<< 0.2.3), locales (<< 2.36), locales-all (<< 2.36), macs (<< 2.2.7.1-3~), nocache (<< 1.1-1~), nscd (<< 2.36), openarena (<< 0.8.8+dfsg-4~), openssh-server (<< 1:8.1p1-5), python3-iptables (<< 1.0.0-2), r-cran-later (<< 0.7.5+dfsg-2), tinydns (<< 1:1.05-14), valgrind (<< 1:3.19.0-1~), wcc (<< 0.0.2+dfsg-3)
+Description: GNU C Library: Shared libraries
+Multi-Arch: same
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description-md5: fc3001b0b90a1c8e6690b283a619d57f
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/g/glibc/libc6_2.36-9+deb12u14_amd64.deb
+Size: 2759320
+MD5sum: 8d98f0c882f269aaee8437bcfe89346e
+SHA256: ba4f88f73dbc3ae9055f3c20f4523bfdbaf1ad13ff95e258924f77d20b4fbedf
+
+Package: libmono-cil-dev
+Source: mono
+Version: 6.8.0.105+dfsg-3.3+deb12u1
+Installed-Size: 72
+Maintainer: Debian Mono Group <pkg-mono-group@lists.alioth.debian.org>
+Architecture: all
+Replaces: libmono-cairo2.0-cil (<< 2.4.3), libmono-cecil-private-cil (<< 2.4.3), libmono-dev (<< 2.10~), libmono-nunit2.2-cil (<< 2.4.3), libmono-nunit2.4-cil (<< 2.4.3), libmono-system-web2.0-cil (<< 2.4.3), libmono-wcf3.0-cil (<< 2.4.3), libmono2.0-cil (<< 2.4.3), mono-devel (<< 2.4.3)
+Depends: libmono-accessibility4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-cairo4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-cecil-private-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-codecontracts4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-compilerservices-symbolwriter4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-corlib4.5-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-cscompmgd0.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-csharp4.0c-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-custommarshalers4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-data-tds4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-db2-1.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-debugger-soft4.0a-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-http4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-i18n4.0-all (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-ldap4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-management4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-messaging4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-messaging-rabbitmq4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-build4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-build-engine4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-build-framework4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-build-tasks-v4.0-4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-build-utilities-v4.0-4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-csharp4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-visualc10.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-microsoft-web-infrastructure1.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-oracle4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-parallel4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-peapi4.0a-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-posix4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-rabbitmq4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-relaxng4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-security4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-sharpzip4.84-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-simd4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-smdiagnostics0.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-sqlite4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-componentmodel-composition4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-componentmodel-dataannotations4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-configuration4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-configuration-install4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-core4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-data4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-data-datasetextensions4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-data-entity4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-data-linq4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-data-services4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-data-services-client4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-deployment4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-design4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-drawing4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-drawing-design4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-dynamic4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-enterpriseservices4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-identitymodel4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-identitymodel-selectors4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-io-compression4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-io-compression-filesystem4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-json4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-json-microsoft4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-ldap4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-ldap-protocols4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-management4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-messaging4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-net4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-net-http4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-net-http-formatting4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-net-http-webrequest4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-numerics4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-numerics-vectors4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-core2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-debugger2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-experimental2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-interfaces2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-linq2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-observable-aliases0.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-platformservices2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-providers2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-runtime-remoting2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-windows-forms2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reactive-windows-threading2.2-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-reflection-context4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-runtime4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-runtime-caching4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-runtime-durableinstancing4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-runtime-serialization4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-runtime-serialization-formatters-soap4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-security4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-servicemodel4.0a-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-servicemodel-activation4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-servicemodel-discovery4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-servicemodel-internals0.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-servicemodel-routing4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-servicemodel-web4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-serviceprocess4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-threading-tasks-dataflow4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-transactions4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-abstractions4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-applicationservices4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-dynamicdata4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-extensions4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-extensions-design4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-http4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-http-selfhost4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-http-webhost4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-mobile4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-mvc3.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-razor2.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-regularexpressions4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-routing4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-services4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-webpages2.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-webpages-deployment2.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-web-webpages-razor2.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-windows4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-windows-forms4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-windows-forms-datavisualization4.0a-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-workflow-activities4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-workflow-componentmodel4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-workflow-runtime4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-xaml4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-xml4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-xml-linq4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-system-xml-serialization4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-tasklets4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-webbrowser4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-webmatrix-data4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-windowsbase4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libmono-xbuild-tasks4.0-cil (= 6.8.0.105+dfsg-3.3+deb12u1), libnunit-cil-dev (>= 2.4)
+Conflicts: libmono-nunit2.2-cil, libmono-nunit2.4-cil
+Breaks: libmono-dev (<< 2.10~)
+Description: Mono Base Class Libraries (BCL) - Development files
+Homepage: http://www.mono-project.com/
+Description-md5: b3ffc3f2c198d9bf41ba035ceb7c5c5e
+Tag: devel::ecma-cli, devel::library, role::devel-lib
+Section: cli-mono
+Priority: optional
+Filename: pool/main/m/mono/libmono-cil-dev_6.8.0.105+dfsg-3.3+deb12u1_all.deb
+Size: 17424
+MD5sum: b69e9a517fc757f4144901c0559a7dad
+SHA256: 3700a4f272769c69569e8da25a13a8130791a8d0c6663161ea2744880bb77f1e
+
+Package: fonts-3270
+Source: 3270font
+Version: 3.0.1-1
+Installed-Size: 775
+Maintainer: Debian Fonts Task Force <debian-fonts@lists.debian.org>
+Architecture: all
+Description: monospaced font based on IBM 3270 terminals
+Multi-Arch: foreign
+Homepage: https://github.com/rbanffy/3270font
+Description-md5: ee5f05e9172509d63dcb4f7ecb71ae03
+Tag: made-of::font, role::data, x11::font
+Section: fonts
+Priority: optional
+Filename: pool/main/3/3270font/fonts-3270_3.0.1-1_all.deb
+Size: 184620
+MD5sum: 615f3c062a67a400e25c53cb606639ab
+SHA256: d182dd722580251486253c97c6664e7fd743761a9be3a3479a1ed3177982ead1
+
+Package: cockpit-389-ds
+Source: 389-ds-base
+Version: 2.3.1+dfsg1-1+deb12u1
+Installed-Size: 706
+Maintainer: Debian FreeIPA Team <pkg-freeipa-devel@alioth-lists.debian.net>
+Architecture: all
+Depends: cockpit, libjs-bootstrap, libjs-c3, libjs-d3, libjs-jquery-datatables, libjs-jquery-datatables-extensions, libjs-jquery-jstree, libjs-moment, libnss3-tools, python3, python3-lib389
+Description: Cockpit user interface for 389 Directory Server
+Multi-Arch: foreign
+Homepage: https://directory.fedoraproject.org
+Description-md5: 29c953a4198b73567ac827862c4a3e0f
+Section: net
+Priority: optional
+Filename: pool/main/3/389-ds-base/cockpit-389-ds_2.3.1+dfsg1-1+deb12u1_all.deb
+Size: 687632
+MD5sum: 4405fca4f8dfae8d86e32cb75222e27e
+SHA256: b7e51bb2c7860b8987f300233f6510c67324f57fe6eccc42e036e7fb4a4e3e2f
+
+Package: lib4ti2-0
+Source: 4ti2
+Version: 1.6.9+ds-8
+Installed-Size: 1944
+Maintainer: Debian Math Team <team+math@tracker.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.0), libglpk40 (>= 4.59), libgmp10 (>= 2:6.2.1+dfsg1), libgmpxx4ldbl (>= 2:6.2.1+dfsg1), libstdc++6 (>= 11)
+Description: mathematical tool suite for problems on linear spaces -- libs
+Multi-Arch: same
+Homepage: https://4ti2.github.io/
+Description-md5: df6e22ec8d67188d9443c53de63ed28a
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/4/4ti2/lib4ti2-0_1.6.9+ds-8_amd64.deb
+Size: 452968
+MD5sum: ae1a6df740e1c189168cdd71364c8b30
+SHA256: 3229fb33acaf661eedec684a26784ebec697794a2d776b5ab3e58d0139e8c2ed
+
+Package: 7zip
+Version: 22.01+really26.01+dfsg-0+deb12u1
+Installed-Size: 2644
+Maintainer: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.0), libstdc++6 (>= 5)
+Description: 7-Zip file archiver with a high compression ratio
+Homepage: https://www.7-zip.org/
+Description-md5: 302b8ff813071cfed09d7b23ac4a0cb3
+Tag: implemented-in::c++, interface::commandline, role::program,
+ scope::utility, use::compressing, works-with-format::TODO,
+ works-with-format::chm, works-with-format::elf,
+ works-with-format::iso9660, works-with-format::swf,
+ works-with-format::tar, works-with-format::zip, works-with::archive
+Section: utils
+Priority: optional
+Filename: pool/main/7/7zip/7zip_22.01+really26.01+dfsg-0+deb12u1_amd64.deb
+Size: 1021792
+MD5sum: 7bbbb566d68cfc65945005c281aa0d6f
+SHA256: 3b182c7983e5261cf003b6d778852fd1fb5274d5fd5d36287a3537c70a5c84b3
+
+Package: 9base
+Version: 1:6-13
+Installed-Size: 4738
+Maintainer: Debian QA Group <packages@qa.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), debianutils (>= 5.3-1~)
+Description: Plan 9 userland tools
+Homepage: https://tools.suckless.org/9base/
+Description-md5: ba92532ca0abb19498113de24635b819
+Tag: admin::configuring, devel::code-generator, devel::interpreter,
+ implemented-in::c, interface::commandline, role::program,
+ scope::utility, works-with::file
+Section: utils
+Priority: optional
+Filename: pool/main/9/9base/9base_6-13_amd64.deb
+Size: 738020
+MD5sum: 3ded9d910e0136299c9afbbbb873100c
+SHA256: 2e6871d44e011e760c2d2dd14719a11266cc40b154265df55f2c5cab1ea32160
+

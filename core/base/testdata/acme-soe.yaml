@@ -1,0 +1,39 @@
+# A hand-written operator base definition.
+#
+# This file exists to give parse_test.go an oracle Marshal did not write. A
+# round-trip test (marshal, load, compare) proves the encoder and the decoder
+# agree with each other and nothing else; if both spelled a field wrong in the
+# same way it would still pass. The values below were typed out by a human
+# from docs/formats.md §3.7, and the test asserts the loaded definition holds
+# exactly what a reader can see here.
+#
+# Deliberately unlike Marshal's output: comments, a different field order, a
+# quoted version_id, and no `arch:` key at all (this SOE is built for whatever
+# architecture is asked for).
+
+schema_version: debark.base/v1
+id: acme:soe-2026/workstation
+description: ACME standard operating environment, 2026 refresh
+
+distro_id: ubuntu
+version_id: "24.04"
+codename: noble
+variant: workstation
+
+# The seeds, not the closure: apt is the oracle, and this file may never name
+# a package list.
+seeds:
+  - acme-soe-workstation
+  - ubuntu-minimal
+
+recommends: false
+
+sources: |
+  Types: deb
+  URIs: http://apt.acme.example/ubuntu
+  Suites: ${codename} ${codename}-updates
+  Components: main acme
+  Signed-By: /usr/share/keyrings/acme-archive-keyring.gpg
+
+keyrings:
+  - /usr/share/keyrings/acme-archive-keyring.gpg

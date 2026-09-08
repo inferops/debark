@@ -1,0 +1,57 @@
+/*
+ * stale-installed-version — a stale installed version.
+ *
+ * Protects: the edge-fixture list, "stale installed versions".
+ * The target already has acme-stale-demo 1.0 installed (dpkg_status says
+ * so, captured verbatim into the snapshot) when the
+ * request names the *same* package again with no version pin. Version 2.0,
+ * the only candidate a fresh apt resolve would offer, adds a dependency
+ * (jq) that 1.0 never had.
+ *
+ * This is deliberately built so a real behavioural bug is distinguishable
+ * from a passing run: if resolution reasoned from the stale 1.0 state
+ * instead of asking the private-root apt fresh for the *candidate* version
+ * (ADR-001, "apt is the oracle" — never let custom code shortcut what apt
+ * would say), the new dependency on jq would be missing from the bundle,
+ * and the target would end up with an unconfigurable or broken upgrade —
+ * the kill scenario ("resolves online but fails offline") in its
+ * most literal form: apt-get install on the target would simply refuse the
+ * upgrade for want of jq.
+ *
+ * What would break if this regressed: any target due for a routine package
+ * refresh — the single most common real use of this tool after the first
+ * bundle — could ship an incomplete upgrade closure.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "stale-installed-version",
+  "protects": "edge fixtures: a stale installed version",
+  "tags": ["edge"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "installed": {
+      "repos": [
+        {
+          "name": "acme-versions",
+          "packages": [
+            { "spec": { "name": "acme-stale-demo", "version": "1.0", "bin": true } },
+            { "spec": { "name": "acme-stale-demo", "version": "2.0", "depends": "jq", "bin": true } }
+          ]
+        }
+      ],
+      "from_repos": ["acme-stale-demo=1.0"]
+    }
+  },
+  "request": {
+    "packages": ["acme-stale-demo"]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-stale-demo", "jq"],
+    "binaries": [
+      { "path": "/usr/bin/acme-stale-demo", "exit_code": 0, "stdout_contains": "acme-stale-demo 2.0" }
+    ]
+  }
+}

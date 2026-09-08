@@ -1,0 +1,15 @@
+### apt-get install --print-uris -y jq tree ###
+Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  libjq1 libonig5
+The following NEW packages will be installed:
+  jq libjq1 libonig5 tree
+0 upgraded, 4 newly installed, 0 to remove and 2 not upgraded.
+Need to get 440 kB of archives.
+After this operation, 1286 kB of additional disk space will be used.
+'http://deb.debian.org/debian/pool/main/libo/libonig/libonig5_6.9.8-1_amd64.deb' libonig5_6.9.8-1_amd64.deb 187828 MD5Sum:7e359432d638eee2be29dfd20ddcd493
+'http://deb.debian.org/debian/pool/main/j/jq/libjq1_1.6-2.1%2bdeb12u2_amd64.deb' libjq1_1.6-2.1+deb12u2_amd64.deb 135656 MD5Sum:60ea2d4f3dc5c0f760769ecc3ff0a999
+'http://deb.debian.org/debian/pool/main/j/jq/jq_1.6-2.1%2bdeb12u2_amd64.deb' jq_1.6-2.1+deb12u2_amd64.deb 63984 MD5Sum:b9aca00e056b5365d65597df4b338cee
+'http://deb.debian.org/debian/pool/main/t/tree/tree_2.1.0-1_amd64.deb' tree_2.1.0-1_amd64.deb 52464 MD5Sum:a12f30705b94d891f14bd5199fe6f4f2
+EXIT:0

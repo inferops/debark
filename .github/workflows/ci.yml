@@ -1,0 +1,491 @@
+name: CI
+
+# Runs on every push to main and every pull request. Nothing in this
+# workflow phones home, uploads telemetry, or checks for updates — see
+# SECURITY.md and docs/dev/contract-brief.md rule 3.
+#
+# THIS REPOSITORY IS A MONOREPO WITH TWO GO MODULES, and this workflow covers
+# both:
+#
+#   .      github.com/inferops/debark      the debark CLI. Pure Go, CGO off,
+#                                          builds and tests everywhere.
+#   gui/   github.com/inferops/debark/gui  the Wails desktop app. cgo + GTK3 +
+#                                          WebKitGTK 4.1 on Linux; CGO off on
+#                                          Windows.
+#
+# The root module's `go build ./...` does NOT reach gui/: a nested module is
+# invisible to the parent module's package patterns. So the GUI gets its own
+# job below rather than a line in the root matrix. gui/go.mod carries
+# `replace github.com/inferops/debark => ../`, which a single checkout of this
+# repository satisfies on its own — no second checkout, no module proxy, no
+# credential. That replace directive is correct for this layout; it is not a
+# temporary workaround waiting on a module proxy.
+#
+# macOS is deliberately absent from every matrix here: this project ships
+# Linux and Windows only. Linux is the shipping target for debark-gui;
+# Windows is built and tested because it compiles and people develop on it.
+#
+# Third-party actions are pinned to a full commit SHA, with the release tag in
+# a trailing comment. A major tag like `@v4` is a mutable pointer: whoever can
+# re-point it runs arbitrary code in this job, with the workspace, the Go
+# module cache and the job token. The trailing comment is the only part that
+# may be edited for readability — the SHA is the pin, and bumping a version
+# means resolving the new tag to its commit, not editing the comment.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Use the toolchain setup-go installed; never silently download another one.
+  GOTOOLCHAIN: local
+
+jobs:
+  # ---------------------------------------------------------------------
+  # gofmt: a file that gofmt would reformat is a failure, independent of
+  # what golangci-lint's own formatter checks say.
+  #
+  # gofmt walks directories, not modules, so `gofmt -l .` at the root covers
+  # gui/ as well. That is why the gui job below does not repeat it: one job,
+  # whole tree, one place to look when it goes red.
+  # ---------------------------------------------------------------------
+  gofmt:
+    name: gofmt check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+
+      - name: gofmt -l . (both modules)
+        run: |
+          set -euo pipefail
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "The following files are not gofmt-formatted:"
+            echo "$unformatted"
+            echo
+            echo "Run 'gofmt -w <file>' (or 'make fmt') and commit the result."
+            exit 1
+          fi
+          echo "All files are gofmt-formatted."
+
+  # ---------------------------------------------------------------------
+  # lint: golangci-lint against .golangci.yml (v2 config format), root
+  # module only — the gui module has its own .golangci.yml and its own build
+  # tags, and is linted in its own job below.
+  #
+  # The version is NOT written here. It lives in the Makefile as
+  # GOLANGCI_LINT_VERSION and is read out below, so that `make lint` on a
+  # developer machine and this job always run the same binary. They drifted
+  # once (this job pinned v2.12.2 while developers had v2.13.2) and a finding
+  # that exists under one version and not the other is indistinguishable from
+  # a regression until someone compares tool versions by hand.
+  #
+  # No --timeout and no --max-issues-* flags here either, for the same
+  # reason: .golangci.yml is the single source for both, so a local run and
+  # this job report the same findings and give up after the same wait.
+  # ---------------------------------------------------------------------
+  lint:
+    name: golangci-lint (root module)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+
+      - name: Resolve the pinned golangci-lint version
+        run: |
+          set -euo pipefail
+          version="$(make -s print-golangci-lint-version)"
+          case "${version}" in
+            v[0-9]*.[0-9]*.[0-9]*) ;;
+            *)
+              echo "The Makefile's GOLANGCI_LINT_VERSION did not resolve to a" >&2
+              echo "version number (got: '${version}'). Fix the Makefile." >&2
+              exit 1
+              ;;
+          esac
+          echo "GOLANGCI_LINT_VERSION=${version}" >> "$GITHUB_ENV"
+
+      # `go install` at the pinned version, NOT the upstream install.sh.
+      #
+      # That script is fetched from golangci-lint's `master` -- a moving
+      # target piped straight into sh, which is the supply-chain shape
+      # this project exists to argue against, and it broke here on the
+      # first run: the script's own hash_sha256_verify rejected the
+      # tarball it had just downloaded (got df5b9676..., wanted
+      # 2277d43b...). `go install` resolves through the Go module proxy
+      # and verifies against the checksum database, needs neither curl
+      # nor a shell, and is what the gui job below already does -- so
+      # both modules now install their linter the same way.
+      - name: Install golangci-lint
+        run: |
+          set -euo pipefail
+          go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      # Installing the wrong version silently would make this whole job lie
+      # about which ruleset the tree passes, so assert it before trusting it.
+      - name: Confirm the installed version is the pinned one
+        run: |
+          set -euo pipefail
+          installed="v$(golangci-lint version --short)"
+          echo "installed: ${installed}   pinned: ${GOLANGCI_LINT_VERSION}"
+          if [ "${installed}" != "${GOLANGCI_LINT_VERSION}" ]; then
+            echo "golangci-lint installed as ${installed}, expected ${GOLANGCI_LINT_VERSION}." >&2
+            exit 1
+          fi
+
+      - name: golangci-lint run
+        run: golangci-lint run ./...
+
+  # ---------------------------------------------------------------------
+  # build / vet / test: the root module, cross-platform, no apt required.
+  # This is the baseline every commit must pass everywhere debark claims to
+  # run verify/inspect/build's non-resolution stages (README support
+  # matrix). ./test/e2e is in this package set and stays container-free
+  # without DEBARK_E2E=1 — see test/e2e/README.md.
+  # ---------------------------------------------------------------------
+  build-test:
+    name: build+vet+test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+
+      - name: go build ./...
+        run: go build ./...
+
+      - name: go vet ./...
+        run: go vet ./...
+
+      - name: go test ./...
+        run: go test -count=1 ./...
+
+  # ---------------------------------------------------------------------
+  # The gui/ module: build, vet, lint and test the desktop app, plus a real
+  # `wails build`.
+  #
+  # ubuntu-24.04 is PINNED rather than ubuntu-latest. The GUI links GTK3 and
+  # WebKitGTK through cgo, so what it produces is conditioned on the build
+  # image, and a runner label that rolls to a new Ubuntu underneath it
+  # silently changes what was built and what the reproducibility claim in
+  # gui/docs/release.md means. The engine's own jobs above can use
+  # ubuntu-latest precisely because they are CGO_ENABLED=0 and link nothing
+  # out of the image.
+  # ---------------------------------------------------------------------
+  gui:
+    name: gui build+lint+test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        # bash on both runners (Git Bash on Windows), so every recipe below
+        # is written once. `make` is not guaranteed to exist on the Windows
+        # runner image, which is why this job parses gui/Makefile with sed
+        # rather than invoking it — unlike the root lint job, which is
+        # Linux-only and can just run `make -s print-…`.
+        shell: bash
+        working-directory: gui
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: gui/go.mod
+          cache-dependency-path: gui/go.sum
+
+      # -------------------------------------------------------------------
+      # Wails renders through the system webview. On Linux that is WebKitGTK
+      # plus GTK3, and their headers are needed to compile — not just to run
+      # — because the binding is cgo. Nothing below this point works on
+      # Linux without them, including plain `go build ./...`.
+      #
+      # ubuntu-24.04 ships libwebkit2gtk-4.1 only (4.0 was dropped after
+      # 22.04), and Wails selects the ABI with a build tag: no tag means
+      # webkit2gtk-4.0, `webkit2_41` means 4.1. Hence the tag below, and the
+      # matching build-tags entry in gui/.golangci.yml and WEBKIT_TAG in
+      # gui/Makefile. Get this wrong and the failure is a pkg-config error
+      # deep in cgo, not an obviously missing dependency.
+      # -------------------------------------------------------------------
+      - name: Install Linux webview build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev \
+            libwebkit2gtk-4.1-dev
+
+      # `desktop,production` are the tags a shipping build needs, and are the
+      # difference between a binary that runs and one that compiles and then
+      # refuses to start ("Wails applications will not build without the
+      # correct build tags"). They are gui/Makefile's RELEASE_TAGS and what
+      # gui/.goreleaser.yaml builds with, so this job compiles the same
+      # package set the release does. webkit2_41 is Linux-only and matches
+      # nothing on Windows.
+      - name: Select build tags and cgo mode
+        run: |
+          set -euo pipefail
+          if [ "${RUNNER_OS}" = "Linux" ]; then
+            echo "GOTAGS=desktop,production,webkit2_41" >> "$GITHUB_ENV"
+            echo "CGO_ENABLED=1" >> "$GITHUB_ENV"
+          else
+            echo "GOTAGS=desktop,production" >> "$GITHUB_ENV"
+            echo "CGO_ENABLED=0" >> "$GITHUB_ENV"
+          fi
+
+      # -------------------------------------------------------------------
+      # Tool versions are read out of gui/Makefile rather than written here,
+      # so the golangci-lint and wails that CI runs are the ones a developer
+      # runs. They drift the moment there are two copies of the number, and a
+      # finding that exists under one tool version and not another is
+      # indistinguishable from a regression until someone compares versions
+      # by hand. The Makefile is parsed with sed instead of via
+      # `make -s print-…` because make is not guaranteed on the Windows
+      # runner image; the shape of each value is asserted so a reformatted
+      # Makefile fails loudly here instead of silently installing "latest".
+      # -------------------------------------------------------------------
+      - name: Resolve pinned tool versions from gui/Makefile
+        run: |
+          set -euo pipefail
+          for var in GOLANGCI_LINT_VERSION WAILS_VERSION; do
+            value="$(sed -n "s/^${var}[[:space:]]*:=[[:space:]]*\([^[:space:]]*\).*/\1/p" Makefile)"
+            case "${value}" in
+              v[0-9]*.[0-9]*.[0-9]*) ;;
+              *)
+                echo "Could not read a version number for ${var} from gui/Makefile" >&2
+                echo "(got: '${value}'). Fix the Makefile or this parser." >&2
+                exit 1
+                ;;
+            esac
+            echo "${var}=${value}" >> "$GITHUB_ENV"
+            echo "${var} = ${value}"
+          done
+
+      - name: Install pinned golangci-lint and wails
+        run: |
+          set -euo pipefail
+          go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}"
+          go install "github.com/wailsapp/wails/v2/cmd/wails@${WAILS_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      # Installing the wrong version silently would make this job lie about
+      # which ruleset the tree passes, so assert it before trusting it.
+      - name: Confirm the installed golangci-lint is the pinned one
+        run: |
+          set -euo pipefail
+          installed="v$(golangci-lint version --short)"
+          echo "installed: ${installed}   pinned: ${GOLANGCI_LINT_VERSION}"
+          if [ "${installed}" != "${GOLANGCI_LINT_VERSION}" ]; then
+            echo "golangci-lint installed as ${installed}, expected ${GOLANGCI_LINT_VERSION}." >&2
+            exit 1
+          fi
+
+      # -------------------------------------------------------------------
+      # The frontend "build". There is no npm and no bundler in this
+      # project: gui/hack/copyfrontend copies frontend/index.html,
+      # frontend/src and frontend/wailsjs into frontend/dist, which main.go
+      # embeds.
+      #
+      # frontend/dist is gitignored apart from a committed .gitkeep, so a
+      # fresh checkout embeds an empty directory and still compiles. That is
+      # the point of the .gitkeep, and it also means a broken copy step would
+      # not fail the build — it would ship a blank window. So the output is
+      # asserted here rather than assumed.
+      # -------------------------------------------------------------------
+      - name: Build the frontend bundle
+        run: go run ./hack/copyfrontend
+
+      - name: Assert the frontend bundle is populated
+        run: |
+          set -euo pipefail
+          test -f frontend/dist/index.html \
+            || { echo "frontend/dist/index.html missing after the copy step" >&2; exit 1; }
+          echo "frontend/dist contains $(find frontend/dist -type f | wc -l) file(s):"
+          find frontend/dist -type f | sort
+
+      - name: go build ./...
+        run: go build -tags "$GOTAGS" ./...
+
+      - name: go vet ./...
+        run: go vet -tags "$GOTAGS" ./...
+
+      # No --timeout and no --max-issues-* flags: gui/.golangci.yml is the
+      # single source for both, so a local run and this job report the same
+      # findings and give up after the same wait. The webkit2_41 build tag
+      # lives in that file too, which is why no -tags is passed here; each
+      # leg analyses the file set its own GOOS selects.
+      - name: golangci-lint run
+        run: golangci-lint run ./...
+
+      - name: go test ./...
+        run: go test -tags "$GOTAGS" -count=1 ./...
+
+      # A real `wails build`, not a `go build`. It is the only step that
+      # exercises what actually ships: bindings generation, wails.json's
+      # empty frontend:install (no package manager is invoked), the
+      # frontend:build copy step run from inside frontend/, asset embedding
+      # and the platform link. A `go build` that passes while `wails build`
+      # fails is a release that does not exist.
+      - name: wails build
+        run: wails build -tags "$GOTAGS"
+
+  # ---------------------------------------------------------------------
+  # DEBARK_E2E: the tests that need a real apt, gated behind
+  # requireLinuxAPT (see CONTRIBUTING.md). Runs inside plain Debian 12 and
+  # Ubuntu 24.04 containers, matching the support matrix's "native apt"
+  # row. This is deliberately the actual distro image, not a Go-flavoured
+  # derivative, so it is exactly what a target/builder machine looks like.
+  # ---------------------------------------------------------------------
+  e2e-apt:
+    name: go test -DEBARK_E2E (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["debian:12", "ubuntu:24.04"]
+    container:
+      image: ${{ matrix.image }}
+    env:
+      DEBARK_E2E: "1"
+      DEBIAN_FRONTEND: noninteractive
+      CGO_ENABLED: "0"
+      # A container job runs as a different uid than the one
+      # actions/checkout wrote the tree as, so git refuses the
+      # repository as "dubious ownership" and any `go build` that
+      # tries to stamp VCS metadata dies with "error obtaining VCS
+      # status: exit status 128". That is how the ubuntu:24.04 leg
+      # failed on the first run -- core/base's equivalence test shells
+      # out to `go build` to get a real binary to drive. Nothing this
+      # job builds ships, so stamp nothing.
+      GOFLAGS: -buildvcs=false
+    steps:
+      # git + ca-certificates first: actions/checkout needs git inside a
+      # container job, and everything after this needs working HTTPS.
+      - name: Install apt/git prerequisites
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates git gnupg curl
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+
+      - name: go test ./... (DEBARK_E2E=1)
+        run: go test -count=1 ./...
+
+  # ---------------------------------------------------------------------
+  # determinism: two builds of the same commit, same flags, must produce
+  # byte-identical output (contract-brief.md rule 2).
+  # Delegates to hack/reproducible-check.sh so the logic exists in exactly
+  # one place and `make snapshot`/local runs exercise the same script CI
+  # does.
+  #
+  # This is the ENGINE's check. gui/hack/reproducible-check.sh is the GUI's
+  # own equivalent and is deliberately not run here: it needs the cgo/GTK
+  # toolchain, and what reproducibility means for a dynamically linked
+  # desktop binary is a weaker, differently-worded claim — see
+  # gui/docs/release.md.
+  # ---------------------------------------------------------------------
+  determinism:
+    name: reproducible build check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+
+      - name: hack/reproducible-check.sh
+        run: bash hack/reproducible-check.sh
+
+  # ---------------------------------------------------------------------
+  # The GUI's end-to-end proof: a bundle the desktop app itself builds and
+  # signs, verified and installed on an offline target with --network none.
+  # gui/hack/e2e drives gui/internal/app through the same bound methods the
+  # frontend calls, so a flag translated wrongly, an event that never
+  # arrives or a path handed across in the wrong dialect shows up here and
+  # nowhere else.
+  #
+  # Salvaged from the GUI's repository-era workflow, minus the two
+  # side-by-side checkouts it needed there. It is Linux-only, and that is a
+  # fact about the runners rather than a preference: `debark build` cannot
+  # use the container backend from a Windows host at all (it mounts its own
+  # executable into the container and refuses a Windows PE binary), and
+  # windows-latest runs Docker in Windows-container mode besides.
+  #
+  # It needs no webview headers, no golangci-lint and no wails: it builds
+  # only gui/hack/e2e and the engine's ./cmd/debark, both CGO_ENABLED=0.
+  # In this monorepo the script's own DEBARK_CORE default (`..` from gui/)
+  # is already the engine, but it is set explicitly so the job stays honest
+  # if the layout ever changes.
+  #
+  # It pulls one public image (debian:bookworm-slim) and downloads a handful
+  # of .deb files from the Debian archive. Neither is a debark-operated
+  # endpoint; rule 3 is about this project running a service, and it does
+  # not.
+  # ---------------------------------------------------------------------
+  gui-e2e:
+    name: gui end-to-end (offline install)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: gui
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: gui/go.mod
+          cache-dependency-path: gui/go.sum
+
+      - name: Confirm Docker can run Linux containers
+        run: docker run --rm debian:bookworm-slim true
+
+      # The work directory is outside the checkout, so a run cannot leave an
+      # artefact in a tree someone is about to commit.
+      - name: A GUI-built bundle verifies and installs offline
+        env:
+          DEBARK_CORE: ${{ github.workspace }}
+          DEBARK_GUI_E2E_OUT: ${{ runner.temp }}/debark-gui-e2e
+        run: hack/demo-gui-e2e.sh
+
+      - name: Upload the harness report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: gui-e2e-report
+          path: ${{ runner.temp }}/debark-gui-e2e/builder/gui-e2e-report.json
+          if-no-files-found: warn

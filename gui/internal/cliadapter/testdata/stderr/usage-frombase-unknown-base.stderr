@@ -1,0 +1,21 @@
+debark: base: "not-a-base" is neither a builtin base id nor a file that exists
+builtin bases: debian:12/desktop, debian:12/minimal, debian:12/server, debian:13/desktop, debian:13/minimal, debian:13/server, ubuntu:22.04/desktop, ubuntu:22.04/minimal, ubuntu:22.04/server, ubuntu:24.04/desktop, ubuntu:24.04/minimal, ubuntu:24.04/server, ubuntu:26.04/desktop, ubuntu:26.04/minimal, ubuntu:26.04/server
+or pass a path to a base definition file (see docs/formats.md)
+
+Usage:
+  debark snapshot from-base BASE [flags]
+
+Flags:
+      --arch string      dpkg architecture to describe (default: this machine's)
+      --backend string   auto, local or container (default: config backend, else auto)
+  -h, --help             help for from-base
+      --image string     override the container image for the container backend
+      --interactive      ask for anything not given on the command line (a terminal is required)
+      --out string       output path for the snapshot archive (default: derived from the base id and architecture)
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

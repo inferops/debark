@@ -1,0 +1,223 @@
+# golangci-lint v2 configuration. Validate: golangci-lint config verify
+# Run:                                     golangci-lint run ./...   (or: make lint)
+#
+# This mirrors the engine's .golangci.yml, kept deliberately
+# close to it. The two modules are developed together and code moves
+# between them; a rule that holds in core and not in the GUI would show up as
+# a lint failure on a paste, which teaches people to distrust the linter. Where
+# this file differs from core's, the difference is called out in a comment
+# beside it — there are three, and no silent ones.
+#
+# The house position, unchanged: report real problems, do not manufacture
+# busywork. _test.go files are exempt from the noisiest style rules (see
+# exclusions) but not from correctness checks like govet and staticcheck.
+
+version: "2"
+
+run:
+  # golangci-lint v2's own default is no timeout at all. A finite number is
+  # kept so that an analyser which genuinely hangs fails the job rather than
+  # burning a runner until GitHub's 6h limit kills it; 20m is headroom, not an
+  # estimate. Do not pass --timeout on the command line instead — then a local
+  # run and CI stop behaving the same way, which is the whole point of the file.
+  timeout: 20m
+
+  # DIFFERENT FROM CORE (1/3). Wails links against webkit2gtk on Linux and
+  # selects the ABI with a build tag: no tag means webkit2gtk-4.0, webkit2_41
+  # means webkit2gtk-4.1. Without the right tag, golangci-lint cannot load the
+  # packages at all on Linux — cgo fails in pkg-config and every finding is
+  # replaced by a typecheck error. Debian 13, Ubuntu 24.04 and newer ship only
+  # 4.1, so 4.1 is the default here, matching the Makefile's WEBKIT_TAG. On a
+  # webkit2gtk-4.0 system, remove this and pass WEBKIT_TAG= to make. Inert on
+  # Windows: nothing there is guarded by the tag.
+  build-tags:
+    - webkit2_41
+
+# Reporting limits. The upstream defaults (max-issues-per-linter: 50,
+# max-same-issues: 3) truncate the result set after analysis, and the truncated
+# subset is not stable between runs — which makes a CI log impossible to diff
+# against the previous one and makes "is this fixed?" unanswerable. 0 is
+# unlimited. This un-silences findings that were always there; it adds no rules.
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # Pinned to its current default rather than changed: one report per line.
+  # Stated explicitly so an upstream default change cannot alter what CI
+  # reports without a visible diff here. The tradeoff it implies: two distinct
+  # findings on the same line show as one.
+  uniq-by-line: true
+
+linters:
+  default: none
+  enable:
+    - govet # correctness: suspicious constructs the compiler allows
+    - staticcheck # correctness + a broad swath of well-established style/perf checks
+    - errcheck # every returned error must be handled or explicitly discarded
+    - ineffassign # assignments that are never used
+    - unused # unused identifiers
+    - misspell # comments/strings: common English misspellings
+    - revive # light style/readability checks, tuned below
+    - gosec # security: the class of bug that matters most in this codebase
+
+  settings:
+    errcheck:
+      # Closing something you already failed to write to, or already read
+      # from, is a common and low-risk pattern; do not force a ubiquitous
+      # `defer func() { _ = f.Close() }()` everywhere for it.
+      #
+      # SCOPE NOTE (behaviour unchanged, written down because it surprises
+      # people): errcheck matches these by the receiver's STATIC type.
+      # `(*os.File).Close` covers every *os.File; the interface form
+      # `(io.Closer).Close` only covers a call whose receiver is DECLARED as
+      # io.Closer, not every type implementing it. A Close that flushes
+      # buffered data is still reported, and that is right — on a write path a
+      # failed Close means a truncated file. hack/copyfrontend checks its
+      # output Close for exactly that reason. Cleanup Closes on an error path
+      # should be written `_ = w.Close()` at the call site so the intent is
+      # stated where a reviewer reads it.
+      exclude-functions:
+        - (io.Closer).Close
+        - (*os.File).Close
+
+    revive:
+      severity: warning
+      confidence: 0.8
+      rules:
+        # "Light rules": readability and obvious mistakes, not a house style
+        # mandate. Exported-symbol doc-comment enforcement is deliberately off
+        # — a package doc comment is asked for, a comment on every exported
+        # name is not, and stub-to-real code is still landing.
+        - name: blank-imports
+        - name: context-as-argument
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: range
+        - name: receiver-naming
+        - name: redefines-builtin-id
+        - name: superfluous-else
+        - name: time-naming
+        - name: unreachable-code
+        - name: var-naming
+
+    gosec:
+      excludes:
+        # G104 (unhandled errors) is errcheck's job here; avoid the two
+        # linters fighting over the same finding.
+        - G104
+        # G304 (file path from a variable) fires on essentially every
+        # path-parameterised file operation. This application's entire job is
+        # acting on paths the user picked in a file dialog — a .deb to
+        # inspect, a directory to export a bundle into. A caller-supplied path
+        # is the normal shape of a desktop tool, not evidence of traversal.
+        # Validation of genuinely untrusted paths (archive members, bundle
+        # contents) lives in debark core and is covered by its own tests.
+        - G304
+        # G301/G302/G306 (permissions looser than 0750/0600) fire on the
+        # exported bundle, the frontend asset copy and config directories,
+        # which use conventional 0755/0644: they are meant to be portable and
+        # world-readable — a bundle is copied to removable media and read by
+        # whatever installs it. A real secret should still use 0600 regardless
+        # of what this linter enforces; that is a review concern, not one to
+        # gate CI on for every directory the app creates.
+        - G301
+        - G302
+        - G306
+        # G204 (subprocess launched with a variable) would fire across
+        # internal/cliadapter, which is this application's central and
+        # intentional design: the GUI drives debark rather than
+        # reimplementing it. Every such call builds an argument *vector*
+        # (program plus a []string), never a shell string handed to `sh -c`,
+        # which is what actually makes subprocess invocation unsafe. gosec
+        # cannot tell the two shapes apart.
+        - G204
+        #
+        # DIFFERENT FROM CORE (2/3). Core additionally excludes G401/G501/G505
+        # (MD5/SHA1) because apt's Packages/Release format requires those
+        # fields, so core must compute them. The GUI displays digests; it does
+        # not compute them. Leaving the checks on means that if weak-hash code
+        # ever appears here, someone looks at it and asks why it is not in
+        # core. Re-add with the same reasoning if that turns out to be wrong.
+      config:
+        # G101 (hardcoded credentials, by entropy/pattern heuristic) stays in
+        # strict mode: a plausible-looking embedded secret is worth a false
+        # positive to catch, unlike the structural exclusions above.
+        G101:
+          mode: strict
+
+    staticcheck:
+      # "all" is the whole catalogue, including the QF ("quickfix") group.
+      # QF1001 ("could apply De Morgan's law") is subtracted for the same
+      # reason as in core: it rewrites a negated predicate that reads as one
+      # idea into two, which is the same boolean and a worse sentence, and it
+      # is a classic place to get a bound wrong while "simplifying". Every
+      # other declined staticcheck finding is waived at its own site with the
+      # check id and the reason on the line, so this list stays short and each
+      # entry means "the check is wrong for this project", not "we had a lot
+      # of these".
+      checks:
+        - all
+        - -QF1001
+
+  exclusions:
+    generated: lax
+    rules:
+      # Tests favour clarity and fast iteration over the strictest production
+      # rules. Correctness linters (govet, staticcheck, unused, ineffassign)
+      # still apply in full.
+      - path: _test\.go
+        linters:
+          - errcheck
+          - gosec
+          - revive
+
+      # Table-driven fixtures and golden-file generators build dynamic paths
+      # and arguments from test inputs by design.
+      - path: (^|/)testdata/
+        linters:
+          - gosec
+          - revive
+          - staticcheck
+          - unused
+
+      # DIFFERENT FROM CORE (3/3), in scope only: core lists internal/cli,
+      # hack and examples here; this repository has only hack/. Unchecked
+      # fmt.Fprint/Fprintf/Fprintln in the maintainer scripts, whose job IS
+      # writing to a terminal. A failed write to stdout/stderr there has no
+      # recovery and no channel to report on — the channel you would report on
+      # is the one that just failed — so the only honest handling is `_ =`, on
+      # every line, forever.
+      #
+      # Scoped by PATH rather than by adding fmt.Fprintf to
+      # errcheck.exclude-functions, deliberately: errcheck's own defaults
+      # already cover the writes that provably cannot fail (*bytes.Buffer,
+      # *strings.Builder, a literal os.Stderr), so a by-name exclusion would
+      # buy nothing for those and would only take effect on writes to real
+      # files and real io.Writers — exactly the calls worth checking. The cost
+      # of the path form is that it must be extended if another console-only
+      # package appears. That is a visible, cheap cost; blinding a write to a
+      # file is an invisible one.
+      #
+      # Only fmt.Fprint* is excluded, not errcheck as a whole: hack/ also
+      # creates and copies files, and those errors stay checked.
+      - path: (^|/)hack/
+        linters:
+          - errcheck
+        text: 'Error return value of .fmt\.Fprint(f|ln)?. is not checked'
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      # Only the GUI module is listed. `github.com/inferops/debark` is a
+      # string prefix of `github.com/inferops/debark/gui`, so listing core
+      # here would also capture this module's own imports and collapse the two
+      # groups. Core is a dependency from here and sorts with the others.
+      local-prefixes:
+        - github.com/inferops/debark/gui
+  exclusions:
+    generated: lax

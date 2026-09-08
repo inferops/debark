@@ -1,0 +1,90 @@
+name: Bug report
+description: Something in debark did not work as documented.
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. A few notes before you start:
+
+        - **Security vulnerability?** Do not file it here — see
+          [SECURITY.md](../../SECURITY.md) for private disclosure.
+        - **debark is pre-1.0** (see the README's Status section). If the
+          command you are describing is not implemented yet, that is
+          probably already known — search open issues first.
+        - **Do not attach a real snapshot, bundle, lock or manifest file**
+          if you have not reviewed what is in it. A snapshot can contain
+          identifying information about the machine it was taken from
+          (`--redact` strips some of this, but check before you paste).
+          A minimal, synthetic reproduction is far more useful anyway.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: A clear description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The exact command(s) you ran, and enough context to reproduce without your specific machine.
+      placeholder: |
+        1. debark snapshot create --out target.snapshot.tar.zst
+        2. debark build --snapshot target.snapshot.tar.zst vlc
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: version
+    attributes:
+      label: debark version
+      description: Output of `debark version --json`, or the commit hash if built from source.
+      render: json
+    validations:
+      required: true
+
+  - type: dropdown
+    id: role
+    attributes:
+      label: Which side were you on
+      options:
+        - Online builder (snapshot/build)
+        - Offline target (verify/install)
+        - Both / not applicable
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: OS and distro/release
+      description: e.g. "Debian 12 amd64", "Ubuntu 24.04 arm64 (container backend)", "Windows 11 (build only)"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: e2e
+    attributes:
+      label: Environment
+      options:
+        - label: This involves a real apt/dpkg/container path (ran with `DEBARK_E2E=1` or on a real target)
+        - label: This is pure-Go behaviour only (verify/inspect/parsing), no apt involved
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Error text, exit code, and (if you ran with `--json`) the relevant object. Please redact anything identifying first.
+      render: shell

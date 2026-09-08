@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AppStream metadata for Debark.
+
+  The component id is reverse-DNS and follows the repository that publishes
+  the software: io.github.inferops.Debark. It is NOT the desktop file's name
+  and NOT the binary's name, both of which stay debark-gui so that the
+  source path, the installed path and the icon lookup key are one string.
+  <launchable> and <icon type="stock"> are how the two are tied together.
+
+  There is no <update_contact>, no <url type="donation"> and nothing that
+  would cause any tool to contact a debark-operated endpoint. Rule 3.
+-->
+<component type="desktop-application">
+  <id>io.github.inferops.Debark</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  <name>Debark</name>
+  <summary>Prepare Debian and Ubuntu software transfers for air-gapped machines</summary>
+
+  <description>
+    <p>
+      Debark is a desktop front end for the debark command-line tool. It runs
+      on an online builder machine: you pick a target operating system, pick
+      packages from a catalogue built out of that target's own apt indexes, add
+      vendor .deb URLs or local files, and build a signed bundle you can carry
+      to a machine with no network.
+    </p>
+    <p>
+      Nothing changes on the offline machine. Over there it is still the
+      debark CLI, or still plain apt.
+    </p>
+    <p>
+      Debark decides nothing itself. It contains no dependency resolution, no
+      version comparison and no dependency reasoning; every such decision is
+      made by debark, which makes it by asking the target release's own apt.
+    </p>
+    <p>Debark does not:</p>
+    <ul>
+      <li>require root, or any elevated privilege, at any point</li>
+      <li>collect telemetry, analytics or crash reports</li>
+      <li>contact any server operated by this project, for any reason</li>
+      <li>write to block devices or create bootable media</li>
+      <li>meter, cap, or check an entitlement for anything</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">debark-gui.desktop</launchable>
+  <icon type="stock">debark-gui</icon>
+
+  <categories>
+    <category>System</category>
+    <category>PackageManager</category>
+  </categories>
+
+  <keywords>
+    <keyword>apt</keyword>
+    <keyword>deb</keyword>
+    <keyword>offline</keyword>
+    <keyword>air-gap</keyword>
+    <keyword>bundle</keyword>
+    <keyword>debark</keyword>
+  </keywords>
+
+  <url type="homepage">https://github.com/inferops/debark/tree/main/gui</url>
+  <url type="bugtracker">https://github.com/inferops/debark/issues</url>
+  <url type="vcs-browser">https://github.com/inferops/debark/tree/main/gui</url>
+
+  <provides>
+    <binary>debark-gui</binary>
+  </provides>
+
+  <!--
+    No <content_rating type="oars-1.1"/> attributes are set because none of
+    the OARS categories apply to a package bundler; the empty element is the
+    correct way to say "rated, and everything is none".
+  -->
+  <content_rating type="oars-1.1"/>
+
+  <developer id="io.github.inferops">
+    <name>The debark Authors</name>
+  </developer>
+
+  <!--
+    No <releases> element is committed here on purpose. Its only honest
+    content is the version being built, which this file does not know, and a
+    placeholder in a committed file is a file that is wrong on disk. Instead
+    packaging/build-deb.sh injects a single <release> element for the version
+    it is packaging, immediately before </component>. A build that installs
+    this file verbatim (goreleaser/nfpm does) therefore ships without a
+    release history and appstreamcli reports "releases-info-missing" as a
+    warning, not an error. That is recorded in docs/packaging.md rather than
+    hidden.
+  -->
+</component>

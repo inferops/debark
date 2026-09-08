@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/verifyreport/v1",
+  "title": "debark verify report v1",
+  "description": "debark.verifyreport/v1 - the machine-readable answer to \"can this artifact be trusted\", emitted by `debark verify --json`. Never written into a bundle; a wire/API response object. Verification stops at the first hard structural failure, so problems is usually one entry; file-digest checking continues to the end so an operator sees the full extent of a tampered medium.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "checked_at", "bundle_path", "ok", "signed", "files_checked", "bytes_checked", "target"],
+  "properties": {
+    "schema_version": { "const": "debark.verifyreport/v1", "description": "Fixed schema identifier; always debark.verifyreport/v1." },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When this check ran, RFC 3339 UTC, second precision."
+    },
+    "bundle_path": { "type": "string", "description": "Path to the bundle that was checked." },
+    "bundle_id": { "type": "string", "description": "The manifest's bundle_id, when the manifest could be parsed." },
+    "ok": {
+      "type": "boolean",
+      "description": "True only when every check passed. A bundle that passes with allow-unsigned has ok true and signed false; a caller must say so explicitly."
+    },
+    "signed": { "type": "boolean", "description": "Whether the bundle carried at least one signature block." },
+    "signatures": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/SignatureResult" },
+      "description": "Outcome of checking each signature block present."
+    },
+    "files_checked": { "type": "integer", "minimum": 0, "description": "Number of files whose digest was verified." },
+    "bytes_checked": { "type": "integer", "minimum": 0, "description": "Total bytes read while verifying file digests." },
+    "problems": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Problem" },
+      "description": "Every failure found. Non-empty here means ok is false."
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Non-fatal observations: an unsigned bundle accepted, an unknown extra file, redistribution flags."
+    },
+    "target": { "$ref": "#/$defs/ReportTarget", "description": "Target identity restated from the manifest, so a caller need not parse the manifest again." },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "The manifest's own created_at, restated."
+    },
+    "tool_version": { "type": "string", "description": "The manifest's tool.version, restated." },
+    "edition": {
+      "type": "string",
+      "enum": ["community", "official", "enterprise"],
+      "description": "The manifest's tool.edition, restated."
+    }
+  },
+  "$defs": {
+    "SignatureResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signer_kind", "key_id", "valid", "trusted"],
+      "properties": {
+        "signer_kind": {
+          "type": "string",
+          "pattern": "^(ed25519-file|gpg|sigstore|plugin:.+)$",
+          "description": "Which Signer implementation produced this block."
+        },
+        "key_id": { "type": "string", "description": "Identifies the key this block claims to be signed by." },
+        "algorithm": { "type": "string", "description": "Signature algorithm, e.g. ed25519." },
+        "valid": { "type": "boolean", "description": "True when the signature verified cryptographically against a trusted key." },
+        "trusted": {
+          "type": "boolean",
+          "description": "False when the signature is cryptographically fine but the key is not one the operator supplied out of band."
+        },
+        "detail": { "type": "string", "description": "Extra explanation, when there is one." }
+      }
+    },
+    "Problem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "message"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "manifest-missing", "manifest-malformed", "schema-unknown", "signature-missing", "signature-invalid",
+            "signature-untrusted", "manifest-digest-mismatch", "file-missing", "file-digest-mismatch",
+            "file-size-mismatch", "file-unexpected", "file-not-regular", "repo-digest-mismatch",
+            "lock-digest-mismatch", "snapshot-digest-mismatch", "same-media-key-refused"
+          ],
+          "description": "Stable, script-matchable failure identifier."
+        },
+        "path": { "type": "string", "description": "The file this problem is about, when it is about one file." },
+        "message": { "type": "string", "description": "Human-readable, actionable explanation." },
+        "expected": { "type": "string", "description": "Expected digest or size, rendered as a string." },
+        "got": { "type": "string", "description": "Actual digest or size found, rendered as a string." }
+      }
+    },
+    "ReportTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "distro_id": { "type": "string", "description": "ID from /etc/os-release, e.g. \"debian\" or \"ubuntu\"." },
+        "version_id": { "type": "string", "description": "VERSION_ID from /etc/os-release." },
+        "codename": { "type": "string", "description": "VERSION_CODENAME from /etc/os-release." },
+        "arch": { "type": "string", "description": "dpkg --print-architecture." },
+        "foreign_archs": { "type": "array", "items": { "type": "string" }, "description": "dpkg --print-foreign-architectures, sorted." }
+      }
+    }
+  }
+}

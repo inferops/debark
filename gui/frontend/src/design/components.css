@@ -1,0 +1,2793 @@
+/* ==========================================================================
+   debark-gui — component library
+   --------------------------------------------------------------------------
+   Requires tokens.css to be loaded FIRST. Every value here comes from a token;
+   there are no literal colours or sizes below except 0, 1px hairlines and
+   geometry that is genuinely arbitrary (e.g. a checkmark's rotation).
+
+   Conventions
+     .df-block            component root
+     .df-block__element   part of a component
+     .df-block--variant   a variant of it
+     .is-*                a runtime state a screen toggles from JS
+                          (.is-selected, .is-loading, .is-active, .is-error,
+                           .is-open, .is-busy)
+
+   Forced-state classes: .is-hover, .is-pressed, .is-focused render the same
+   appearance as :hover, :active and :focus-visible. They exist so gallery.html
+   can show every state without a pointer, and so a keyboard-driven list can
+   mark its active row while real DOM focus stays on the scroll container.
+   They are presentation only — they convey nothing to assistive technology,
+   so pair them with the matching ARIA state.
+
+   .df-check__input.is-indeterminate mirrors the :indeterminate pseudo-class
+   for static rendering. It must ACCOMPANY `input.indeterminate = true`, never
+   replace it: the DOM property is what a screen reader announces.
+
+   Deliberately plain CSS: no nesting, no @layer, no :has(). That started as a
+   compatibility rule and is now a style one: the third round measured the real
+   engine floor (Ubuntu 24.04 at GA, WebKitGTK 2.44, because the t64 transition
+   stops the package installing anywhere older) and 2.44 supports all three. They stay
+   out because flat CSS greps well when several packages own different screens,
+   and neither @layer nor :has() would remove anything from this file.
+   light-dark() IS used, in tokens.css, because it removed a duplicated palette
+   that could drift. README.md section 1 and section 3 carry the measurements.
+
+   Accessibility rules this file enforces, and that screen authors must not
+   undo:
+     * Every interactive element gets a visible focus ring. `outline: none`
+       appears twice below and never without a replacement:
+         1. on `:focus:not(:focus-visible)`, which drops the fallback ring for
+            pointer focus on engines that support :focus-visible (the
+            :focus-visible rule immediately below re-applies it for keyboard);
+         2. on `.df-search__input`, because the ring is drawn on the wrapping
+            `.df-search` via :focus-within so the leading icon sits inside it.
+     * State is never signalled by colour alone. Each semantic component has
+       a slot for an icon and a text label; the CSS reserves the space, the
+       screen author must fill it.
+     * All motion is expressed through the duration tokens, which collapse
+       under prefers-reduced-motion.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. BASE
+   Minimal, and scoped to the app root where it can be. Adding `.df-app` to
+   a container is what opts a subtree into the design system.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* The `hidden` attribute must win over a component's own display.
+
+   The UA sheet's `[hidden] { display: none }` is a single-class-free selector,
+   so ANY component rule setting `display: flex` (or grid, or block) beats it —
+   .df-state__actions, .df-progress-label and .df-stack all did. The symptom is
+   that `el.hidden = true` silently does nothing, and every screen author
+   independently discovers it and falls back to `style.display`, which then
+   fights the component's own layout when it is shown again.
+
+   Patched per-component twice below before this rule existed, which is what
+   made it clear the fix belonged here instead. !important is warranted: the
+   whole point is to beat a more specific selector, and "this element is not
+   here" has no legitimate override. */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-surface-1);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The element the app frame is built INTO.
+
+   `.df-app` is `height: 100%`, and a percentage height only resolves against a
+   parent that has a height of its own. `html` and `body` have one; the host
+   element a page hands the shell (`<div id="app">` in index.html) does not, and
+   the library cannot select a parent without `:has()`. So the requirement is
+   named instead of guessed at.
+
+   Leaving it off does not look broken at a glance — it looks like a page that
+   scrolls. What it actually does is remove the bound on every nested scroller,
+   and the virtualised catalogue's port then grows to `total × --row-height` and
+   renders all 60,000 rows. Found by the accessibility keyboard pass. */
+.df-app-host {
+  height: 100%;
+  min-height: 0;
+}
+
+.df-app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background-color: var(--color-surface-1);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-base);
+}
+
+/* The operator is reading package names and log lines, not selecting art. */
+.df-app img,
+.df-app svg {
+  -webkit-user-drag: none;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: var(--font-size-xl); }
+h2 { font-size: var(--font-size-lg); }
+h3 { font-size: var(--font-size-base); }
+h4 { font-size: var(--font-size-md); }
+
+p {
+  margin: 0 0 var(--space-3);
+  max-width: var(--measure-prose);
+}
+
+p:last-child { margin-bottom: 0; }
+
+code, pre, kbd, samp {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
+hr {
+  border: 0;
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+  margin: var(--space-4) 0;
+}
+
+/* ==========================================================================
+   2. UTILITIES
+   ========================================================================== */
+
+/* Available to screen readers, invisible on screen. Use for the text label
+   that accompanies an icon-only control. */
+.df-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Monospace. Mandatory for package names, versions, architectures, paths,
+   digests and anything copied from CLI output. */
+.df-mono {
+  font-family: var(--font-family-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+.df-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.df-text-secondary { color: var(--color-text-secondary); }
+
+/* The counterpart to the above, and it is not redundant: several components
+   paint a whole region secondary (.df-table__detail is the one that prompted
+   this), so a sentence inside them that matters more than its neighbours has
+   no way back to primary. Without it a screen author inlines a token, which
+   rule 7 forbids and which then drifts from the palette. Raising emphasis by
+   weight is usually better than by colour — but when the surrounding text is
+   already dimmed, weight alone does not recover the contrast. */
+.df-text-primary { color: var(--color-text-primary); }
+.df-text-sm { font-size: var(--font-size-sm); }
+.df-text-md { font-size: var(--font-size-md); }
+
+/* Vertical rhythm: children separated by one gap. */
+.df-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+}
+.df-stack--tight { gap: var(--space-2); }
+.df-stack--loose { gap: var(--space-5); }
+
+/* Horizontal group that wraps. */
+.df-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.df-spacer { flex: 1 1 auto; min-width: 0; }
+
+/* A scrolling region. Always give it a bounded parent. */
+.df-scroller {
+  overflow: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.df-link {
+  color: var(--color-accent-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+.df-link:hover { text-decoration-thickness: 2px; }
+
+/* ==========================================================================
+   3. FOCUS
+   One ring, applied to everything. The `:focus` rule fires on engines without
+   :focus-visible support; the `:focus:not(:focus-visible)` rule removes it
+   again for pointer focus on engines that do. That is the only place outline
+   is cleared, and a replacement is always in effect.
+   ========================================================================== */
+
+.df-btn:focus,
+.df-icon-btn:focus,
+.df-input:focus,
+.df-search__input:focus,
+.df-search__clear:focus,
+.df-chip:focus,
+.df-chip__remove:focus,
+.df-tab:focus,
+.df-check__input:focus,
+.df-radio__input:focus,
+.df-summary:focus,
+.df-row:focus,
+.df-link:focus,
+.df-stepper__step:focus,
+.df-boxed-list__row:focus,
+.df-help__btn:focus,
+.df-dialog__close:focus {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.df-btn:focus:not(:focus-visible),
+.df-icon-btn:focus:not(:focus-visible),
+.df-search__clear:focus:not(:focus-visible),
+.df-chip:focus:not(:focus-visible),
+.df-chip__remove:focus:not(:focus-visible),
+.df-tab:focus:not(:focus-visible),
+.df-summary:focus:not(:focus-visible),
+.df-row:focus:not(:focus-visible),
+.df-link:focus:not(:focus-visible),
+.df-stepper__step:focus:not(:focus-visible),
+.df-boxed-list__row:focus:not(:focus-visible),
+.df-help__btn:focus:not(:focus-visible),
+.df-dialog__close:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.df-btn:focus-visible,
+.df-icon-btn:focus-visible,
+.df-search__clear:focus-visible,
+.df-chip:focus-visible,
+.df-chip__remove:focus-visible,
+.df-tab:focus-visible,
+.df-summary:focus-visible,
+.df-row:focus-visible,
+.df-link:focus-visible,
+.df-stepper__step:focus-visible,
+.df-boxed-list__row:focus-visible,
+.df-help__btn:focus-visible,
+.df-dialog__close:focus-visible,
+.is-focused {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* A full-width row sits inside an overflow:hidden box, which clips an outset
+   ring. Draw these inset so they are always visible. .df-boxed-list is the same
+   case as .df-list: the box clips to its own radius. */
+.df-row:focus-visible,
+.df-row.is-focused,
+.df-boxed-list__row:focus-visible,
+.df-boxed-list__row.is-focused {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
+/* Programmatic focus landing points, and the one scroll port that is itself a
+   tab stop.
+
+   `.df-vlist` is the virtualised catalogue's `role="listbox"` port — a single
+   `tabindex="0"` element standing in for up to 60,000 rows — and it had no
+   rule here at all. Measured on WebKit2GTK 2.52.6 with the real engine: it
+   fell back to the UA ring, `outline: 5px auto rgba(53, 132, 228, 0.8)`, which
+   is Adwaita's blue and not a colour any of the 292 pairs in the design
+   README §7 has ever been measured against. WebView2 would supply a third.
+   Drawn inset, because `.df-list` is `overflow: hidden` and clips an outset
+   ring — the same reason `.df-row` is inset above.
+
+   `.df-focus-target` is for a heading a screen hands focus to when a pane
+   swaps under the operator (build.js `swapPane`). It is never a Tab stop, so
+   the only ring it can draw is the one that says "focus moved here", and that
+   is worth drawing — in the measured colour rather than the engine's own. */
+.df-vlist:focus,
+.df-focus-target:focus {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+.df-vlist:focus:not(:focus-visible),
+.df-focus-target:focus:not(:focus-visible) { outline: none; }
+.df-vlist:focus-visible,
+.df-focus-target:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+.df-vlist:focus,
+.df-vlist:focus-visible {
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
+/* On a solid fill the ring needs a halo to stay visible. */
+.df-btn--primary:focus-visible,
+.df-btn--danger:focus-visible {
+  outline-color: var(--color-focus-ring);
+  box-shadow: 0 0 0 var(--focus-ring-offset) var(--color-focus-halo);
+}
+
+/* ==========================================================================
+   4. BUTTON
+   <button class="df-btn df-btn--primary">Build bundle</button>
+   ========================================================================== */
+
+.df-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  position: relative;
+  min-height: var(--control-height);
+  padding: 0 var(--space-4);
+  border: var(--border-width-hairline) solid transparent;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.df-btn--sm { min-height: var(--control-height-sm); padding: 0 var(--space-3); font-size: var(--font-size-sm); }
+.df-btn--lg { min-height: var(--control-height-lg); padding: 0 var(--space-5); font-size: var(--font-size-base); }
+.df-btn--block { display: flex; width: 100%; }
+
+/* -- primary: exactly one per screen region -- */
+.df-btn--primary {
+  background-color: var(--color-accent-fill);
+  border-color: var(--color-accent-fill);
+  color: var(--color-accent-on-fill);
+}
+.df-btn--primary:hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--primary.is-hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading) {
+  background-color: var(--color-accent-fill-hover);
+  border-color: var(--color-accent-fill-hover);
+}
+.df-btn--primary:active:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--primary.is-pressed:not(:disabled):not([aria-disabled="true"]):not(.is-loading) {
+  background-color: var(--color-accent-fill-active);
+  border-color: var(--color-accent-fill-active);
+}
+
+/* -- secondary: the default button -- */
+.df-btn--secondary {
+  background-color: var(--color-surface-2);
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+}
+.df-btn--secondary:hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--secondary.is-hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading) {
+  background-color: var(--color-row-hover);
+  border-color: var(--color-border-strong);
+}
+.df-btn--secondary:active:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--secondary.is-pressed:not(:disabled):not([aria-disabled="true"]):not(.is-loading) {
+  background-color: var(--color-row-active);
+  border-color: var(--color-border-strong);
+}
+
+/* -- ghost: toolbars, row-level actions -- */
+.df-btn--ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text-primary);
+}
+.df-btn--ghost:hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--ghost.is-hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading) { background-color: var(--color-row-hover); }
+.df-btn--ghost:active:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--ghost.is-pressed:not(:disabled):not([aria-disabled="true"]):not(.is-loading) { background-color: var(--color-row-active); }
+
+/* -- selected: a button standing in for a choice that is currently in force.
+   A toggle rendered as a button had no selected style at all, so a group of
+   them (the gallery's own theme switch) showed nothing about which one was
+   active. Signalled with tint AND weight, never tint alone. Prefer a chip or
+   a tab for a real choice; this exists so a button used as one is not
+   silently unreadable.
+
+   Scoped to secondary and ghost deliberately: primary and danger already
+   carry a solid fill that means something, and repainting it accent would
+   make a pressed danger button stop looking dangerous. -- */
+.df-btn--secondary[aria-pressed="true"]:not(:disabled),
+.df-btn--secondary[aria-checked="true"]:not(:disabled),
+.df-btn--secondary.is-active:not(:disabled),
+.df-btn--ghost[aria-pressed="true"]:not(:disabled),
+.df-btn--ghost[aria-checked="true"]:not(:disabled),
+.df-btn--ghost.is-active:not(:disabled) {
+  background-color: var(--color-accent-bg);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-medium);
+}
+
+/* -- danger: destructive only. Never "the other option". -- */
+.df-btn--danger {
+  background-color: var(--color-danger-fill);
+  border-color: var(--color-danger-fill);
+  color: var(--color-danger-on-fill);
+}
+.df-btn--danger:hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--danger.is-hover:not(:disabled):not([aria-disabled="true"]):not(.is-loading) {
+  background-color: var(--color-danger-fill-hover);
+  border-color: var(--color-danger-fill-hover);
+}
+.df-btn--danger:active:not(:disabled):not([aria-disabled="true"]):not(.is-loading),
+.df-btn--danger.is-pressed:not(:disabled):not([aria-disabled="true"]):not(.is-loading) {
+  background-color: var(--color-danger-fill-active);
+  border-color: var(--color-danger-fill-active);
+}
+
+.df-btn:disabled,
+.df-btn[aria-disabled="true"] {
+  background-color: var(--color-surface-1);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+.df-btn--ghost:disabled,
+.df-btn--ghost[aria-disabled="true"] { background-color: transparent; border-color: transparent; }
+
+/* aria-disabled is the FORM THIS APP USES for a gated action (§29). It must
+   keep the control focusable and hoverable, so it never gets pointer-events:
+   none and it never leaves the tab order. Only `:disabled` does that, and
+   `:disabled` is banned on a screen's primary action. */
+.df-icon-btn[aria-disabled="true"] { color: var(--color-text-disabled); cursor: not-allowed; }
+.df-icon-btn[aria-disabled="true"]:hover { background-color: transparent; color: var(--color-text-disabled); }
+.df-chip[aria-disabled="true"] { color: var(--color-text-disabled); cursor: not-allowed; }
+
+/* -- busy. Keep the label; swap the leading icon for a spinner.
+      Markup must also set aria-busy="true". -- */
+.df-btn.is-loading {
+  cursor: progress;
+  pointer-events: none;
+}
+.df-btn.is-loading .df-btn__icon { display: none; }
+.df-btn.is-loading::before {
+  content: "";
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex: none;
+  border-radius: var(--radius-circle);
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.9;
+  animation: df-spin var(--duration-indeterminate) var(--ease-linear) infinite;
+}
+
+.df-btn__icon {
+  flex: none;
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+/* Icon-only button. REQUIRES aria-label or a .df-visually-hidden child. */
+.df-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-height);
+  height: var(--control-height);
+  flex: none;
+  padding: 0;
+  border: var(--border-width-hairline) solid transparent;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard);
+}
+.df-icon-btn:hover:not(:disabled),
+.df-icon-btn.is-hover:not(:disabled) { background-color: var(--color-row-hover); color: var(--color-text-primary); }
+.df-icon-btn:active:not(:disabled),
+.df-icon-btn.is-pressed:not(:disabled) { background-color: var(--color-row-active); }
+.df-icon-btn:disabled { color: var(--color-text-disabled); cursor: not-allowed; }
+.df-icon-btn svg { width: var(--icon-size); height: var(--icon-size); }
+
+/* ==========================================================================
+   5. SPINNER
+   ========================================================================== */
+
+.df-spinner {
+  display: inline-block;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex: none;
+  border-radius: var(--radius-circle);
+  border: 2px solid var(--color-border-default);
+  border-top-color: var(--color-accent);
+  animation: df-spin var(--duration-indeterminate) var(--ease-linear) infinite;
+}
+.df-spinner--lg { width: var(--icon-size-xl); height: var(--icon-size-xl); border-width: 3px; }
+
+@keyframes df-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   6. CHECKBOX + RADIO
+   <label class="df-check">
+     <input type="checkbox" class="df-check__input">
+     <span class="df-check__label">Include recommends</span>
+   </label>
+   Indeterminate is set from JS: input.indeterminate = true.
+   ========================================================================== */
+
+.df-check,
+.df-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-snug);
+  color: var(--color-text-primary);
+  user-select: none;
+}
+
+.df-check__input,
+.df-radio__input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  margin: 0;
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  background-color: var(--color-surface-2);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+
+.df-check__input { border-radius: var(--radius-sm); }
+.df-radio__input { border-radius: var(--radius-circle); }
+
+.df-check__input:hover:not(:disabled),
+.df-radio__input:hover:not(:disabled) { border-color: var(--color-border-strong); }
+
+.df-check__input:checked,
+.df-check__input:indeterminate,
+.df-check__input.is-indeterminate,
+.df-radio__input:checked {
+  background-color: var(--color-accent-fill);
+  border-color: var(--color-accent-fill);
+}
+
+/* Checkmark, drawn in CSS so it inherits the theme with no asset. */
+.df-check__input:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--color-accent-on-fill);
+  border-width: 0 2px 2px 0;
+  transform: rotate(43deg);
+}
+
+/* Indeterminate: a bar. A DIFFERENT SHAPE from the tick, not a different
+   colour — "some of this group is selected" must be readable without hue. */
+.df-check__input:indeterminate::after,
+.df-check__input.is-indeterminate::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 6px;
+  width: 8px;
+  height: 2px;
+  background-color: var(--color-accent-on-fill);
+  border-radius: 1px;
+}
+
+.df-radio__input:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-circle);
+  background-color: var(--color-accent-on-fill);
+}
+
+.df-check__input:disabled,
+.df-radio__input:disabled {
+  background-color: var(--color-surface-1);
+  border-color: var(--color-border-subtle);
+  cursor: not-allowed;
+}
+.df-check__input:disabled:checked,
+.df-check__input:disabled:indeterminate,
+.df-check__input:disabled.is-indeterminate,
+.df-radio__input:disabled:checked {
+  background-color: var(--color-text-disabled);
+  border-color: var(--color-text-disabled);
+}
+.df-check__input:disabled ~ .df-check__label,
+.df-radio__input:disabled ~ .df-radio__label { color: var(--color-text-disabled); cursor: not-allowed; }
+
+/* ==========================================================================
+   7. TEXT INPUT + SEARCH FIELD
+   <div class="df-search">
+     <svg class="df-search__icon" aria-hidden="true">…</svg>
+     <input class="df-search__input" type="search" placeholder="Search packages">
+     <button class="df-search__clear" aria-label="Clear search">…</button>
+   </div>
+   ========================================================================== */
+
+.df-input {
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 var(--space-3);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-2);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.df-input:hover:not(:disabled),
+.df-input.is-hover:not(:disabled) { border-color: var(--color-border-strong); }
+.df-input::placeholder { color: var(--color-text-secondary); opacity: 1; }
+.df-input:disabled {
+  background-color: var(--color-surface-1);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+.df-input.is-error,
+.df-input[aria-invalid="true"] { border-color: var(--color-danger); border-width: var(--border-width-thick); }
+
+textarea.df-input {
+  min-height: calc(var(--control-height) * 3);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  resize: vertical;
+}
+
+.df-field { display: flex; flex-direction: column; gap: var(--space-1); }
+.df-field__label { font-size: var(--font-size-md); font-weight: var(--font-weight-medium); }
+.df-field__hint { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+/* Error text carries an icon slot; colour is never the only signal. */
+.df-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-danger-text);
+}
+.df-field__error svg { flex: none; width: var(--icon-size-sm); height: var(--icon-size-sm); margin-top: 2px; }
+
+.df-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 var(--space-2);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-2);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.df-search:hover,
+.df-search.is-hover { border-color: var(--color-border-strong); }
+/* The ring lands on the wrapper, not the bare input, so the icon is inside it. */
+.df-search:focus-within,
+.df-search.is-focused {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-color: var(--color-border-focus);
+}
+
+.df-search__icon {
+  flex: none;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--color-text-secondary);
+}
+
+.df-search__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  outline: none; /* replaced by the :focus-within ring on .df-search above */
+}
+.df-search__input::placeholder { color: var(--color-text-secondary); opacity: 1; }
+.df-search__input::-webkit-search-cancel-button { display: none; }
+
+.df-search__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--hit-target-min);
+  height: var(--hit-target-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.df-search__clear:hover { background-color: var(--color-row-hover); color: var(--color-text-primary); }
+.df-search__clear svg { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.df-search__clear[hidden] { display: none; }
+
+/* ==========================================================================
+   8. CHIP / TAG
+   Selection tray entries and category filters.
+   <span class="df-chip df-chip--removable">
+     <span class="df-chip__label df-mono">nginx</span>
+     <button class="df-chip__remove" aria-label="Remove nginx">…</button>
+   </span>
+   ========================================================================== */
+
+.df-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 100%;
+  min-height: var(--control-height-sm);
+  padding: 0 var(--space-2);
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-1);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-snug);
+  white-space: nowrap;
+}
+
+.df-chip__label { overflow: hidden; text-overflow: ellipsis; }
+
+/* The leading tick on a selected filter chip. §6.4 asks for three signals —
+   tint, border weight and a tick — of which only one is colour, and until now
+   the library shipped no class for the third, so the gallery used a
+   gallery-local one and no screen could reproduce it. Rule 2 depends on this.
+   Reported by the first round, fixed by the accessibility pass. */
+.df-chip__icon { flex: none; width: var(--icon-size-sm); height: var(--icon-size-sm); }
+
+/* Filter chip: a real button, toggled with aria-pressed. */
+button.df-chip,
+.df-chip--filter {
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+button.df-chip:hover:not(:disabled),
+.df-chip.is-hover:not(:disabled) { background-color: var(--color-row-hover); border-color: var(--color-border-default); }
+button.df-chip:active:not(:disabled),
+.df-chip.is-pressed:not(:disabled) { background-color: var(--color-row-active); }
+
+/* Selected filter: tint AND a heavier border AND (in markup) a leading tick.
+   aria-checked is listed alongside aria-pressed so a three-way radio group
+   (the theme switch) gets the selected look from its accessible state rather
+   than from a parallel class — the same "the accessible state and the visual
+   state cannot drift" argument made for .df-tab. */
+.df-chip.is-active,
+.df-chip[aria-pressed="true"],
+.df-chip[aria-checked="true"] {
+  background-color: var(--color-accent-bg);
+  border-color: var(--color-accent);
+  border-width: var(--border-width-thick);
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-medium);
+  padding: 0 calc(var(--space-2) - 1px);
+}
+
+.df-chip:disabled { color: var(--color-text-disabled); background-color: var(--color-surface-1); cursor: not-allowed; }
+
+/* Removable: the remove button owns a full 24px hit target even though the
+   glyph is 10px, so it is clickable without precision aiming. */
+.df-chip--removable { padding-right: var(--space-1); }
+.df-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--hit-target-min);
+  height: var(--hit-target-min);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.df-chip__remove:hover { background-color: var(--color-row-active); color: var(--color-danger-text); }
+.df-chip__remove svg { width: 10px; height: 10px; }
+
+/* Role-tinted chips, for a vendor .deb or a warning marker in the tray. */
+.df-chip--info    { background-color: var(--color-info-bg);    border-color: var(--color-info);    color: var(--color-info-text); }
+.df-chip--success { background-color: var(--color-success-bg); border-color: var(--color-success); color: var(--color-success-text); }
+.df-chip--warning { background-color: var(--color-warning-bg); border-color: var(--color-warning); color: var(--color-warning-text); }
+.df-chip--danger  { background-color: var(--color-danger-bg);  border-color: var(--color-danger);  color: var(--color-danger-text); }
+
+/* ==========================================================================
+   9. BADGE
+   Small non-interactive marker, e.g. the right-hand slot on a catalogue row.
+   ========================================================================== */
+
+.df-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-1);
+  min-height: 16px;
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.df-badge--info    { background-color: var(--color-info-bg);    border-color: var(--color-info);    color: var(--color-info-text); }
+.df-badge--success { background-color: var(--color-success-bg); border-color: var(--color-success); color: var(--color-success-text); }
+.df-badge--warning { background-color: var(--color-warning-bg); border-color: var(--color-warning); color: var(--color-warning-text); }
+.df-badge--danger  { background-color: var(--color-danger-bg);  border-color: var(--color-danger);  color: var(--color-danger-text); }
+.df-badge--count { text-transform: none; letter-spacing: var(--letter-spacing-normal); font-family: var(--font-family-mono); }
+
+/* ==========================================================================
+   10. LIST + VIRTUALISED CATALOGUE ROW
+   --------------------------------------------------------------------------
+   THE ROW HEIGHT IS A CONTRACT. .df-row is exactly var(--row-height) tall,
+   border-box, with no margin and no collapsing. The virtualiser multiplies
+   this number; if a screen adds padding that grows the box, the list tears.
+
+   Virtualiser structure:
+     <div class="df-vlist df-scroller">        <- the scroll port
+       <div class="df-vlist__sizer"            <- height = total * rowHeight
+            style="height: 1920000px">
+         <div class="df-vlist__window"         <- translateY(topIndex*rowHeight)
+              style="transform: translateY(64000px)">
+           <div class="df-row">…</div>  x ~40 visible rows
+         </div>
+       </div>
+     </div>
+
+   Row markup. Note there is NO tabindex: a recycled row must never be
+   focusable. tabindex="-1" is still CLICK-focusable, so clicking a row put DOM
+   focus on a node the virtualiser then moved, and the next appendChild blurred
+   it to <body>, killing the arrow keys. The port owns focus; rows are named
+   through aria-activedescendant.
+     <div class="df-row" role="option" aria-selected="false">
+       <input type="checkbox" class="df-check__input df-row__check">
+       <span class="df-row__name df-mono">nginx-full</span>
+       <span class="df-row__version df-mono">1.24.0-2ubuntu7</span>
+       <span class="df-row__summary df-truncate">high performance web server</span>
+       <span class="df-row__badge"><span class="df-badge">universe</span></span>
+     </div>
+   ========================================================================== */
+
+.df-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background-color: var(--color-surface-2);
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.df-vlist {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  background-color: var(--color-surface-2);
+  /* Hint the compositor; rows are recycled every frame. */
+  will-change: transform;
+}
+
+.df-vlist__sizer { position: relative; width: 100%; }
+.df-vlist__window { position: absolute; top: 0; left: 0; right: 0; }
+
+.df-row {
+  display: grid;
+  grid-template-columns:
+    auto                    /* checkbox   */
+    minmax(0, 22ch)         /* name       */
+    minmax(0, 15ch)         /* version    */
+    minmax(0, 1fr)          /* summary    */
+    auto;                   /* badge slot */
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--row-height);
+  min-height: var(--row-height);
+  max-height: var(--row-height);
+  margin: 0;
+  padding: 0 var(--space-3);
+  box-sizing: border-box;
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+  background-color: var(--color-surface-2);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-tight);
+  cursor: default;
+  /* No transition: rows are recycled during scroll and a transition would
+     animate a row into its new neighbour's state. */
+}
+
+.df-row:hover,
+.df-row.is-hover { background-color: var(--color-row-hover); }
+.df-row:active,
+.df-row.is-pressed { background-color: var(--color-row-active); }
+
+/* Selected: tint AND a 3px leading rule AND the checkbox is checked.
+   Three signals, only one of which is colour. */
+.df-row.is-selected,
+.df-row[aria-selected="true"] {
+  background-color: var(--color-row-selected);
+  box-shadow: inset var(--border-width-rule) 0 0 0 var(--color-accent);
+}
+
+.df-row.is-disabled,
+.df-row[aria-disabled="true"] { color: var(--color-text-disabled); cursor: not-allowed; }
+
+.df-row__check { flex: none; }
+.df-row__name {
+  font-weight: var(--font-weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.df-row__version {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.df-row__summary {
+  color: var(--color-text-secondary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.df-row__badge { flex: none; display: flex; align-items: center; gap: var(--space-1); justify-self: end; }
+
+/* A section header inside the list (category grouping). Same height rule. */
+.df-row--header {
+  grid-template-columns: 1fr auto;
+  background-color: var(--color-surface-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+/* ==========================================================================
+   11. SKELETON / LOADING PLACEHOLDER
+   .df-skeleton-row is exactly --row-height so a loading list has the same
+   rhythm as a loaded one and nothing jumps when data arrives.
+   ========================================================================== */
+
+.df-skeleton {
+  display: block;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-skeleton);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-skeleton) 0%,
+    var(--color-skeleton-highlight) 50%,
+    var(--color-skeleton) 100%
+  );
+  background-size: 200% 100%;
+  animation: df-shimmer calc(var(--duration-indeterminate) * 1.4) var(--ease-linear) infinite;
+}
+
+.df-skeleton-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 22ch) minmax(0, 15ch) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--skeleton-row-height);
+  min-height: var(--skeleton-row-height);
+  max-height: var(--skeleton-row-height);
+  padding: 0 var(--space-3);
+  box-sizing: border-box;
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+  background-color: var(--color-surface-2);
+}
+.df-skeleton-row .df-skeleton { height: 10px; }
+.df-skeleton-row .df-skeleton--check { width: var(--icon-size); height: var(--icon-size); border-radius: var(--radius-sm); }
+
+@keyframes df-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ==========================================================================
+   12. PROGRESS
+   Determinate:
+     <div class="df-progress" role="progressbar" aria-valuenow="42"
+          aria-valuemin="0" aria-valuemax="100">
+       <div class="df-progress__bar" style="width:42%"></div>
+     </div>
+   Indeterminate: add .df-progress--indeterminate and drop aria-valuenow.
+   ========================================================================== */
+
+.df-progress {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-0);
+  overflow: hidden;
+}
+
+.df-progress__bar {
+  height: 100%;
+  width: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent-fill);
+  transition: width var(--duration-base) var(--ease-out);
+}
+
+.df-progress--success .df-progress__bar { background-color: var(--color-success-fill); }
+.df-progress--warning .df-progress__bar { background-color: var(--color-warning-fill); }
+.df-progress--danger  .df-progress__bar { background-color: var(--color-danger-fill); }
+
+.df-progress--indeterminate .df-progress__bar {
+  width: 35%;
+  transition: none;
+  animation: df-indeterminate var(--duration-indeterminate) var(--ease-in-out) infinite;
+}
+
+@keyframes df-indeterminate {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(340%); }
+}
+
+/* Thin top-of-screen bar. Fixed, above everything, communicates background
+   work without stealing layout space. */
+.df-progress--top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 0;
+  background-color: transparent;
+  z-index: var(--z-progress-top);
+}
+.df-progress--top .df-progress__bar { border-radius: 0; }
+
+/* The label that must accompany every progress bar. */
+.df-progress-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+.df-progress-label__value { font-family: var(--font-family-mono); color: var(--color-text-primary); }
+
+/* ==========================================================================
+   13. BANNER / INLINE MESSAGE
+   <div class="df-banner df-banner--warning" role="status">
+     <svg class="df-banner__icon" aria-hidden="true">…</svg>
+     <div class="df-banner__body">
+       <p class="df-banner__title">Firefox on Ubuntu is a snap</p>
+       <p class="df-banner__text">…</p>
+     </div>
+     <div class="df-banner__actions"><button class="df-btn df-btn--secondary df-btn--sm">…</button></div>
+   </div>
+   Use role="alert" for danger, role="status" otherwise.
+   ========================================================================== */
+
+/* Flex with wrapping, not a three-column grid.
+
+   As a grid the actions column was `auto`, so a banner in the 320px selection
+   tray gave its buttons whatever they asked for and squeezed the body to about
+   100px — a column of one or two words per line, which is not a readable
+   sentence and is a 1.4.10 reflow failure. Flex lets the body claim a floor of
+   24ch and pushes the actions onto their own line when that will not fit. At
+   normal widths the layout is identical: icon, body, actions, one row.
+   Reported by the first round, fixed by the accessibility pass. */
+.df-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-left-width: var(--border-width-rule);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-1);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+}
+
+.df-banner__icon { flex: none; width: var(--icon-size-lg); height: var(--icon-size-lg); margin-top: 1px; }
+/* 24ch is the floor below which the body wraps the actions onto their own line
+   rather than shrinking further. It is a measure, like --measure-prose. */
+.df-banner__body { flex: 1 1 24ch; min-width: 0; }
+.df-banner__title { margin: 0 0 var(--space-1); font-weight: var(--font-weight-semibold); }
+.df-banner__title:last-child { margin-bottom: 0; }
+.df-banner__text { margin: 0; color: var(--color-text-secondary); max-width: var(--measure-prose); }
+.df-banner__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); flex: 0 0 auto; }
+/* The actions slot no longer has to hold a grid column open, so an empty one
+   should not contribute a gap either. Keeping it in the markup is still fine. */
+.df-banner__actions:empty { display: none; }
+
+.df-banner--info    { background-color: var(--color-info-bg);    border-color: var(--color-info-bg);    border-left-color: var(--color-info); }
+.df-banner--success { background-color: var(--color-success-bg); border-color: var(--color-success-bg); border-left-color: var(--color-success); }
+.df-banner--warning { background-color: var(--color-warning-bg); border-color: var(--color-warning-bg); border-left-color: var(--color-warning); }
+.df-banner--danger  { background-color: var(--color-danger-bg);  border-color: var(--color-danger-bg);  border-left-color: var(--color-danger); }
+
+.df-banner--info .df-banner__icon    { color: var(--color-info); }
+.df-banner--success .df-banner__icon { color: var(--color-success); }
+.df-banner--warning .df-banner__icon { color: var(--color-warning); }
+.df-banner--danger .df-banner__icon  { color: var(--color-danger); }
+
+/* ==========================================================================
+   14. STATUS — an icon + label pair. The canonical "never colour alone" unit.
+   <span class="df-status df-status--warning">
+     <svg aria-hidden="true">…</svg><span>Degraded</span>
+   </span>
+   ========================================================================== */
+
+.df-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+}
+.df-status svg { flex: none; width: var(--icon-size); height: var(--icon-size); }
+.df-status--info svg    { color: var(--color-info); }
+.df-status--success svg { color: var(--color-success); }
+.df-status--warning svg { color: var(--color-warning); }
+.df-status--danger svg  { color: var(--color-danger); }
+.df-status--pending svg { color: var(--color-text-secondary); }
+
+/* ==========================================================================
+   15. DIALOG
+   Uses the native <dialog> element and dialog.showModal(), which gives focus
+   trapping and Escape-to-close for free.
+   ========================================================================== */
+
+.df-dialog {
+  width: min(560px, calc(100vw - var(--space-8)));
+  max-height: calc(100vh - var(--space-12));
+  padding: 0;
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-3);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-3);
+  overflow: hidden;
+}
+.df-dialog--wide { width: min(840px, calc(100vw - var(--space-8))); }
+
+.df-dialog::backdrop { background-color: var(--color-backdrop); }
+
+.df-dialog__inner { display: flex; flex-direction: column; max-height: calc(100vh - var(--space-12)); }
+
+.df-dialog__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+.df-dialog__title { flex: 1 1 auto; min-width: 0; font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); }
+.df-dialog__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.df-dialog__close:hover { background-color: var(--color-row-hover); color: var(--color-text-primary); }
+.df-dialog__close svg { width: var(--icon-size); height: var(--icon-size); }
+
+.df-dialog__body { flex: 1 1 auto; min-height: 0; overflow: auto; padding: var(--space-4); }
+
+.df-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+  background-color: var(--color-surface-2);
+}
+
+/* Non-native fallback, on the <dialog> itself.
+
+   `.df-dialog-overlay` below is a WRAPPER — it paints the backdrop and centres
+   whatever is inside it — and it was being read as a modifier and put straight
+   onto the <dialog>, which turns the dialog into a full-screen backdrop and
+   loses its own surface, border and shadow. Two screens hit that and one grew
+   a private copy of this rule. So the modifier the fallback path actually
+   wanted now exists.
+
+   `box-shadow` supplies the backdrop: `::backdrop` only paints for showModal(),
+   which is exactly the case this rule is not for. Reported by the first round,
+   fixed by the accessibility pass. */
+.df-dialog--fallback {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  z-index: var(--z-modal);
+  box-shadow: var(--shadow-3), 0 0 0 100vmax var(--color-backdrop);
+}
+
+/* Non-native fallback / gallery preview: a positioned overlay WRAPPER. Put it
+   on a container around the dialog, never on the dialog. */
+.df-dialog-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background-color: var(--color-backdrop);
+  z-index: var(--z-modal);
+}
+
+/* ==========================================================================
+   16. TABS
+   <div class="df-tabs" role="tablist">
+     <button class="df-tab" role="tab" aria-selected="true">Catalogue</button>
+   </div>
+   ========================================================================== */
+
+.df-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+
+.df-tab {
+  position: relative;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-bottom: var(--border-width-thick) solid transparent;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+.df-tab:hover:not(:disabled),
+.df-tab.is-hover:not(:disabled) { color: var(--color-text-primary); background-color: var(--color-row-hover); }
+
+/* Selected: colour AND weight AND a 2px underline. */
+.df-tab[aria-selected="true"],
+.df-tab.is-active {
+  color: var(--color-accent-text);
+  border-bottom-color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+.df-tab:disabled { color: var(--color-text-disabled); cursor: not-allowed; }
+.df-tab__count { margin-left: var(--space-1); font-family: var(--font-family-mono); font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+
+.df-tabpanel { padding: var(--space-4) 0; }
+.df-tabpanel[hidden] { display: none; }
+
+/* ==========================================================================
+   17. DISCLOSURE / DETAILS DRAWER
+   The raw NDJSON log. Collapsed by default; this audience trusts what it can
+   inspect, so the affordance must be obvious and the content monospace.
+   <details class="df-disclosure">
+     <summary class="df-summary">Raw event log</summary>
+     <div class="df-disclosure__body"><pre class="df-log">…</pre></div>
+   </details>
+   ========================================================================== */
+
+.df-disclosure {
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-2);
+  overflow: hidden;
+}
+
+.df-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface-2);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.df-summary::-webkit-details-marker { display: none; }
+.df-summary:hover { background-color: var(--color-row-hover); }
+
+/* CSS-drawn caret; rotates open. Shape, not colour, marks the state. */
+.df-summary::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border: solid var(--color-text-secondary);
+  border-width: 0 2px 2px 0;
+  transform: rotate(-45deg);
+  margin-left: 2px;
+  margin-right: var(--space-1);
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+.df-disclosure[open] > .df-summary::before { transform: rotate(45deg); }
+
+.df-disclosure__body {
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+  background-color: var(--color-surface-inset);
+}
+
+/* Log output. Wraps long lines rather than scrolling horizontally, because
+   an NDJSON line is long and the operator is scanning it, not editing it. */
+.df-log {
+  margin: 0;
+  padding: var(--space-3);
+  max-height: 320px;
+  overflow: auto;
+  background-color: var(--color-surface-inset);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  tab-size: 2;
+}
+.df-log__line { display: block; }
+.df-log__line--warn  { color: var(--color-warning-text); }
+.df-log__line--error { color: var(--color-danger-text); }
+.df-log__line--muted { color: var(--color-text-secondary); }
+
+/* ==========================================================================
+   18. TABLE — readiness checks
+   status icon | label | detail | action
+   ========================================================================== */
+
+.df-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-md);
+  background-color: var(--color-surface-2);
+}
+
+.df-table th {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-strong);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.df-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+  vertical-align: middle;
+  height: var(--row-height-comfortable);
+}
+
+.df-table tbody tr:hover { background-color: var(--color-row-hover); }
+.df-table tbody tr:last-child td { border-bottom: 0; }
+
+.df-table__status { width: 1%; white-space: nowrap; }
+.df-table__label { font-weight: var(--font-weight-medium); white-space: nowrap; }
+.df-table__detail { color: var(--color-text-secondary); width: 100%; }
+.df-table__action { width: 1%; white-space: nowrap; text-align: right; }
+
+/* `table-layout: fixed` is what a table wants when rows stream in and it must
+   not reflow — but the column rules above are written for AUTO layout, where
+   `width: 1%` means "as narrow as the content allows". Under fixed layout 1% is
+   taken literally: the status and action columns collapse, the nowrap label
+   column cannot claim the width its text needs, and with more than one label
+   column the table is unusable. So --fixed states real widths and lets a label
+   wrap. Reported by the first round; fixed by the brand pass. */
+.df-table--fixed { table-layout: fixed; }
+.df-table--fixed th,
+.df-table--fixed td { overflow-wrap: break-word; }
+.df-table--fixed .df-table__status { width: var(--space-12); }
+/* `auto` here is load-bearing: under fixed layout the columns that state no
+   width share what is left, equally, however many label columns there are. A
+   ch- or percentage-based width instead would overflow a 320px container, which
+   is how the first attempt at this fix failed its own reflow check. */
+.df-table--fixed .df-table__label { width: auto; white-space: normal; }
+.df-table--fixed .df-table__detail { width: auto; }
+.df-table--fixed .df-table__action { width: 20%; white-space: normal; }
+/* .df-btn is nowrap by design, which in a fixed-width column means a long
+   label clips instead of wrapping. Inside a fixed table it wraps: a two-line
+   button is ugly, an unreachable one is a defect. */
+.df-table--fixed .df-table__action .df-btn { white-space: normal; }
+
+/* ==========================================================================
+   19. TOOLBAR / HEADER BAR / FOOTER ACTION BAR
+   ========================================================================== */
+
+/* min-height, not height, and it wraps: a headerbar carrying a .df-stepper has
+   to reflow at a 320px container rather than pushing the last step off the
+   edge. --headerbar-height is the resting height, not a clamp. WCAG 1.4.10. */
+.df-headerbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  flex: none;
+  min-height: var(--headerbar-height);
+  padding: var(--space-1) var(--space-4);
+  background-color: var(--color-surface-2);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+.df-headerbar__title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); white-space: nowrap; }
+.df-headerbar__subtitle { font-size: var(--font-size-sm); color: var(--color-text-secondary); white-space: nowrap; }
+
+.df-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+  min-height: var(--toolbar-height);
+  /* --space-1 vertically, not --space-2: --control-height is 34px now (GTK's
+     real minimum) and 34 + 2*8 overflows a 44px bar. 34 + 2*4 does not. */
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--color-surface-2);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+.df-toolbar--sticky { position: sticky; top: 0; z-index: var(--z-sticky); box-shadow: var(--shadow-1); }
+.df-toolbar__group { display: flex; align-items: center; gap: var(--space-1); }
+.df-toolbar__divider { width: 1px; align-self: stretch; margin: 0 var(--space-1); background-color: var(--color-border-subtle); }
+
+.df-actionbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex: none;
+  min-height: var(--actionbar-height);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-surface-2);
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+.df-actionbar__status { margin-right: auto; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+
+/* Desktop screens own exactly one action area. The content alone scrolls;
+   legacy screens remain mountable while they adopt these sibling regions. */
+.df-screen-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.df-screen-content {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.df-screen-content > .df-app__content { padding: var(--space-4) var(--space-5); }
+.df-screen-layout > .df-actionbar { position: relative; z-index: 1; }
+.df-actionbar__back { margin-right: auto; }
+.df-actionbar__status { min-width: 0; overflow-wrap: anywhere; }
+.df-disclosure {
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+  padding: var(--space-2) 0;
+}
+.df-disclosure > summary {
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+.df-disclosure > summary:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+.df-disclosure[open] > summary { margin-bottom: var(--space-2); }
+.df-menu-anchor { position: relative; flex: none; }
+.df-menu {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  z-index: var(--z-dropdown);
+  width: 17rem;
+  min-width: 232px;
+  max-width: calc(100vw - var(--space-4));
+  max-height: calc(100vh - var(--headerbar-height) - var(--space-4));
+  overflow: auto;
+  padding: var(--space-1);
+  border: var(--border-width-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-3);
+  box-shadow: var(--shadow-2);
+}
+.df-menu__item {
+  width: 100%;
+  min-height: var(--control-height);
+  justify-content: flex-start;
+  text-align: left;
+  white-space: normal;
+}
+.df-menu__section {
+  padding: var(--space-2);
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+.df-menu__label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+.df-target-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-4);
+}
+.df-readiness-check {
+  padding: var(--space-3);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+.df-readiness-check:last-child { border-bottom: 0; }
+.df-readiness-check__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.df-readiness-check__header h3 { flex: 1; }
+@media (max-width: 600px) {
+  .df-target-fields { grid-template-columns: minmax(0, 1fr); }
+}
+.df-key-value { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-4); margin: 0; }
+.df-key-value dt { font-weight: var(--font-weight-medium); }
+.df-key-value dd { margin: 0; overflow-wrap: anywhere; }
+.df-desktop-toolbar { gap: var(--space-2); }
+.df-desktop-toolbar__identity {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+  gap: var(--space-2);
+}
+.df-desktop-toolbar__target {
+  min-width: 0;
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+.df-desktop-toolbar__utilities {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 0;
+  min-width: 0;
+  gap: var(--space-2);
+}
+.df-desktop-toolbar__job { overflow: hidden; text-overflow: ellipsis; }
+.df-picker-workspace { display: flex; flex: 1 1 0; min-width: 0; min-height: 0; overflow: hidden; }
+.df-picker-results { flex: 1 1 0; min-width: 0; min-height: 0; }
+.df-picker-content { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.df-picker-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
+.df-picker-toolbar > .picker-search { flex: 1; min-width: 0; }
+.df-picker-workspace { gap: var(--space-3); padding: var(--space-2) var(--space-3); }
+.df-picker-results { display: flex; flex-direction: column; }
+.df-picker-list-host { flex: 1; min-height: 0; display: flex; }
+.df-picker-list-host > .df-list { flex: 1; min-height: 0; }
+.df-picker-state { flex: 1; min-height: 0; overflow: auto; }
+.df-picker-notices:empty { display: none; }
+.df-picker-categories { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.df-row.df-picker-row { display: flex; }
+.df-picker-row-identity { display: flex; gap: var(--space-2); flex: 0 1 35%; min-width: 100px; overflow: hidden; white-space: nowrap; }
+.df-picker-row-display { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.df-picker-row-identity > .df-row__name { flex: 0 0 auto; }
+.df-picker-row-summary { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.df-picker-row-details { flex: none; height: 26px; min-height: 26px; padding: 0 var(--space-2); }
+.df-picker-detail-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-4); }
+.df-picker-detail-facts dd { margin: 0; overflow-wrap: anywhere; }
+.df-picker-description { white-space: pre-wrap; overflow-wrap: anywhere; }
+.pt { display: flex; flex-direction: column; min-height: 0; height: 100%; }
+.pt__title { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
+.pt__busy { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.pt__scroll { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: var(--space-3); }
+.pt__wrap { white-space: normal; overflow-wrap: break-word; }
+.pt__stats { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.pt__note { margin: var(--space-2) 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: var(--line-height-normal); }
+.pt__foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); flex: none; padding: var(--space-2) var(--space-3); border-top: var(--border-width-hairline) solid var(--color-border-subtle); }
+.pt__glyph { flex: none; width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.pt__prose { max-width: var(--measure-prose); margin: 0; line-height: var(--line-height-normal); overflow-wrap: break-word; }
+.pt__group { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.pt__grouphead { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-md); font-weight: var(--font-weight-medium); }
+.pt__scrollbox { max-height: 220px; overflow: auto; overscroll-behavior: contain; }
+.pt__textarea { min-height: 180px; padding: var(--space-2) var(--space-3); line-height: var(--line-height-normal); resize: vertical; }
+.df-selection-list { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.df-selection-item { padding: var(--space-2) 0; border-bottom: var(--border-width-hairline) solid var(--color-border-subtle); min-width: 0; }
+.df-selection-item__header { display: flex; align-items: center; gap: var(--space-2); min-height: 32px; }
+.df-selection-item__label { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.df-selection-item__warning { margin: var(--space-1) 0 0; font-size: var(--font-size-sm); color: var(--color-warning-text); overflow-wrap: anywhere; }
+.df-selection-item__details { font-size: var(--font-size-sm); overflow-wrap: anywhere; }
+.df-menu--anchored { position: fixed; right: auto; }
+.df-selection-pane { flex: 0 0 260px; width: 260px; min-width: 0; min-height: 0; overflow: auto; }
+.df-selection-dialog .df-selection-pane { width: 100%; }
+@media (max-width: 1023px) {
+  .df-picker-workspace > .df-selection-pane { display: none; }
+  .df-desktop-toolbar__target { max-width: 160px; }
+}
+/* Text enlargement may narrow the usable catalogue before viewport zoom
+   changes CSS pixels. observeSelectionLayout sets this explicit fallback. */
+.df-picker-workspace.is-selection-dialog > .df-selection-pane { display: none; }
+@media (max-width: 720px) {
+  .df-desktop-toolbar__identity { flex: 1 1 auto; }
+  .df-desktop-toolbar > .df-stepper { order: 3; flex-basis: 100%; justify-content: center; }
+  .df-desktop-toolbar__utilities { flex: 0 1 auto; }
+  .df-desktop-toolbar__target { max-width: 200px; }
+}
+
+/* .df-panel IS NOT THE GROUPING PRIMITIVE. Use .df-boxed-list (§24) for that.
+
+   A bordered card on a differently-shaded canvas, used as the default way to
+   group anything, is the loudest reason this app read as a web dashboard —
+   screens/build.js stacked seven of them in one column, each with its title
+   inside the box. Peripheral vision counts rectangles before it reads a label.
+
+   What .df-panel is for, and the whole list: something genuinely FLOATING over
+   content — the selection tray, a sidebar, the container a popover or a
+   fallback dialog is built from. If it is a group of settings, of rows, or of
+   fields, it is a .df-boxed-list with its title above the box. */
+.df-panel {
+  background-color: var(--color-surface-2);
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+.df-panel--flush { padding: 0; }
+/* Floating for real: a tray or sidebar detached from the canvas behind it. */
+.df-panel--raised { background-color: var(--color-surface-3); box-shadow: var(--shadow-2); }
+
+/* ==========================================================================
+   20. EMPTY / LOADING / ERROR STATES
+   Every one of these has a headline, a sentence and (usually) an action.
+   "Nothing here" without a next step is a bug, not a state.
+   ========================================================================== */
+
+.df-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.df-state__icon { width: var(--icon-size-xl); height: var(--icon-size-xl); color: var(--color-text-disabled); }
+.df-state--error .df-state__icon { color: var(--color-danger); }
+.df-state--loading .df-state__icon { color: var(--color-accent); }
+
+.df-state__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+.df-state__text { max-width: 48ch; margin: 0; font-size: var(--font-size-md); }
+/* flex-wrap, because an empty/error state in the 320px selection tray can carry
+   three buttons and without it the third is simply off the edge — unreachable
+   by pointer and clipped for everyone. WCAG 1.4.10. Reported by the first
+   round, fixed by the accessibility pass. */
+.df-state__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
+
+/* An error state should be able to show what actually failed, verbatim. */
+.df-state__detail {
+  width: 100%;
+  max-width: var(--measure-prose);
+  margin-top: var(--space-2);
+  text-align: left;
+}
+
+/* ==========================================================================
+   23. APP FRAME
+   --------------------------------------------------------------------------
+   The window's own layout, published as library classes so it stops being
+   forty lines of CSS injected by the shell at boot.
+
+     <body>
+       <div id="app" class="df-app-host">            <- HEIGHT CONTRACT, see §1
+         <div class="df-app">
+           <a class="df-app__skip" href="#main">Skip to content</a>
+           <div class="df-headerbar df-headerbar--brand">…</div>
+           <div class="df-app__banners">…</div>      <- app-level, persistent
+           <main class="df-app__main" id="main">
+             <div class="df-app__pane" tabindex="-1">…one screen…</div>
+             <div class="df-toast-host">…at most one .df-toast…</div>
+           </main>
+           <div class="df-actionbar">…</div>
+         </div>
+       </div>
+     </body>
+
+   .df-app__main is `position: relative` because .df-toast-host anchors to it:
+   the toast belongs to the content area, not to the viewport, so it does not
+   sit on top of the screen-owned action bar.
+   ========================================================================== */
+
+.df-app__skip {
+  position: absolute;
+  left: var(--space-2);
+  top: var(--space-2);
+  z-index: var(--z-toast);
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+.df-app__skip:focus { transform: translateY(0); }
+
+.df-app__banners {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) 0;
+}
+.df-app__banners:empty { display: none; }
+
+.df-app__main {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* One screen. Takes programmatic focus on navigation so a screen reader lands
+   inside the new step; the ring shows only for real keyboard navigation. */
+.df-app__pane {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.df-app__pane:focus:not(:focus-visible) { outline: none; }
+.df-app__pane:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
+/* The readable column inside a pane. A step is a form, not a dashboard: give
+   it a measure and centre it rather than letting controls run to the window
+   edge at 1600px. */
+.df-app__content {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) var(--space-10);
+}
+.df-app__content--wide { max-width: 1080px; }
+/* A pane whose job is a full-bleed list (the catalogue) opts out entirely. */
+.df-app__content--bleed { max-width: none; padding: 0; }
+/* A screen IS a vertical stack, so adding .df-stack here is the obvious move
+   and it silently collapsed four screens: .df-stack sets min-height: 0, which
+   lets the column shrink below its own content inside a bounded pane, and a
+   .df-boxed-list is overflow: hidden, so the overflow was CLIPPED rather than
+   scrolled. It reached the shipping engine because every demo harness mounted
+   into an unbounded block, where the bug cannot appear. Put .df-stack on a
+   child; if someone puts it here anyway, this stops it being silent. */
+.df-app__content.df-stack { min-height: auto; }
+
+/* ==========================================================================
+   24. GROUP + BOXED LIST
+   --------------------------------------------------------------------------
+   THE grouping primitive. Use this, not a stack of .df-panel cards.
+
+   A bordered card on a differently-shaded canvas is the admin-dashboard idiom,
+   and peripheral vision counts rectangles before it reads a label: seven
+   bordered cards in one column is seven things to triage before the first word
+   is read. libadwaita's answer — and this one — is the boxed list: the group's
+   title is PLAIN TEXT ABOVE the box, the box itself is one seamless rounded
+   surface, rows inside are separated by hairlines, and groups are separated by
+   space (32px) rather than by more borders.
+
+     <div class="df-groups">
+       <section class="df-group" aria-labelledby="g-out">
+         <h2 class="df-group__title" id="g-out">Output</h2>
+         <p class="df-group__description">Where the bundle folder is written.</p>
+         <div class="df-boxed-list">
+           <div class="df-boxed-list__row">
+             <div class="df-boxed-list__text">
+               <span class="df-boxed-list__label">Bundle name</span>
+               <span class="df-boxed-list__description">Written to the folder as-is.</span>
+             </div>
+             <div class="df-boxed-list__control">
+               <input id="bn" class="df-input" value="airgap-2026-09">
+             </div>
+           </div>
+         </div>
+       </section>
+     </div>
+
+   The label must be a real <label for> when the control is a form field; the
+   markup above shows a <span> only where the control is a button.
+   ========================================================================== */
+
+.df-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);           /* 32px — the separator IS the space */
+  min-height: 0;
+}
+.df-groups--tight { gap: var(--space-6); }   /* 24px */
+
+.df-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+/* Body-sized and bold, deliberately. This is a group label, not a headline;
+   there is no type size above 19px in this app. */
+.df-group__title {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--color-text-primary);
+}
+
+.df-group__description {
+  margin: 0 0 var(--space-1);
+  max-width: var(--measure-prose);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* The box. One border for the whole group, not one per row. */
+.df-boxed-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-2);
+  overflow: hidden;              /* rows clip to the radius */
+}
+/* .df-scroller on a boxed list is a no-op without this: equal specificity, and
+   the base rule wins on source order. Use --scroll for a list that scrolls. */
+.df-boxed-list--scroll { overflow: auto; overscroll-behavior: contain; }
+
+/* Rows are separated by a border-TOP with the first suppressed, so the box's
+   own bottom edge is never doubled and appending a row needs no bookkeeping. */
+.df-boxed-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  min-height: var(--row-height-comfortable);
+  padding: var(--space-2) var(--space-4);
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+  background-color: var(--color-surface-2);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+}
+.df-boxed-list__row:first-child { border-top: 0; }
+
+/* 24ch is the floor below which the control wraps onto its own line instead of
+   crushing the label. Same measure argument as .df-banner__body. */
+.df-boxed-list__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 24ch;
+  min-width: 0;
+  gap: var(--space-px);
+}
+.df-boxed-list__label {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
+  color: var(--color-text-primary);
+}
+.df-boxed-list__description {
+  max-width: var(--measure-prose);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+  color: var(--color-text-secondary);
+}
+
+.df-boxed-list__control {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-left: auto;
+  min-width: 0;
+}
+/* A field-width control (an input, a select) rather than a button or a switch. */
+.df-boxed-list__control--field { flex: 1 1 22ch; }
+
+/* An activatable row: the row element IS the button or link. GNOME's
+   AdwActionRow with a chevron. Keep the trailing chevron in the markup. */
+button.df-boxed-list__row,
+a.df-boxed-list__row {
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+button.df-boxed-list__row:hover,
+a.df-boxed-list__row:hover,
+.df-boxed-list__row.is-hover { background-color: var(--color-row-hover); }
+button.df-boxed-list__row:active,
+a.df-boxed-list__row:active,
+.df-boxed-list__row.is-pressed { background-color: var(--color-row-active); }
+button.df-boxed-list__row[aria-disabled="true"],
+button.df-boxed-list__row:disabled { cursor: not-allowed; }
+button.df-boxed-list__row[aria-disabled="true"]:hover,
+button.df-boxed-list__row:disabled:hover { background-color: var(--color-surface-2); }
+
+/* Selected row inside a boxed list (a target choice, a drive). Tint AND a 3px
+   leading rule AND — in markup — a checked radio. Same three signals as .df-row. */
+.df-boxed-list__row.is-selected,
+.df-boxed-list__row[aria-selected="true"],
+.df-boxed-list__row[aria-checked="true"] {
+  background-color: var(--color-row-selected);
+  box-shadow: inset var(--border-width-rule) 0 0 0 var(--color-accent);
+}
+
+.df-boxed-list__chevron {
+  flex: none;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--color-text-secondary);
+}
+
+/* A full-bleed child of the box: a .df-list, a .df-table, a .df-log. It gets
+   the same hairline separation as a row but none of the padding, and it strips
+   the nested component's own border and radius so the box stays seamless. */
+/* A group heading INSIDE a boxed list, for a list of options that falls into
+   named tiers (applications, then sections). .df-list has .df-row--header for
+   exactly this; a boxed list had nothing, so a consuming screen had to invent
+   one locally. Not sticky: a boxed list is short by construction, and a
+   sticky heading inside a rounded, clipped box detaches from its own border. */
+.df-boxed-list__header {
+  padding: var(--space-2) var(--space-4);
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+  background-color: var(--color-surface-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+.df-boxed-list__header:first-child { border-top: 0; }
+
+.df-boxed-list__slab { border-top: var(--border-width-hairline) solid var(--color-border-subtle); }
+.df-boxed-list__slab:first-child { border-top: 0; }
+.df-boxed-list__slab > .df-list,
+.df-boxed-list__slab > .df-disclosure {
+  border: 0;
+  border-radius: 0;
+}
+/* The same strip, reachable outside a slab. Readiness needs one disclosure per
+   check row -- five to eight of them inside a boxed list -- and each drew its
+   own border, which is the nested-rectangle idiom this section exists to end. */
+.df-disclosure--flush {
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+}
+.df-boxed-list__slab > .df-table { border-radius: 0; }
+.df-boxed-list__slab > .df-table tbody tr:last-child td { border-bottom: 0; }
+
+/* A footer strip inside the box: "3 of 12 selected", a Select-all link. */
+.df-boxed-list__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+  background-color: var(--color-surface-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ==========================================================================
+   25. STEPPER
+   --------------------------------------------------------------------------
+   The gated step control that replaces the headerbar's ghost-button nav row.
+   Free navigation, not a Next/Back wizard: a completed step is reachable in
+   one click, because the picker is a workspace people revise for twenty
+   minutes rather than a step they complete.
+
+     <nav class="df-stepper" aria-label="Build steps">
+       <ol class="df-stepper__list">
+         <li class="df-stepper__item">
+           <button type="button" class="df-stepper__step is-complete">
+             <span class="df-stepper__marker">
+               <svg class="df-stepper__glyph" aria-hidden="true">…tick…</svg>
+             </span>
+             <span class="df-stepper__label">Target</span>
+             <span class="df-visually-hidden">, completed</span>
+           </button>
+         </li>
+         <li class="df-stepper__item">
+           <button type="button" class="df-stepper__step" aria-current="step">
+             <span class="df-stepper__marker">2</span>
+             <span class="df-stepper__label">Packages</span>
+           </button>
+         </li>
+         <li class="df-stepper__item">
+           <button type="button" class="df-stepper__step" aria-disabled="true"
+                   aria-describedby="why-build">
+             <span class="df-stepper__marker">
+               <svg class="df-stepper__glyph" aria-hidden="true">…padlock…</svg>
+             </span>
+             <span class="df-stepper__label">Build</span>
+           </button>
+           <span class="df-stepper__reason" id="why-build" role="tooltip">
+             Choose at least one package first.
+           </span>
+         </li>
+       </ol>
+     </nav>
+
+   Three states, each carrying at least two signals so none depends on hue:
+     current    aria-current="step"        filled marker + semibold label
+     completed  .is-complete               tick glyph + tinted marker
+     locked     aria-disabled="true"       padlock glyph + muted label + reason
+
+   NEVER use `disabled`. A disabled button leaves the tab order, so the operator
+   never meets the locked step and is never told why it is locked — which is the
+   whole thing a gated flow has to communicate. `aria-disabled="true"` keeps it
+   focusable; the click handler refuses and moves focus to the control that will
+   unblock it. docs/accessibility.md §10 P1-4.
+
+   The reason is revealed on HOVER **and** on FOCUS, and it is a SIBLING of the
+   button, not a child: a child would be swallowed into the button's accessible
+   name ("Build Choose at least one package first"). As an aria-describedby
+   target it is announced even while visually hidden — accname includes a
+   directly-referenced node regardless of its visibility.
+   ========================================================================== */
+
+.df-stepper { display: flex; align-items: center; min-width: 0; }
+
+.df-stepper__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+
+.df-stepper__item {
+  position: relative;            /* the reason anchors here */
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* The connector. Shape only, no meaning — it does not encode progress. */
+.df-stepper__item + .df-stepper__item::before {
+  content: "";
+  flex: none;
+  width: var(--space-3);
+  height: var(--border-width-hairline);
+  margin: 0 var(--space-1);
+  background-color: var(--color-border-subtle);
+}
+
+.df-stepper__step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-height);
+  max-width: 100%;
+  min-width: 0;
+  padding: 0 var(--space-3);
+  border: var(--border-width-hairline) solid transparent;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-snug);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard);
+}
+.df-stepper__step:hover:not([aria-disabled="true"]),
+.df-stepper__step.is-hover:not([aria-disabled="true"]) {
+  background-color: var(--color-row-hover);
+  color: var(--color-text-primary);
+}
+.df-stepper__step:active:not([aria-disabled="true"]),
+.df-stepper__step.is-pressed:not([aria-disabled="true"]) { background-color: var(--color-row-active); }
+
+.df-stepper__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.df-stepper__marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-circle);
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.df-stepper__glyph { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+
+/* -- current: filled marker AND a semibold label. Two signals. -- */
+.df-stepper__step[aria-current="step"],
+.df-stepper__step[aria-current="true"],
+.df-stepper__step.is-current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+.df-stepper__step[aria-current="step"] .df-stepper__marker,
+.df-stepper__step[aria-current="true"] .df-stepper__marker,
+.df-stepper__step.is-current .df-stepper__marker {
+  background-color: var(--color-accent-fill);
+  border-color: var(--color-accent-fill);
+  color: var(--color-accent-on-fill);
+}
+
+/* -- completed: a tick glyph AND a tinted marker. There is no ARIA state for
+      "completed", so the markup must also carry a visually-hidden ", completed"
+      — the class alone tells assistive technology nothing. -- */
+.df-stepper__step.is-complete { color: var(--color-text-primary); }
+.df-stepper__step.is-complete .df-stepper__marker {
+  background-color: var(--color-accent-bg);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+/* -- locked: a padlock glyph AND a muted label AND the reason. Still focusable,
+      still in the tab order, still hoverable — pointer-events must stay on or
+      the reason can never be reached. -- */
+.df-stepper__step[aria-disabled="true"] {
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+.df-stepper__step[aria-disabled="true"] .df-stepper__marker {
+  border-style: dashed;
+  color: var(--color-text-secondary);
+}
+
+/* The reason. Layered, never inline: an inline disclosure in a headerbar
+   reflows everything under it. */
+.df-stepper__reason {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: var(--z-dropdown);
+  width: max-content;
+  max-width: 32ch;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-3);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  white-space: normal;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+.df-stepper__step:hover + .df-stepper__reason,
+.df-stepper__step:focus + .df-stepper__reason,
+.df-stepper__step:focus-visible + .df-stepper__reason,
+.df-stepper__step.is-focused + .df-stepper__reason,
+.df-stepper__reason.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+/* Near the right edge, flip it so it cannot leave the window. */
+.df-stepper__reason--end { left: auto; right: 0; }
+
+/* Compact: labels leave the screen but NOT the accessibility tree, because
+   `display: none` would take the button's accessible name with them. */
+.df-stepper--compact .df-stepper__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.df-stepper--compact .df-stepper__step { padding: 0 var(--space-1); }
+.df-stepper--compact .df-stepper__item + .df-stepper__item::before { width: var(--space-2); margin: 0; }
+
+/* ==========================================================================
+   26. TOAST
+   --------------------------------------------------------------------------
+   ONE pill, rising from the BOTTOM CENTRE of the content area. Never stacked.
+
+   Toasts stacking in the bottom-right corner is a defining web/Electron
+   signature; GNOME's AdwToast is a single pill at bottom centre and a second
+   notice replaces or queues behind the first. .df-toast-host therefore holds
+   AT MOST ONE .df-toast — the queue lives in JS, not in the DOM.
+
+     <div class="df-toast-host">
+       <div class="df-toast df-toast--success" role="status" aria-live="polite">
+         <svg class="df-toast__icon" aria-hidden="true">…circle-tick…</svg>
+         <span class="df-toast__text">Bundle written to /srv/bundles/airgap-2026-09.</span>
+         <button type="button" class="df-btn df-btn--secondary df-btn--sm df-toast__action">Open</button>
+         <button type="button" class="df-icon-btn df-toast__close" aria-label="Dismiss">…</button>
+       </div>
+     </div>
+
+   role="alert" + aria-live="assertive" for danger; role="status" + polite for
+   the rest. The icon SHAPE is what distinguishes the kinds — the tint is the
+   second signal, never the only one.
+   ========================================================================== */
+
+.df-toast-host {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--screen-actionbar-space, var(--actionbar-height));
+  z-index: var(--z-toast);
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+  pointer-events: none;          /* the pane underneath stays usable */
+}
+.df-toast-host:empty { display: none; }
+
+.df-toast {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  width: 100%;
+  max-width: var(--toast-width);
+  min-height: var(--control-height-lg);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-3);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-3);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-snug);
+  animation: df-toast-in var(--duration-base) var(--ease-out) both;
+}
+.df-toast.is-leaving { animation: df-toast-out var(--duration-fast) var(--ease-standard) both; }
+
+.df-toast__icon { flex: none; width: var(--icon-size); height: var(--icon-size); }
+/* 16ch is the floor below which the action wraps to its own line rather than
+   squeezing the message. WCAG 1.4.10 at a 320px container. */
+.df-toast__text { flex: 1 1 16ch; min-width: 0; }
+.df-toast__action { flex: none; margin-left: auto; }
+.df-toast__close { flex: none; }
+
+.df-toast--info .df-toast__icon    { color: var(--color-info); }
+.df-toast--success .df-toast__icon { color: var(--color-success); }
+.df-toast--warning .df-toast__icon { color: var(--color-warning); }
+.df-toast--danger .df-toast__icon  { color: var(--color-danger); }
+.df-toast--danger { border-color: var(--color-danger); }
+
+@keyframes df-toast-in {
+  from { opacity: 0; transform: translateY(var(--space-3)); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes df-toast-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ==========================================================================
+   27. POPOVER + CONTEXTUAL HELP
+   --------------------------------------------------------------------------
+   Layered over content, never inline. This is a correctness requirement, not a
+   preference: an inline <details> above a 60,000-row virtualised list reflows
+   everything below it, which moves the list's scroll position and keyboard
+   focus every time somebody touches a filter.
+
+     <span class="df-popover-anchor">
+       <button type="button" class="df-btn df-btn--secondary"
+               aria-expanded="false" aria-controls="pop-sect">Section…</button>
+       <div class="df-popover" id="pop-sect" hidden>…</div>
+     </span>
+
+   Toggle it with `el.hidden`, never `style.display` (§6.17). The opener owns
+   `aria-expanded`; the screen closes it on Escape and on outside click and
+   returns focus to the opener.
+
+   CONTEXTUAL HELP is the reason .df-field__hint should stop appearing under
+   every control. A permanent caption under each field is a SaaS-onboarding
+   habit and half the density problem; keep the hint only where the answer is
+   short and always relevant, and put the paragraph behind this instead:
+
+     <span class="df-popover-anchor">
+       <button type="button" class="df-help__btn" aria-expanded="false"
+               aria-controls="h-name" aria-label="About the bundle name">
+         <svg aria-hidden="true">…question mark…</svg>
+       </button>
+       <div class="df-popover df-popover--end" id="h-name" hidden>
+         <p class="df-popover__text">…</p>
+       </div>
+     </span>
+   ========================================================================== */
+
+.df-popover-anchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+.df-popover {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: var(--z-dropdown);
+  width: max-content;
+  min-width: 24ch;
+  max-width: min(var(--measure-prose), 88vw);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-3);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-2);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  text-align: left;
+  white-space: normal;
+}
+.df-popover--end { left: auto; right: 0; }
+.df-popover--above { top: auto; bottom: calc(100% + var(--space-1)); }
+/* No padding, for a popover holding a menu or a list. */
+.df-popover--flush { padding: 0; }
+.df-popover--wide { min-width: 40ch; }
+
+.df-popover__title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+.df-popover__text {
+  margin: 0;
+  max-width: var(--measure-prose);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+.df-popover__text + .df-popover__text { margin-top: var(--space-2); }
+.df-popover__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+/* The help affordance itself. A --hit-target-min box around a 14px glyph. */
+.df-help__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--hit-target-min);
+  height: var(--hit-target-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard);
+}
+.df-help__btn:hover,
+.df-help__btn.is-hover { background-color: var(--color-row-hover); color: var(--color-text-primary); }
+.df-help__btn[aria-expanded="true"] { background-color: var(--color-accent-bg); color: var(--color-accent-text); }
+.df-help__btn svg { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+
+/* ==========================================================================
+   28. BRAND / IDENTITY SURFACES
+   --------------------------------------------------------------------------
+   Debark's warmth lives here and nowhere else. .df-brand re-points a short list
+   of surface, border and text tokens at their brand equivalents, so every
+   component inside it warms up without any component knowing that brand exists.
+
+   What it deliberately does NOT re-point: --color-accent and the four semantic
+   roles. The interactive colour and the status colours are the same on brand
+   chrome as everywhere else, because a status must mean one thing in one hue
+   across the whole app, and because brand amber and --color-warning are the
+   same colour to a reader (1.56:1 / dE 12 light, 1.59:1 / dE 13 dark — see
+   README §8.2). Brand hue and semantic hue never meet.
+
+   --color-text-disabled is re-pointed at --color-brand-text-muted: the cool
+   grey is 2.92:1 on the warm ground, under the 3:1 floor. The consequence is
+   that a disabled control on brand chrome is no dimmer than a secondary one,
+   which is fine because a control on brand chrome must not use `disabled` at
+   all (§25, docs/accessibility.md §10 P1-4) — the state is carried by a glyph
+   and a reason, not by dimming.
+   ========================================================================== */
+
+.df-brand {
+  --color-surface-1: var(--color-brand-surface);
+  --color-surface-2: var(--color-brand-surface);
+  --color-surface-3: var(--color-brand-canvas);
+  --color-row-hover: var(--color-brand-hover);
+  --color-row-active: var(--color-brand-active);
+  --color-border-subtle: var(--color-brand-border);
+  --color-border-default: var(--color-brand-border-control);
+  --color-text-primary: var(--color-brand-text);
+  --color-text-secondary: var(--color-brand-text-muted);
+  --color-text-disabled: var(--color-brand-text-muted);
+  --color-focus-halo: var(--color-brand-surface);
+  background-color: var(--color-brand-surface);
+  color: var(--color-brand-text);
+}
+
+/* The window's own headerbar, wearing the brand. */
+.df-headerbar--brand { border-bottom-color: var(--color-brand-border); }
+
+/* The mark. The library ships no icons; this styles the slot. Inline the mark
+   SVG with its outer fill and stroke set to `currentColor` and the crate left
+   as var(--color-brand-amber) — then one file themes correctly instead of a
+   light/dark pair going stale. gallery.html carries the exact markup to copy,
+   and shell/shell.js holds the same paths as BRAND_MARK. */
+.df-brand-mark {
+  flex: none;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  color: var(--color-brand-text);
+}
+.df-brand-mark--lg { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+
+/* The wordmark. Brand shows through WEIGHT and TRACKING on the system font.
+   There is no --font-family-display and there must not be one: the day a brand
+   face is installed on a developer's machine the app silently stops matching
+   every other GNOME application, and nobody testing it can see that happen. */
+.df-wordmark {
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-brand);
+  color: var(--color-brand-text);
+  white-space: nowrap;
+}
+.df-wordmark--lg { font-size: var(--font-size-xl); }
+
+/* The about surface — the one place allowed to look like a poster. */
+.df-about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+  background-color: var(--color-brand-canvas);
+  color: var(--color-brand-text);
+}
+.df-about .df-brand-mark { color: var(--color-brand-text); }
+.df-about__version {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-brand-accent);
+}
+.df-about__text {
+  max-width: var(--measure-prose);
+  font-size: var(--font-size-md);
+  color: var(--color-brand-text-muted);
+}
+/* Decorative brand fills. Never near a status, never carrying text. */
+.df-about__rule {
+  width: var(--space-16);
+  height: var(--border-width-rule);
+  border-radius: var(--radius-pill);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-brand-amber) 0%,
+    var(--color-brand-clay) 60%,
+    var(--color-brand-oasis) 100%
+  );
+}
+
+/* ==========================================================================
+   29. GATING — the aria-disabled idiom
+   --------------------------------------------------------------------------
+   A gated flow has more "you cannot do this yet" states, not fewer, and the
+   library has to make the correct pattern the easy one.
+
+   NEVER `disabled` on a screen's primary action. A disabled control leaves the
+   tab order, so the operator never meets it and is never told why it is
+   unavailable — the single most useful sentence on the screen.
+
+     <button type="button" class="df-btn df-btn--primary"
+             aria-disabled="true" aria-describedby="build-gate">Build bundle</button>
+     <p class="df-live" id="build-gate" role="status" aria-live="polite">
+       Choose a target before building.
+     </p>
+
+   `.df-live` is a visually-hidden live region that is STILL a valid
+   aria-describedby target — accname includes a directly-referenced node even
+   when it is hidden — so one element does both jobs. Use `.df-gate-reason`
+   instead when the sentence should also be on screen.
+
+   The handler refuses the click, re-announces the reason by rewriting the live
+   region, and moves focus to the control that unblocks it.
+   ========================================================================== */
+
+.df-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.df-gate-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+  color: var(--color-text-secondary);
+}
+.df-gate-reason svg { flex: none; width: var(--icon-size-sm); height: var(--icon-size-sm); margin-top: 2px; }
+
+/* ==========================================================================
+   30. FORCED COLOURS — WINDOWS / WEBVIEW2 ONLY
+   Everything in this section is dead code on the shipping Linux engine, and
+   that is measured rather than assumed: on WebKit2GTK 2.52.6 `forced-colors:
+   active` never matched under any GTK setting — including GTK's own
+   HighContrast theme — `forced-colors: none` was true throughout, and
+   `forced-color-adjust` computed to the empty string, i.e. the property is
+   not implemented at all. What Linux signals instead is `prefers-contrast:
+   more`, which tokens.css answers in the block immediately above its own
+   forced-colours block. Keep this section: WebView2 is a supported target and
+   implements forced colours properly, so deleting it would break the platform
+   it was written for to tidy up the platform it never reached.
+   docs/accessibility.md §8.3 has the run and §11.6 the reasoning.
+   ========================================================================== */
+
+@media (forced-colors: active) {
+  .df-btn,
+  .df-input,
+  .df-search,
+  .df-chip,
+  .df-badge,
+  .df-panel,
+  .df-dialog,
+  .df-disclosure,
+  .df-boxed-list,
+  .df-popover,
+  .df-toast,
+  .df-stepper__reason {
+    border: 1px solid ButtonBorder;
+  }
+  /* The brand scope re-points surface and text tokens; under forced colours the
+     OS owns both, so hand them straight back. */
+  .df-brand,
+  .df-headerbar--brand,
+  .df-about {
+    background-color: Canvas;
+    color: CanvasText;
+    forced-color-adjust: auto;
+  }
+  .df-about__rule { background-image: none; background-color: CanvasText; }
+  .df-boxed-list__row { border-top-color: ButtonBorder; }
+  .df-stepper__marker { border-color: ButtonBorder; }
+  .df-stepper__step[aria-current="step"] .df-stepper__marker,
+  .df-stepper__step.is-current .df-stepper__marker {
+    background-color: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+  .df-boxed-list__row.is-selected,
+  .df-boxed-list__row[aria-selected="true"],
+  .df-boxed-list__row[aria-checked="true"] {
+    background-color: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+  .df-row.is-selected,
+  .df-row[aria-selected="true"] {
+    background-color: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+  .df-progress__bar { background-color: Highlight; }
+  .df-skeleton { animation: none; background: ButtonFace; }
+}
+
+/* ==========================================================================
+   31. REDUCED MOTION
+   The duration tokens already collapse. These rules stop the looping
+   animations outright, because a 1ms loop is worse than no loop.
+   A busy control must therefore ALWAYS carry a text label — the spinner
+   alone is not permitted to be the only indication of activity.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .df-spinner,
+  .df-btn.is-loading::before {
+    animation: none;
+    border-top-color: var(--color-accent);
+    border-right-color: var(--color-accent);
+  }
+
+  .df-skeleton {
+    animation: none;
+    background-image: none;
+    background-color: var(--color-skeleton);
+  }
+
+  /* A toast that slides is a toast that is missed when motion is off; it must
+     simply be there. Same for the skip link. */
+  .df-toast,
+  .df-toast.is-leaving { animation: none; }
+  .df-app__skip { transition: none; }
+  .df-stepper__reason { transition: none; }
+
+  /* A still 35% bar reads as "unknown progress" without motion. */
+  .df-progress--indeterminate .df-progress__bar {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}

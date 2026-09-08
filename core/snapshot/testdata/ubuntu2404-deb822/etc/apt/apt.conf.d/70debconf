@@ -1,0 +1,4 @@
+// Captured verbatim like every other apt.conf.d file; carries no
+// Install-Recommends setting, so InstallRecommends should report the
+// Debian/Ubuntu default (true, explicit=false).
+DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt || true";};

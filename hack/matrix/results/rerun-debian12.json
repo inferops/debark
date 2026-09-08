@@ -1,0 +1,409 @@
+{
+  "schema_version": "debark.e2e.matrixresult/v1",
+  "generated_at": "2026-09-03T23:44:23.4570708Z",
+  "host": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.26.0"
+  },
+  "config": {
+    "workers": 4,
+    "release_filter": "debian-12"
+  },
+  "rows": [
+    {
+      "fixture": "alt-deps",
+      "protects": "edge fixtures: alternative dependencies (a | b)",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T16:44:23.5810853-07:00",
+      "finished_at": "2026-09-03T16:56:24.6778476-07:00",
+      "total_ms": 721096,
+      "stage_ms": {
+        "build": 156460,
+        "build-binary": 881,
+        "snapshot-create": 153,
+        "target-setup": 558753
+      },
+      "log_path": "matrix-work/r7ef2ac71/alt-deps-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T16:44:23.583196-07:00",
+      "finished_at": "2026-09-03T16:56:24.6085081-07:00",
+      "total_ms": 721025,
+      "stage_ms": {
+        "build": 264516,
+        "build-binary": 879,
+        "snapshot-create": 128,
+        "target-setup": 450554
+      },
+      "log_path": "matrix-work/r7ef2ac71/basic-install-matrix-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "arm64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T16:44:24.2601909-07:00",
+      "finished_at": "2026-09-03T16:56:25.1926697-07:00",
+      "total_ms": 720932,
+      "stage_ms": {
+        "build": 181516,
+        "build-binary": 882,
+        "snapshot-create": 504,
+        "target-setup": 533090
+      },
+      "log_path": "matrix-work/r7ef2ac71/basic-install-matrix-debian-12-arm64/transcript.log"
+    },
+    {
+      "fixture": "dkms-without-headers",
+      "protects": "edge fixtures: DKMS package without headers; core/doctor checkDKMSHeaders",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T16:44:23.5734698-07:00",
+      "finished_at": "2026-09-03T16:56:24.4278338-07:00",
+      "total_ms": 720854,
+      "stage_ms": {
+        "build": 178538,
+        "build-binary": 889,
+        "snapshot-create": 147,
+        "target-setup": 536664
+      },
+      "log_path": "matrix-work/r7ef2ac71/dkms-without-headers-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "external-deb-closure",
+      "protects": "external .deb dependency closure",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T16:56:24.4288743-07:00",
+      "finished_at": "2026-09-03T17:08:25.2869014-07:00",
+      "total_ms": 720858,
+      "stage_ms": {
+        "build": 263365,
+        "build-binary": 0,
+        "snapshot-create": 231,
+        "target-setup": 452311
+      },
+      "log_path": "matrix-work/r7ef2ac71/external-deb-closure-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "external-deb-missing-deps",
+      "protects": "edge fixtures: external .deb with missing dependencies; §3.10 exit 3; §3.6",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 3 (incomplete): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T16:56:24.6090289-07:00",
+      "finished_at": "2026-09-03T17:08:25.4807766-07:00",
+      "total_ms": 720871,
+      "stage_ms": {
+        "build": 188851,
+        "build-binary": 0,
+        "snapshot-create": 149,
+        "target-setup": 526968
+      },
+      "log_path": "matrix-work/r7ef2ac71/external-deb-missing-deps-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "foreign-arch-i386",
+      "protects": "edge fixtures: foreign-arch (i386); §3.5.6",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T16:56:24.6783598-07:00",
+      "finished_at": "2026-09-03T17:08:25.1472433-07:00",
+      "total_ms": 720468,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719327
+      },
+      "log_path": "matrix-work/r7ef2ac71/foreign-arch-i386-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "held-package",
+      "protects": "edge fixtures: held packages; §3.5.7",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T16:56:25.1931966-07:00",
+      "finished_at": "2026-09-03T17:08:26.2163341-07:00",
+      "total_ms": 721023,
+      "stage_ms": {
+        "build": 74362,
+        "build-binary": 0,
+        "snapshot-create": 177,
+        "target-setup": 641834
+      },
+      "log_path": "matrix-work/r7ef2ac71/held-package-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "no-recommends-target",
+      "protects": "edge fixtures: Install-Recommends=false target; experiment E4",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T17:08:25.147767-07:00",
+      "finished_at": "2026-09-03T17:20:26.026298-07:00",
+      "total_ms": 720878,
+      "stage_ms": {
+        "build": 4205,
+        "build-binary": 0,
+        "snapshot-create": 163,
+        "target-setup": 711488
+      },
+      "log_path": "matrix-work/r7ef2ac71/no-recommends-target-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "origin-release-pin",
+      "protects": "edge fixtures: origin and release pins; §3.5.5",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:08:25.2874128-07:00",
+      "finished_at": "2026-09-03T17:20:25.8048566-07:00",
+      "total_ms": 720517,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719377
+      },
+      "log_path": "matrix-work/r7ef2ac71/origin-release-pin-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "stale-installed-version",
+      "protects": "edge fixtures: a stale installed version",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:08:25.4812908-07:00",
+      "finished_at": "2026-09-03T17:20:25.9227704-07:00",
+      "total_ms": 720441,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719569
+      },
+      "log_path": "matrix-work/r7ef2ac71/stale-installed-version-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-added-file",
+      "protects": "tamper matrix: added file; verify.ProblemFileUnexpected",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "fail",
+      "stage": "build",
+      "blocker": "exit 1 (usage), want 0 (success): ",
+      "exit_classes": {
+        "build": "usage"
+      },
+      "started_at": "2026-09-03T17:08:26.2173754-07:00",
+      "finished_at": "2026-09-03T17:20:26.9978585-07:00",
+      "total_ms": 720780,
+      "stage_ms": {
+        "build": 202003,
+        "build-binary": 0,
+        "snapshot-create": 162,
+        "target-setup": 513962
+      },
+      "log_path": "matrix-work/r7ef2ac71/tamper-added-file-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-edited-manifest",
+      "protects": "tamper matrix: edited manifest; D6; verify.ProblemManifestDigest",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:20:25.8058902-07:00",
+      "finished_at": "2026-09-03T17:32:26.2333045-07:00",
+      "total_ms": 720427,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719455
+      },
+      "log_path": "matrix-work/r7ef2ac71/tamper-edited-manifest-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-modified-deb",
+      "protects": "tamper matrix: modified deb; D6, §3.8",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:20:25.9241509-07:00",
+      "finished_at": "2026-09-03T17:32:26.3439972-07:00",
+      "total_ms": 720419,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719561
+      },
+      "log_path": "matrix-work/r7ef2ac71/tamper-modified-deb-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-removed-file",
+      "protects": "tamper matrix: removed file; verify.ProblemFileMissing",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:20:26.0268234-07:00",
+      "finished_at": "2026-09-03T17:32:26.4948059-07:00",
+      "total_ms": 720467,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719395
+      },
+      "log_path": "matrix-work/r7ef2ac71/tamper-removed-file-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-swapped-signature",
+      "protects": "tamper matrix: swapped signature; core/sign SignPurpose; verify.ProblemManifestDigest",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:20:26.9983778-07:00",
+      "finished_at": "2026-09-03T17:32:27.3983999-07:00",
+      "total_ms": 720400,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719572
+      },
+      "log_path": "matrix-work/r7ef2ac71/tamper-swapped-signature-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-wrong-key",
+      "protects": "tamper matrix: wrong key; §3.8 trust model; verify.ProblemSignatureUntrusted",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:32:26.233825-07:00",
+      "finished_at": "2026-09-03T17:44:26.5732033-07:00",
+      "total_ms": 720339,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719552
+      },
+      "log_path": "matrix-work/r7ef2ac71/tamper-wrong-key-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "third-party-repo",
+      "protects": "edge fixtures: third-party repository; §3.4.1",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:32:26.3453556-07:00",
+      "finished_at": "2026-09-03T17:44:26.6403532-07:00",
+      "total_ms": 720294,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719525
+      },
+      "log_path": "matrix-work/r7ef2ac71/third-party-repo-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "virtual-provides",
+      "protects": "edge fixtures: virtual packages and Provides",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "blocked",
+      "stage": "target-setup",
+      "blocker": "apt-get update: apt-get update -qq: exit 1: ",
+      "started_at": "2026-09-03T17:32:26.4953169-07:00",
+      "finished_at": "2026-09-03T17:44:26.9165243-07:00",
+      "total_ms": 720421,
+      "stage_ms": {
+        "build-binary": 0,
+        "target-setup": 719617
+      },
+      "log_path": "matrix-work/r7ef2ac71/virtual-provides-debian-12-amd64/transcript.log"
+    }
+  ],
+  "summary": {
+    "total": 19,
+    "pass": 0,
+    "fail": 9,
+    "blocked": 10,
+    "skipped": 0
+  }
+}

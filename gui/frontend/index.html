@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Debark</title>
+
+    <!--
+      Theme before first paint.
+
+      This must be a classic, non-deferred script in <head>, ahead of the
+      stylesheets: src/main.js is a module and therefore deferred, so a theme
+      applied from there lands after the first paint and the operator sees a
+      flash of the wrong one. Mirrors THEME_STORAGE_KEY and THEME_MODES in
+      frontend/src/shell/theme.js — keep the key and the values in step.
+
+      It deliberately does nothing for "system" or for absent/blocked storage:
+      the absent attribute IS system, so there is nothing to write, and
+      tokens.css resolves it from prefers-color-scheme.
+    -->
+    <script>
+      try {
+        var m = localStorage.getItem('debark.theme');
+        if (m === 'light' || m === 'dark') {
+          document.documentElement.setAttribute('data-theme', m);
+        }
+      } catch (e) {
+        /* Private window, cleared site data, storage blocked: fall back to
+           system rather than breaking the boot. */
+      }
+    </script>
+
+    <link rel="stylesheet" href="./src/design/tokens.css" />
+    <link rel="stylesheet" href="./src/design/components.css" />
+  </head>
+  <body>
+    <!--
+      The frame, the screens and all behaviour are built by src/main.js.
+
+      There is no bundler: main.js is loaded as a native ES module and may
+      import other modules by relative path, including Wails' generated
+      bindings at ../wailsjs/. frontend/ and frontend/dist/ have the same
+      shape, so a path that resolves while editing resolves in the build.
+
+      `df-app-host` is load-bearing, not decoration. The shell builds a
+      `.df-app` inside this element and that frame is `height: 100%`, which
+      only resolves against a parent that has a height of its own. Without it
+      the frame is content-sized, the whole document scrolls instead of the
+      screen pane, and — worst — the virtualised catalogue's scroll port grows
+      to the full result set and renders every row. Measured by the
+      accessibility pass at 4,000 rows: a 128,000px port with all 4,000 rows in
+      the DOM. At the real catalogue size that is 1.92 million pixels and 60,000
+      rows.
+
+      The rest of the frame — `.df-app`, `.df-app__skip`, `.df-app__banners`,
+      `.df-app__main`, `.df-app__pane`, `.df-app__content` and
+      `.df-toast-host` — is in the design system too, and documented in
+      `src/design/README.md` §6.24. A shell that injects its own copy of that
+      layout is duplicating a contract; the library's version is the one that
+      is measured.
+    -->
+    <div id="app" class="df-app-host"></div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

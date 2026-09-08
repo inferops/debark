@@ -1,0 +1,36 @@
+debark: at least one of the flags in the group [snapshot base interactive] is required
+
+Usage:
+  debark build [pkg...] [flags]
+
+Flags:
+      --acknowledge-redistribution   suppress the interactive redistribution prompt (warnings are still recorded)
+      --approved-keys string         archive key fingerprints resolution must satisfy
+      --arch string                  dpkg architecture the --base describes (default: this machine's)
+      --backend string               auto, local or container (default: config backend, else auto)
+      --base string                  stock release to assume instead of a snapshot: a builtin id such as ubuntu:26.04/desktop, or a path to a base definition file
+      --digest stringToString        expected digest for a URL input, upgrading its provenance to user-digest (URL=SHA256); repeatable (default [])
+      --embed-binary string          copy a debark binary into the bundle at bin/debark-linux-<arch>
+  -h, --help                         help for build
+      --image string                 override the container image for the container backend
+      --interactive                  ask for anything not given on the command line, then print the equivalent command (a terminal is required)
+      --list stringArray             packages.txt-style input list; repeatable
+      --local-dir stringArray        directory of vendor .deb files, scanned (not recursively); repeatable
+      --no-prune                     with --update, keep superseded files instead of pruning them
+      --no-recommends                override the target's Install-Recommends and exclude recommended packages
+      --no-sign                      write an unsigned bundle explicitly
+      --out string                   write the bundle as a directory (default when neither --out nor --tar is given: ./bundle)
+      --policy string                local policy file evaluated against the plan
+      --sbom                         write sbom.cdx.json (CycloneDX)
+      --sign string                  signing key: a private key file, gpg:<keyid>, or plugin:<name>
+      --snapshot string              snapshot of the real target to resolve against (exactly one of --snapshot or --base)
+      --tar string                   write the bundle as a <name>.debark.tar.zst archive
+      --update                       refresh indexes, re-resolve, fetch newer versions, then prune superseded files
+      --upgrades                     add a full-upgrade pass for packages already installed on the target
+
+Global Flags:
+      --config string        config file path (overrides XDG discovery)
+      --json                 print the documented JSON object for this command instead of human text
+      --json-events string   stream NDJSON evidence events to PATH, or "-" for stdout
+      --no-color             disable coloured output (also honours NO_COLOR and TERM=dumb)
+      --profile string       named config profile to apply

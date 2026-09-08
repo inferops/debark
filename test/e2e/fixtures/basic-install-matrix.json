@@ -1,0 +1,50 @@
+/*
+ * basic-install-matrix — the headline claim itself.
+ *
+ * Protects: the kill criterion ("Zero bundles that resolve online
+ * but fail offline") and the whole reason to exist. This is the row
+ * hack/matrix expands across every supported release/arch (target.matrix:
+ * true) — Debian 12/13, Ubuntu 22.04/24.04/26.04, amd64 and arm64 — because
+ * it is the one claim that must hold everywhere, not just on one release.
+ *
+ * It reproduces the exact closure recorded in docs/dev/prototype-baseline.md
+ * and proven against a real apt in
+ * core/repository/e2e_realapt_test.go (jq, libjq1, libonig5, tree), so a
+ * result here is directly comparable to both.
+ *
+ * It also carries determinism:true (contract-brief.md rule 2's "build the
+ * same request twice -> byte-identical manifest and repository metadata")
+ * and is the fixture the performance baseline (the prototype's own
+ * ~6.5s/74pkg/40MB figure) is read from,
+ * because it is the row every release runs, so its stage_ms/bundle_size_bytes
+ * numbers are the ones worth comparing release to release.
+ *
+ * If this regresses, the product does not do the one thing it exists to do.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "basic-install-matrix",
+  "protects": "kill criterion, core matrix + determinism",
+  "tags": ["matrix", "core", "determinism"],
+  "determinism": true,
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "matrix": true,
+    "matrix_arches": ["amd64", "arm64"],
+    "installed": {}
+  },
+  "request": {
+    "packages": ["jq", "tree"],
+    "sign": true
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["jq", "tree", "libjq1", "libonig5"],
+    "binaries": [
+      { "path": "/usr/bin/jq", "args": ["--version"], "exit_code": 0, "stdout_contains": "jq-" },
+      { "path": "/usr/bin/tree", "args": ["--version"], "exit_code": 0, "stdout_contains": "tree" }
+    ]
+  }
+}

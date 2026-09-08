@@ -1,0 +1,264 @@
+# golangci-lint v2 configuration. Validate: golangci-lint config verify
+# Run:                                     golangci-lint run ./...   (or: make lint)
+#
+# A sensible, not-punitive set (docs/dev/contract-brief.md's tone: report
+# real problems, do not manufacture busywork). _test.go files are exempt
+# from the noisiest/style-oriented rules — see exclusions below — but not
+# from correctness checks like govet and staticcheck.
+
+version: "2"
+
+run:
+  # golangci-lint v2's own default is 0 — no timeout at all — so the 5m that
+  # used to be here was entirely self-inflicted, and it was not enough: a
+  # cold-cache run of ./... on a developer machine exceeded it and
+  # golangci-lint exited 4, "Timeout exceeded". Exit 4 looks like a lint
+  # failure and is really a stopwatch, which is the worst kind of red build.
+  # The lint job in ci.yml passes no --timeout of its own and so inherits
+  # whatever is written here, meaning the same flake was one slow runner
+  # away from failing CI for reasons unrelated to the code.
+  #
+  # 20m is headroom, not an estimate: a warm run of this tree finishes in
+  # under a minute. Keeping a finite number rather than reverting to
+  # upstream's 0 is deliberate — an analyser that genuinely hangs should
+  # fail the job rather than burn a runner until GitHub's own 6h job limit
+  # kills it. If a legitimate run ever approaches 20m, raise this; do not
+  # start passing --timeout on the command line, because then a local run
+  # and CI stop behaving the same way.
+  timeout: 20m
+
+# Reporting limits. golangci-lint's defaults are max-issues-per-linter: 50
+# and max-same-issues: 3, and they are applied AFTER analysis, by truncating
+# the result set — so with more findings than the cap, the run prints an
+# arbitrary 50 of them and the arbitrary subset is not stable between runs.
+# Two identical runs of this repository returned 79 findings each and
+# *different* sets of 79, which makes a CI log impossible to diff against
+# the previous one and makes "is this fixed?" unanswerable.
+#
+# 0 means unlimited in both cases. This un-silences findings that were
+# always there; it does not add new rules. Expect the reported count to
+# jump the first time this lands — that is the truncation being removed,
+# not a regression.
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # Pinned to its current default rather than changed: one report per line.
+  # Stated explicitly so a future upstream default change cannot alter what
+  # CI reports without a visible diff here. Note the tradeoff it implies —
+  # two distinct findings on the same line show as one.
+  uniq-by-line: true
+
+linters:
+  default: none
+  enable:
+    - govet # correctness: suspicious constructs the compiler allows
+    - staticcheck # correctness + a broad swath of well-established style/perf checks
+    - errcheck # every returned error must be handled or explicitly discarded
+    - ineffassign # assignments that are never used
+    - unused # unused identifiers
+    - misspell # comments/strings: common English misspellings
+    - revive # light style/readability checks, tuned below
+    - gosec # security: the class of bug that matters most in this codebase
+
+  settings:
+    errcheck:
+      # Closing something you already failed to write to, or already read
+      # from, is a common and low-risk pattern; do not force a ubiquitous
+      # `defer func() { _ = f.Close() }()` everywhere for it.
+      #
+      # SCOPE NOTE (behaviour unchanged, written down because the effect
+      # surprises people): errcheck matches these by the receiver's STATIC
+      # type. `(*os.File).Close` therefore covers every *os.File; the
+      # interface form `(io.Closer).Close` only covers a call whose receiver
+      # is declared as io.Closer, NOT every type that happens to implement
+      # it. Unchecked Close on a *tar.Writer, *zstd.Encoder or *gzip.Writer
+      # is still reported, and that is the right outcome — those Closes flush
+      # buffered data, so on a write path a failed Close means a truncated
+      # artifact. See core/bundle/tar.go, which checks tw.Close, zw.Close,
+      # tmp.Sync, tmp.Close and os.Rename individually before publishing a
+      # bundle: that is the determinism guarantee, and it must stay visible.
+      # Cleanup Closes on an error path (where an error is already being
+      # returned) should be written `_ = w.Close()` at the call site, so the
+      # intent is stated where a reviewer reads it. Do not broaden this list
+      # into a blanket .Close exclusion to make those quiet.
+      exclude-functions:
+        - (io.Closer).Close
+        - (*os.File).Close
+
+    revive:
+      severity: warning
+      confidence: 0.8
+      rules:
+        # "Light rules": readability and obvious mistakes, not a house style
+        # mandate. Exported-symbol doc-comment enforcement is deliberately
+        # left off here — CONTRIBUTING.md asks for a package doc comment,
+        # not a comment on every exported name, and stub-to-real
+        # code is still landing.
+        - name: blank-imports
+        - name: context-as-argument
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: range
+        - name: receiver-naming
+        - name: redefines-builtin-id
+        - name: superfluous-else
+        - name: time-naming
+        - name: unreachable-code
+        - name: var-naming
+
+    gosec:
+      excludes:
+        # G104 (unhandled errors) is errcheck's job, not gosec's, in this
+        # config; avoid the two linters fighting over the same finding.
+        - G104
+        # G304 (file path from a variable) fires on essentially every
+        # path-parameterised file-read helper — e.g. core/digest's
+        # SHA256File(path string). Reading a caller-supplied path is the
+        # normal shape of a CLI tool and a library used by one; it is not,
+        # on its own, evidence of a path-traversal bug. Real validation of
+        # untrusted paths (bundle contents, archive members) belongs in
+        # core/verify and is covered by its own tests, not this linter.
+        - G304
+        # G401/G501/G505 (weak crypto primitive: MD5/SHA1) fire on
+        # core/digest computing MD5 and SHA1 alongside SHA256. apt's own
+        # Packages/Release index format carries MD5Sum and SHA1 fields for
+        # backward compatibility, so debark must be able to compute and
+        # record them — see core/digest's own doc comment: "MD5 and SHA1
+        # are required by apt's index format for compatibility; debark
+        # never makes a trust decision on them." SHA-256 is what
+        # core/canonical, core/sign and core/verify actually trust.
+        - G401
+        - G501
+        - G505
+        # G301/G302/G306 (directory/file permissions looser than 0750/0600)
+        # fire on the store, the assembled bundle/repository and config
+        # directories, which use conventional 0755/0644: they are supposed
+        # to be portable and world-readable — a bundle is built to be
+        # copied to removable media and read by whatever installs it, not
+        # kept secret. A real secret (a local signing key, in core/sign)
+        # should still deliberately use 0600 regardless of what this linter
+        # enforces; that is a code-review concern, not something blanket
+        # gosec severity should gate CI on for every directory the tool
+        # creates.
+        - G301
+        - G302
+        - G306
+        # G204 (subprocess launched with a variable) would fire on nearly
+        # every exec.Command/CommandContext call in core/apt, core/install,
+        # the container backend and the test harness — which is to say, on
+        # this tool's central, intentional design (ADR-001: Go orchestrates
+        # apt/dpkg/gpg/docker as external processes; it never re-implements
+        # them). Every such call in this codebase builds an argument
+        # *vector* (program name plus a []string of args), never a shell
+        # string handed to `sh -c`, which is what actually makes subprocess
+        # invocation unsafe. Gosec cannot distinguish the two shapes; for
+        # this codebase specifically, keeping G204 enabled would not be a
+        # security check, it would be noise on the tool's own architecture.
+        - G204
+      config:
+        # G101 (hardcoded credentials, by entropy/pattern heuristic) stays
+        # in strict mode: a plausible-looking embedded secret is worth a
+        # false positive to catch, unlike the structural exclusions above.
+        G101:
+          mode: strict
+
+    staticcheck:
+      # "all" is the whole catalogue, including the QF ("quickfix") group,
+      # which is a set of refactoring suggestions meant for an editor's
+      # lightbulb rather than a build gate. Most of them are worth taking and
+      # have been taken. One is subtracted:
+      #
+      # QF1001, "could apply De Morgan's law", rewrites `!(a && b)` into
+      # `!a || !b`. Every occurrence in this tree is a negated PREDICATE that
+      # reads as one idea, and distributing the negation destroys the idea:
+      #
+      #   !(data[i] == '*' && data[i+1] == '/')   "not the end-of-comment marker"
+      #   !((r >= '0' && r <= '9') || (r >= 'A' && r <= 'F'))   "not a hex digit"
+      #
+      # become `data[i] != '*' || data[i+1] != '/'` and
+      # `(r < '0' || r > '9') && (r < 'A' || r > 'F')`, which are the same
+      # booleans and worse sentences -- and the second one is a classic place
+      # to get a bound wrong while "simplifying". The four sites are
+      # core/snapshot/{aptconf.go,validate.go,pgp_fuzz_test.go} and
+      # test/e2e/fixture.go; they were read individually before this line was
+      # written, not swept.
+      #
+      # Subtracted here rather than waived at each site because it is one
+      # consistent position about how boolean logic is written in this
+      # codebase, not four independent judgements. Every OTHER staticcheck
+      # finding that is being declined IS waived at its site, with the check
+      # id and the reason on the line (SA1019 in core/bundle/tar.go, SA4023 in
+      # core/dferr/dferr_test.go, QF1008 in core/evidence/api.go, S1016 in
+      # core/snapshot/summary.go) -- so this list stays short and each entry
+      # in it means "the check is wrong for this project", not "we had a lot
+      # of these".
+      checks:
+        - all
+        - -QF1001
+
+  exclusions:
+    generated: lax
+    rules:
+      # Tests favour clarity and fast iteration over the strictest
+      # production-code rules. Correctness linters (govet, staticcheck,
+      # unused, ineffassign) still apply in full.
+      - path: _test\.go
+        linters:
+          - errcheck
+          - gosec
+          - revive
+
+      # Table-driven test fixtures and golden-file generators often build
+      # dynamic exec/file arguments from test inputs by design.
+      - path: (^|/)testdata/
+        linters:
+          - gosec
+          - revive
+          - staticcheck
+          - unused
+
+      # Unchecked fmt.Fprint/Fprintf/Fprintln in the three packages whose
+      # job IS writing to a terminal: the CLI (internal/cli), the
+      # maintainer scripts (hack/) and the worked examples (examples/).
+      # A failed write to stdout/stderr there has no recovery and no
+      # channel to report on — the channel you would report on is the one
+      # that just failed — so the only honest handling is `_ =`, on every
+      # line, forever. Same argument the (io.Closer).Close exclusion above
+      # already makes.
+      #
+      # Scoped by PATH, deliberately, rather than by adding fmt.Fprintf to
+      # errcheck.exclude-functions:
+      #   - errcheck's own defaults already cover the writes that provably
+      #     cannot fail — fmt.Fprint*(*bytes.Buffer), *strings.Builder, and
+      #     a literal os.Stderr. So a by-name exclusion would buy nothing
+      #     for those, and would only take effect on writes to real files
+      #     and real io.Writers: exactly the calls worth checking.
+      #   - core/store/fsstore.go writes the advisory index-lock file with
+      #     fmt.Fprintf into an *os.File. That is a write to durable state,
+      #     not to a console, and a by-name exclusion would blind it — and
+      #     any future one like it in core/, where the bundle, the apt
+      #     indices and the signatures are produced.
+      # The cost of the path form is that it must be extended if another
+      # console-only package appears. That is a visible, cheap cost;
+      # blinding a write to a file is an invisible one.
+      #
+      # Only fmt.Fprint* is excluded here, not errcheck as a whole: these
+      # packages still create files and keys, and those errors stay checked.
+      - path: (^|/)(internal/cli|hack|examples)/
+        linters:
+          - errcheck
+        text: 'Error return value of .fmt\.Fprint(f|ln)?. is not checked'
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/inferops/debark
+  exclusions:
+    generated: lax

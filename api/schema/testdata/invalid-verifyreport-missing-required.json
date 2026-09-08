@@ -1,0 +1,27 @@
+{
+  "schema_version": "debark.verifyreport/v1",
+  "checked_at": "2026-09-03T13:00:00Z",
+  "bundle_path": "/mnt/media/plant4-bundle",
+  "bundle_id": "bd-80be0631f286fe7e",
+  "signed": true,
+  "signatures": [
+    {
+      "signer_kind": "ed25519-file",
+      "key_id": "dGVzdC1rZXktaWQ",
+      "algorithm": "ed25519",
+      "valid": true,
+      "trusted": true
+    }
+  ],
+  "files_checked": 5,
+  "bytes_checked": 6300288,
+  "warnings": [],
+  "target": {
+    "distro_id": "debian",
+    "version_id": "12",
+    "codename": "bookworm",
+    "arch": "amd64"
+  },
+  "tool_version": "1.0.0",
+  "edition": "official"
+}

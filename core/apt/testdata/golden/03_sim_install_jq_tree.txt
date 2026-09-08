@@ -1,0 +1,17 @@
+### apt-get -s install jq tree ###
+Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  libjq1 libonig5
+The following NEW packages will be installed:
+  jq libjq1 libonig5 tree
+0 upgraded, 4 newly installed, 0 to remove and 2 not upgraded.
+Inst libonig5 (6.9.8-1 Debian:12.15/oldstable [amd64])
+Inst libjq1 (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])
+Inst jq (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])
+Inst tree (2.1.0-1 Debian:12.15/oldstable [amd64])
+Conf libonig5 (6.9.8-1 Debian:12.15/oldstable [amd64])
+Conf libjq1 (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])
+Conf jq (1.6-2.1+deb12u2 Debian:12.15/oldstable, Debian-Security:12/oldstable-security [amd64])
+Conf tree (2.1.0-1 Debian:12.15/oldstable [amd64])
+EXIT:0

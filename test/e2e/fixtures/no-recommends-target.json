@@ -1,0 +1,55 @@
+/*
+ * no-recommends-target — an Install-Recommends=false target.
+ *
+ * Protects: the edge-fixture list, "Install-Recommends=false
+ * target", and prototype-baseline.md / the apt.conf.d capture
+ * ("new vs prototype — carries Install-Recommends, Default-Release, phasing
+ * settings"). This is one of the four correctness experiments
+ * (E4: "target with Install-Recommends 'false' ...; confirm
+ * the prototype mis-resolves and the fix resolves correctly") turned into a
+ * standing regression guard.
+ *
+ * The target's apt.conf.d sets APT::Install-Recommends "false"; the request
+ * asks for a vendor package that Recommends a real, otherwise-absent
+ * package (tree). Per the rule that ("APT::Install-Recommends follows the
+ * target's apt.conf unless overridden"), the effective recommends setting
+ * read from the captured apt.conf.d must reach the private-root resolve, so
+ * tree must be excluded from the bundle — packages_absent, not merely
+ * "not in packages_present", so a bug that fetches it anyway is actually
+ * caught rather than just uncommented on.
+ *
+ * What would break if this regressed: a target that has deliberately turned
+ * recommends off (common on minimal servers and appliances, exactly this
+ * product's core audience) would get a bloated bundle full
+ * of packages the operator explicitly opted out of — at best wasted media
+ * space, at worst packages the operator's redistribution policy would have
+ * refused.
+ */
+{
+  "schema_version": "debark.e2e.fixture/v1",
+  "name": "no-recommends-target",
+  "protects": "edge fixtures: Install-Recommends=false target; experiment E4",
+  "tags": ["edge"],
+  "target": {
+    "distro": "debian",
+    "version": "12",
+    "arch": "amd64",
+    "apt_conf": {
+      "APT::Install-Recommends": "\"false\""
+    },
+    "installed": {}
+  },
+  "request": {
+    "vendor_debs": [
+      { "name": "acme-recommends-demo", "version": "1.0", "recommends": "tree", "bin": true }
+    ]
+  },
+  "expect": {
+    "build": { "exit_class": "success" },
+    "packages_present": ["acme-recommends-demo"],
+    "packages_absent": ["tree"],
+    "binaries": [
+      { "path": "/usr/bin/acme-recommends-demo", "exit_code": 0, "stdout_contains": "acme-recommends-demo 1.0" }
+    ]
+  }
+}

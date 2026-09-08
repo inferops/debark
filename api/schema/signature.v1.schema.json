@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/signature/v1",
+  "title": "debark signature v1",
+  "description": "debark.signature/v1 - the detached signature file for a manifest: one or more signature blocks over the manifest's canonical bytes. Written as debark.manifest.sig beside debark.manifest.json. verify recomputes manifest_sha256 from the manifest's canonical encoding and refuses a mismatch before it looks at any signature.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "manifest_sha256", "signatures"],
+  "properties": {
+    "schema": { "const": "debark.signature/v1", "description": "Fixed schema identifier; always debark.signature/v1." },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 of the manifest's canonical JSON bytes that were signed."
+    },
+    "signatures": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Signature" },
+      "description": "One or more independent signature blocks over the same manifest bytes."
+    }
+  },
+  "$defs": {
+    "Signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signer_kind", "key_id", "algorithm", "created_at", "signature"],
+      "properties": {
+        "signer_kind": {
+          "type": "string",
+          "pattern": "^(ed25519-file|gpg|sigstore|plugin:.+)$",
+          "description": "Which Signer implementation produced this block: ed25519-file, gpg, sigstore, or plugin:<name> for an out-of-process signer."
+        },
+        "key_id": {
+          "type": "string",
+          "description": "Identifies the signing key: the base64 key id for ed25519-file, the uppercase fingerprint for gpg."
+        },
+        "algorithm": { "type": "string", "description": "Signature algorithm, e.g. \"ed25519\"." },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "description": "When this signature was produced, RFC 3339 UTC, second precision."
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "description": "Standard base64 of the raw signature bytes (for gpg: base64 of the detached binary signature)."
+        },
+        "comment": { "type": "string", "description": "Optional operator text, e.g. \"release engineering key, 2026\"." }
+      }
+    }
+  }
+}

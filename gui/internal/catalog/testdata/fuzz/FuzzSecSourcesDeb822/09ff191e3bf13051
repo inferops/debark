@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("URIs:0\nSuites:0\nComponents:0\nArChiteCtures:\xd7")

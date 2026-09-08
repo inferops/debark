@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/snapshot/v1",
+  "title": "debark snapshot v1",
+  "description": "debark.snapshot/v1 - the captured state of an offline target: everything the target's own apt needs to resolve a request as the target would, and nothing more by default. Produced by `debark snapshot create` (origin.kind = captured) or `debark snapshot from-base` (origin.kind = synthesized) and stored as snapshot.json inside snapshot.tar.zst, alongside the files/ directory it indexes. This document is never mutated once published; a new capture is a new snapshot with its own digest. See docs/formats.md for the canonicalisation and digest rules.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "created_at", "tool", "target", "apt", "dpkg_status", "origin"],
+  "properties": {
+    "schema_version": {
+      "const": "debark.snapshot/v1",
+      "description": "Fixed schema identifier; always the literal string debark.snapshot/v1."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When the capture ran, RFC 3339 UTC with second precision."
+    },
+    "tool": {
+      "$ref": "#/$defs/Tool",
+      "description": "The debark binary that produced this snapshot."
+    },
+    "target": {
+      "$ref": "#/$defs/Target",
+      "description": "Identity of the offline machine this snapshot describes."
+    },
+    "apt": {
+      "$ref": "#/$defs/APT",
+      "description": "The target's apt configuration, captured verbatim."
+    },
+    "dpkg_status": {
+      "$ref": "#/$defs/File",
+      "description": "Pointer to the captured /var/lib/dpkg/status: the target's installed set, versions and holds."
+    },
+    "origin": {
+      "$ref": "#/$defs/Origin",
+      "description": "How this snapshot came to exist: measured from a real machine, or synthesized from a base definition. Required, because the two carry different correctness guarantees and the dangerous one must never be the silent default."
+    },
+    "installed_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of installed packages found in dpkg_status. Derived, for human output only; never authoritative."
+    },
+    "keyring_fingerprints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/KeyFingerprint" },
+      "description": "Every OpenPGP fingerprint found in the captured keyrings, sorted. Recorded as captured trust policy, never as an independent root of trust."
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Optional operator-supplied metadata such as hostname or ticket id. Off by default and stripped by --redact. Deliberately open: keys are operator-chosen."
+    },
+    "redactions": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["machine-id", "proxies", "labels"] },
+      "description": "Every field class removed from this snapshot by --redact."
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "What the capture could not do (an unreadable keyring, a missing preferences file) without failing the capture."
+    }
+  },
+  "$defs": {
+    "Origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "captured" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "base_id": false,
+              "source": false,
+              "source_digest": false,
+              "assumed_installed": { "maxItems": 0 }
+            }
+          },
+          "$comment": "A captured snapshot carries no base-definition fields and, above all, no assumed_installed: that field is the one part of this document that travels into a bundle, and a real machine's installed-package list is the sensitive inventory the design keeps out of artefacts. core/snapshot.Validate refuses the same shapes; this states the rule for a consumer validating against the published schema alone."
+        },
+        {
+          "if": { "properties": { "kind": { "const": "synthesized" } }, "required": ["kind"] },
+          "then": { "required": ["base_id"] },
+          "$comment": "A synthesized snapshot must say which base it came from, or the warning verify and install owe the operator cannot name anything."
+        }
+      ],
+      "description": "The provenance of this snapshot, and with it the guarantee a bundle built from it can carry. A captured snapshot is a measurement of one real machine: a bundle resolved against it is proven complete for that machine. A synthesized snapshot is an assumption about a machine that may not exist yet: the bundle is complete only if the target really matches the base. If the real machine has FEWER packages than the base assumed, the bundle is short and fails at the gap - which is the failure debark exists to prevent - so verify and install must be able to tell the operator which kind they hold.",
+      "properties": {
+        "kind": {
+          "enum": ["captured", "synthesized"],
+          "description": "captured: read from a real target by `debark snapshot create`. synthesized: constructed by `debark snapshot from-base` from a base definition, by resolving that base's seed packages with apt."
+        },
+        "base_id": {
+          "type": "string",
+          "description": "Identifier of the base definition this snapshot was synthesized from, e.g. \"ubuntu:26.04/desktop\". Absent when kind is captured."
+        },
+        "source": {
+          "type": "string",
+          "description": "Where the base definition came from: \"builtin\" for a definition compiled into the binary, or the base name of the operator-supplied file it was read from. Never an absolute path - a snapshot travels, and the builder's directory layout is not the target's business. Absent when kind is captured."
+        },
+        "source_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Lowercase hex SHA-256 of the canonicalised base definition, so two snapshots claiming the same base_id can be told apart when the definition itself changed. Absent when kind is captured."
+        },
+        "assumed_installed": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Every package the base assumes a stock install already has, as name:arch, sorted. Absent when kind is captured. This duplicates the synthesized dpkg_status on purpose: a bundle carries snapshot.json but NOT the snapshot's files, so this is the only place on the target where the assumption can be compared against the real dpkg status, which is what lets `install` say how far the machine in front of it diverges from the base. Recording it is safe precisely because the snapshot is synthesized - the list is a claim about a public stock release, not the sensitive inventory of a real machine that D8 keeps out of artefacts."
+        }
+      }
+    },
+    "Tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "description": "Tool name; always \"debark\"." },
+        "version": { "type": "string", "description": "The debark release version that ran the capture." },
+        "edition": {
+          "type": "string",
+          "enum": ["community", "official", "enterprise"],
+          "description": "Build edition. Community unless produced by the project's own release process; never a feature gate."
+        }
+      }
+    },
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["distro_id", "version_id", "codename", "arch", "apt_version", "dpkg_version"],
+      "properties": {
+        "distro_id": { "type": "string", "description": "ID from /etc/os-release, e.g. \"debian\" or \"ubuntu\"." },
+        "version_id": { "type": "string", "description": "VERSION_ID from /etc/os-release, e.g. \"12\" or \"24.04\"." },
+        "codename": { "type": "string", "description": "VERSION_CODENAME from /etc/os-release, e.g. \"bookworm\" or \"noble\"." },
+        "pretty_name": { "type": "string", "description": "Human-readable release string, for reports only." },
+        "arch": { "type": "string", "description": "dpkg --print-architecture, e.g. \"amd64\"." },
+        "foreign_archs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "dpkg --print-foreign-architectures, sorted."
+        },
+        "apt_version": { "type": "string", "description": "Version reported by apt-get -v, e.g. \"2.8.3\"." },
+        "dpkg_version": { "type": "string", "description": "Version reported by dpkg --version, e.g. \"1.22.6\"." },
+        "machine_id": {
+          "type": "string",
+          "description": "/etc/machine-id, needed to reproduce Ubuntu phased-update selection exactly. Redactable: absent when --redact was used, which switches resolution to the never-include-phased-updates policy."
+        },
+        "os_release": {
+          "$ref": "#/$defs/File",
+          "description": "The captured /etc/os-release file, verbatim."
+        }
+      }
+    },
+    "APT": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/File" },
+          "description": "sources.list, sources.list.d/*.list and sources.list.d/*.sources, verbatim."
+        },
+        "preferences": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/File" },
+          "description": "preferences and preferences.d/* (apt pins), verbatim."
+        },
+        "conf": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/File" },
+          "description": "apt.conf and apt.conf.d/*: carries Install-Recommends, Default-Release, phasing settings and proxies (proxy credentials redacted)."
+        },
+        "trusted": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/File" },
+          "description": "trusted.gpg.d/* keyrings."
+        },
+        "keyrings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/File" },
+          "description": "Files referenced by Signed-By in sources, captured at their original absolute paths."
+        }
+      }
+    },
+    "File": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "archive_path", "size", "sha256"],
+      "properties": {
+        "path": { "type": "string", "description": "Absolute path on the target, e.g. /etc/apt/sources.list." },
+        "archive_path": { "type": "string", "description": "Member name inside the archive, relative to files/ (the target path with its leading separator removed)." },
+        "size": { "type": "integer", "minimum": 0, "description": "File size in bytes." },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Lowercase hex SHA-256 digest of the file's bytes." },
+        "mode": { "type": "string", "pattern": "^[0-7]{3,4}$", "description": "File permission bits, octal, e.g. \"0644\"." },
+        "redacted": { "type": "boolean", "description": "True when the stored bytes differ from the target's because secrets (proxy credentials) were removed." }
+      }
+    },
+    "KeyFingerprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fingerprint", "keyring"],
+      "properties": {
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{40,64}$",
+          "description": "Uppercase hex OpenPGP fingerprint with no spaces (40 hex characters for a v4 key)."
+        },
+        "key_id": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{16}$",
+          "description": "Long key id: the last 16 hex characters of the fingerprint."
+        },
+        "user_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Primary user ids on the key, for human output."
+        },
+        "keyring": { "type": "string", "description": "Recorded path of the captured file this key came from." },
+        "signed_by": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Source files that reference this keyring with Signed-By, recording the captured trust policy."
+        }
+      }
+    }
+  }
+}

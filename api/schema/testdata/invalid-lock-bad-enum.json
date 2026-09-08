@@ -1,0 +1,90 @@
+{
+  "schema_version": "debark.lock/v1",
+  "created_at": "2026-09-03T12:05:00Z",
+  "snapshot_digest": "94a1a6bd87442a401b30634b46577a677f31a4ad066a943fb646ff6899054df0",
+  "request_digest": "80d51bb829a6e379a6f43309aa6b28d206ff39953816b748267b16bed58be497",
+  "target": {
+    "distro_id": "debian",
+    "version_id": "12",
+    "codename": "bookworm",
+    "arch": "amd64",
+    "foreign_archs": [
+      "i386"
+    ],
+    "apt_version": "2.6.1",
+    "dpkg_version": "1.21.22"
+  },
+  "resolver": {
+    "backend": "auto",
+    "apt_version": "2.6.1",
+    "dpkg_version": "1.21.22",
+    "apt_options": [
+      "APT::Sandbox::User=root",
+      "Debug::NoLocking=1"
+    ],
+    "phased_updates": "target-machine-id",
+    "install_recommends": true
+  },
+  "packages": [
+    {
+      "name": "vlc",
+      "arch": "amd64",
+      "version": "3.0.21-1build1",
+      "source_package": "vlc",
+      "filename": "pool/v/vlc/vlc_3.0.21-1build1_amd64.deb",
+      "size": 1957888,
+      "sha256": "b6fd458a7205924b78c0b1bcc6730fc69ee72e093dd49f56e106479057f9441d",
+      "origin": {
+        "uri": "http://deb.debian.org/debian",
+        "suite": "bookworm",
+        "component": "main",
+        "release_digest": "48c6dc7efba94dc886451717a6d7077271646ac6be4b90e561d6ce86daf87645",
+        "key_fingerprint": "CAE265BE4F5710A1C6714384E04F6BB6DC1AE916"
+      },
+      "reason": "requested",
+      "publisher_verification": "apt-signed"
+    },
+    {
+      "name": "acme-agent",
+      "arch": "amd64",
+      "version": "2.1.0",
+      "filename": "pool/a/acme-agent/acme-agent_2.1.0_amd64.deb",
+      "size": 88000,
+      "sha256": "5ca54ae935ebe6a895ac8f31606e4db256628778d35f562ff44ee0aba658c349",
+      "origin": {
+        "uri": "https://vendor.example.com/acme-agent_2.1.0_amd64.deb"
+      },
+      "reason": "external",
+      "publisher_verification": "user-digest",
+      "flags": [
+        "network-postinst"
+      ]
+    }
+  ],
+  "install": [
+    "acme-agent=2.1.0",
+    "vlc=3.0.21-1build1"
+  ],
+  "closed_world_check": {
+    "result": "ok",
+    "command_digest": "19c29e0fbf72ec4bf6d83c5bf7f54efb97921f94480e70af8d1c94b49b7ce4b4",
+    "output_digest": "ea08eeadaaf778f1c36d5b880e677b8277fddaff3704cde3ea029b85fbd9a34f"
+  },
+  "warnings": [
+    {
+      "code": "redistribution.multiverse",
+      "message": "1 package from multiverse; redistribution terms apply.",
+      "packages": [
+        "acme-agent"
+      ]
+    }
+  ],
+  "unresolved": [],
+  "stats": {
+    "added": 2,
+    "removed": 0,
+    "unchanged": 0,
+    "bytes": 2045888,
+    "downloaded_bytes": 2045888
+  }
+}

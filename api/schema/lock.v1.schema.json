@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://debark.dev/schema/lock/v1",
+  "title": "debark lock v1",
+  "description": "debark.lock/v1 - exactly what the online solve chose and why: the install plan (exact versions, ADR-007) and the provenance record for every file that crosses the gap. Written as lock.json at the root of a bundle. Never mutated once a bundle is exported; a re-run produces a new lock.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "created_at", "snapshot_digest", "request_digest", "target",
+    "resolver", "packages", "install", "closed_world_check", "stats"
+  ],
+  "properties": {
+    "schema_version": { "const": "debark.lock/v1", "description": "Fixed schema identifier; always debark.lock/v1." },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "When this plan was produced, RFC 3339 UTC, second precision."
+    },
+    "snapshot_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Canonical digest of the snapshot this plan was resolved against."
+    },
+    "request_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Canonical digest of the BuildRequest, so a rerun with identical inputs is recognisable."
+    },
+    "target": { "$ref": "#/$defs/Target", "description": "The target identity this plan is valid for; install refuses a mismatched architecture." },
+    "resolver": { "$ref": "#/$defs/Resolver", "description": "Which apt, where, and under which policy made the decisions in this lock." },
+    "packages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Package" },
+      "description": "Every file in the bundle pool, sorted by (name, arch, version)."
+    },
+    "install": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*=.+$" },
+      "description": "The exact set install must request, in name=version form, sorted. The subset of packages that was requested or is needed by a requested package - never the whole pool."
+    },
+    "closed_world_check": {
+      "$ref": "#/$defs/ClosedWorld",
+      "description": "Result of resolving the finished bundle against itself, offline, before export (ADR-007)."
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Warning" },
+      "description": "Structured warnings this plan carries: phasing fallback, solver divergence, redistribution flags, unverified URLs."
+    },
+    "unresolved": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Unresolved" },
+      "description": "Inputs apt could not satisfy. Non-empty here corresponds to exit code 3."
+    },
+    "stats": { "$ref": "#/$defs/Stats", "description": "Summary of this run against the previous state of the output bundle." }
+  },
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["distro_id", "version_id", "codename", "arch"],
+      "properties": {
+        "distro_id": { "type": "string", "description": "ID from /etc/os-release, e.g. \"debian\" or \"ubuntu\"." },
+        "version_id": { "type": "string", "description": "VERSION_ID from /etc/os-release, e.g. \"12\" or \"24.04\"." },
+        "codename": { "type": "string", "description": "VERSION_CODENAME from /etc/os-release, e.g. \"bookworm\"." },
+        "arch": { "type": "string", "description": "dpkg --print-architecture, e.g. \"amd64\"." },
+        "foreign_archs": { "type": "array", "items": { "type": "string" }, "description": "dpkg --print-foreign-architectures, sorted." },
+        "apt_version": { "type": "string", "description": "Target's apt-get -v version string." },
+        "dpkg_version": { "type": "string", "description": "Target's dpkg --version version string." }
+      }
+    },
+    "Resolver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend", "apt_version", "dpkg_version", "phased_updates", "install_recommends"],
+      "properties": {
+        "backend": {
+          "type": "string",
+          "enum": ["local", "container"],
+          "description": "Where resolution actually ran. Never \"auto\": that value only ever appears at request time and is resolved to one of these two before it is recorded."
+        },
+        "image": { "type": "string", "description": "Container image reference used, when backend is \"container\"." },
+        "image_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "description": "The resolved container image digest, OCI form (\"sha256:\" prefix plus 64 lowercase hex characters)."
+        },
+        "apt_version": { "type": "string", "description": "Version of the apt that actually ran the resolution." },
+        "dpkg_version": { "type": "string", "description": "Version of dpkg that actually ran alongside it." },
+        "apt_options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Every -o option passed to apt-get, sorted, so the run is reproducible."
+        },
+        "phased_updates": {
+          "type": "string",
+          "enum": ["target-machine-id", "never-include"],
+          "description": "The phased-update policy that applied: the target's own machine-id was used, or only fully-phased versions were considered (ADR-006)."
+        },
+        "install_recommends": { "type": "boolean", "description": "The effective APT::Install-Recommends value used for this resolution." },
+        "solver_divergence": {
+          "type": "string",
+          "description": "Set when the resolving apt's major.minor version differed from the target's, explaining a possible future discrepancy."
+        }
+      }
+    },
+    "Package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "arch", "version", "filename", "size", "sha256", "origin", "reason", "publisher_verification"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*$", "description": "Debian binary package name." },
+        "arch": { "type": "string", "description": "dpkg architecture of this file, e.g. \"amd64\" or \"all\"." },
+        "version": { "type": "string", "description": "Debian version string, dpkg --compare-versions ordering." },
+        "source_package": { "type": "string", "description": "Source package name (without version), for redistribution and corresponding-source questions." },
+        "filename": { "type": "string", "description": "Path inside the bundle, e.g. pool/v/vlc/vlc_3.0.21-1build1_amd64.deb." },
+        "size": { "type": "integer", "minimum": 0, "description": "File size in bytes." },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Lowercase hex SHA-256 of the .deb file." },
+        "origin": { "$ref": "#/$defs/Origin", "description": "Where this file came from." },
+        "reason": {
+          "type": "string",
+          "pattern": "^(requested|upgrade|external|dependency-of:.+)$",
+          "description": "Why this file is in the bundle: requested, upgrade, external, or dependency-of:<pkg> naming the package that pulled it in."
+        },
+        "publisher_verification": {
+          "type": "string",
+          "enum": ["apt-signed", "url-unverified", "user-digest", "user-signature"],
+          "description": "Strength of the provenance claim for this file. HTTPS alone is not provenance: a plain URL download is url-unverified."
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["multiverse", "restricted", "non-free", "non-free-firmware", "network-postinst", "snap-shim", "dkms", "user-supplied"]
+          },
+          "description": "Redistribution and doctor findings for this file. Informational: no flag alone blocks a build."
+        },
+        "essential": { "type": "boolean", "description": "True for packages the dpkg fallback must unpack before others." }
+      }
+    },
+    "Origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uri": { "type": "string", "description": "Archive URI or vendor URL this file was fetched from; empty for a local file input." },
+        "local_path": { "type": "string", "description": "Operator-supplied path for a local file input, recorded as given." },
+        "suite": { "type": "string", "description": "Archive suite the file was listed in, e.g. \"bookworm\"." },
+        "component": { "type": "string", "description": "Archive component, e.g. \"main\" or \"universe/net\"." },
+        "release_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of the InRelease/Release file that authenticated the index listing this file."
+        },
+        "key_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{40,64}$",
+          "description": "Uppercase hex fingerprint of the archive key that signed that Release."
+        }
+      }
+    },
+    "ClosedWorld": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result"],
+      "properties": {
+        "result": { "type": "string", "enum": ["ok", "failed", "skipped"], "description": "Outcome of the pre-export offline resolution proof." },
+        "command_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Canonical digest of the argv that was run." },
+        "output_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of the captured command output." },
+        "detail": { "type": "string", "description": "One-line explanation of a failure or a skip." }
+      }
+    },
+    "Warning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "description": "Stable machine-readable identifier, e.g. \"phased-updates.never-include\" or \"redistribution.multiverse\"." },
+        "message": { "type": "string", "description": "Human-readable sentence." },
+        "packages": { "type": "array", "items": { "type": "string" }, "description": "Package names this warning applies to, when relevant." }
+      }
+    },
+    "Unresolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input", "kind"],
+      "properties": {
+        "input": { "type": "string", "description": "The operator's original input string." },
+        "kind": { "type": "string", "enum": ["package", "url", "file"], "description": "What kind of input this was." },
+        "detail": { "type": "string", "description": "apt's own explanation, trimmed." },
+        "missing": { "type": "array", "items": { "type": "string" }, "description": "Dependency names that could not be satisfied, when they could be extracted." }
+      }
+    },
+    "Stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed", "unchanged", "bytes", "downloaded_bytes"],
+      "properties": {
+        "added": { "type": "integer", "minimum": 0, "description": "Files newly added to the bundle by this run." },
+        "removed": { "type": "integer", "minimum": 0, "description": "Files removed (pruned) by this run." },
+        "unchanged": { "type": "integer", "minimum": 0, "description": "Files already present and untouched by this run." },
+        "bytes": { "type": "integer", "minimum": 0, "description": "Total bytes in the resulting bundle pool." },
+        "downloaded_bytes": { "type": "integer", "minimum": 0, "description": "Bytes that actually crossed the network this run; the remainder came from the local store." }
+      }
+    }
+  }
+}

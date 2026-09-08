@@ -1,0 +1,14 @@
+# version is fully self-contained (core/version has no other-package
+# dependency), so this is one of the few commands this suite can assert a
+# real successful run against end to end.
+
+exec debark version
+stdout 'debark'
+
+exec debark version --json
+stdout '"name": "debark"'
+stdout '"edition"'
+stdout '"go_version"'
+
+# --json must never be decorated with colour, even without --no-color.
+! stdout '\x1b\['

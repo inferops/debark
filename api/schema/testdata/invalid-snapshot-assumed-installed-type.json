@@ -1,0 +1,72 @@
+{
+  "schema_version": "debark.snapshot/v1",
+  "created_at": "2026-09-03T12:00:00Z",
+  "tool": {
+    "name": "debark",
+    "version": "1.0.0",
+    "edition": "community"
+  },
+  "target": {
+    "distro_id": "debian",
+    "version_id": "12",
+    "codename": "bookworm",
+    "pretty_name": "Debian GNU/Linux 12 (bookworm)",
+    "arch": "amd64",
+    "foreign_archs": [
+      "i386"
+    ],
+    "apt_version": "2.6.1",
+    "dpkg_version": "1.21.22",
+    "machine_id": "0123456789abcdef0123456789abcdef",
+    "os_release": {
+      "path": "/etc/os-release",
+      "archive_path": "etc/os-release",
+      "size": 385,
+      "sha256": "94a1a6bd87442a401b30634b46577a677f31a4ad066a943fb646ff6899054df0",
+      "mode": "0644"
+    }
+  },
+  "apt": {
+    "sources": [
+      {
+        "path": "/etc/apt/sources.list",
+        "archive_path": "etc/apt/sources.list",
+        "size": 1200,
+        "sha256": "93b01c58ab034ef261f31762c5246f5ddebb1c7c3db60cde6e6956487b6ff066"
+      }
+    ],
+    "trusted": [
+      {
+        "path": "/etc/apt/trusted.gpg.d/debian-archive-bookworm-stable.gpg",
+        "archive_path": "etc/apt/trusted.gpg.d/debian-archive-bookworm-stable.gpg",
+        "size": 2400,
+        "sha256": "b6fd458a7205924b78c0b1bcc6730fc69ee72e093dd49f56e106479057f9441d"
+      }
+    ]
+  },
+  "dpkg_status": {
+    "path": "/var/lib/dpkg/status",
+    "archive_path": "var/lib/dpkg/status",
+    "size": 892000,
+    "sha256": "48c6dc7efba94dc886451717a6d7077271646ac6be4b90e561d6ce86daf87645"
+  },
+  "origin": {
+    "kind": "synthesized",
+    "base_id": "ubuntu:26.04/desktop",
+    "source": "our-soe.yaml",
+    "source_digest": "5ca54ae935ebe6a895ac8f31606e4db256628778d35f562ff44ee0aba658c349",
+    "assumed_installed": "base-files:amd64 bash:amd64 libc6:amd64"
+  },
+  "installed_count": 742,
+  "keyring_fingerprints": [
+    {
+      "fingerprint": "CAE265BE4F5710A1C6714384E04F6BB6DC1AE916",
+      "key_id": "E04F6BB6DC1AE916",
+      "keyring": "etc/apt/trusted.gpg.d/debian-archive-bookworm-stable.gpg"
+    }
+  ],
+  "redactions": [
+    "proxies"
+  ],
+  "warnings": []
+}

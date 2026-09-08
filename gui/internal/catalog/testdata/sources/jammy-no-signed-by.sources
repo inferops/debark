@@ -1,0 +1,9 @@
+Types: deb
+URIs: http://archive.ubuntu.com/ubuntu
+Suites: jammy jammy-updates
+Components: main restricted universe multiverse
+
+Types: deb
+URIs: http://security.ubuntu.com/ubuntu
+Suites: jammy-security
+Components: main restricted universe multiverse

@@ -1,0 +1,2 @@
+# Tailscale packages for ubuntu noble
+deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/ubuntu noble main

@@ -1,0 +1,991 @@
+{
+  "schema_version": "debark.e2e.matrixresult/v1",
+  "generated_at": "2026-09-06T19:46:07.9648324Z",
+  "host": {
+    "goos": "windows",
+    "goarch": "amd64",
+    "go_version": "go1.26.0"
+  },
+  "config": {
+    "workers": 2
+  },
+  "rows": [
+    {
+      "fixture": "alt-deps",
+      "protects": "edge fixtures: alternative dependencies (a | b)",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:46:12.1423133-07:00",
+      "finished_at": "2026-09-06T12:46:40.5107808-07:00",
+      "total_ms": 28368,
+      "stage_ms": {
+        "build": 7400,
+        "build-binary": 1468,
+        "bundle-transfer": 90,
+        "install": 2404,
+        "snapshot-create": 203,
+        "target-commit": 2390,
+        "target-setup": 4050,
+        "verify": 283
+      },
+      "bundle_size_bytes": 429208,
+      "package_count": 4,
+      "log_path": "matrix-work/r66c32d66/alt-deps-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "apt-conf-hook-dropped",
+      "protects": "docs/security/review-2026-09.md RCE via captured apt.conf.d; core/apt/aptconf.go filterAptConf allow-list.1 apt.conf.d capture",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:46:12.1539155-07:00",
+      "finished_at": "2026-09-06T12:46:39.2169521-07:00",
+      "total_ms": 27063,
+      "stage_ms": {
+        "build": 7114,
+        "build-binary": 1456,
+        "bundle-transfer": 93,
+        "install": 2138,
+        "snapshot-create": 206,
+        "target-commit": 2314,
+        "target-setup": 4171,
+        "verify": 422
+      },
+      "bundle_size_bytes": 425404,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/apt-conf-hook-dropped-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:46:39.2191751-07:00",
+      "finished_at": "2026-09-06T12:47:10.9911623-07:00",
+      "total_ms": 31771,
+      "stage_ms": {
+        "build": 6302,
+        "build-binary": 0,
+        "bundle-transfer": 109,
+        "determinism": 6875,
+        "install": 2638,
+        "snapshot-create": 218,
+        "target-commit": 2077,
+        "target-setup": 2531,
+        "verify": 239
+      },
+      "bundle_size_bytes": 479416,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "12",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:46:41.8658911-07:00",
+      "finished_at": "2026-09-06T12:48:37.0513815-07:00",
+      "total_ms": 115185,
+      "stage_ms": {
+        "build": 37279,
+        "build-binary": 2275,
+        "bundle-transfer": 565,
+        "determinism": 38380,
+        "install": 5975,
+        "snapshot-create": 671,
+        "target-commit": 5400,
+        "target-setup": 8308,
+        "verify": 456
+      },
+      "bundle_size_bytes": 454608,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-debian-12-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "13",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:47:11.3052208-07:00",
+      "finished_at": "2026-09-06T12:47:58.2873052-07:00",
+      "total_ms": 46982,
+      "stage_ms": {
+        "build": 7712,
+        "build-binary": 0,
+        "bundle-transfer": 169,
+        "determinism": 9146,
+        "install": 6360,
+        "snapshot-create": 256,
+        "target-commit": 4818,
+        "target-setup": 3452,
+        "verify": 198
+      },
+      "bundle_size_bytes": 535081,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-debian-13-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "debian",
+      "version": "13",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:47:59.7955347-07:00",
+      "finished_at": "2026-09-06T12:50:25.1236652-07:00",
+      "total_ms": 145328,
+      "stage_ms": {
+        "build": 39477,
+        "build-binary": 0,
+        "bundle-transfer": 92,
+        "determinism": 54116,
+        "install": 14781,
+        "snapshot-create": 1307,
+        "target-commit": 7595,
+        "target-setup": 9821,
+        "verify": 815
+      },
+      "bundle_size_bytes": 507898,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-debian-13-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "22.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:48:37.5006621-07:00",
+      "finished_at": "2026-09-06T12:49:56.2620869-07:00",
+      "total_ms": 78761,
+      "stage_ms": {
+        "build": 24684,
+        "build-binary": 0,
+        "bundle-transfer": 167,
+        "determinism": 25813,
+        "install": 1942,
+        "snapshot-create": 138,
+        "target-commit": 4392,
+        "target-setup": 10005,
+        "verify": 225
+      },
+      "bundle_size_bytes": 438415,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-ubuntu-22.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "22.04",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:49:58.1150304-07:00",
+      "finished_at": "2026-09-06T12:54:45.9903906-07:00",
+      "total_ms": 287875,
+      "stage_ms": {
+        "build": 133810,
+        "build-binary": 0,
+        "bundle-transfer": 659,
+        "determinism": 95599,
+        "install": 4740,
+        "snapshot-create": 1190,
+        "target-commit": 13966,
+        "target-setup": 24042,
+        "verify": 341
+      },
+      "bundle_size_bytes": 426080,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-ubuntu-22.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:50:25.6022644-07:00",
+      "finished_at": "2026-09-06T12:51:50.9252904-07:00",
+      "total_ms": 85323,
+      "stage_ms": {
+        "build": 19109,
+        "build-binary": 0,
+        "bundle-transfer": 197,
+        "determinism": 19466,
+        "install": 7697,
+        "snapshot-create": 207,
+        "target-commit": 7513,
+        "target-setup": 6394,
+        "verify": 360
+      },
+      "bundle_size_bytes": 460762,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:51:55.4521965-07:00",
+      "finished_at": "2026-09-06T12:55:32.8725226-07:00",
+      "total_ms": 217420,
+      "stage_ms": {
+        "build": 80120,
+        "build-binary": 0,
+        "bundle-transfer": 124,
+        "determinism": 73924,
+        "install": 5581,
+        "snapshot-create": 1154,
+        "target-commit": 10946,
+        "target-setup": 26884,
+        "verify": 411
+      },
+      "bundle_size_bytes": 450999,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-ubuntu-24.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "26.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:54:46.187445-07:00",
+      "finished_at": "2026-09-06T12:55:46.4381721-07:00",
+      "total_ms": 60250,
+      "stage_ms": {
+        "build": 15691,
+        "build-binary": 0,
+        "bundle-transfer": 106,
+        "determinism": 13643,
+        "install": 4491,
+        "snapshot-create": 283,
+        "target-commit": 7513,
+        "target-setup": 7294,
+        "verify": 164
+      },
+      "bundle_size_bytes": 479741,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-ubuntu-26.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "basic-install-matrix",
+      "protects": "kill criterion, §3.13 core matrix + determinism",
+      "distro": "ubuntu",
+      "version": "26.04",
+      "arch": "arm64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:55:34.0962988-07:00",
+      "finished_at": "2026-09-06T12:58:06.0381606-07:00",
+      "total_ms": 151941,
+      "stage_ms": {
+        "build": 54848,
+        "build-binary": 0,
+        "bundle-transfer": 173,
+        "determinism": 49293,
+        "install": 14447,
+        "snapshot-create": 590,
+        "target-commit": 4805,
+        "target-setup": 13093,
+        "verify": 423
+      },
+      "bundle_size_bytes": 469312,
+      "package_count": 4,
+      "determinism_ok": true,
+      "log_path": "matrix-work/r66c32d66/basic-install-matrix-ubuntu-26.04-arm64/transcript.log"
+    },
+    {
+      "fixture": "dkms-without-headers",
+      "protects": "edge fixtures: DKMS package without headers; core/doctor checkDKMSHeaders",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:55:46.4397352-07:00",
+      "finished_at": "2026-09-06T12:56:11.1181865-07:00",
+      "total_ms": 24678,
+      "stage_ms": {
+        "build": 5495,
+        "build-binary": 0,
+        "bundle-transfer": 90,
+        "install": 762,
+        "snapshot-create": 183,
+        "target-commit": 1584,
+        "target-setup": 3746,
+        "verify": 145
+      },
+      "bundle_size_bytes": 34205,
+      "package_count": 1,
+      "log_path": "matrix-work/r66c32d66/dkms-without-headers-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "external-deb-closure",
+      "protects": "external .deb dependency closure",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:56:11.118696-07:00",
+      "finished_at": "2026-09-06T12:56:41.2677237-07:00",
+      "total_ms": 30149,
+      "stage_ms": {
+        "build": 9372,
+        "build-binary": 0,
+        "bundle-transfer": 145,
+        "install": 2454,
+        "snapshot-create": 182,
+        "target-commit": 2912,
+        "target-setup": 2323,
+        "verify": 169
+      },
+      "bundle_size_bytes": 483591,
+      "package_count": 5,
+      "log_path": "matrix-work/r66c32d66/external-deb-closure-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "external-deb-missing-deps",
+      "protects": "edge fixtures: external .deb with missing dependencies; §3.10 exit 3; §3.6",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "incomplete"
+      },
+      "started_at": "2026-09-06T12:56:41.2687941-07:00",
+      "finished_at": "2026-09-06T12:56:57.4836798-07:00",
+      "total_ms": 16214,
+      "stage_ms": {
+        "build": 4737,
+        "build-binary": 0,
+        "snapshot-create": 239,
+        "target-commit": 1794,
+        "target-setup": 2981
+      },
+      "log_path": "matrix-work/r66c32d66/external-deb-missing-deps-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "foreign-arch-i386",
+      "protects": "edge fixtures: foreign-arch (i386); §3.5.6",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:56:57.4836798-07:00",
+      "finished_at": "2026-09-06T12:57:33.1167017-07:00",
+      "total_ms": 35633,
+      "stage_ms": {
+        "build": 10957,
+        "build-binary": 0,
+        "bundle-transfer": 112,
+        "install": 4410,
+        "snapshot-create": 174,
+        "target-commit": 2010,
+        "target-setup": 9189,
+        "verify": 152
+      },
+      "bundle_size_bytes": 3413503,
+      "package_count": 6,
+      "log_path": "matrix-work/r66c32d66/foreign-arch-i386-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "held-package",
+      "protects": "edge fixtures: held packages; §3.5.7",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:57:33.1172782-07:00",
+      "finished_at": "2026-09-06T12:58:03.4321935-07:00",
+      "total_ms": 30314,
+      "stage_ms": {
+        "build": 9451,
+        "build-binary": 0,
+        "bundle-transfer": 90,
+        "install": 2512,
+        "snapshot-create": 185,
+        "target-commit": 1355,
+        "target-setup": 4499,
+        "verify": 179
+      },
+      "bundle_size_bytes": 306423,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/held-package-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "multiarch-coexist",
+      "protects": "edge fixtures: multi-arch; §3.5.6",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:58:03.4368442-07:00",
+      "finished_at": "2026-09-06T12:59:57.8944936-07:00",
+      "total_ms": 114457,
+      "stage_ms": {
+        "build": 24714,
+        "build-binary": 0,
+        "bundle-transfer": 811,
+        "install": 20865,
+        "snapshot-create": 331,
+        "target-commit": 9578,
+        "target-setup": 31758,
+        "verify": 168
+      },
+      "bundle_size_bytes": 538211,
+      "package_count": 5,
+      "log_path": "matrix-work/r66c32d66/multiarch-coexist-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "no-recommends-target",
+      "protects": "edge fixtures: Install-Recommends=false target; experiment E4",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:58:06.0407915-07:00",
+      "finished_at": "2026-09-06T12:58:51.6070651-07:00",
+      "total_ms": 45566,
+      "stage_ms": {
+        "build": 8085,
+        "build-binary": 0,
+        "bundle-transfer": 883,
+        "install": 2870,
+        "snapshot-create": 243,
+        "target-commit": 4520,
+        "target-setup": 6788,
+        "verify": 182
+      },
+      "bundle_size_bytes": 34303,
+      "package_count": 1,
+      "log_path": "matrix-work/r66c32d66/no-recommends-target-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "origin-release-pin",
+      "protects": "edge fixtures: origin and release pins; §3.5.5",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:58:51.7513015-07:00",
+      "finished_at": "2026-09-06T12:59:46.7448847-07:00",
+      "total_ms": 54993,
+      "stage_ms": {
+        "build": 9904,
+        "build-binary": 0,
+        "bundle-transfer": 157,
+        "install": 5633,
+        "snapshot-create": 280,
+        "target-commit": 8361,
+        "target-setup": 6529,
+        "verify": 156
+      },
+      "bundle_size_bytes": 33460,
+      "package_count": 1,
+      "log_path": "matrix-work/r66c32d66/origin-release-pin-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "phased-updates",
+      "protects": "edge fixtures: phased updates; E1's narrowing to the upgrade pass",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:59:46.7561236-07:00",
+      "finished_at": "2026-09-06T13:04:32.1711642-07:00",
+      "total_ms": 285415,
+      "stage_ms": {
+        "build": 31004,
+        "build-binary": 0,
+        "bundle-transfer": 1196,
+        "install": 187379,
+        "snapshot-create": 175,
+        "target-commit": 12086,
+        "target-setup": 18942,
+        "verify": 183
+      },
+      "bundle_size_bytes": 9957256,
+      "package_count": 28,
+      "log_path": "matrix-work/r66c32d66/phased-updates-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "pool-unreferenced",
+      "protects": "core/bundle/unreferenced.go; bundle.WarnUnreferenced.7 additive runs; Request.PriorBuild",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T12:59:57.8970624-07:00",
+      "finished_at": "2026-09-06T13:01:11.2452627-07:00",
+      "total_ms": 73348,
+      "stage_ms": {
+        "build": 8090,
+        "build-binary": 0,
+        "bundle-transfer": 334,
+        "install": 13152,
+        "prior-build": 8912,
+        "snapshot-create": 183,
+        "target-commit": 4585,
+        "target-setup": 2949,
+        "verify": 228
+      },
+      "bundle_size_bytes": 478154,
+      "package_count": 4,
+      "log_path": "matrix-work/r66c32d66/pool-unreferenced-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "snap-shim-package",
+      "protects": "edge fixtures: snap-shim package; core/doctor checkSnapShim",
+      "distro": "ubuntu",
+      "version": "24.04",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T13:01:11.2480204-07:00",
+      "finished_at": "2026-09-06T13:02:15.9132063-07:00",
+      "total_ms": 64665,
+      "stage_ms": {
+        "build": 13826,
+        "build-binary": 0,
+        "bundle-transfer": 85,
+        "install": 2661,
+        "snapshot-create": 234,
+        "target-commit": 5858,
+        "target-setup": 8279,
+        "verify": 249
+      },
+      "bundle_size_bytes": 27572,
+      "package_count": 1,
+      "log_path": "matrix-work/r66c32d66/snap-shim-package-ubuntu-24.04-amd64/transcript.log"
+    },
+    {
+      "fixture": "stale-installed-version",
+      "protects": "edge fixtures: a stale installed version",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T13:02:15.9184354-07:00",
+      "finished_at": "2026-09-06T13:03:15.3523643-07:00",
+      "total_ms": 59433,
+      "stage_ms": {
+        "build": 8374,
+        "build-binary": 0,
+        "bundle-transfer": 540,
+        "install": 16398,
+        "snapshot-create": 226,
+        "target-commit": 6819,
+        "target-setup": 7706,
+        "verify": 123
+      },
+      "bundle_size_bytes": 432657,
+      "package_count": 4,
+      "log_path": "matrix-work/r66c32d66/stale-installed-version-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-added-file",
+      "protects": "tamper matrix: added file; verify.ProblemFileUnexpected",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-06T13:03:15.3755271-07:00",
+      "finished_at": "2026-09-06T13:04:05.9375212-07:00",
+      "total_ms": 50561,
+      "stage_ms": {
+        "build": 7711,
+        "build-binary": 0,
+        "bundle-transfer": 237,
+        "snapshot-create": 151,
+        "tamper": 1,
+        "target-commit": 4844,
+        "target-setup": 2910,
+        "verify": 1455
+      },
+      "bundle_size_bytes": 424772,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/tamper-added-file-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-edited-manifest",
+      "protects": "tamper matrix: edited manifest; D6; verify.ProblemManifestDigest",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-06T13:04:06.0221517-07:00",
+      "finished_at": "2026-09-06T13:05:11.7176739-07:00",
+      "total_ms": 65695,
+      "stage_ms": {
+        "build": 6612,
+        "build-binary": 0,
+        "bundle-transfer": 93,
+        "snapshot-create": 428,
+        "tamper": 12,
+        "target-commit": 6762,
+        "target-setup": 15018,
+        "verify": 123
+      },
+      "bundle_size_bytes": 424772,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/tamper-edited-manifest-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-modified-deb",
+      "protects": "tamper matrix: modified deb; D6, §3.8",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-06T13:04:32.1823728-07:00",
+      "finished_at": "2026-09-06T13:05:14.6498398-07:00",
+      "total_ms": 42467,
+      "stage_ms": {
+        "build": 6041,
+        "build-binary": 0,
+        "bundle-transfer": 148,
+        "snapshot-create": 209,
+        "tamper": 5,
+        "target-commit": 9168,
+        "target-setup": 6307,
+        "verify": 129
+      },
+      "bundle_size_bytes": 424772,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/tamper-modified-deb-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-removed-file",
+      "protects": "tamper matrix: removed file; verify.ProblemFileMissing",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-06T13:05:11.7184982-07:00",
+      "finished_at": "2026-09-06T13:06:20.2421182-07:00",
+      "total_ms": 68523,
+      "stage_ms": {
+        "build": 9158,
+        "build-binary": 0,
+        "bundle-transfer": 429,
+        "snapshot-create": 182,
+        "tamper": 1,
+        "target-commit": 3303,
+        "target-setup": 2633,
+        "verify": 922
+      },
+      "bundle_size_bytes": 424772,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/tamper-removed-file-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-swapped-signature",
+      "protects": "tamper matrix: swapped signature; core/sign SignPurpose; verify.ProblemManifestDigest",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-06T13:05:14.6503587-07:00",
+      "finished_at": "2026-09-06T13:06:25.7153249-07:00",
+      "total_ms": 71064,
+      "stage_ms": {
+        "build": 13868,
+        "build-binary": 0,
+        "bundle-transfer": 3550,
+        "snapshot-create": 208,
+        "tamper": 0,
+        "target-commit": 2309,
+        "target-setup": 2892,
+        "verify": 213
+      },
+      "bundle_size_bytes": 424772,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/tamper-swapped-signature-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "tamper-wrong-key",
+      "protects": "tamper matrix: wrong key; §3.8 trust model; verify.ProblemSignatureUntrusted",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "verify": "verification"
+      },
+      "started_at": "2026-09-06T13:06:20.2431195-07:00",
+      "finished_at": "2026-09-06T13:07:03.1887248-07:00",
+      "total_ms": 42945,
+      "stage_ms": {
+        "build": 11433,
+        "build-binary": 0,
+        "bundle-transfer": 153,
+        "snapshot-create": 204,
+        "tamper": 0,
+        "target-commit": 5291,
+        "target-setup": 3525,
+        "verify": 268
+      },
+      "bundle_size_bytes": 424772,
+      "package_count": 3,
+      "log_path": "matrix-work/r66c32d66/tamper-wrong-key-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "third-party-repo",
+      "protects": "edge fixtures: third-party repository; §3.4.1",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T13:06:25.7158291-07:00",
+      "finished_at": "2026-09-06T13:07:16.5600609-07:00",
+      "total_ms": 50844,
+      "stage_ms": {
+        "build": 10749,
+        "build-binary": 0,
+        "bundle-transfer": 125,
+        "install": 7570,
+        "snapshot-create": 379,
+        "target-commit": 4599,
+        "target-setup": 3556,
+        "verify": 133
+      },
+      "bundle_size_bytes": 428059,
+      "package_count": 4,
+      "log_path": "matrix-work/r66c32d66/third-party-repo-debian-12-amd64/transcript.log"
+    },
+    {
+      "fixture": "virtual-provides",
+      "protects": "edge fixtures: virtual packages and Provides",
+      "distro": "debian",
+      "version": "12",
+      "arch": "amd64",
+      "status": "pass",
+      "stage": "done",
+      "exit_classes": {
+        "build": "success",
+        "install": "success",
+        "verify": "success"
+      },
+      "started_at": "2026-09-06T13:07:03.1892414-07:00",
+      "finished_at": "2026-09-06T13:07:48.9962451-07:00",
+      "total_ms": 45807,
+      "stage_ms": {
+        "build": 9144,
+        "build-binary": 0,
+        "bundle-transfer": 278,
+        "install": 2893,
+        "snapshot-create": 325,
+        "target-commit": 6771,
+        "target-setup": 3243,
+        "verify": 236
+      },
+      "bundle_size_bytes": 37650,
+      "package_count": 2,
+      "log_path": "matrix-work/r66c32d66/virtual-provides-debian-12-amd64/transcript.log"
+    }
+  ],
+  "summary": {
+    "total": 32,
+    "pass": 32,
+    "fail": 0,
+    "blocked": 0,
+    "skipped": 0,
+    "timeout": 0,
+    "aborted": 0
+  }
+}

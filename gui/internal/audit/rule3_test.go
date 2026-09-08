@@ -118,6 +118,18 @@ func secDebarkOperated(host string) bool {
 // disagree with. A matcher quietly widened until it stops matching is
 // indistinguishable from one that was never right.
 var secExemptDebarkToken = map[string]string{
+	secPlant("README.md|https://%P.dev"): "project website link for readers; the README is not runtime code.",
+	secPlant("README.md|https://%P.dev/docs/get-started/desktop"): "desktop guide link for readers; " +
+		"the application does not open or fetch it.",
+	secPlant("README.md|%P.dev"): "bare-domain matches from the two reader links above.",
+	secPlant(".goreleaser.yaml|https://%P.dev/docs/get-started/desktop"): "published release-note link " +
+		"to the desktop guide; not a build hook or a runtime request.",
+	secPlant(".goreleaser.yaml|https://%P.dev/docs"): "published release-note link to the docs index; " +
+		"not a build hook or a runtime request.",
+	secPlant(".goreleaser.yaml|%P.dev"): "bare-domain matches from the two release-note links above.",
+	secPlant("packaging/build-deb.sh|https://%P.dev"): "HOMEPAGE is written into the Debian control " +
+		"file as package metadata; the packaging script never requests this URL.",
+	secPlant("packaging/build-deb.sh|%P.dev"): "bare-domain match from the HOMEPAGE metadata above.",
 	secPlant("docs/security-review.md|catalog.%P.io"): "prose. The security review's own " +
 		"§4.6 explains what this check forbids, and it cannot do that without naming an " +
 		"example of a forbidden host. Scoped to that file: the same string in any .go or " +
@@ -655,6 +667,9 @@ func TestFrontendHasNoNetworkPrimitive(t *testing.T) {
 // security property is "can this fixture produce the failure at all?"
 func TestRule3ScannerDetectsAPlantedEndpoint(t *testing.T) {
 	for _, u := range []string{
+		// Reader-link exemptions must not change how these hosts are detected.
+		secPlant("https://%P.dev"),
+		secPlant("https://%P.dev/docs/get-started/desktop"),
 		secPlant("https://api.%P.io/v1/catalog"),
 		secPlant("http://updates.%P.dev/latest.json"),
 		secPlant("wss://events.%P.app/stream"),

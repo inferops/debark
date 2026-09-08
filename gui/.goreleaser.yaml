@@ -419,6 +419,10 @@ release:
     ## Desktop application (`debark-gui`)
 
 
+    [Desktop guide](https://debark.dev/docs/get-started/desktop) ·
+    [Documentation](https://debark.dev/docs)
+
+
     **Linux/amd64 is the supported target.** The Windows build is provided
     because it compiles, not as a support commitment, and it carries no icon and
     no DPI manifest. There is no macOS build and none is planned.

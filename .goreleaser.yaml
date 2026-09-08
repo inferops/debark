@@ -180,7 +180,7 @@ nfpms:
     file_name_template: >-
       {{ .PackageName }}_{{ .Version }}_{{ .Arch }}
     vendor: The debark Authors
-    homepage: "https://github.com/inferops/debark"
+    homepage: "https://debark.dev"
     maintainer: "The debark Authors <noreply@users.noreply.github.com>"
     description: |
       Move Debian/Ubuntu software across an air gap, correctly, and prove it.
@@ -247,6 +247,10 @@ release:
   # other half of this decision.
   footer: >-
     ---
+
+
+    [Website](https://debark.dev) · [Documentation](https://debark.dev/docs) ·
+    [Quick start](https://debark.dev/docs/get-started/quickstart)
 
 
     **Artifacts.** `debark_*` is the CLI: Linux amd64/arm64 and Windows amd64

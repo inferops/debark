@@ -31,6 +31,12 @@ Useful starting points include:
 Use [SUPPORT.md](SUPPORT.md) for questions and bug reports. Report security
 vulnerabilities privately through [SECURITY.md](SECURITY.md).
 
+The [website](https://debark.dev) hosts the [online documentation](https://debark.dev/docs).
+Repository guides live under `docs/` and `gui/docs/`; the website content is
+maintained separately. To report a website documentation issue, use the
+[bug report form](https://github.com/inferops/debark/issues/new?template=bug_report.yml),
+select **Documentation**, and include the page URL and a suggested correction.
+
 ## Set up a checkout
 
 Fork the repository on GitHub and clone your fork. Replace `YOUR-USERNAME`

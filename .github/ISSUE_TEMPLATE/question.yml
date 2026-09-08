@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Start with the [documentation](https://github.com/inferops/debark/blob/main/docs/README.md)
+        Start with the [documentation](https://debark.dev/docs)
         and search existing issues. Do not include private keys, credentials, or
         unreviewed machine snapshots.
   - type: textarea

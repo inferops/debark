@@ -105,7 +105,7 @@ repo=$(CDPATH= cd -- "$here/.." && pwd)
 PKG=debark-gui
 APPID=io.github.inferops.Debark
 MAINTAINER=${DEBARK_GUI_MAINTAINER:-"The debark Authors <noreply@users.noreply.github.com>"}
-HOMEPAGE=https://github.com/inferops/debark/tree/main/gui
+HOMEPAGE=https://debark.dev
 
 # ---------------------------------------------------------------------------
 # Inputs. Every one can be given as a flag or as an environment variable, and

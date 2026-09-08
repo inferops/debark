@@ -1,8 +1,13 @@
 # debark documentation
 
-Start with the [project overview](../README.md), then choose a guide below.
-These docs describe the source in this checkout. For a released version,
-browse the same files at its tag and read the [changelog](../CHANGELOG.md).
+[Website](https://debark.dev) · [Online documentation](https://debark.dev/docs)
+
+The website has an [online quick start](https://debark.dev/docs/get-started/quickstart)
+and [CLI reference](https://debark.dev/docs/reference/cli). For documentation
+in this checkout, start with the [project overview](../README.md), then choose
+a guide below. These repository docs describe the source in this checkout
+and can be read offline. For a released version, browse the same files at
+its tag and read the [changelog](../CHANGELOG.md).
 
 ## Using debark
 

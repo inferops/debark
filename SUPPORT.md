@@ -1,8 +1,12 @@
 # Getting help
 
-For setup and usage, start with the [quick start](docs/quickstart.md),
-[platform requirements](docs/platforms.md), and [troubleshooting](docs/troubleshooting.md).
-Desktop users can also use the [desktop user guide](gui/docs/user-guide.md).
+For setup and usage, start with the [online documentation](https://debark.dev/docs):
+[quick start](https://debark.dev/docs/get-started/quickstart),
+[supported systems](https://debark.dev/docs/get-started/supported-systems), and
+[troubleshooting](https://debark.dev/docs/operate/troubleshooting).
+Desktop users can also use the [desktop guide](https://debark.dev/docs/get-started/desktop).
+The [repository documentation](docs/README.md) includes guides for offline
+reading and for the source revision in your checkout.
 Check [known limitations](docs/status.md) for validation gaps.
 
 ## Questions, bugs, and ideas
@@ -27,6 +31,8 @@ Useful details are:
 - The command or UI steps, selected backend, expected result, and actual output.
 - The smallest package list or synthetic fixture that reproduces the problem.
 - Exit code, relevant logs, and container runtime details if applicable.
+- For website or documentation problems, the affected page URL and the text
+  or link that needs correcting.
 
 Review everything before posting. Snapshots, bundle metadata, URLs, and logs can
 contain internal infrastructure details or credentials. `--redact` removes

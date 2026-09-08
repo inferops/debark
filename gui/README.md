@@ -6,7 +6,8 @@ Debark is the desktop companion to the [debark CLI](../README.md). It runs on
 the **online builder**, where you choose a target, select packages, and build
 a bundle to transfer. The offline target uses the CLI to verify and install.
 
-[User guide](docs/user-guide.md) ·
+[Website](https://debark.dev) ·
+[Desktop guide](https://debark.dev/docs/get-started/desktop) ·
 [Downloads](https://github.com/inferops/debark/releases) ·
 [Get help](../SUPPORT.md) · [Contributing](../CONTRIBUTING.md)
 
@@ -24,7 +25,7 @@ the catalogue is for browsing. The CLI remains available for scripts and for
 options beyond the graphical workflow.
 
 See the [user guide](docs/user-guide.md) for system checks, keyboard workflows,
-signing, and export.
+signing, and export. It is included in this checkout for offline reading.
 
 ## Platforms
 

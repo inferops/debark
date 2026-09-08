@@ -11,8 +11,9 @@ optional signature that the offline machine verifies before installation.
 Use the **CLI** for terminals, scripts, and CI, or the **[Debark desktop
 app](gui/README.md)** to browse packages and prepare bundles on the online machine.
 
-[Get started](#quick-start) · [Downloads](https://github.com/inferops/debark/releases) ·
-[Documentation](docs/README.md) · [Contributing](CONTRIBUTING.md) · [Get help](SUPPORT.md)
+[Website](https://debark.dev) · [Get started](#quick-start) ·
+[Downloads](https://github.com/inferops/debark/releases) ·
+[Documentation](https://debark.dev/docs) · [Contributing](CONTRIBUTING.md) · [Get help](SUPPORT.md)
 
 > **Pre-1.0:** debark is under active development. Minor releases may include
 > breaking changes; published data formats have their own compatibility rules.
@@ -216,16 +217,21 @@ that require the network. See the [security model](docs/security-model.md).
 
 ## Documentation
 
-| I want to… | Read |
-| --- | --- |
-| Build and install my first bundle | [Quick start](docs/quickstart.md) |
-| Find flags, package inputs, JSON output, or exit codes | [CLI guide](docs/cli.md) |
-| Set up Windows, containers, or a different target release | [Platforms](docs/platforms.md) |
-| Browse packages in the desktop app | [Desktop user guide](gui/docs/user-guide.md) |
-| Diagnose a failure | [Troubleshooting](docs/troubleshooting.md) |
-| Understand snapshots, baselines, and trust | [FAQ](docs/faq.md) · [Security model](docs/security-model.md) |
-| Read or integrate the file formats | [Formats](docs/formats.md) · [Schemas](api/schema/) |
-| Find design decisions and validation reports | [Documentation index](docs/README.md) |
+Browse the [online documentation](https://debark.dev/docs) for guides and
+reference pages. The [repository documentation](docs/README.md) follows the
+source in this checkout and can be read offline; use a release tag for the
+docs that shipped with that version.
+
+| I want to… | Online guide | Repository reference |
+| --- | --- | --- |
+| Build and install my first bundle | [Quick start](https://debark.dev/docs/get-started/quickstart) | [Quick start](docs/quickstart.md) |
+| Find flags, package inputs, JSON output, or exit codes | [CLI reference](https://debark.dev/docs/reference/cli) | [CLI guide](docs/cli.md) |
+| Set up Windows, containers, or a different target release | [Supported systems](https://debark.dev/docs/get-started/supported-systems) | [Platforms](docs/platforms.md) |
+| Browse packages in the desktop app | [Desktop guide](https://debark.dev/docs/get-started/desktop) | [Desktop user guide](gui/docs/user-guide.md) |
+| Diagnose a failure | [Troubleshooting](https://debark.dev/docs/operate/troubleshooting) | [Troubleshooting](docs/troubleshooting.md) |
+| Understand snapshots, baselines, and trust | [How verification works](https://debark.dev/docs/trust/trust-model) | [FAQ](docs/faq.md) · [Security model](docs/security-model.md) |
+| Read or integrate the file formats | [Bundle format](https://debark.dev/docs/reference/bundle-format) | [Formats](docs/formats.md) · [Schemas](api/schema/) |
+| Find design decisions and validation reports | — | [Documentation index](docs/README.md) |
 
 ## Contributing and support
 

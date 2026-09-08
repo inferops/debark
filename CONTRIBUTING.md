@@ -8,6 +8,11 @@ Participation follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 [GOVERNANCE.md](GOVERNANCE.md) describes how maintainers review changes and make
 project decisions.
 
+Changes to `main` go through a contribution branch and a pull request, including
+maintainer changes. Start with [checkout and branch setup](#set-up-a-checkout),
+run the checks for your change, then follow [opening a pull request](#open-a-pull-request)
+and [review and merging](#review-and-merging).
+
 ## Choose a contribution
 
 Search [existing issues](https://github.com/inferops/debark/issues) and pull
@@ -28,8 +33,30 @@ vulnerabilities privately through [SECURITY.md](SECURITY.md).
 
 ## Set up a checkout
 
-Fork the repository on GitHub, clone your fork, and create a branch. The
-commands below use a POSIX shell and run from the repository root.
+Fork the repository on GitHub and clone your fork. Replace `YOUR-USERNAME`
+with your GitHub username. The examples use a POSIX shell; after cloning,
+run commands from the repository root.
+
+```sh
+git clone https://github.com/YOUR-USERNAME/debark.git
+cd debark
+git remote add upstream https://github.com/inferops/debark.git
+git fetch upstream
+git switch -c fix/example upstream/main
+```
+
+Here, `origin` is your fork and `upstream` is `inferops/debark`. Choose a short,
+descriptive branch name such as `fix/export-paths` or `docs/install-guide`.
+For each later contribution, fetch `upstream` and create a new branch from
+`upstream/main`.
+
+Maintainers with write access can use a direct clone of `inferops/debark`,
+where `origin` points to the project. Create a contribution branch there too:
+
+```sh
+git fetch origin
+git switch -c fix/example origin/main
+```
 
 Requirements:
 
@@ -217,6 +244,31 @@ own contribution branch. Do not sign off work you cannot certify.
 
 ## Open a pull request
 
+Run the relevant local checks in this guide before opening the PR. Review and stage
+only the files you intend to contribute; replace `path/to/changed-file` with
+their paths:
+
+```sh
+git diff --check
+git diff
+git add path/to/changed-file
+git diff --cached
+git commit -s -m "fix: describe the change"
+git push -u origin fix/example
+```
+
+Use the branch name you created earlier. On GitHub, choose **Compare & pull
+request**, set the base repository to `inferops/debark` and the base branch to
+`main`, and select your contribution branch as the head. Fill in the PR
+template. With an authenticated GitHub CLI, you can instead run:
+
+```sh
+gh pr create --repo inferops/debark --base main
+```
+
+The CLI lets you enter the title and description or continue in the browser.
+Use a draft PR when you want early feedback before the change is ready to merge.
+
 Describe the problem and resulting behavior, link an issue if there is one,
 and explain how you validated the change. Keep unrelated fixes in separate
 pull requests.
@@ -230,3 +282,67 @@ Review the diff before submitting. Do not include private keys, real machine
 inventories, generated binaries, or unrelated dependency changes. The
 [pull request template](.github/PULL_REQUEST_TEMPLATE.md) records the checks
 and compatibility considerations reviewers need.
+
+## Review and merging
+
+The PR's **Checks** tab shows build, lint, test, vulnerability, and DCO results.
+The same required checks run for documentation-only PRs, even when local code
+checks are marked not applicable. Fork contributions may wait for a maintainer
+to approve the workflow run before checks start.
+
+`main` requires these checks:
+
+| Area | Required job names |
+| --- | --- |
+| Formatting and root lint | `gofmt check`; `golangci-lint (root module)` |
+| CLI build, vet, and tests | `build+vet+test (ubuntu-latest)`; `build+vet+test (windows-latest)` |
+| Desktop build, lint, and tests | `gui build+lint+test (ubuntu-24.04)`; `gui build+lint+test (windows-latest)` |
+| apt integration | `go test -DEBARK_E2E (debian:12)`; `go test -DEBARK_E2E (ubuntu:24.04)` |
+| Reproducibility | `reproducible build check` |
+| Desktop integration | `gui end-to-end (offline install)` |
+| [Vulnerabilities](.github/workflows/vulnerabilities.yml) | `govulncheck (ubuntu-24.04)`; `govulncheck (windows-latest)` |
+| [DCO](.github/workflows/dco.yml) | `Signed-off-by check` |
+
+The build, lint, formatting, reproducibility, and integration jobs are defined
+in [CI](.github/workflows/ci.yml).
+
+If a check fails, open its log, fix the problem, and push signed-off commits
+to the same branch. The PR updates automatically. Address review feedback and
+resolve discussions before merging.
+
+The contribution branch must also be up to date with `main`. For a fork, update
+your current contribution branch without rewriting its existing commits:
+
+```sh
+git fetch upstream
+git merge --signoff upstream/main
+git push
+```
+
+In a maintainer's direct clone, use `origin` in place of `upstream`. If the
+merge reports conflicts, resolve them, stage the resolved files, and finish
+with `git commit -s` before pushing. Rerun the relevant local checks after
+resolving conflicts, then wait for GitHub's checks on the updated PR.
+
+Maintainers review the final diff and merge through GitHub once the required
+checks pass and discussions are resolved. The protections apply to repository
+administrators too; direct pushes, force pushes, and deletion of `main` are
+blocked. While the project has a sole maintainer, a separate approving review
+is not required, so that maintainer can review and merge their own PR after
+checks pass. The [governance requirements](GOVERNANCE.md#decision-process) for
+public-contract and scope decisions still apply.
+
+Keep DCO trailers when merging. If using **Squash and merge**, review the final
+commit message and preserve the applicable sign-offs. A DCO sign-off is added
+by `git commit -s`; GitHub's **Require signed commits** option concerns
+cryptographic signatures and is a separate setting.
+
+Maintainers configuring branch protection should require the jobs listed above
+from GitHub Actions. Keep that list aligned with workflow job names. Release,
+SLSA provenance, scheduled matrix, and path-filtered dependency-license jobs
+are not required PR checks because they do not run on every PR. Requiring one
+can leave an otherwise complete PR waiting for a check that never starts.
+
+Merging a PR updates `main` and runs CI. Publishing new downloads is a separate
+maintainer step: update the changelog and push a new version tag following the
+[release guide](gui/docs/release.md#8-cutting-a-release).

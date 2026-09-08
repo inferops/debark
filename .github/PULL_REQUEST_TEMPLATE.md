@@ -16,6 +16,7 @@ checks as N/A. Root Go commands do not test the separate gui/ module. -->
 
 ## Contribution checklist
 
+- [ ] This PR targets `main` from a contribution branch
 - [ ] Every commit has a DCO sign-off (`git commit -s`)
 - [ ] New dependencies or public-contract changes were discussed, or N/A
 - [ ] Schema/interface changes include the required ADR, compatibility notes, and fixtures, or N/A

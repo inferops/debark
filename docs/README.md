@@ -32,7 +32,8 @@ browse the same files at its tag and read the [changelog](../CHANGELOG.md).
 
 ## Contributing and design
 
-- [Contributing](../CONTRIBUTING.md): local setup, checks, and review expectations.
+- [Contributing](../CONTRIBUTING.md): fork and branch setup, local checks,
+  signed-off commits, pull requests, and review/merge requirements.
 - [Engineering contract](dev/contract-brief.md): package boundaries and public contracts.
 - [Architecture decisions](adr/README.md): the reasons behind the design.
 - [Desktop development](../gui/README.md#development): UI contracts and checks.

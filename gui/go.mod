@@ -4,8 +4,8 @@ go 1.26.8
 
 require (
 	github.com/inferops/debark v0.0.0
-	github.com/wailsapp/wails/v2 v2.12.0
-	golang.org/x/sys v0.47.0
+	github.com/wailsapp/wails/v2 v2.15.0
+	golang.org/x/sys v0.48.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
